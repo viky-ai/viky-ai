@@ -1,0 +1,13 @@
+<div class="ts-summary">
+  <div class="ts-summary__primary">
+    <span :class="'ts-status ts-status--' + summary.status"></span>
+    <%= t('views.agent_regression_checks.summary.tests_suite') %>
+    <small>• {{summary.count_i18n}}</small>
+  </div>
+  <div class="ts-summary__secondary">
+    <template v-if="summary.running_count > 0">{{summary.running_count_i18n}},</template>
+    {{summary.success_count_i18n}},
+    {{summary.failed_count_i18n}}
+    <template v-if="summary.running_count == 0">• {{summary.last_update}}</template>
+  </div>
+</div>

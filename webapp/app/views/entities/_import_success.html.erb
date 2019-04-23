@@ -1,0 +1,16 @@
+<div class="banner banner--success">
+  <div class="banner__content">
+    <div>
+      <img src='<%= asset_path("robot-happy.png") %>'
+           srcset='<%= asset_path("robot-happy.png") %> 1x,
+                   <%= asset_path("robot-happy@2x.png") %> 2x'
+           style='width: 80px'/>
+    </div>
+    <div>
+      <h3><%= t('views.entities_lists.show.import.success', count: count) %></h3>
+      <p>
+        <%= t('views.entities_lists.show.import.success_redirection_html') %>
+      </p>
+    </div>
+  </div>
+</div>

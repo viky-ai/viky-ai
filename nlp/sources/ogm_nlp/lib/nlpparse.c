@@ -441,6 +441,7 @@ static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
   request_word->is_auto_complete_word = FALSE;
 
   request_word->spelling_score = 1.0;
+  request_word->lang_id = DOgLangNil;
 
   request_word->is_punctuation = FALSE;
   request_word->is_expression_punctuation = FALSE;

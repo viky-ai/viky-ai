@@ -31,6 +31,7 @@ a.btn,
   }
   &.btn--disabled{
     background: linear-gradient(to bottom, #fff 0%, #f9f9f9 100%);
+    color: #444;
   }
   &.btn--disabled:active{
     transform: none;
@@ -78,6 +79,7 @@ a.btn,
         darken($primary_color, 4%) 100%
       );
       border-color: darken($primary_color, 4%);
+      color: rgba(#fff, .8);
     }
 
     &.btn--outline{
@@ -90,8 +92,9 @@ a.btn,
         background-color: $primary_color;
       }
       &.btn--disabled{
-        color: darken($primary_color, 10%);
+        color: rgba($primary_color, .9);
         background-color: transparent;
+        border-color: rgba($primary_color, .8);
       }
     }
   }
@@ -126,6 +129,7 @@ a.btn,
         darken($destructive_color, 4%) 100%
       );
       border-color: darken($destructive_color, 4%);
+      color: rgba(#fff, .8);
     }
 
     &.btn--outline{
@@ -138,7 +142,8 @@ a.btn,
         background-color: $destructive_color;
       }
       &.btn--disabled{
-        color: darken($destructive_color, 10%);
+        color: rgba($destructive_color, .8);
+        border-color: rgba($destructive_color, .8);
         background-color: transparent;
       }
     }
@@ -175,7 +180,7 @@ a.btn,
   }
 
   &.btn--disabled{
-    opacity: 0.5;
+    opacity: 0.8;
     cursor: not-allowed;
   }
 
@@ -184,8 +189,9 @@ a.btn,
 .btn-group{
   @include display_inline_flex();
   .btn{
-    margin-left: -1px;
     border-radius: 0;
+    border-left-width: 1px;
+    border-right-width: 0;
   }
   .btn:first-child{
     margin-left: 0;
@@ -195,6 +201,13 @@ a.btn,
   .btn:last-child{
     border-top-right-radius: $btn_border_radius;
     border-bottom-right-radius: $btn_border_radius;
+    border-right-width: 1px;
+  }
+  .btn.btn--primary{
+    border-right-width: 1px;
+  }
+  .btn.btn--primary + .btn{
+    border-left-width: 0;
   }
 }
 

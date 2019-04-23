@@ -1,0 +1,13 @@
+<div class="card card--indicator">
+  <% users_count = User.count %>
+  <% admins_count = User.where(admin: true).count %>
+  <div class="card-main">
+    <strong><%= number_with_delimiter users_count %></strong>
+    <%= t("views.backend.dashboard.indicators.users", count: users_count) %>
+  </div>
+  <div class="card-detail">
+    <%= t("views.backend.dashboard.indicators.users_admin",
+           count: admins_count,
+           total: number_with_delimiter(admins_count)) %>
+  </div>
+</div>

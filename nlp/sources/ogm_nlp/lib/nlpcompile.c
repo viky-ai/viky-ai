@@ -488,7 +488,6 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   json_t *json_id = NULL;
   json_t *json_text = NULL;
   json_t *json_keep_order = NULL;
-  json_t *json_glued = NULL;
   json_t *json_glue_strength = NULL;
   json_t *json_glue_distance = NULL;
   json_t *json_aliases = NULL;
@@ -511,10 +510,6 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     else if (Ogstricmp(key, "keep-order") == 0)
     {
       json_keep_order = json_object_iter_value(iter);
-    }
-    else if (Ogstricmp(key, "glued") == 0)
-    {
-      json_glued = json_object_iter_value(iter);
     }
     else if (Ogstricmp(key, "glue-strength") == 0)
     {
@@ -631,25 +626,6 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   else
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: keep-order is not a boolean");
-    DPcErr;
-  }
-
-  expression->glued = FALSE;
-  if (json_glued == NULL)
-  {
-    expression->glued = FALSE;
-  }
-  else if (json_is_boolean(json_glued))
-  {
-    expression->glued = json_boolean_value(json_glued);
-  }
-  else if (json_is_null(json_glued))
-  {
-    expression->glued = FALSE;
-  }
-  else
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: glued is not a boolean");
     DPcErr;
   }
 

@@ -7,6 +7,8 @@ class Nlp::Package
   class_attribute :sync_active
   self.sync_active = true
 
+  VERSION = 1  # Used to invalidate cache
+
   JSON_HEADERS = {"Content-Type" => "application/json", "Accept" => "application/json"}
 
   REDIS_URL = ENV.fetch("VIKYAPP_REDIS_PACKAGE_NOTIFIER") { 'redis://localhost:6379/3' }
@@ -49,19 +51,17 @@ class Nlp::Package
   end
 
   def generate_json
-    JSON.parse(
-      ApplicationController.render(
-        template: 'agents/package',
-        assigns: { agent: @agent, interpretations: build_tree },
-        format: :json
-      )
+    ApplicationController.render(
+      template: 'agents/package',
+      assigns: { agent: @agent, interpretations: build_tree },
+      format: :json
     )
   end
 
   def full_json_export
     packages_list = full_packages_map(@agent).values
     packages_list.collect do |package|
-      Nlp::Package.new(package).generate_json
+      JSON.parse(Nlp::Package.new(package).generate_json)
     end
   end
 
@@ -94,14 +94,14 @@ class Nlp::Package
       interpretations = []
       slug = @agent.slug
       @agent.intents.order(position: :desc).each do |intent|
-        cache_key = ['pkg', slug, 'intent', intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
+        cache_key = ['pkg', VERSION, slug, 'intent', intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
         interpretations += Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
           build_internals_list_nodes(intent)
         end
         interpretations << Rails.cache.fetch("#{cache_key}/build_node"){ build_intent(intent) }
       end
       @agent.entities_lists.order(position: :desc).each do |elist|
-        cache_key = ['pkg', slug, 'entities_list', elist.id, (elist.updated_at.to_f * 1000).to_i].join('/')
+        cache_key = ['pkg', VERSION, slug, 'entities_list', elist.id, (elist.updated_at.to_f * 1000).to_i].join('/')
         interpretations += Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
           build_internals_list_nodes(elist)
         end
@@ -115,7 +115,9 @@ class Nlp::Package
 
       InterpretationAlias
         .includes(:interpretation)
-        .where(is_list: true, interpretations: { intent_id: intent.id }).order('interpretations.position DESC, interpretations.locale ASC').order(:position_start).each do |ialias|
+        .where(is_list: true, interpretations: { intent_id: intent.id })
+        .order('interpretations.position DESC, interpretations.locale ASC')
+        .order(:position_start).each do |ialias|
 
         interpretation_hash = {}
         interpretation_hash[:id]   = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
@@ -130,7 +132,8 @@ class Nlp::Package
         expression[:aliases] = []
         expression[:aliases] << build_internal_alias(ialias)
         expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
-        expression[:glued]      = ialias.interpretation.glued      if ialias.interpretation.glued
+        expression[:glue_distance] = ialias.interpretation.proximity.get_distance
+        expression[:glue_strength] = 'punctuation' if ialias.interpretation.proximity_accepts_punctuations?
         expressions << expression
 
         expression = {}
@@ -140,24 +143,9 @@ class Nlp::Package
         expression[:aliases] << build_internal_alias(ialias)
         expression[:aliases] << build_internal_alias(ialias, true)
         expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
-        expression[:glued]      = ialias.interpretation.glued      if ialias.interpretation.glued
+        expression[:glue_distance] = ialias.interpretation.proximity.get_distance
+        expression[:glue_strength] = 'punctuation' if ialias.interpretation.proximity_accepts_punctuations?
         expressions << expression
-
-        if ialias.any_enabled
-          expression = {}
-          expression[:expression] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
-          expression[:id] = ialias.interpretation.id
-          expression[:aliases] = []
-          expression[:aliases] << {
-            alias: ialias.aliasname,
-            type: 'any'
-          }
-          expression[:aliases] << build_internal_alias(ialias, true)
-          expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
-          expression[:glued]      = ialias.interpretation.glued      if ialias.interpretation.glued
-          expressions << expression
-        end
-
         interpretation_hash[:expressions] = expressions
         interpretations << interpretation_hash
       end
@@ -179,9 +167,11 @@ class Nlp::Package
         expression[:aliases]    = build_aliases(interpretation)
         expression[:locale]     = interpretation.locale     unless interpretation.locale == Locales::ANY
         expression[:keep_order] = interpretation.keep_order if interpretation.keep_order
-        expression[:glued]      = interpretation.glued      if interpretation.glued
+        expression[:glue_distance] = interpretation.proximity.get_distance
+        expression[:glue_strength] = 'punctuation' if interpretation.proximity_accepts_punctuations?
         expression[:solution]   = build_interpretation_solution(interpretation)
         expressions << expression
+
         interpretation.interpretation_aliases
           .where(any_enabled: true, is_list: false)
           .order(position_start: :asc).each do |ialias|
@@ -207,8 +197,8 @@ class Nlp::Package
           expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
           expression[:solution] = build_entities_list_solution(entity)
           expression[:keep_order] = true
-          expression[:glued]      = true
-          expression[:glue_strength] = 'punctuation'
+          expression[:glue_distance] = elist.proximity.get_distance
+          expression[:glue_strength] = 'punctuation' if elist.proximity_glued?
           expressions << expression
         end
       end

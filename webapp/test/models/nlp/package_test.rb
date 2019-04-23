@@ -16,10 +16,11 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "Quel temps fera-t-il demain ?",
-              "id"         => interpretations(:weather_forecast_demain).id,
-              "locale"     => "fr",
-              "solution"   => "Quel temps fera-t-il demain ?"
+              "expression"    => "Quel temps fera-t-il demain ?",
+              "id"            => interpretations(:weather_forecast_demain).id,
+              "locale"        => "fr",
+              "solution"      => "Quel temps fera-t-il demain ?",
+              "glue-distance" => 20
             },
             {
               "expression" => "@{question} @{when} ?",
@@ -38,10 +39,10 @@ class PackageTest < ActiveSupport::TestCase
                   "package" => weather.id
                 }
               ],
-              "locale"     => "en",
-              "keep-order" => true,
-              "glued"      => true,
-              "solution"   => "`forecast.tomorrow`"
+              "locale"         => "en",
+              "keep-order"     => true,
+              "glue-distance" => 0,
+              "solution"       => "`forecast.tomorrow`"
             }
           ]
         },
@@ -51,10 +52,11 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "What the weather like",
-              "id"         => interpretations(:weather_question_like).id,
-              "locale"     => "en",
-              "solution"   => "What the weather like"
+              "expression"    => "What the weather like",
+              "id"            => interpretations(:weather_question_like).id,
+              "locale"        => "en",
+              "solution"      => "What the weather like",
+              "glue-distance" => 20
             }
           ]
         },
@@ -64,13 +66,13 @@ class PackageTest < ActiveSupport::TestCase
           'scope'    => 'public',
           "expressions" => [
             {
-              "expression" => "pluie",
-              "id"         => entities(:weather_raining).id,
-              "locale"     => "fr",
-              "solution"   => "pluie",
-              "keep-order" => true,
-              "glued"      => true,
-              "glue-strength" => "punctuation",
+              "expression"    => "pluie",
+              "id"            => entities(:weather_raining).id,
+              "locale"        => "fr",
+              "solution"      => "pluie",
+              "keep-order"    => true,
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation"
             },
             {
               "expression" => "rain",
@@ -78,8 +80,8 @@ class PackageTest < ActiveSupport::TestCase
               "locale"     => "en",
               "solution"   => "pluie",
               "keep-order" => true,
-              "glued"      => true,
-              "glue-strength" => "punctuation",
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation"
             },
             {
               "expression" => "sun",
@@ -87,8 +89,8 @@ class PackageTest < ActiveSupport::TestCase
               "locale"     => "en",
               "solution"   => "sun",
               "keep-order" => true,
-              "glued"      => true,
-              "glue-strength" => "punctuation",
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation"
             },
             {
               "expression" => "soleil",
@@ -96,8 +98,8 @@ class PackageTest < ActiveSupport::TestCase
               "locale"     => "fr",
               "solution"   => "sun",
               "keep-order" => true,
-              "glued"      => true,
-              "glue-strength" => "punctuation",
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation"
             }
           ]
         },
@@ -112,8 +114,8 @@ class PackageTest < ActiveSupport::TestCase
               "locale"     => "fr",
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
-              "glued"      => true,
-              "glue-strength" => "punctuation",
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation"
             },
             {
               "expression" => "tout à l'heure",
@@ -121,8 +123,8 @@ class PackageTest < ActiveSupport::TestCase
               "locale"     => "fr",
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
-              "glued"      => true,
-              "glue-strength" => "punctuation",
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation"
             },
             {
               "expression" => "today",
@@ -130,22 +132,22 @@ class PackageTest < ActiveSupport::TestCase
               "locale"     => "en",
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
-              "glued"      => true,
-              "glue-strength" => "punctuation",
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation"
             },
             {
               "expression" => "tomorrow",
               "id"         => entities(:weather_dates_tomorrow).id,
               "solution"   => "`{\"date\": \"tomorrow\"}`",
               "keep-order" => true,
-              "glued"      => true,
-              "glue-strength" => "punctuation",
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation"
             }
           ]
         }
       ]
     }
-    assert_equal expected, p.generate_json
+    assert_equal expected, JSON.parse(p.generate_json)
   end
 
 
@@ -173,15 +175,16 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "Quel temps fera-t-il demain ?",
-              "id"         => interpretations(:weather_forecast_demain).id,
-              "solution"   => "Quel temps fera-t-il demain ?"
+              "expression"    => "Quel temps fera-t-il demain ?",
+              "id"            => interpretations(:weather_forecast_demain).id,
+              "solution"      => "Quel temps fera-t-il demain ?",
+              "glue-distance" => 20
             }
           ]
         }
       ]
     }
-    assert_equal expected, p.generate_json
+    assert_equal expected, JSON.parse(p.generate_json)
   end
 
 
@@ -206,17 +209,19 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'private',
           "expressions" => [
             {
-              "expression" => "What the weather like",
-              "id"         => interpretations(:weather_question_like).id,
-              "locale"     => "en",
-              "solution"   => "What the weather like"
+              "expression"    => "What the weather like",
+              "id"            => interpretations(:weather_question_like).id,
+              "locale"        => "en",
+              "solution"      => "What the weather like",
+              "glue-distance" => 20
             }
           ]
         }
       ]
     }
-    assert_equal expected, p.generate_json
+    assert_equal expected, JSON.parse(p.generate_json)
   end
+
 
   test 'Package generation with alias list' do
     weather = agents(:weather)
@@ -248,8 +253,8 @@ class PackageTest < ActiveSupport::TestCase
                   "package" => weather.id
                 }
               ],
-              "keep-order"  => true,
-              "glued"       => true
+              "keep-order"    => true,
+              "glue-distance" => 0
             },
             {
               "expression" => "@{question} @{question_recursive}",
@@ -268,8 +273,8 @@ class PackageTest < ActiveSupport::TestCase
                   "package" => weather.id
                 }
               ],
-              "keep-order"  => true,
-              "glued"       => true
+              "keep-order"    => true,
+              "glue-distance" => 0
             }
           ]
         },
@@ -279,10 +284,11 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "Quel temps fera-t-il demain ?",
-              "id"         => interpretations(:weather_forecast_demain).id,
-              "locale"     => "fr",
-              "solution"   => "Quel temps fera-t-il demain ?"
+              "expression"     => "Quel temps fera-t-il demain ?",
+              "id"             => interpretations(:weather_forecast_demain).id,
+              "locale"         => "fr",
+              "solution"       => "Quel temps fera-t-il demain ?",
+              "glue-distance"  => 20
             },
             {
               "expression" => "@{question} tomorrow ?",
@@ -295,10 +301,10 @@ class PackageTest < ActiveSupport::TestCase
                   "package" => weather.id
                 }
               ],
-              "locale"     => "en",
-              "keep-order" => true,
-              "glued"      => true,
-              "solution"   => "`forecast.tomorrow`"
+              "locale"        => "en",
+              "keep-order"    => true,
+              "glue-distance" => 0,
+              "solution"      => "`forecast.tomorrow`"
             }
           ]
         },
@@ -308,139 +314,18 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "What the weather like",
-              "id"         => interpretations(:weather_question_like).id,
-              "locale"     => "en",
-              "solution"   => "What the weather like"
+              "expression"    => "What the weather like",
+              "id"            => interpretations(:weather_question_like).id,
+              "locale"        => "en",
+              "solution"      => "What the weather like",
+              "glue-distance" => 20
             }
           ]
         }
       ]
     }
-    assert_equal expected, p.generate_json
+    assert_equal expected, JSON.parse(p.generate_json)
   end
-
-  test 'Package generation with alias list any' do
-    weather = agents(:weather)
-    assert entities_lists(:weather_conditions).destroy
-    assert entities_lists(:weather_dates).destroy
-    ialias = interpretation_aliases(:weather_forecast_tomorrow_question)
-    ialias.is_list = true
-    ialias.any_enabled = true
-    assert ialias.save
-
-    p = Nlp::Package.new(weather)
-
-    expected = {
-      'id'   => weather.id,
-      'slug' => 'admin/weather',
-      'interpretations' => [
-        {
-          'id' => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
-          'slug' => "admin/weather/interpretations/weather_question_#{ialias.id}_recursive",
-          'scope' => 'hidden',
-          'expressions' => [
-            {
-              'expression' => '@{question}',
-              'id'         => interpretations(:weather_forecast_tomorrow).id,
-              'aliases'    => [
-                {
-                  'alias'   => 'question',
-                  'slug'    => 'admin/weather/interpretations/weather_question',
-                  'id'      => intents(:weather_question).id,
-                  'package' => weather.id
-                }
-              ],
-              "keep-order"  => true,
-              "glued"       => true
-            },
-            {
-              'expression' => '@{question} @{question_recursive}',
-              'id'         => interpretations(:weather_forecast_tomorrow).id,
-              'aliases'    => [
-                {
-                  'alias'   => 'question',
-                  'slug'    => 'admin/weather/interpretations/weather_question',
-                  'id'      => intents(:weather_question).id,
-                  'package' => weather.id
-                },
-                {
-                  'alias'   => 'question_recursive',
-                  'slug'    => "admin/weather/interpretations/weather_question_#{ialias.id}_recursive",
-                  'id'      => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
-                  'package' => weather.id
-                }
-              ],
-              "keep-order"  => true,
-              "glued"       => true
-            },
-            {
-              'expression'  => '@{question} @{question_recursive}',
-              'id'          =>  interpretations(:weather_forecast_tomorrow).id,
-              'aliases'     => [
-                {
-                  'alias'   => 'question',
-                  'type'    => 'any'
-                },
-                {
-                  'alias'   => 'question_recursive',
-                  'slug'    => "admin/weather/interpretations/weather_question_#{ialias.id}_recursive",
-                  'id'      => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
-                  'package' => weather.id
-                }
-              ],
-              "keep-order"  => true,
-              "glued"       => true
-            }
-          ]
-        },
-        {
-          'id'    => intents(:weather_forecast).id,
-          'slug'  => 'admin/weather/interpretations/weather_forecast',
-          'scope' => 'public',
-          'expressions' => [
-            {
-              'expression' => 'Quel temps fera-t-il demain ?',
-              'id'         => interpretations(:weather_forecast_demain).id,
-              'locale'     => 'fr',
-              'solution'   => "Quel temps fera-t-il demain ?"
-            },
-            {
-              'expression' => '@{question} tomorrow ?',
-              "id"         => interpretations(:weather_forecast_tomorrow).id,
-              'aliases'    => [
-                {
-                  'alias'   => 'question',
-                  'slug'    => "admin/weather/interpretations/weather_question_#{ialias.id}_recursive",
-                  'id'      => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
-                  'package' => weather.id
-                }
-              ],
-              'locale'     => 'en',
-              'keep-order' => true,
-              'glued'      => true,
-              'solution'   => '`forecast.tomorrow`'
-            }
-          ]
-        },
-        {
-          'id'    => intents(:weather_question).id,
-          'slug'  => 'admin/weather/interpretations/weather_question',
-          'scope' => 'public',
-          'expressions' => [
-            {
-              'expression' => 'What the weather like',
-              "id"         => interpretations(:weather_question_like).id,
-              'locale'     => 'en',
-              'solution'   => "What the weather like"
-            }
-          ]
-        }
-      ]
-    }
-    assert_equal expected, p.generate_json
-  end
-
 
   test 'Package generation with alias any' do
     weather = agents(:weather)
@@ -462,10 +347,11 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'public',
           'expressions' => [
             {
-              'expression' => 'Quel temps fera-t-il demain ?',
-              'id'         => interpretations(:weather_forecast_demain).id,
-              'locale'     => 'fr',
-              'solution'   => 'Quel temps fera-t-il demain ?'
+              'expression'    => 'Quel temps fera-t-il demain ?',
+              'id'            => interpretations(:weather_forecast_demain).id,
+              'locale'        => 'fr',
+              'solution'      => 'Quel temps fera-t-il demain ?',
+              "glue-distance" => 20
             },
             {
               'expression' => '@{question} tomorrow ?',
@@ -478,10 +364,10 @@ class PackageTest < ActiveSupport::TestCase
                   'package' => weather.id
                 }
               ],
-              'locale'     => 'en',
-              'keep-order' => true,
-              'glued'      => true,
-              'solution'   => '`forecast.tomorrow`'
+              'locale'        => 'en',
+              'keep-order'    => true,
+              'glue-distance' => 0,
+              'solution'      => '`forecast.tomorrow`'
             },
             {
               'expression' => '@{question} tomorrow ?',
@@ -492,10 +378,10 @@ class PackageTest < ActiveSupport::TestCase
                   'type'    => 'any'
                 }
               ],
-              'locale'     => 'en',
-              'keep-order' => true,
-              'glued'      => true,
-              'solution'   => '`forecast.tomorrow`'
+              'locale'        => 'en',
+              'keep-order'    => true,
+              'glue-distance' => 0,
+              'solution'      => '`forecast.tomorrow`'
             }
           ]
         },
@@ -505,16 +391,17 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'public',
           'expressions' => [
             {
-              'expression' => 'What the weather like',
-              "id"         => interpretations(:weather_question_like).id,
-              'locale'     => 'en',
-              'solution'   => "What the weather like"
+              'expression'    => 'What the weather like',
+              "id"            => interpretations(:weather_question_like).id,
+              'locale'        => 'en',
+              'solution'      => "What the weather like",
+              "glue-distance" => 20
             }
           ]
         }
       ]
     }
-    assert_equal expected, p.generate_json
+    assert_equal expected, JSON.parse(p.generate_json)
   end
 
 
@@ -537,10 +424,11 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "Quel temps fera-t-il demain ?",
-              "id"         => interpretations(:weather_forecast_demain).id,
-              "locale" => "fr",
-              "solution" => "Quel temps fera-t-il demain ?"
+              "expression"    => "Quel temps fera-t-il demain ?",
+              "id"            => interpretations(:weather_forecast_demain).id,
+              "locale"        => "fr",
+              "solution"      => "Quel temps fera-t-il demain ?",
+              "glue-distance" => 20
             },
             {
               "expression" => "@{question} tomorrow ?",
@@ -553,10 +441,10 @@ class PackageTest < ActiveSupport::TestCase
                   "package" => weather.id
                 }
               ],
-              "locale" => "en",
-              "keep-order" => true,
-              "glued" => true,
-              "solution" => "`forecast.tomorrow`"
+              "locale"        => "en",
+              "keep-order"    => true,
+              "glue-distance" => 0,
+              "solution"      => "`forecast.tomorrow`"
             }
           ]
         },
@@ -566,10 +454,11 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "What the weather like",
-              "id"         => interpretations(:weather_question_like).id,
-              "locale" => "en",
-              "solution" => "What the weather like"
+              "expression"    => "What the weather like",
+              "id"            => interpretations(:weather_question_like).id,
+              "locale"        => "en",
+              "solution"      => "What the weather like",
+              "glue-distance" => 20
             }
           ]
         }
@@ -584,10 +473,11 @@ class PackageTest < ActiveSupport::TestCase
           "scope"=>"private",
           "expressions"=>  [
               {
-                "expression"=>"Find",
-                "id"=>"55495e57-e816-5b14-b665-2205a6ccf263",
-                "locale"=>"en",
-                "solution"=>"Find"
+                "expression"    =>"Find",
+                "id"            =>"55495e57-e816-5b14-b665-2205a6ccf263",
+                "locale"        =>"en",
+                "solution"      =>"Find",
+                "glue-distance" => 20
               }
             ]
         },
@@ -601,24 +491,25 @@ class PackageTest < ActiveSupport::TestCase
               "id"=>"dfcf3b39-2f54-5847-b717-a8040707f232",
               "aliases"=> [
                 {
-                  "alias" => "find",
-                  "slug" => "admin/terminator/interpretations/simple_where",
-                  "id" => "997928ef-e905-535e-b36a-2f64b7349c3b",
+                  "alias"   => "find",
+                  "slug"    => "admin/terminator/interpretations/simple_where",
+                  "id"      => "997928ef-e905-535e-b36a-2f64b7349c3b",
                   "package" => "794f5279-8ed5-5563-9229-3d2573f23051"
                 }
               ],
-              "locale"=>"en"
+              "locale"        =>"en",
+              "glue-distance" => 20
             },
             {
-              "expression" => "Where is Sarah Connor ?",
-              "id"         => interpretations(:terminator_find_sarah).id,
-              "locale" => "en",
-              "solution" => "Where is Sarah Connor ?"
+              "expression"    => "Where is Sarah Connor ?",
+              "id"            => interpretations(:terminator_find_sarah).id,
+              "locale"        => "en",
+              "solution"      => "Where is Sarah Connor ?",
+              "glue-distance" => 20
             }
           ]
         },
         {
-
           "id" => "1f45c98f-b39b-5a8b-a4a7-8379bea19f0a",
           "slug" => "admin/terminator/entities_lists/terminator_targets",
           "scope" => "private",
@@ -627,6 +518,7 @@ class PackageTest < ActiveSupport::TestCase
     }]
     assert_equal expected, p.full_json_export
   end
+
 
   test 'No interpretation alias' do
     expected_expression = 'I want to go to Paris from London'
@@ -746,6 +638,7 @@ class PackageTest < ActiveSupport::TestCase
     assert_equal expected_expression, interpretation.expression_with_aliases
   end
 
+
   test 'Package generation with regex type' do
     agent = agents(:terminator)
     interpretation = interpretations(:terminator_find_sarah)
@@ -783,13 +676,150 @@ class PackageTest < ActiveSupport::TestCase
                   "regex"   => "[A-Za-z,-]"
                 }
               ],
-              "locale"     => "en"
+              "locale"        => "en",
+              "glue-distance" => 20
             }
           ]
         }
       ]
     }
-    assert_equal expected, package.generate_json
+    assert_equal expected, JSON.parse(package.generate_json)
+  end
+
+  test 'Package generation with different proximity values' do
+    weather = agents(:weather)
+    interpretation_far = interpretations(:weather_forecast_demain)
+    interpretation_far.proximity = 'accepts_punctuations'
+    assert interpretation_far.save
+
+    interpretation_very_close = interpretations(:weather_question_like)
+    interpretation_very_close.proximity = 'very_close'
+    assert interpretation_very_close.save
+
+    entities_far = entities_lists(:weather_dates)
+    entities_far.proximity = 'far'
+    assert entities_far.save
+
+    assert interpretations(:weather_forecast_tomorrow).destroy
+    p = Nlp::Package.new(weather)
+
+    expected = {
+      "id"   => weather.id,
+      "slug" => "admin/weather",
+      "interpretations" => [
+        {
+          "id"    => intents(:weather_forecast).id,
+          "slug"  => "admin/weather/interpretations/weather_forecast",
+          'scope' => 'public',
+          "expressions" => [
+            {
+              "expression"    => "Quel temps fera-t-il demain ?",
+              "id"            => interpretations(:weather_forecast_demain).id,
+              "locale"        => "fr",
+              "solution"      => "Quel temps fera-t-il demain ?",
+              "glue-distance" => 0,
+              "glue-strength" => 'punctuation'
+            }
+          ]
+        },
+        {
+          "id"    => intents(:weather_question).id,
+          "slug"  => "admin/weather/interpretations/weather_question",
+          'scope' => 'public',
+          "expressions" => [
+            {
+              "expression"    => "What the weather like",
+              "id"            => interpretations(:weather_question_like).id,
+              "locale"        => "en",
+              "solution"      => "What the weather like",
+              "glue-distance" => 10
+            }
+          ]
+        },
+        {
+          "id"       => entities_lists(:weather_conditions).id,
+          "slug"     => "admin/weather/entities_lists/weather_conditions",
+          'scope'    => 'public',
+          "expressions" => [
+            {
+              "expression"    => "pluie",
+              "id"            => entities(:weather_raining).id,
+              "locale"        => "fr",
+              "solution"      => "pluie",
+              "keep-order"    => true,
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation"
+            },
+            {
+              "expression" => "rain",
+              "id"         => entities(:weather_raining).id,
+              "locale"     => "en",
+              "solution"   => "pluie",
+              "keep-order" => true,
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation"
+            },
+            {
+              "expression" => "sun",
+              "id"         => entities(:weather_sunny).id,
+              "locale"     => "en",
+              "solution"   => "sun",
+              "keep-order" => true,
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation"
+            },
+            {
+              "expression" => "soleil",
+              "id"         => entities(:weather_sunny).id,
+              "locale"     => "fr",
+              "solution"   => "sun",
+              "keep-order" => true,
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation"
+            }
+          ]
+        },
+        {
+          "id"       => entities_lists(:weather_dates).id,
+          "slug"     => "admin/weather/entities_lists/weather_dates",
+          'scope'    => 'public',
+          "expressions" => [
+            {
+              "expression" => "aujourd'hui",
+              "id"         => entities(:weather_dates_today).id,
+              "locale"     => "fr",
+              "solution"   => "`{\"date\": \"today\"}`",
+              "keep-order" => true,
+              "glue-distance" => 50
+            },
+            {
+              "expression" => "tout à l'heure",
+              "id"         => entities(:weather_dates_today).id,
+              "locale"     => "fr",
+              "solution"   => "`{\"date\": \"today\"}`",
+              "keep-order" => true,
+              "glue-distance" => 50
+            },
+            {
+              "expression" => "today",
+              "id"         => entities(:weather_dates_today).id,
+              "locale"     => "en",
+              "solution"   => "`{\"date\": \"today\"}`",
+              "keep-order" => true,
+              "glue-distance" => 50
+            },
+            {
+              "expression" => "tomorrow",
+              "id"         => entities(:weather_dates_tomorrow).id,
+              "solution"   => "`{\"date\": \"tomorrow\"}`",
+              "keep-order" => true,
+              "glue-distance" => 50
+            }
+          ]
+        }
+      ]
+    }
+    assert_equal expected, JSON.parse(p.generate_json)
   end
 
 end

@@ -5,6 +5,8 @@ weather_conditions:
   position: 1
   color: purple
   visibility: 0
+  proximity: "glued"
+  entities_count: 2
 
 weather_dates:
   listname: weather_dates
@@ -13,6 +15,7 @@ weather_dates:
   position: 0
   color: brown
   visibility: 0
+  entities_count: 2
 
 terminator_targets:
   listname: terminator_targets

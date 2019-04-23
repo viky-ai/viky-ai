@@ -7,6 +7,7 @@ en:
       backend:
         title: Backend
         users: Users management
+        dashboard: Platform overview
         style_guide: Style guide
         sidekiq_ui: Async jobs
         mailer_test: Mailer test

@@ -28,10 +28,13 @@ class NlpRoute::TestNlpLauncher < Minitest::Test
 
     mock = NlpRoute::PackageApiWrapper.any_instance
     mock.expects(:list_id).returns(package_list)
-    mock.expects(:get_package).with('1').returns(package_1)
-    mock.expects(:update_or_create).with('1', package_1).returns(true)
-    mock.expects(:get_package).with('2').returns(package_2)
-    mock.expects(:update_or_create).with('2', package_2).returns(true)
+    mock.expects(:get_package).with("1").returns(package_1)
+    mock.expects(:update_or_create).with("1", package_1).returns(true)
+    mock.expects(:notify_updated_package).returns(true)
+
+    mock.expects(:get_package).with("2").returns(package_2)
+    mock.expects(:update_or_create).with("2", package_2).returns(true)
+    mock.expects(:notify_updated_package).returns(true)
 
     launcher = NlpRoute::NlpLauncher.new
     launcher.init
@@ -39,15 +42,17 @@ class NlpRoute::TestNlpLauncher < Minitest::Test
 
   def test_subscribe
     Thread.new do
-      package_1 = { id: '1' }
-      package_2 = { id: '2' }
+      package_1 = { id: "1" }
+      package_2 = { id: "2" }
 
       mock = NlpRoute::PackageApiWrapper.any_instance
-      mock.expects(:get_package).with('1').returns(package_1)
-      mock.expects(:update_or_create).with('1', package_1).returns(true)
+      mock.expects(:get_package).with("1").returns(package_1)
+      mock.expects(:update_or_create).with("1", package_1).returns(true)
+      mock.expects(:notify_updated_package).returns(true)
 
-      mock.expects(:get_package).with('2').returns(package_2)
-      mock.expects(:update_or_create).with('2', package_2).returns(true)
+      mock.expects(:get_package).with("2").returns(package_2)
+      mock.expects(:update_or_create).with("2", package_2).returns(true)
+      mock.expects(:notify_updated_package).returns(true)
 
       mock.expects(:delete).with('2').returns(true)
 

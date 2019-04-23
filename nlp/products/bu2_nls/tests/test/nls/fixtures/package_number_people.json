@@ -57,7 +57,7 @@
         {
           "expression": "@{preposition_number_people} @{number} @{people}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {

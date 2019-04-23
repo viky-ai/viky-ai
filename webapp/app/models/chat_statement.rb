@@ -6,8 +6,6 @@ class ChatStatement < ApplicationRecord
   enum speaker: [:user, :bot, :moderator]
   enum nature: [:text, :image, :video, :map, :button, :button_group, :card, :list, :notification, :geolocation]
 
-  serialize :content, JSON
-
   validates :content, presence: true
   validate :content_format
 

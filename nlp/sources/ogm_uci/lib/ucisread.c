@@ -35,3 +35,20 @@ PUBLIC(int) OgUciServerRead(void *handle, struct og_ucisr_input *input, struct o
   DONE;
 }
 
+
+PUBLIC(og_status) OgUciServerReadReset(void *handle, og_bool reset_to_minimal)
+{
+  struct og_ctrl_ucis *ctrl_ucis = (struct og_ctrl_ucis *) handle;
+  struct og_ctrl_uci *ctrl_uci = (struct og_ctrl_uci *) ctrl_ucis->huci;
+
+  if (reset_to_minimal)
+  {
+    IFE(OgHeapResetToMinimal(ctrl_uci->hba));
+  }
+  else
+  {
+    IFE(OgHeapReset(ctrl_uci->hba));
+  }
+
+  DONE;
+}

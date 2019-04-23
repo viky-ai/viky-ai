@@ -149,6 +149,11 @@
   height: 12em;
 }
 
+.field input[readonly='readonly'].agent-token-input{
+  color: #aaa;
+  text-align: center;
+}
+
 .agent-upload__new.field--upload{
   height: 12em;
 }
@@ -166,6 +171,28 @@
   .field:first-child{
     width: 100%;
     margin-right: 2em;
+  }
+}
+
+.agent-locales{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-column-gap: .5em;
+  grid-row-gap: .25em;
+  margin-bottom: 1.5em;
+  .label,
+  label{
+    font-weight: 300;
+    margin-bottom: 0;
+    small{
+      color: #666;
+    }
+    .icon--x-small{
+      vertical-align: middle;
+      svg{
+        fill: #666;
+      }
+    }
   }
 }
 

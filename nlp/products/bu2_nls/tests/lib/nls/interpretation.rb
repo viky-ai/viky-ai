@@ -79,11 +79,11 @@ module Nls
       locale = nil
       locale = opts[:locale] if opts.has_key?(:locale)
 
-      glued = false
-      if opts.has_key?(:glued)
-        glued = opts[:glued]
-      elsif !@package.nil? && !@package.default_glued.nil?
-        glued = @package.default_glued
+      glue_distance = 20
+      if opts.has_key?(:glue_distance)
+        glue_distance = opts[:glue_distance]
+      elsif !@package.nil? && !@package.default_glue_distance.nil?
+        glue_distance = @package.default_glue_distance
       end
 
       keep_order = false
@@ -95,7 +95,7 @@ module Nls
 
       solution = nil
       solution = opts[:solution] if opts.has_key?(:solution)
-      add_expression(Expression.new(text, {aliases: aliases, locale: locale, glued: glued, keep_order: keep_order, solution: solution}))
+      add_expression(Expression.new(text, {aliases: aliases, locale: locale, glue_distance: glue_distance, keep_order: keep_order, solution: solution}))
       self
     end
 
@@ -103,11 +103,11 @@ module Nls
       locale = @@default_locale
       locale = opts[:locale] if opts.has_key?(:locale)
 
-      glued = false
-      if opts.has_key?(:glued)
-        glued = opts[:glued]
-      elsif !@package.nil? && !@package.default_glued.nil?
-        glued = @package.default_glued
+      glue_distance = 20
+      if opts.has_key?(:glue_distance)
+        glue_distance = opts[:glue_distance]
+      elsif !@package.nil? && !@package.default_glue_distance.nil?
+        glue_distance = @package.default_glue_distance
       end
 
       keep_order = false
@@ -121,10 +121,10 @@ module Nls
       solution = opts[:solution] if opts.has_key?(:solution)
       if texts.kind_of? Array
         texts.each do |t|
-          add_expression(Expression.new(t, {locale: locale, glued: glued, keep_order: keep_order, solution: solution}))
+          add_expression(Expression.new(t, {locale: locale, glue_distance: glue_distance, keep_order: keep_order, solution: solution}))
         end
       else
-        add_expression(Expression.new(texts, {locale: locale, glued: glued, keep_order: keep_order, solution: solution}))
+        add_expression(Expression.new(texts, {locale: locale, glue_distance: glue_distance, keep_order: keep_order, solution: solution}))
       end
       self
     end

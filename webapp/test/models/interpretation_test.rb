@@ -23,7 +23,7 @@ class InterpretationTest < ActiveSupport::TestCase
     assert_equal 'Good morning John', interpretation.expression
     assert_equal intents(:weather_forecast).id, interpretation.intent.id
     assert_equal false, interpretation.keep_order
-    assert_equal false, interpretation.glued
+    assert interpretation.proximity_close?
     assert interpretation.solution.nil?
     assert_equal 3, intents(:weather_forecast).interpretations.count
     assert_equal interpretation_alias.id, interpretation.interpretation_aliases.reload[0].id
@@ -78,12 +78,132 @@ class InterpretationTest < ActiveSupport::TestCase
 
   test 'Check interpretation solution is valid' do
     interpretation = interpretations(:weather_forecast_tomorrow)
-    interpretation.solution = (['a'] * 2001).join('')
+    interpretation.solution = (['a'] * 8193).join('')
     assert !interpretation.valid?
     expected = {
-      solution: ['is too long (maximum is 2000 characters)']
+      solution: ['(8.001 KB) is too long (maximum is 8 KB)']
     }
     assert_equal expected, interpretation.errors.messages
+  end
+
+
+  test 'Check expression size' do
+    interpretation = interpretations(:weather_forecast_tomorrow)
+    interpretation.expression = (['À'] * 1025).join('')
+    assert !interpretation.valid?
+    expected = {
+      expression: ['(2.002 KB) is too long (maximum is 2 KB)']
+    }
+    assert_equal expected, interpretation.errors.messages
+  end
+
+
+  test "Aliases any constraint : only one any" do
+    interpretation = interpretations(:weather_forecast_demain)
+
+    assert_not interpretation.update(
+      interpretation_aliases_attributes: [
+        {
+          aliasname: "first",
+          position_start: 0,
+          position_end: 4,
+          interpretation: interpretations(:weather_forecast_demain),
+          interpretation_aliasable: intents(:weather_question),
+          any_enabled: true,
+        },
+        {
+          aliasname: "second",
+          position_start: 6,
+          position_end: 10,
+          interpretation: interpretations(:weather_forecast_demain),
+          interpretation_aliasable: intents(:weather_question),
+          any_enabled: true,
+        }
+      ]
+    )
+    expected = ["Only one annotation with \"Any\" option is permitted."]
+    assert_equal expected, interpretation.errors.full_messages
+  end
+
+
+  test "Aliases any constraint : one alias one any" do
+    interpretation = interpretations(:weather_forecast_demain)
+    assert_not interpretation.update(
+      interpretation_aliases_attributes: [
+        {
+          aliasname: "first",
+          position_start: 0,
+          position_end: 4,
+          interpretation: interpretations(:weather_forecast_demain),
+          interpretation_aliasable: intents(:weather_question),
+          any_enabled: true,
+        }
+      ]
+    )
+    expected = ["\"Any\" option is not permitted with only one annotation."]
+    assert_equal expected, interpretation.errors.full_messages
+
+
+    interpretation.reload
+    assert interpretation.update(
+      interpretation_aliases_attributes: [
+        {
+          aliasname: "first",
+          position_start: 0,
+          position_end: 4,
+          interpretation: interpretations(:weather_forecast_demain),
+          interpretation_aliasable: intents(:weather_question),
+          any_enabled: true,
+        },
+        {
+          aliasname: "second",
+          position_start: 5,
+          position_end: 10,
+          interpretation: interpretations(:weather_forecast_demain),
+          interpretation_aliasable: intents(:weather_question),
+          any_enabled: false,
+        }
+      ]
+    )
+
+    assert_not interpretation.update(
+      interpretation_aliases_attributes: [
+        {
+          id: interpretation.interpretation_aliases.last.id,
+          _destroy:  true,
+        }
+      ]
+    )
+    expected = ["\"Any\" option is not permitted with only one annotation."]
+    assert_equal expected, interpretation.errors.full_messages
+  end
+
+
+  test "Aliases any constraint : only one list" do
+    interpretation = interpretations(:weather_forecast_demain)
+
+    assert_not interpretation.update(
+      interpretation_aliases_attributes: [
+        {
+          aliasname: "first",
+          position_start: 0,
+          position_end: 4,
+          interpretation: interpretations(:weather_forecast_demain),
+          interpretation_aliasable: intents(:weather_question),
+          is_list: true,
+        },
+        {
+          aliasname: "second",
+          position_start: 6,
+          position_end: 10,
+          interpretation: interpretations(:weather_forecast_demain),
+          interpretation_aliasable: intents(:weather_question),
+          is_list: true,
+        }
+      ]
+    )
+    expected = ["Only one annotation with \"List\" option is permitted."]
+    assert_equal expected, interpretation.errors.full_messages
   end
 
 
@@ -127,5 +247,61 @@ class InterpretationTest < ActiveSupport::TestCase
     interpretation.expression = '<script>javascript:alert("Hello")</script>'
     assert interpretation.save
     assert_equal '', interpretation.expression
+  end
+
+
+  test 'Limit maximum number of words in an interpretation' do
+    interpretation = interpretations(:weather_forecast_demain)
+    interpretation.expression = (['a'] * 37).join(' ')
+    assert !interpretation.save
+    expected = {
+      expression: ['is too long (maximum is 36 elements), found: 37']
+    }
+    assert_equal expected, interpretation.errors.messages
+
+    interpretation.expression = 'a1.2' * 15
+    assert !interpretation.save
+    expected = {
+      expression: ['is too long (maximum is 36 elements), found: 60']
+    }
+    assert_equal expected, interpretation.errors.messages
+
+    interpretation.expression = ([
+      '²', # G_UNICODE_OTHER_NUMBER (No)
+      '_', # G_UNICODE_CONNECT_PUNCTUATION (Pc)
+      '-', # G_UNICODE_DASH_PUNCTUATION (Pd)
+      '(', # G_UNICODE_OPEN_PUNCTUATION (Ps)
+      ')', # G_UNICODE_CLOSE_PUNCTUATION (Pe)
+      '«', # G_UNICODE_INITIAL_PUNCTUATION (Pi)
+      '”', # G_UNICODE_FINAL_PUNCTUATION (Pf)
+      '&', # G_UNICODE_OTHER_PUNCTUATION (Po)
+      '€', # G_UNICODE_CURRENCY_SYMBOL (Sc)
+      '^', # G_UNICODE_MODIFIER_SYMBOL (Sk)
+      '=', # G_UNICODE_MATH_SYMBOL (Sm)
+      '©', # G_UNICODE_OTHER_SYMBOL (So)
+      '力', # G_UNICODE_BREAK_IDEOGRAPHIC (ID)
+      '😀', # G_UNICODE_BREAK_EMOJI_BASE (EB)
+      '🏿',  # G_UNICODE_BREAK_EMOJI_MODIFIER (EM)
+    ] * 3).join
+
+    assert !interpretation.save
+    expected = {
+      expression: ['is too long (maximum is 36 elements), found: 45']
+    }
+    assert_equal expected, interpretation.errors.messages
+
+    interpretation.expression = (['a'] * 36 + ['؀' * 2]).join(' ')
+    assert interpretation.save
+
+    interpretation.expression = (['a'] * 35 + ['après demain']).join(' ')
+    assert InterpretationAlias.new(
+      aliasname: 'when',
+      position_start: 70,
+      position_end: 82,
+      interpretation: interpretation,
+      interpretation_aliasable: entities_lists(:weather_dates)
+    ).save
+    force_reset_model_cache interpretation
+    assert interpretation.save
   end
 end

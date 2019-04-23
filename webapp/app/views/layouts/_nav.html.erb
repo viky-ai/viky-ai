@@ -1,8 +1,8 @@
 <nav class="h-nav">
 
   <div class="h-nav__header">
-    <a href="/" class="logo">
-      <%= logo_on_dark %>
+    <a href="/">
+      <span class="logo"><%= logo_on_dark %></span>
     </a>
   </div>
 
@@ -18,31 +18,60 @@
           <%= t('views.nav.chatbots') %>
         </a>
       </li>
+      <li>
+        <a href="<%= doc_url %>" data-turbolinks="false" target="_blank">
+          <%= t('views.nav.doc') %>
+          <span class="icon icon--x-small"><%= icon_open_in_new %></span>
+        </a>
+      </li>
+
       <% if current_user.admin %>
         <% cerebro_url = Rails.env.development? ? 'http://localhost:9201' : '/cerebro/'%>
         <% kibana_url = Rails.env.development? ? 'http://localhost:5601/kibana/' : '/kibana/'%>
         <li class="secondary">
-          <a href="<%= backend_users_path %>" <% if controller_path.include?('backend') %>class="current"<% end %>>
+          <a href="<%= backend_dashboard_path %>"
+             <% if controller_path.include?('backend/dashboard') %>class="current"<% end %>>
+            <%= t('views.nav.backend.dashboard') %>
+          </a>
+        </li>
+        <li class="secondary">
+          <a href="<%= backend_users_path %>"
+            <% if ['backend/users','backend/invitations'].include? controller_path %>
+              class="current"
+            <% end %>>
             <%= t('views.nav.backend.users') %>
           </a>
         </li>
-        <li class="more" style="display:none;">
-          <div class="dropdown">
-            <a href="#" class="dropdown__trigger">
-              <span class="icon">
-                <%= icon_dots %>
-              </span>
-            </a>
-            <div class="dropdown__content dropdown__content--hidden">
-              <ul>
+      <% end %>
+
+      <li class="more" style="display:none;">
+        <div class="dropdown">
+          <a href="#" class="dropdown__trigger">
+            <span class="icon">
+              <%= icon_dots %>
+            </span>
+          </a>
+          <div class="dropdown__content dropdown__content--hidden">
+            <ul>
+              <% if current_user.admin %>
                 <li>
-                  <a href="<%= backend_users_path %>" <% if controller_path.include?('backend') %>class="current"<% end %>>
-                    <%= t('views.nav.backend.users') %>
+                  <a href="<%= backend_dashboard_path %>"
+                     <% if controller_path.include?('backend/dashboard') %>class="current"<% end %>>
+                    <%= t('views.nav.backend.dashboard') %>
                   </a>
                 </li>
                 <li>
-                  <a href="/style-guide/icon" data-turbolinks="false">
+                  <a href="<%= backend_users_path %>"
+                    <% if ['backend/users','backend/invitations'].include? controller_path %>
+                      class="current"
+                    <% end %>>
+                    <%= t('views.nav.backend.users') %>
+                  </a>
+                </li>
+                <li class="separator">
+                  <a href="/style-guide/icon" data-turbolinks="false" target="_blank">
                     <%= t('views.nav.backend.style_guide') %>
+                    <span class="icon icon--x-small"><%= icon_open_in_new %></span>
                   </a>
                 </li>
                 <li>
@@ -69,19 +98,16 @@
                     <span class="icon icon--x-small"><%= icon_open_in_new %></span>
                   </a>
                 </li>
-                <li>
-                  <a href="<%= doc_url %>" data-turbolinks="false" target="_blank">
-                    <%= t('views.nav.doc') %>
-                    <span class="icon icon--x-small"><%= icon_open_in_new %></span>
-                  </a>
-                </li>
-              </ul>
-            </div>
+              <% end %>
+            </ul>
           </div>
-        </li>
+        </div>
+      </li>
+      <% if current_user.admin %>
         <li class="secondary">
-          <a href="/style-guide/icon" data-turbolinks="false">
+          <a href="/style-guide/icon" data-turbolinks="false" target="_blank">
             <%= t('views.nav.backend.style_guide') %>
+            <span class="icon icon--x-small"><%= icon_open_in_new %></span>
           </a>
         </li>
         <li class="secondary">
@@ -109,12 +135,6 @@
           </a>
         </li>
       <% end %>
-      <li class="secondary">
-        <a href="<%= doc_url %>" data-turbolinks="false" target="_blank">
-          <%= t('views.nav.doc') %>
-          <span class="icon icon--x-small"><%= icon_open_in_new %></span>
-        </a>
-      </li>
     </ul>
   </div>
 
@@ -123,19 +143,19 @@
       <li>
         <a href="<%= profile_path %>" <% if controller_path.include?('profile') %>class="current"<% end %>>
           <div class="user">
-            <div class="avatar">
+            <div class="user__avatar user__avatar--small">
               <img src="<%= current_user.image_url(:square) %>">
             </div>
-            <span>
+            <div class="user__info">
               <% if current_user.name.blank? %>
                 <%= current_user.username %>
               <% else %>
                 <%= current_user.name %>
               <% end %>
               <% if current_user != true_user %>
-                <span class="badge badge--danger"><%= t('views.nav.switched') %></span>
+                &nbsp;<span class="badge badge--danger"><%= t('views.nav.switched') %></span>
               <% end %>
-            </span>
+            </div>
           </div>
         </a>
       </li>
@@ -143,10 +163,12 @@
         <li>
           <a href="<%= stop_impersonating_profile_path %>" rel="nofollow" data-method="post">
             <div class="user">
-              <div class="avatar">
+              <div class="user__avatar user__avatar--small">
                 <img src="<%= true_user.image_url(:square) %>">
               </div>
-              <span><%= t('views.nav.comeback') %></span>
+              <div class="user__info">
+                <%= t('views.nav.comeback') %>
+              </div>
             </div>
           </a>
         </li>

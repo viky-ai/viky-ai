@@ -17,6 +17,7 @@
   <component name="ogm_aut/lib" info="Finite State Automaton library" />
   <component name="ogm_auta/lib" info="Automaton library application (common usage)" />
   <component name="ogm_gen/lib" info="Historical Pertimm 'generic libs'" />
+  <component name="ogm_aut/prog/ogaut" info="Finite State Automaton utilities program" />
   <component name="ogm_ghbn/lib" info="a gethostbyname with a memory DNS" />
   <component name="ogm_heap/lib" info="Memory heap management library" />
   <component name="ogm_heap/prog/ogheap" info="Memory heap management library test program" />

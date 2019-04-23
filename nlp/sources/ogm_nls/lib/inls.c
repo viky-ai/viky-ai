@@ -6,6 +6,7 @@
  */
 #include "ogm_nls.h"
 #include <stddef.h>
+#include <sys/resource.h>
 #include <glib-2.0/glib/gstdio.h>
 
 PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
@@ -195,6 +196,8 @@ PUBLIC(og_status) OgNlsOnSignalStop(og_nls ctrl_nls)
   // stop non blocking thread
   ctrl_nls->must_stop = TRUE;
 
+  OgNlsMemLogPeakUsage(ctrl_nls, "OgNlsOnSignalStop");
+
   struct og_ucic_request request[1];
   memset(request, 0, sizeof(struct og_ucic_request));
 
@@ -217,6 +220,8 @@ PUBLIC(og_status) OgNlsOnSignalStop(og_nls ctrl_nls)
 
 PUBLIC(og_status) OgNlsOnSignalEmergency(og_nls ctrl_nls)
 {
+  OgNlsMemLogPeakUsage(ctrl_nls, "OgNlsOnSignalEmergency");
+
   IFE(NlsOnEmergency(ctrl_nls));
 
   DONE;
@@ -256,3 +261,15 @@ og_status OgNlsWritePidFile(og_nls ctrl_nls)
   DONE;
 }
 
+
+void OgNlsMemLogPeakUsage(og_nls ctrl_nls, og_string context)
+{
+  struct rusage rusage[1];
+  NIF(getrusage(RUSAGE_SELF, rusage))
+  {
+    og_char_buffer mem_peak_usage[128];
+    Og64FormatThousand(rusage->ru_maxrss, mem_peak_usage, TRUE);
+
+    OgMsg(ctrl_nls->hmsg, "", DOgMsgDestInLog + DOgMsgDestMBox, "%s: NLS  peak RSS memory usage : %s kiloBytes", context, mem_peak_usage);
+  }
+}

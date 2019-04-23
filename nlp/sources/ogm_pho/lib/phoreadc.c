@@ -123,7 +123,7 @@ static og_status PhoReadConfFile(void *ptr, int is_dir, int filename_length, og_
   if (is_dir) DONE;
   if (strstr(filename, "/xsd/")) DONE;
 
-  if (ctrl_pho->loginfo->trace & DOgPhoTraceMinimal)
+  if (ctrl_pho->loginfo->trace & DOgPhoTracePhoReadConf)
   {
     OgMsg(ctrl_pho->hmsg, "", DOgMsgDestInLog, "PhoReadConfFile: processing configuration file '%s'", filename);
   }

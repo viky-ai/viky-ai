@@ -26,7 +26,7 @@ module InterpretationHelper
     )
   end
 
-  def number_to_json()
+  def number_to_json
     JSON.generate({
       color:  "intent-black",
       aliasname: t("views.interpretations.number").downcase,
@@ -34,7 +34,7 @@ module InterpretationHelper
     })
   end
 
-  def regex_to_json()
+  def regex_to_json
     JSON.generate({
       color: "intent-black",
       aliasname: t("views.interpretations.regex").downcase,
@@ -48,7 +48,6 @@ module InterpretationHelper
   end
 
   def alias_to_json(interpretation_alias)
-
     if interpretation_alias.type_number?
       data = {
         color: "intent-black",
@@ -98,12 +97,17 @@ module InterpretationHelper
       end
     end
     data[:id] = interpretation_alias.id unless interpretation_alias.id.nil?
+
     unless interpretation_alias.errors[:aliasname].empty?
       data[:aliasname_errors] = display_errors(interpretation_alias, :aliasname)
     end
 
     unless interpretation_alias.errors[:reg_exp].empty?
       data[:regex_errors] = display_errors(interpretation_alias, :reg_exp)
+    end
+
+    unless interpretation_alias.errors[:base].empty?
+      data[:base_errors] = display_errors(interpretation_alias, :base)
     end
 
     JSON.generate(data)
@@ -169,14 +173,26 @@ module InterpretationHelper
       result << "</span>"
     end
 
+    result << "&nbsp;"
+    result << "&nbsp;"
+
     if interpretation.keep_order
-      result << " <span class='badge'>#{t('activerecord.attributes.interpretation.keep_order')}</span>"
+      result << "&nbsp;"
+      result << "<span class='badge' title='#{t("views.interpretations.keep_order_description")}'>"
+      result << t('activerecord.attributes.interpretation.keep_order')
+      result << "</span>"
     end
-    if interpretation.glued
-      result << " <span class='badge'>#{t('activerecord.attributes.interpretation.glued')}</span>"
-    end
+
+    result << "&nbsp;"
+    result << "<span class='badge' title='#{t("views.interpretations.proximity.description.#{interpretation.proximity}")}'>"
+    result << t("views.interpretations.proximity.#{interpretation.proximity}")
+    result << "</span>"
+
     if interpretation.auto_solution_enabled
-      result << " <span class='badge'>#{t('activerecord.attributes.interpretation.auto_solution_enabled')}</span>"
+      result << "&nbsp;"
+      result << " <span class='badge' title='#{t("views.interpretations.auto_solution_description")}'>"
+      result << t('activerecord.attributes.interpretation.auto_solution_enabled')
+      result << "</span>"
     end
 
     result.join('').html_safe

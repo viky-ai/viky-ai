@@ -11,6 +11,7 @@ Rails.application.routes.draw do
       end
       post :impersonate, on: :member
     end
+    get 'dashboard', to: 'dashboard#index'
   end
 
   resource :profile, only: [:show, :edit, :update, :destroy] do
@@ -72,7 +73,6 @@ Rails.application.routes.draw do
 
           get :select_new_locale
           post :add_locale
-          delete :remove_locale
           get :confirm_destroy
 
           collection do
@@ -95,6 +95,7 @@ Rails.application.routes.draw do
         resources :entities_lists do
           member do
             post :move_to_agent
+            get :export, to: 'entities_lists_exports#show'
           end
 
           get :confirm_destroy
@@ -114,6 +115,13 @@ Rails.application.routes.draw do
               get :new_import
               post :create_import
             end
+          end
+        end
+
+        resources :agent_regression_checks, only: [:create, :update, :destroy] do
+          collection do
+            post :run
+            post :update_positions
           end
         end
 
@@ -160,8 +168,9 @@ Rails.application.routes.draw do
 
   # API internal without versioning
   namespace :api_internal do
-    get '/packages',     to: 'packages#index'
-    get '/packages/:id', to: 'packages#show'
+    get '/packages',              to: 'packages#index'
+    get '/packages/:id',          to: 'packages#show'
+    post '/packages/:id/updated', to: 'packages#updated'
   end
 
   get 'style-guide', to: 'style_guide#index'

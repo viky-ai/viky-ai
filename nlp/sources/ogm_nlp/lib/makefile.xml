@@ -15,19 +15,24 @@
     <file>nlpcompile.c</file>
     <file>nlpconsolidate.c</file>
     <file>nlpdump.c</file>
+    <file>nlpentity.c</file>
     <file>nlperr.c</file>
     <file>nlpexplainhighlight.c</file>
     <file>nlpglue.c</file>
     <file>nlpipalias.c</file>
     <file>nlpipword.c</file>
+    <file>nlplem.c</file>
     <file>nlplocale.c</file>
     <file>nlplog.c</file>
     <file>nlpltrac.c</file>
+    <file>nlpltrac_entity.c</file>
     <file>nlpltras.c</file>
+    <file>nlpltras_entity.c</file>
     <file>nlpjavascript.c</file>
     <file>nlpinterpret.c</file>
     <file>nlpmatch.c</file>
     <file>nlpmatch_word.c</file>
+    <file>nlpmatch_entity.c</file>
     <file>nlpmatch_expression.c</file>
     <file>nlpmatch_interpretation.c</file>
     <file>nlpmatch_group_numbers.c</file>
@@ -58,7 +63,7 @@
     <platform name="linux">
       <option name="NAME">ognlp</option>
       <option name="ADD_CFLAGS"/>
-      <option name="ADD_LIBR">-logltras -logltrac -logaut -loguni -logheap -logmsg -loggen -lduktape -ljansson -lglib-2.0 -logsysi</option>
+      <option name="ADD_LIBR">-logstm -logltras -logltrac -logaut -loguni -logheap -logmsg -loggen -lduktape -ljansson -lglib-2.0 -logsysi</option>
       <option name="ADD_LIBD">$(ADD_LIBR)</option>
       <option name="ADD_LIBP">$(ADD_LIBR)</option>
     </platform>

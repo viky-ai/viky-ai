@@ -44,7 +44,13 @@ class AgentsNewTest < ApplicationSystemTestCase
     ]
     go_to_agents_index
     assert_equal expected, (all('.agent-box h2').collect {|n| n.text})
-    assert_equal "Wall-e", first(".background-color-gradient__red h2").text
+
+    expected = [
+      "agent-box__header background-color-gradient__black",
+      "agent-box__header background-color-gradient__black",
+      "agent-box__header background-color-gradient__red"
+    ]
+    assert_equal expected,  all('.agent-box__header').collect {|n| n['class']}
   end
 
 
@@ -96,8 +102,34 @@ class AgentsNewTest < ApplicationSystemTestCase
     ]
     go_to_agents_index
     assert_equal expected, (all('.agent-box h2').collect {|n| n.text})
-    assert_equal "Wall-e", first(".background-color-gradient__red h2").text
+    expected = [
+      "agent-box__header background-color-gradient__black",
+      "agent-box__header background-color-gradient__black",
+      "agent-box__header background-color-gradient__red"
+    ]
+    assert_equal expected,  all('.agent-box__header').collect {|n| n['class']}
     assert_equal 'PUBLIC', first('.background-color-gradient__red span').text
+  end
+
+
+  test "Agent creation with default locales then update" do
+    go_to_agents_creation
+    within(".modal") do
+      fill_in 'Name', with: 'Locales test'
+      fill_in 'ID', with: 'locales-test'
+      click_button 'Public'
+      first("button.background-color__red").click
+      click_button 'Create'
+    end
+    assert page.has_text?('Your agent has been successfully created.')
+    assert_equal ["*", "en", "fr"], Agent.find_by_name('Locales test').ordered_locales
+    click_link 'Configure'
+    within(".modal") do
+      uncheck("fr (French)")
+      click_button 'Update'
+    end
+    assert page.has_text?('Your agent has been successfully updated.')
+    assert_equal ["*", "en"], Agent.find_by_name('Locales test').ordered_locales
   end
 
 
@@ -143,4 +175,5 @@ class AgentsNewTest < ApplicationSystemTestCase
       assert_nil first("#agent_api_token")
     end
   end
+
 end

@@ -6,7 +6,7 @@ class InterpretRequestLog
   SEARCH_ALIAS_NAME = ['search', INDEX_NAME].join('-').freeze
   INDEX_TYPE = 'log'.freeze
 
-  attr_accessor :id, :agent, :timestamp, :sentence, :language, :now, :status, :body, :context
+  attr_accessor :id, :agent, :timestamp, :sentence, :language, :spellchecking, :now, :status, :body, :context
 
   validates :context_to_s, length: {
     maximum: 1000
@@ -62,11 +62,11 @@ class InterpretRequestLog
   private
 
     def to_json
-      {
+      result = {
         timestamp: @timestamp,
         sentence: @sentence,
         language: @language,
-        now: @now,
+        spellchecking: @spellchecking,
         agent_id: @agent.id,
         agent_slug: @agent.slug,
         owner_id: @agent.owner.id,
@@ -74,6 +74,8 @@ class InterpretRequestLog
         body: @body,
         context: @context
       }
+      result[:now] = @now if @now.present?
+      result
     end
 
     def context_to_s

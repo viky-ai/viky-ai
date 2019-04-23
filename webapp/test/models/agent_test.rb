@@ -9,6 +9,7 @@ class AgentTest < ActiveSupport::TestCase
       agentname: "agenta",
       description: "Agent A decription",
       visibility: 'is_public',
+      nlp_updated_at: '2019-01-21 10:07:53.484942',
       source_agent: {
         id: agents(:terminator).id,
         slug: agents(:terminator).slug,
@@ -36,7 +37,10 @@ class AgentTest < ActiveSupport::TestCase
       description: "Agent A decription"
     )
     assert !agent.save
-    expected = ["Owner can't be blank", "Users list does not includes agent owner"]
+    expected = [
+      "Owner can't be blank",
+      "Users list does not includes agent owner"
+    ]
     assert_equal expected, agent.errors.full_messages
   end
 
@@ -103,21 +107,33 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
-  test "Remove users from agent & ensure owner stay present" do
+  test "Ensure owner present" do
     agent = Agent.new(
       name: "Agent 1",
-      agentname: "aaa"
+      agentname: "aaa",
+      memberships: [
+        Membership.new(user_id: users(:admin).id, rights: "all")
+      ]
     )
-    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
     assert agent.save
 
-    agent.users = []
-    assert !agent.valid?
-    expected = ["Users list does not includes agent owner"]
+    agent = Agent.new(
+      name: "Agent 2",
+      agentname: "bbb",
+      memberships: []
+    )
+    assert_not agent.save
+    expected = ["Owner can't be blank", "Users list does not includes agent owner"]
     assert_equal expected, agent.errors.full_messages
 
-    agent.users << users(:confirmed)
-    assert !agent.save
+    agent = Agent.new(
+      name: "Agent 2",
+      agentname: "bbb",
+      memberships: [
+        Membership.new(user_id: users(:admin).id, rights: "show")
+      ]
+    )
+    assert_not agent.save
     expected = ["Users list does not includes agent owner"]
     assert_equal expected, agent.errors.full_messages
   end
@@ -209,6 +225,80 @@ class AgentTest < ActiveSupport::TestCase
 
     agent.color = "red"
     assert agent.valid?
+  end
+
+
+  test "Agent locales default on create" do
+    agent = Agent.new(
+      name: "Agent 1",
+      agentname: "aaa"
+    )
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
+    assert agent.valid?
+    assert agent.save
+    expected = [Locales::ANY, 'en', 'fr']
+    assert_equal expected, agent.locales
+  end
+
+
+  test "Agent locales are deduplicated" do
+    agent = Agent.new(
+      name: "Agent 1",
+      agentname: "aaa"
+    )
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
+    agent.locales = ["en", "fr", "fr", "en"]
+    assert agent.save
+    assert_equal ["en", "fr"], agent.locales
+  end
+
+
+  test "Agent locales presence on update" do
+    agent = Agent.new(
+      name: "Agent 1",
+      agentname: "aaa"
+    )
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
+    assert agent.save
+
+    agent.locales = []
+    assert_not agent.save
+    expected = ["Languages can't be blank"]
+    assert_equal expected, agent.errors.full_messages
+  end
+
+
+  test "Agent locales are include in available locales" do
+    agent = Agent.new(
+      name: "Agent 1",
+      agentname: "aaa"
+    )
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
+    agent.locales = ["missing_locale_1", "missing_locale_2"]
+    assert_not agent.save
+    expected = ["Languages unknown 'missing_locale_1'", "Languages unknown 'missing_locale_2'"]
+    assert_equal expected, agent.errors.full_messages
+  end
+
+
+  test "Agent ordered_locales" do
+    agent = Agent.new(
+      name: "Agent 1",
+      agentname: "aaa",
+      locales: ["fr", "en", "*"]
+    )
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
+    assert agent.save
+
+    assert_equal ["fr", "en", "*"], agent.locales
+    assert_equal ["*", "en", "fr"], agent.ordered_locales
+  end
+
+
+  test "Agent used_locales" do
+    assert_equal ["*", "en", "fr"], agents(:weather).ordered_and_used_locales
+    assert_equal ["en"], agents(:terminator).ordered_and_used_locales
+    assert_equal [], agents(:weather_confirmed).ordered_and_used_locales
   end
 
 
@@ -372,14 +462,16 @@ class AgentTest < ActiveSupport::TestCase
 
   test 'List reachable intents for agent' do
     agent_weather = agents(:weather)
-    current_intent = Intent.create(intentname: 'current_intent', locales: ['en'], agent: agent_weather,)
+    current_intent = Intent.create(
+      intentname: 'current_intent',
+      agent: agent_weather
+    )
     assert_equal 2, agent_weather.reachable_intents(current_intent).count
     assert_equal ['weather_forecast', 'weather_question'], agent_weather.reachable_intents(current_intent).collect(&:intentname)
 
     agent_successor = agents(:weather_confirmed)
     assert Intent.create(
       intentname: 'greeting',
-      locales: ['en'],
       agent: agent_successor
     )
     assert AgentArc.create(source: agent_weather, target: agent_successor)
@@ -391,7 +483,10 @@ class AgentTest < ActiveSupport::TestCase
 
   test 'List reachable public/private intents for agent' do
     agent_weather = agents(:weather)
-    current_intent = Intent.create(intentname: 'current_intent', locales: ['en'], agent: agent_weather,)
+    current_intent = Intent.create(
+      intentname: 'current_intent',
+      agent: agent_weather
+    )
     intent_greetings = intents(:weather_forecast)
     intent_greetings.visibility = 'is_public'
     assert intent_greetings.save
@@ -402,13 +497,11 @@ class AgentTest < ActiveSupport::TestCase
     agent_successor = agents(:weather_confirmed)
     assert Intent.create(
       intentname: 'greeting_public',
-      locales: ['en'],
       agent: agent_successor,
       visibility: 'is_public'
     )
     assert Intent.create(
       intentname: 'greeting_private',
-      locales: ['en'],
       agent: agent_successor,
       visibility: 'is_private'
     )
@@ -472,7 +565,7 @@ class AgentTest < ActiveSupport::TestCase
     weather_confirmed.memberships << Membership.new(user: current_user, rights: 'edit')
     assert weather_confirmed.save
 
-    other_agent_with_edit = Agent.create(
+    other_agent_with_edit = Agent.new(
       name: 'Other_agent_with_edit',
       agentname: 'other_agent_with_edit'.parameterize,
       memberships: [
@@ -482,7 +575,7 @@ class AgentTest < ActiveSupport::TestCase
     )
     assert other_agent_with_edit.save
 
-    other_agent_without_edit = Agent.create(
+    other_agent_without_edit = Agent.new(
       name: 'Other_agent_without_edit',
       agentname: 'other_agent_without_edit'.parameterize,
       memberships: [
@@ -520,5 +613,102 @@ class AgentTest < ActiveSupport::TestCase
   test 'Test agent slug generation' do
     agent = agents(:weather)
     assert_equal 'admin/weather', agent.slug
+  end
+
+
+  test 'Test agent regression global state' do
+    create_agent_regression_check_fixtures
+
+    agent = agents(:weather)
+    @regression_weather_forecast.state = 'running'
+    @regression_weather_forecast.save
+    %w[running error failure unknown success].each do |state|
+      @regression_weather_question.state = state
+      @regression_weather_question.save
+      assert_equal 'running', agent.regression_checks_global_state
+    end
+
+    @regression_weather_forecast.state = 'error'
+    @regression_weather_forecast.save
+    %w[error failure unknown success].each do |state|
+      @regression_weather_question.state = state
+      @regression_weather_question.save
+      assert_equal 'error', agent.regression_checks_global_state
+    end
+
+    @regression_weather_forecast.state = 'failure'
+    @regression_weather_forecast.save
+    %w[failure unknown success].each do |state|
+      @regression_weather_question.state = state
+      @regression_weather_question.save
+      assert_equal 'failure', agent.regression_checks_global_state
+    end
+
+    @regression_weather_forecast.state = 'unknown'
+    @regression_weather_forecast.save
+    %w[unknown success].each do |state|
+      @regression_weather_question.state = state
+      @regression_weather_question.save
+      assert_equal 'unknown', agent.regression_checks_global_state
+    end
+
+    @regression_weather_forecast.state = 'success'
+    @regression_weather_forecast.save
+    ['success'].each do |state|
+      @regression_weather_question.state = state
+      @regression_weather_question.save
+      assert_equal 'success', agent.regression_checks_global_state
+    end
+  end
+
+
+  test 'Test find a regression check from sentence, language, now and spellchecking params' do
+    create_agent_regression_check_fixtures
+
+    agent = agents(:weather)
+    @regression_weather_forecast.now = '2019-01-21T12:00:00+01:00'
+    @regression_weather_forecast.spellchecking = 'high'
+    @regression_weather_forecast.save
+    expected_id = @regression_weather_forecast.id
+
+    ['Quel temps fera-t-il demain ?', 'quel temps fera-t-il demain ?', ' Quel temps fera-t-il demain ?   '].each do |sentence|
+      rc = agent.find_regression_check_with(sentence, '*', 'high', '2019-01-21T12:00:00+01:00')
+      assert_equal expected_id, rc.id
+    end
+    assert_nil agent.find_regression_check_with(' Quel temps fera-t-il demain ?   ', '*', 'high', nil)
+    assert_nil agent.find_regression_check_with('random input : qlsjlqsjdflqsd', '*', 'high', '2019-01-21T12:00:00+01:00')
+    assert_nil agent.find_regression_check_with('Quel temps fera-t-il demain ?', 'fr', 'high', '2019-01-21T12:00:00+01:00')
+    assert_nil agent.find_regression_check_with('Quel temps fera-t-il demain ?', '*', 'low', '2019-01-21T12:00:00+01:00')
+    assert_nil agent.find_regression_check_with('Quel temps fera-t-il demain ?', '*', 'high', '2019-01-21T12:12:12+01:00')
+
+    @regression_weather_forecast.now = nil
+    @regression_weather_forecast.save
+
+    rc = agent.find_regression_check_with('Quel temps fera-t-il demain ?', '*', 'high', nil)
+    assert_equal expected_id, rc.id
+
+    rc = agent.find_regression_check_with('Quel temps fera-t-il demain ?', '*', 'high', '')
+    assert_equal expected_id, rc.id
+
+    assert_nil agent.find_regression_check_with('Quel temps fera-t-il demain ?', 'fr', 'high', '')
+  end
+
+
+  test 'Reset nlp updated at when the agent is updated' do
+    agent = agents(:weather)
+    assert_nil agent.nlp_updated_at
+    assert_not agent.synced_with_nlp?
+
+    agent.updated_at = '2018-01-01 01:01:01.000000'
+    agent.nlp_updated_at = '2000-01-01 01:01:01.000000'
+    assert_not agent.synced_with_nlp?
+
+    agent.updated_at = '2018-01-01 01:01:01.000000'
+    agent.nlp_updated_at = '2020-01-01 01:01:01.000000'
+    assert agent.synced_with_nlp?
+
+    agent.updated_at = '2018-01-01 01:01:01.000000'
+    agent.nlp_updated_at = '2018-01-01 01:01:01.000000'
+    assert agent.synced_with_nlp?
   end
 end

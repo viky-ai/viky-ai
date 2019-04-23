@@ -16,7 +16,7 @@
         {
           "expression": "snow board",
           "keep-order": true,
-          "glued": true
+          "glue-distance": 0
         },
         {
           "expression": "snowboard"
@@ -38,7 +38,7 @@
         {
           "expression": "jet ski",
           "keep-order": true,
-          "glued": true
+          "glue-distance": 0
         },
         {
           "expression": "jetski"
@@ -56,7 +56,7 @@
         {
           "expression": "wind surf",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "en"
         },
         {
@@ -66,7 +66,7 @@
         {
           "expression": "planche à voile",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "en"
         }
       ],
@@ -112,13 +112,13 @@
         {
           "expression": "to do some",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "en"
         },
         {
           "expression": "to do",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "en"
         },
         {
@@ -132,13 +132,13 @@
         {
           "expression": "pour faire du",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         },
         {
           "expression": "pour faire de la",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         },
         {
@@ -179,7 +179,7 @@
         {
           "expression": "@{preposition_activity} @{activity_entity}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {

@@ -1,0 +1,106 @@
+<div class="sg-intro">
+  <h1>Banner</h1>
+</div>
+
+
+<section>
+  <h2>Banner</h2>
+  <%= highlight_html do %>
+<div class="banner">
+  <div class="banner__content">
+    <div>
+      <img src='<%= asset_path("robot-idle.png") %>'
+           srcset='<%= asset_path("robot-idle.png") %> 1x,
+                   <%= asset_path("robot-idle@2x.png") %> 2x'
+           style='width: 80px'/>
+    </div>
+    <div>
+      <h3>
+        Hello
+      </h3>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+      </p>
+    </div>
+  </div>
+</div>
+  <% end %>
+</section>
+
+<section>
+  <h2>Banner & progress</h2>
+  <%= highlight_html do %>
+<div class="banner">
+  <div class="banner__content">
+    <div class="robot-float">
+      <img src='<%= asset_path("robot-idle-no-shadow.png") %>'
+           srcset='<%= asset_path("robot-idle-no-shadow.png") %> 1x,
+                   <%= asset_path("robot-idle-no-shadow@2x.png") %> 2x'
+           style='width: 80px'/>
+    </div>
+    <div>
+      <h3>
+        Processing a CSV import...
+      </h3>
+      <p>
+        CSV Import file of 4.46 MB.<br />
+        Import launch by Jean-Marie <small>(Wed, 10 Apr 2019 12:30:07 +0200)</small>.
+      </p>
+    </div>
+  </div>
+  <div class="banner__progression">
+    <div class="banner__progression__bar" style="width: 30%;"></div>
+  </div>
+</div>
+  <% end %>
+</section>
+
+
+<section>
+  <h2>Success variant</h2>
+  <%= highlight_html do %>
+<div class="banner banner--success">
+  <div class="banner__content">
+    <div>
+      <img src='<%= asset_path("robot-happy.png") %>'
+           srcset='<%= asset_path("robot-happy.png") %> 1x,
+                   <%= asset_path("robot-happy@2x.png") %> 2x'
+           style='width: 80px'/>
+    </div>
+    <div>
+      <h3>
+        2098 entities imported successfully.
+      </h3>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+      </p>
+    </div>
+  </div>
+</div>
+  <% end %>
+</section>
+
+
+<section>
+  <h2>Alert variant</h2>
+  <%= highlight_html do %>
+<div class="banner banner--alert">
+  <div class="banner__content">
+    <div>
+      <img src='<%= asset_path("robot-confused.png") %>'
+           srcset='<%= asset_path("robot-confused.png") %> 1x,
+                   <%= asset_path("robot-confused@2x.png") %> 2x'
+           style='width: 80px'/>
+    </div>
+    <div>
+      <h3>
+        Oops, import failed.
+      </h3>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+      </p>
+    </div>
+  </div>
+</div>
+  <% end %>
+</section>

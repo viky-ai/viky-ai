@@ -187,7 +187,7 @@ namespace :restore do
       client.snapshot.restore repository: repository_name, snapshot: selected_snapshot, wait_for_completion: true, body: {
         indices: 'stats-interpret_request_log-*',
         rename_pattern: 'stats-interpret_request_log-(\w+)-([0-9]+)-(.+)',
-        rename_replacement: "stats-interpret_request_log-$1-$2-#{uniq_id}-$3",
+        rename_replacement: "stats-interpret_request_log-$1-$2-$3-#{uniq_id}",
         index_settings: {
           'index.number_of_replicas' => 0
         }
@@ -217,16 +217,6 @@ namespace :restore do
 
     def synchronize_NLP
       Restore::Print::step("Synchronize with NLP")
-      backup_dir = File.join(Rails.root, 'import', 'development')
-      Restore::Print::substep("Stash packages from import/ to #{backup_dir}")
-      unless Dir.exist?(backup_dir)
-        FileUtils.mkdir backup_dir
-        FileUtils.cp(Dir.glob(File.join(Rails.root, 'import', '/*.json')), backup_dir)
-      else
-        Restore::Print::notice("    [skipping] Stash directory is already present")
-      end
-      Restore::Print::substep("Reinit NLP")
-
       begin
         Rake::Task['packages:reinit'].invoke
       rescue => e

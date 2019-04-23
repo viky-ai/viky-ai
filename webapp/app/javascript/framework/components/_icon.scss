@@ -73,6 +73,13 @@
     }
   }
 
+  &.icon--success svg{
+    fill: $success_color;
+  }
+  &.icon--alert svg{
+    fill: $alert_color;
+  }
+
 }
 
 .btn--primary .icon,
@@ -97,5 +104,21 @@
 .btn--destructive.btn--outline:hover .icon{
   svg{
     fill: #fff;
+  }
+}
+
+.btn--disabled .icon{
+  svg{
+    opacity: 0.75;
+  }
+}
+.btn--primary.btn--outline.btn--disabled:hover .icon{
+  svg{
+    fill: $primary_color;
+  }
+}
+.btn--destructive.btn--outline.btn--disabled:hover .icon{
+  svg{
+    fill: $destructive_color;
   }
 }

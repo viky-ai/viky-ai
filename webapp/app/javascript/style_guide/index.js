@@ -1,8 +1,8 @@
-import './main';
+import './main.scss';
 
-import './nav';
-import './card-shake';
-import './chatbot-list';
-import './form';
+import './nav.coffee';
+import './card-shake.coffee';
+import './chatbot-list.coffee';
+import './form.coffee';
 
 window.Sortable = require('sortablejs');

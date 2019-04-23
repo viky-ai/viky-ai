@@ -17,6 +17,7 @@
 */
 #define DOgLtracExtStringSeparator  1
 #define DOgLtracMaxWordsSize 300
+#define DOgLtracSwapMaxWordsSizeUnicode 40
 
 struct og_ltrac_input
 {
