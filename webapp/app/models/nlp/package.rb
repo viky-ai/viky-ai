@@ -225,11 +225,17 @@ class Nlp::Package
           min_position = (max_position - batch_size + 1)
           min_position = min_position < cursor_min ? cursor_min : min_position
 
-          last_updated = elist.entities
-                              .select(:updated_at)
-                              .where('position BETWEEN ? AND ?', min_position, max_position)
-                              .order(updated_at: :desc).first.updated_at
+          last_updated_entity = elist.entities
+                                     .select(:updated_at)
+                                     .where('position BETWEEN ? AND ?', min_position, max_position)
+                                     .order(updated_at: :desc).first
+          
+          if last_updated_entity.nil?
+            max_position = min_position - 1
+            next
+          end
   
+          last_updated = last_updated_entity.updated_at
           cache_key = [
             'pkg',
             VERSION,
