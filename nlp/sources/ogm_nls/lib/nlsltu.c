@@ -126,12 +126,18 @@ static og_status OgListeningProcessEndpoint(struct og_listening_thread *lt, stru
     }
   }
 
+  // reset uci buffer : not used anymore body has been parsed
+  IFE(OgUciServerReadReset(lt->hucis, !lt->ctrl_nls->nls_ready));
+
   // Setup an empty json response
   response->default_body = json_object();
   response->body = response->default_body;
 
   og_bool endpoint_status = OgNlsEndpoints(lt, request, response);
   IFE(endpoint_status);
+
+  // free request body soon has possible
+  json_decrefp(&request->body);
 
   // current endpoint not found
   if (endpoint_status == FALSE)

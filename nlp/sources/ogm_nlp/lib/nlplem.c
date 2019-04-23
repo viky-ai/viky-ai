@@ -17,7 +17,7 @@ static og_status NlpLemAddWord(og_nlp_th ctrl_nlp_th, int Irequest_word_basic, i
 og_status NlpLemInit(og_nlp ctrl_nlp)
 {
   ctrl_nlp->ld[DOgLangFR].active = TRUE;
-//  ctrl_nlp->ld[DOgLangEN].active=TRUE;
+  ctrl_nlp->ld[DOgLangEN].active=TRUE;
 //  ctrl_nlp->ld[DOgLangDE].active=TRUE;
 //  ctrl_nlp->ld[DOgLangRO].active=TRUE;
 //  ctrl_nlp->ld[DOgLangAR].active=TRUE;
