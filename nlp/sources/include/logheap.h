@@ -61,6 +61,7 @@ DEFPUBLIC(size_t) OgHeapGetSmoothedAverage(og_heap handle);
 DEFPUBLIC(float)  OgHeapGetSmoothingRatio(og_heap handle);
 DEFPUBLIC(og_status) OgHeapSetCellsUsed(og_heap handle, size_t cells_used);
 DEFPUBLIC(og_status) OgHeapReset(og_heap handle);
+DEFPUBLIC(og_status) OgHeapResetToMinimal(og_heap ctrl_heap);
 DEFPUBLIC(og_status) OgHeapResetWithoutReduce(og_heap handle);
 DEFPUBLIC(og_status) OgHeapSetTrace(og_heap handle, int trace);
 DEFPUBLIC(og_status) OgHeapSetDefaultValue(og_heap handle, int default_mem_set_value);

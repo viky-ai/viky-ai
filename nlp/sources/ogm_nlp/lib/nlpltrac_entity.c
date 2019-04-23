@@ -144,9 +144,10 @@ og_status NlpLtracEntityPackage(og_nlp_th ctrl_nlp_th, package_t package)
 
     IFE(NlpLtracEntityPackageWrite(ctrl_nlp_th, package));
 
-    // Reducing the memory of the automaton to avoid keep temporary memory
-    IFE(OgAutResize(ctrl_nlp_th->ha_prepare_entity, 0x10));
   }
+
+  // Reducing the memory of the automaton to avoid keep temporary memory
+  IFE(OgAutResize(ctrl_nlp_th->ha_prepare_entity, 0x10));
 
   DONE;
 }
@@ -177,8 +178,8 @@ og_status NlpLtracEntityPrepareInit(og_nlp_th ctrl_nlp_th, og_string name)
 
 og_status NlpLtracEntityPrepareReset(og_nlp_th ctrl_nlp_th)
 {
-  IFE(OgAutReset(ctrl_nlp_th->ha_prepare_entity));
-  IFE(OgHeapReset(ctrl_nlp_th->hprepare_entity));
+  IFE(OgAutResize(ctrl_nlp_th->ha_prepare_entity, 0x10));
+  IFE(OgHeapResetToMinimal(ctrl_nlp_th->hprepare_entity));
   DONE;
 }
 

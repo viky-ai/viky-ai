@@ -12,6 +12,64 @@
 static og_status OgHeapResetUpdateSmoothedAverage(og_heap handle);
 static og_status OgHeapResetOptimizedCellsNumber(og_heap handle);
 
+static og_status OgHeapResetInternal(og_heap ctrl_heap, og_bool reset_to_minimal)
+{
+  IFn(ctrl_heap) DONE;
+
+  if (ctrl_heap->freezed)
+  {
+    og_char_buffer erreur[DOgErrorSize];
+    snprintf(erreur, DOgErrorSize, "OgHeapReset on '%s': is freezed you cannot reset heap", ctrl_heap->name);
+    OgErr(ctrl_heap->herr, erreur);
+    OG_LOG_BACKTRACE(ctrl_heap->hmsg, erreur);
+    DPcErr;
+  }
+
+  // To facilitate debugging with asan, heap is reallocated instead of just being reset so that asan detects buffer overflows.
+#ifdef DOG_HEAP_FORCE_RESET
+  reset_to_minimal = TRUE;
+#endif
+
+  if (ctrl_heap->type == DOgHeapTypeNormal && ctrl_heap->normal_cells_number > 0)
+  {
+    // Reset heap to 0 for string, with sliced heap no string can be used (thus no need to check)
+    ctrl_heap->normal_heap[0] = 0;
+  }
+
+  ctrl_heap->reset_cmpt++;
+
+  if (reset_to_minimal)
+  {
+    // reset heap used
+    ctrl_heap->cells_used = 0;
+    ctrl_heap->max_cells_used = 0;
+
+    if (DogHeapEnableReduction)
+    {
+      IFE(OgHeapReallocInternal(ctrl_heap, 1));
+    }
+  }
+  else
+  {
+    // compute smoothed average heap usage
+    IFE(OgHeapResetUpdateSmoothedAverage(ctrl_heap));
+
+    // reset heap used
+    ctrl_heap->cells_used = 0;
+    ctrl_heap->max_cells_used = 0;
+
+    // reduce heap size if needed
+    if (DogHeapEnableReduction)
+    {
+      IFE(OgHeapResetOptimizedCellsNumber(ctrl_heap));
+    }
+  }
+
+  DONE;
+}
+
+
+
 /**
  * Setting the number of cells used in the heap to zero
  * OgHeapReset(handle)
@@ -21,51 +79,22 @@ static og_status OgHeapResetOptimizedCellsNumber(og_heap handle);
  **/
 PUBLIC(og_status) OgHeapReset(og_heap ctrl_heap)
 {
-  IFn(ctrl_heap) DONE;
-
-  if (ctrl_heap->freezed)
-  {
-    og_char_buffer erreur[DOgErrorSize];
-    snprintf(erreur, DOgErrorSize, "OgHeapReset on '%s': is freezed you cannot reset heap",
-        ctrl_heap->name);
-    OgErr(ctrl_heap->herr, erreur);
-    OG_LOG_BACKTRACE(ctrl_heap->hmsg, erreur);
-    DPcErr;
-  }
-
-  // To facilitate debugging with asan, heap is reallocated instead of just being reset so that asan detects buffer overflows.
-#ifdef DOG_HEAP_FORCE_RESET
-  ctrl_heap->cells_used = 0;
-  IFE(OgHeapReallocInternal(ctrl_heap, 1));
-  DONE;
-#endif
-
-  if (ctrl_heap->type == DOgHeapTypeNormal && ctrl_heap->normal_cells_number > 0)
-  {
-    // Reset heap to 0 for string, with sliced heap no string can be used (thus no need to check)
-    ctrl_heap->normal_heap[0] = 0;
-  }
-
-  // TODO remove reset counter after debuging
-  ctrl_heap->reset_cmpt++;
-
-  // compute smoothed average heap usage
-  IFE(OgHeapResetUpdateSmoothedAverage(ctrl_heap));
-
-  // reset heap used
-  ctrl_heap->cells_used = 0;
-  ctrl_heap->max_cells_used = 0;
-
-  // reduce heap size if needed
-  if (DogHeapEnableReduction)
-  {
-    IFE(OgHeapResetOptimizedCellsNumber(ctrl_heap));
-  }
-
-  DONE;
+  return OgHeapResetInternal(ctrl_heap, FALSE);
 }
 
-DEFPUBLIC(og_status) OgHeapResetWithoutReduce(og_heap ctrl_heap)
+/**
+ * Setting the number of cells used in the heap to zero
+ * OgHeapReset(handle)
+ *
+ * \param handle handle to a memory heap API
+ * \return 0 if ok, -1 on error
+ **/
+PUBLIC(og_status) OgHeapResetToMinimal(og_heap ctrl_heap)
+{
+  return OgHeapResetInternal(ctrl_heap, TRUE);
+}
+
+PUBLIC(og_status) OgHeapResetWithoutReduce(og_heap ctrl_heap)
 {
   IFn(ctrl_heap) DONE;
 
