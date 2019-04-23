@@ -219,13 +219,16 @@ class Nlp::Package
         cursor_max = elist.entities.select(:position).order(position: :desc).first.position
         cursor_min = elist.entities.select(:position).order(position: :desc).last.position
         batch_size = 1_000
-        cursor = cursor_max
-        while cursor > cursor_min
-          max_position = cursor
-          min_position = (cursor - batch_size + 1)
+        
+        max_position = cursor_max
+        while max_position > cursor_min
+          min_position = (max_position - batch_size + 1)
           min_position = min_position < cursor_min ? cursor_min : min_position
 
-          last_updated = elist.entities.select(:updated_at).where('position BETWEEN ? AND ?', min_position, max_position).order(updated_at: :desc).first.updated_at
+          last_updated = elist.entities
+                              .select(:updated_at)
+                              .where('position BETWEEN ? AND ?', min_position, max_position)
+                              .order(updated_at: :desc).first.updated_at
   
           cache_key = [
             'pkg',
@@ -265,8 +268,7 @@ class Nlp::Package
             end
             Rails.cache.write(cache_key, expressions)
           end
-          cursor = min_position - 1
-          ap cursor
+          max_position = min_position - 1
         end
       end
     end
