@@ -14,6 +14,23 @@ class ApiInternalTest < ActionDispatch::IntegrationTest
   end
 
   test "Api internal get one package" do
+
+    # Hack : test failed because we write more than 10 times in the response.stream while the get method does not read it.
+    # The stream as a limit of 10 so it become full and the test hangs forever.
+    # see :
+    # https://github.com/rails/rails/pull/31938
+    # https://github.com/rails/rails/commit/a640da454fdb9cd8806a1b6bd98c2da93f1b53b9
+    module ::ActionController::Live
+      remove_method :new_controller_thread
+      def new_controller_thread
+        Thread.new {
+          t2 = Thread.current
+          t2.abort_on_exception = true
+          yield
+        }
+      end
+    end
+
     agent = agents(:weather_confirmed)
     get api_internal_path(agent.id, format: :json), headers: { "Access-Token" => VIKYAPP_INTERNAL_API_TOKEN }
 
