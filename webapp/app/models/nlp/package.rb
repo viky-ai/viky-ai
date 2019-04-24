@@ -142,7 +142,7 @@ class Nlp::Package
 
           expression = {}
           expression['expression'] = "@{#{ialias.aliasname}}"
-          expression['id'] = ialias.interpretation.id
+          expression['pos'] = ialias.interpretation.position
           expression['aliases'] = []
           expression['aliases'] << build_internal_alias(ialias)
           expression['keep-order'] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
@@ -152,7 +152,7 @@ class Nlp::Package
 
           expression = {}
           expression['expression'] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
-          expression['id'] = ialias.interpretation.id
+          expression['pos'] = ialias.interpretation.position
           expression['aliases'] = []
           expression['aliases'] << build_internal_alias(ialias)
           expression['aliases'] << build_internal_alias(ialias, true)
@@ -187,7 +187,7 @@ class Nlp::Package
             intent.interpretations.order(position: :desc, locale: :asc).each do |interpretation|
               expression = {}
               expression['expression']    = interpretation.expression_with_aliases
-              expression['id']            = interpretation.id
+              expression['pos']           = interpretation.position
               aliases = build_aliases(interpretation)
               expression['aliases']       = aliases unless aliases.empty?
               expression['locale']        = interpretation.locale unless interpretation.locale == Locales::ANY
@@ -261,7 +261,7 @@ class Nlp::Package
               entity.terms.each do |term|
                 expression = {}
                 expression[:expression] = term['term']
-                expression[:id] = entity.id
+                expression[:pos] = entity.position
                 expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
                 expression[:solution] = build_entities_list_solution(entity)
                 expression['keep-order'] = true
