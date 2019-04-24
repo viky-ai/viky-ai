@@ -14,22 +14,25 @@ class ApiInternalTest < ActionDispatch::IntegrationTest
   end
 
   test "Api internal get one package" do
-    get "/api_internal/packages/fba88ff8-8238-5007-b3d8-b88fd504f94c.json", headers: { "Access-Token" => VIKYAPP_INTERNAL_API_TOKEN }
+    agent = agents(:weather_confirmed)
+    get api_internal_path(agent.id, format: :json), headers: { "Access-Token" => VIKYAPP_INTERNAL_API_TOKEN }
 
     assert_equal '200', response.code
 
+    intent_question = intents(:weather_confirmed_question)
+    entities_list_dates = entities_lists(:weather_confirmed_dates)
     expected = {
-      "id"              => "fba88ff8-8238-5007-b3d8-b88fd504f94c",
-      "slug"            => "confirmed/weather",
+      "id"              => agent.id ,
+      "slug"            => agent.slug,
       "interpretations" =>
-        [{ "id"          => "ae0794b7-7a4f-5953-8e8b-86bea36730c0",
-           "slug"        => "confirmed/weather/interpretations/weather_question",
-           "scope"       => "private",
+        [{ "id"          => intent_question.id,
+           "slug"        => intent_question.slug,
+           "scope"       => 'private',
            "expressions" => []
          },
-         { "id"          => "b7ffe360-49d7-576a-b619-470d8725e938",
-           "slug"        => "confirmed/weather/entities_lists/weather_dates",
-           "scope"       => "private",
+         { "id"          => entities_list_dates.id,
+           "slug"        => entities_list_dates.slug,
+           "scope"       => 'private',
            "expressions" => []
          }
         ]
