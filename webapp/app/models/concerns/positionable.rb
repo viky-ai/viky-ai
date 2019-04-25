@@ -7,7 +7,7 @@ module Positionable
 
 
   module ClassMethods
-    attr_reader :ancestor_classname
+    attr_reader :ancestor_classname, :has_unique_position
 
     def positionable_ancestor(*attributes)
       parent_name = attributes.first
@@ -15,11 +15,15 @@ module Positionable
       @touch_ancestor = attributes.size > 1 ? attributes.second[:touch] : true
     end
 
+    def unique_position(value)
+      @has_unique_position = value
+    end
+
     def update_positions(parent, public_list, private_list = nil)
-      if self.to_s == 'Entity' || self.to_s == 'Interpretation'
-        # Entities use an unique position index scoped by entities_list.
-        # The reordering procedure is therefore specific and used only
-        # for entities_list with less than 100 entities.
+      if @has_unique_position
+        # Entities and Interpretations use a unique position index scoped by entities_list and intents respectively.
+        # The reordering procedure is therefore specific.
+        # For entities_list updating postions is possible with less than 100 entities.
         update_unique_positions(public_list)
       else
         if self.attribute_method? :visibility
