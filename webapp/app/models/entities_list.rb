@@ -85,8 +85,7 @@ class EntitiesList < ApplicationRecord
   def entities_in_ordered_batchs(batch_size = 1_000)
     Enumerator.new(entities.count) do |block|
       if entities.exists?
-        cursor_max = entities.select(:position).order(position: :desc).first.position
-        cursor_min = entities.select(:position).order(position: :desc).last.position
+        cursor_max, cursor_min = entities.pluck('MAX("entities"."position"), MIN("entities"."position")').first
         cursor = cursor_max + 1
         while cursor > cursor_min do
           batch = entities.where('position < ?', cursor).order(position: :desc).limit(batch_size)
