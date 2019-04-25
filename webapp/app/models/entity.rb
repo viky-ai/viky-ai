@@ -1,6 +1,7 @@
 class Entity < ApplicationRecord
   include Positionable
   positionable_ancestor :entities_list
+  unique_position true
 
   include ActionView::Helpers::NumberHelper
 

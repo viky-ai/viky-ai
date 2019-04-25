@@ -367,13 +367,10 @@ static og_status NlpInterpretTreeMatchJsonExpression(og_nlp_th ctrl_nlp_th,
     NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeMatchJsonExpression: error setting interpretation_id");
     DPcErr;
   }
-  IFX(request_expression->expression->id)
+  IF(json_object_set_new(json_expression, "expression_pos", json_integer(request_expression->expression->pos)))
   {
-    IF(json_object_set_new(json_expression, "expression_id", json_string(request_expression->expression->id)))
-    {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeMatchJsonExpression: error setting expression_id");
-      DPcErr;
-    }
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeMatchJsonExpression: error setting expression_pos");
+    DPcErr;
   }
   DONE;
 }

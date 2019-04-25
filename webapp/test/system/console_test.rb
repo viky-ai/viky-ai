@@ -69,8 +69,8 @@ class ConsoleTest < ApplicationSystemTestCase
                         "match" => {
                           "expression" => "Hello world",
                           "interpretation_slug" => "weather_forecast",
-                          "interpretation_id" => "6b50f2d9-2a25-493c-8b93-104968418958",
-                          "expression_id" => interpretations(:weather_forecast_tomorrow).id,
+                          "interpretation_id" => intents(:weather_forecast).id,
+                          "expression_pos" => interpretations(:weather_forecast_tomorrow).position,
                         }
                       },
                       {
@@ -209,8 +209,8 @@ class ConsoleTest < ApplicationSystemTestCase
                         "match" => {
                           "expression" => "weather",
                           "interpretation_slug" => "admin/weather/interpretations/weather_forecast",
-                          "interpretation_id" => "6b50f2d9-2a25-493c-8b93-104968418958",
-                          "expression_id" => interpretations(:weather_forecast_tomorrow).id,
+                          "interpretation_id" => intents(:weather_forecast).id,
+                          "expression_pos" => interpretations(:weather_forecast_tomorrow).position,
                         }
                       }
                     ]
@@ -286,8 +286,8 @@ class ConsoleTest < ApplicationSystemTestCase
                         "match" => {
                           "expression" => "weather",
                           "interpretation_slug" => "admin/weather/interpretations/weather_forecast",
-                          "interpretation_id" => "6b50f2d9-2a25-493c-8b93-104968418958",
-                          "expression_id" => interpretations(:weather_forecast_tomorrow).id,
+                          "interpretation_id" => intents(:weather_forecast).id,
+                          "expression_pos" => interpretations(:weather_forecast_tomorrow).position,
                         }
                       }
                     ]
@@ -319,8 +319,8 @@ class ConsoleTest < ApplicationSystemTestCase
                         "match" => {
                           "expression" => "terminator",
                           "interpretation_slug" => "admin/terminator/interpretations/terminator_find",
-                          "interpretation_id" => "6b50f2d9-2a25-493c-8b93-104968418959",
-                          "expression_id" => interpretations(:terminator_find_sarah).id,
+                          "interpretation_id" => intents(:terminator_find).id,
+                          "expression_pos" => interpretations(:terminator_find_sarah).position,
                         }
                       }
                     ]

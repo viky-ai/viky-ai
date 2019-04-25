@@ -234,7 +234,12 @@ class InterpretationTest < ActiveSupport::TestCase
     Interpretation.update_positions(intent, new_positions)
 
     force_reset_model_cache([interpretation_0, interpretation_1, interpretation_2])
-    assert_equal [2, 1, 0], [interpretation_1.position, interpretation_2.position, interpretation_0.position]
+    assert_equal [1_000_003, 1_000_002, 1_000_001], [interpretation_1.position, interpretation_2.position, interpretation_0.position]
+
+    new_positions = [interpretation_0.id, interpretation_1.id, interpretation_2.id]
+    Interpretation.update_positions(intent, new_positions)
+    force_reset_model_cache([interpretation_0, interpretation_1, interpretation_2])
+    assert_equal [2, 1, 0], [interpretation_0.position, interpretation_1.position, interpretation_2.position]
   end
 
 

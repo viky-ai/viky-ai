@@ -150,23 +150,16 @@ og_status NlpPackageCompileExpressionLog(og_nlp_th ctrl_nlp_th, package_t packag
 {
   IFN(expression) DPcErr;
 
-  char id_string[DPcPathSize];
-  if (expression->id_start < 0)
-  {
-    id_string[0]=0;
-  }
-  else
-  {
-    og_string id = OgHeapGetCell(package->hexpression_ba, expression->id_start);
-    sprintf(id_string," with id '%s'", id);
-  }
+  char pos_string[DPcPathSize];
+  sprintf(pos_string," pos: %d", expression->pos);
+
   og_string text = OgHeapGetCell(package->hexpression_ba, expression->text_start);
 
   unsigned char string_locale[DPcPathSize];
   OgIso639_3166ToCode(expression->locale, string_locale);
 
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Expression compile '%s' with locale %s%s", text, string_locale,
-      id_string);
+      pos_string);
   for (int i = 0; i < expression->aliases_nb; i++)
   {
     struct alias_compile *alias = OgHeapGetCell(package->halias_compile, expression->alias_start + i);
@@ -296,15 +289,8 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, stru
   super_list[0]=0;
   if (expression->is_super_list) sprintf(super_list," super_list");
 
-  char id_string[DPcPathSize];
-  IFN(expression->id)
-  {
-    id_string[0]=0;
-  }
-  else
-  {
-    sprintf(id_string," with id '%s'", expression->id);
-  }
+  char pos_string[DPcPathSize];
+  sprintf(pos_string," pos: %d", expression->pos);
 
   og_string text = expression->text;
 
@@ -322,7 +308,7 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, stru
   }
 
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
-      "    Expression '%s' with locale %s%s%s%s%s%s%s alias_any_input_part_position=%d", text, string_locale, id_string,
+      "    Expression '%s' with locale %s%s%s%s%s%s%s alias_any_input_part_position=%d", text, string_locale, pos_string,
       expression->keep_order ? " keep-order" : "", string_glue_distance,  string_glue_strength, recursive,
       super_list, expression->alias_any_input_part_position);
 

@@ -2,7 +2,16 @@ class ApiInternal::PackagesController < ApiInternal::ApplicationController
   include ActionController::Live
 
   def index
-    @agents = Agent.all.select(:id)
+    # sort agent by number of entities
+    agent_by_entites_count = Agent
+      .select('agents.id as id, COUNT(entities.id) as count')
+      .left_outer_joins(entities_lists: :entities)
+      .group(:id)
+      .order('count DESC, agents.updated_at DESC')
+
+    @agents = Agent
+      .select(:id)
+      .from("(#{agent_by_entites_count.to_sql}) as a")
   end
 
   def show

@@ -485,7 +485,7 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   IFE(NlpJsonToBuffer(json_expression, json_expression_string, DPcPathSize, NULL, JSON_INDENT(2)));
   NlpLog(DOgNlpTraceCompile, "NlpCompilePackageExpression: compiling expression [\n%s]", json_expression_string)
 
-  json_t *json_id = NULL;
+  json_t *json_pos = NULL;
   json_t *json_text = NULL;
   json_t *json_keep_order = NULL;
   json_t *json_glue_strength = NULL;
@@ -499,9 +499,9 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     const char *key = json_object_iter_key(iter);
     NlpLog(DOgNlpTraceCompile, "NlpCompilePackageExpression: found key='%s'", key)
 
-    if (Ogstricmp(key, "id") == 0)
+    if (Ogstricmp(key, "pos") == 0)
     {
-      json_id = json_object_iter_value(iter);
+      json_pos = json_object_iter_value(iter);
     }
     else if (Ogstricmp(key, "expression") == 0)
     {
@@ -538,22 +538,21 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     }
   }
 
-  const char *string_id = NULL;
+  int expression_pos = -1;
 
-  IFN(json_id)
+  if (json_is_integer(json_pos))
   {
-    string_id = NULL;
+    expression_pos = json_integer_value(json_pos);
   }
-  else if (!json_is_string(json_id))
+  else if (json_pos)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: interpretation 'id' is not a string");
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: expression 'pos' is not an integer");
     DPcErr;
   }
-  string_id = json_string_value(json_id);
 
   IFN(json_text)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: no text");
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: expression has no text");
     DPcErr;
   }
 
@@ -562,15 +561,7 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   IFn(expression) DPcErr;
   IFE(Iexpression);
 
-  IFN(string_id)
-  {
-    expression->id_start = -1;
-  }
-  else
-  {
-    expression->id_start = OgHeapGetCellsUsed(package->hexpression_ba);
-    IFE(OgHeapAppend(package->hexpression_ba, strlen(string_id) + 1, string_id));
-  }
+  expression->pos = expression_pos;
 
   if (json_is_string(json_text))
   {
@@ -579,7 +570,7 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     int text_length = strlen(string_text);
     if (text_length > DOgNlpInterpretationExpressionMaxLength)
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: text is too long");
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: expression text is too long");
       DPcErr;
     }
     IFE(OgHeapAppend(package->hexpression_ba, text_length + 1, string_text));
@@ -637,11 +628,12 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   else if (json_is_string(json_glue_strength))
   {
     const char *string_glue_strength = json_string_value(json_glue_strength);
-    if (!Ogstricmp(string_glue_strength,"total")) expression->glue_strength = nlp_glue_strength_Total;
-    else if (!Ogstricmp(string_glue_strength,"punctuation")) expression->glue_strength = nlp_glue_strength_Punctuation;
+    if (!Ogstricmp(string_glue_strength, "total")) expression->glue_strength = nlp_glue_strength_Total;
+    else if (!Ogstricmp(string_glue_strength, "punctuation")) expression->glue_strength = nlp_glue_strength_Punctuation;
     else
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: glue_strength value '%s' is not valid",string_glue_strength);
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: glue_strength value '%s' is not valid",
+          string_glue_strength);
       DPcErr;
     }
   }
@@ -654,7 +646,6 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: glue_strength is not a string");
     DPcErr;
   }
-
 
   if (json_glue_distance == NULL)
   {

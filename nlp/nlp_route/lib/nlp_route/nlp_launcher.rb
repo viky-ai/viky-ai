@@ -9,6 +9,9 @@ require 'parallel'
 
 module NlpRoute
   class NlpLauncher
+
+    MASSIF = false
+
     @@nls_background = nil
 
     def pidfile()
@@ -22,9 +25,25 @@ module NlpRoute
 
         starting = true
 
+        command = './ogm_nls'
+
+        if MASSIF
+          commands = []
+          commands << 'G_DEBUG=resident-modules'
+          commands << 'G_SLICE=always-malloc'
+          commands << 'NLP_JS_DUK_GC_PERIOD=1'
+          commands << 'valgrind --tool=massif'
+          commands << '--time-unit=ms'
+          commands << '--threshold=0.1'
+          commands << '--max-snapshots=500'
+          commands << '--detailed-freq=1'
+          commands << '--massif-out-file=massif-output.txt'
+          commands << command
+          command = commands.join(' ')
+        end
+
         @@nls_background = Thread.new do
-          command = './ogm_nls'
-          Thread.current.name = "Nls : #{command}"
+          Thread.current.name = "Nls launcher"
           begin
             NlpLauncher.exec(command)
           rescue StandardError => e
@@ -71,10 +90,15 @@ module NlpRoute
       start_time = Time.now
       puts 'Loading all packages ...'
 
+      parallel = (ENV.fetch('VIKYAPP_NLP_PARALLEL_LOAD') { "8" }).to_i
+
       # Load all packages ids
       wrapper = PackageApiWrapper.new
       packages_ids = wrapper.list_id
-      payloads = Parallel.map(packages_ids, in_threads: Parallel.processor_count) do |package_id|
+
+      puts "#{packages_ids.size} packages to process"
+
+      payloads = Parallel.map(packages_ids, in_threads: parallel) do |package_id|
         payloads = []
         begin
           retries ||= 3
