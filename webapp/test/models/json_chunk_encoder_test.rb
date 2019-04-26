@@ -104,4 +104,58 @@ class JsonChunkEncoderTest < ActiveSupport::TestCase
     }
     assert_equal expected.to_json, io.string
   end
+
+
+  test 'Build a cache payload' do
+    io = StringIO.new
+    encoder = JsonChunkEncoder.new io
+    encoder.wrap_object do
+      encoder.wrap_array('my_array') do
+        encoder.write_object({ id: 1, value: 'one' }, 'cache_1')
+        encoder.write_object({ id: 2, value: 'two' }, 'cache_1')
+        encoder.write_object({ id: 3, value: 'three' }, 'cache_2')
+      end
+    end
+    expected = {
+      my_array: [{
+        id: 1,
+        value: 'one'
+      }, {
+        id: 2,
+        value: 'two'
+      }, {
+        id: 3,
+        value: 'three'
+      }]
+    }
+    assert_equal expected.to_json, io.string
+    assert_equal '{"id":1,"value":"one"},{"id":2,"value":"two"}', encoder.withdraw_cache_payload('cache_1')
+    assert_nil encoder.withdraw_cache_payload('cache_1')
+    assert_equal '{"id":3,"value":"three"}', encoder.withdraw_cache_payload('cache_2')
+    assert_nil encoder.withdraw_cache_payload('foo bar')
+  end
+
+  test 'Write raw string to IO' do
+    io = StringIO.new
+    encoder = JsonChunkEncoder.new io
+    encoder.wrap_object do
+      encoder.wrap_array('my_array') do
+        encoder.write_string('{"id":1,"value":"one"},{"id":2,"value":"two"}')
+        encoder.write_string('{"id":3,"value":"three"}')
+      end
+    end
+    expected = {
+      my_array: [{
+        id: 1,
+        value: 'one'
+      }, {
+        id: 2,
+        value: 'two'
+      }, {
+        id: 3,
+        value: 'three'
+      }]
+    }
+    assert_equal expected.to_json, io.string
+  end
 end

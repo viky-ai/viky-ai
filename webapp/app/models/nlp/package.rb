@@ -13,8 +13,9 @@ class Nlp::Package
 
   REDIS_URL = ENV.fetch("VIKYAPP_REDIS_PACKAGE_NOTIFIER") { 'redis://localhost:6379/3' }
 
-  def initialize(agent)
+  def initialize(agent, cache = Rails.cache)
     @agent = agent
+    @cache = cache
   end
 
   def self.reinit
@@ -113,13 +114,10 @@ class Nlp::Package
 
     def build_internals_list_nodes(intent, encoder, cache_key)
       cache_key = "#{cache_key}/build_internals_list_nodes"
-      if Rails.cache.exist?(cache_key)
-        interpretations = Rails.cache.read(cache_key)
-        interpretations.each do |interpretation_hash|
-          encoder.write_object interpretation_hash
-        end
+      if @cache.exist? cache_key
+        interpretations = @cache.read cache_key
+        encoder.write_string interpretations
       else
-        interpretations = []
         InterpretationAlias
           .includes(:interpretation)
           .where(is_list: true, interpretations: { intent_id: intent.id })
@@ -155,11 +153,10 @@ class Nlp::Package
           expressions << expression
 
           interpretation_hash[:expressions] = expressions
-          interpretations << interpretation_hash
-
-          encoder.write_object interpretation_hash
+          encoder.write_object(interpretation_hash, cache_key)
         end
-        Rails.cache.write(cache_key, interpretations)
+        payload = encoder.withdraw_cache_payload(cache_key)
+        @cache.write(cache_key, payload) if payload.present?
       end
     end
 
@@ -170,13 +167,10 @@ class Nlp::Package
         encoder.write_value('slug', intent.slug)
         encoder.write_value('scope', intent.is_public? ? 'public' : 'private')
         encoder.wrap_array('expressions') do
-          if Rails.cache.exist?(cache_key)
-            expressions = Rails.cache.read(cache_key)
-            expressions.each do |expression|
-              encoder.write_object expression
-            end
+          if @cache.exist? cache_key
+            expressions = @cache.read cache_key
+            encoder.write_string expressions
           else
-            expressions = []
             intent.interpretations.order(position: :desc, locale: :asc).each do |interpretation|
               expression = {}
               expression['expression']    = interpretation.expression_with_aliases
@@ -189,19 +183,18 @@ class Nlp::Package
               expression['glue-strength'] = 'punctuation'.freeze if interpretation.proximity_accepts_punctuations?
               solution = build_interpretation_solution(interpretation)
               expression['solution']      = solution unless solution.blank?
-              expressions << expression
-              
-              encoder.write_object expression
+
+              encoder.write_object(expression, cache_key)
 
               interpretation.interpretation_aliases
                 .where(any_enabled: true, is_list: false)
                 .order(position_start: :asc).each do |ialias|
                 any_node = build_any_node(ialias, expression)
-                expressions << any_node
-                encoder.write_object any_node
+                encoder.write_object(any_node, cache_key)
               end
             end
-            Rails.cache.write(cache_key, expressions)
+            payload = encoder.withdraw_cache_payload(cache_key)
+            @cache.write(cache_key, payload) if payload.present?
           end
         end
       end
@@ -229,13 +222,10 @@ class Nlp::Package
               'build_node'.freeze
             ].join('/')
 
-            if Rails.cache.exist?(cache_key)
-              expressions = Rails.cache.read(cache_key)
-              expressions.each do |expression|
-                encoder.write_object expression
-              end
+            if @cache.exist? cache_key
+              expressions = @cache.read cache_key
+              encoder.write_string expressions
             else
-              expressions = []
               batch.each do |entity|
                 entity.terms.each do |term|
                   expression = {}
@@ -246,12 +236,11 @@ class Nlp::Package
                   expression['keep-order'] = true
                   expression['glue-distance'] = elist.proximity.get_distance
                   expression['glue-strength'] = 'punctuation'.freeze if elist.proximity_glued?
-                  expressions << expression
-
-                  encoder.write_object expression
+                  encoder.write_object(expression, cache_key)
                 end
               end
-              Rails.cache.write(cache_key, expressions)
+              payload = encoder.withdraw_cache_payload(cache_key)
+              @cache.write(cache_key, payload) if payload.present?
             end
           end
         end
