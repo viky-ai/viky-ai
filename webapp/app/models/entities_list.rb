@@ -86,15 +86,15 @@ class EntitiesList < ApplicationRecord
     Enumerator.new do |block|
       if entities.exists?
         cursor_max, cursor_min = entities.pluck('MAX("entities"."position"), MIN("entities"."position")').first
-        cursor = cursor_max + 1
+        cursor = cursor_max
         while cursor > cursor_min do
-          batch = entities.where('position < ?', cursor).order(position: :desc).limit(batch_size)
-          if batch.present?
+          batch_max_position = cursor
+          batch_min_position = (cursor - batch_size + 1).positive? ? cursor - batch_size + 1 : 0
+          if entities.where(position: batch_min_position..batch_max_position).exists?
+            batch = entities.where(position: batch_min_position..batch_max_position).order(position: :desc)
             block << batch
-            cursor = batch.last.position
-          else
-            cursor -= batch_size
           end
+          cursor = (cursor - batch_size).positive? ? cursor - batch_size : 0
         end
       else
         block << entities.where('1 = 1')
