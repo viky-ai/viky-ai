@@ -89,8 +89,12 @@ class EntitiesList < ApplicationRecord
         cursor = cursor_max + 1
         while cursor > cursor_min do
           batch = entities.where('position < ?', cursor).order(position: :desc).limit(batch_size)
-          block << batch
-          cursor = batch.last.position
+          if batch.present?
+            block << batch
+            cursor = batch.last.position
+          else
+            cursor -= batch_size
+          end
         end
       else
         block << entities.where('1 = 1')

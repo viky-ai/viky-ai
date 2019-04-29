@@ -207,7 +207,6 @@ class Nlp::Package
         encoder.write_value('scope', elist.is_public? ? 'public' : 'private')
         encoder.wrap_array('expressions') do
           elist.entities_in_ordered_batchs.each do |batch|
-            next if batch.blank?
             max_position, min_position, last_updated = batch.unscope(:order).pluck('MAX("entities"."position"), MIN("entities"."position"), MAX("entities"."updated_at")').first
             cache_key = [
               'pkg',
