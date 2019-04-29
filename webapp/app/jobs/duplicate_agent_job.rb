@@ -1,4 +1,3 @@
-require_relative 'measure_helper.rb'
 class DuplicateAgentJob < ApplicationJob
   queue_as :default
 
