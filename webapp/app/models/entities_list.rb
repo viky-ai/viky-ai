@@ -83,7 +83,7 @@ class EntitiesList < ApplicationRecord
   end
 
   def entities_in_ordered_batchs(batch_size = 1_000)
-    Enumerator.new(entities.count) do |block|
+    Enumerator.new do |block|
       if entities.exists?
         cursor_max, cursor_min = entities.pluck('MAX("entities"."position"), MIN("entities"."position")').first
         cursor = cursor_max + 1
