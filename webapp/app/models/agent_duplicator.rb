@@ -28,7 +28,9 @@ class AgentDuplicator
       end
     end
     fix_interpretation_aliases(new_agent.to_record)
-    new_agent.persist
+    ActiveRecord::Base.transaction do
+      new_agent.persist
+    end
     new_agent.to_record
   end
 
@@ -82,21 +84,26 @@ class InterpretationsCloner < Clowne::Cloner
 end
 
 class EntitiesListsCloner < Clowne::Cloner
-  # include_association :entities
-  after_persist do |origin, clone, mapper:, **|
+  
+  after_persist do |origin, clone|
     unless origin.entities_count.zero?
       columns = [:terms, :auto_solution_enabled, :solution, :position, :entities_list_id, :searchable_terms]
-      origin.entities_in_ordered_batchs.each do |batch|
-        new_entities = []
-        batch.each do |entity|
-          new_entities << [entity.terms, entity.auto_solution_enabled, entity.solution, entity.position, clone.id, entity.searchable_terms]
+      begin
+        origin.entities_in_ordered_batchs.each do |batch|
+          new_entities = []
+          batch.each do |entity|
+            new_entities << [entity.terms, entity.auto_solution_enabled, entity.solution, entity.position, clone.id, entity.searchable_terms]
+          end
+          Entity.import!(columns, new_entities)
         end
-        Entity.import(columns, new_entities)
+      rescue ActiveRecord::RecordInvalid => e
+        clone.agent.errors[:base] << e.record.errors.to_a
+        raise ActiveRecord::Rollback
       end
     end
   end
-
 end
+
 class IntentsCloner < Clowne::Cloner
   include_association :interpretations, clone_with: InterpretationsCloner
 end
