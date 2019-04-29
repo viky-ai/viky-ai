@@ -93,7 +93,7 @@ class EntitiesList < ApplicationRecord
           cursor = batch.last.position
         end
       else
-        block << []
+        block << entities.where('1 = 1')
       end
     end
   end
