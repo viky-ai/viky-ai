@@ -89,7 +89,7 @@ class EntitiesListsCloner < Clowne::Cloner
     unless origin.entities_count.zero?
       columns = [:terms, :auto_solution_enabled, :solution, :position, :entities_list_id, :searchable_terms]
       begin
-        origin.entities_in_ordered_batchs.each do |batch|
+        origin.entities.find_in_batches.each do |batch|
           new_entities = []
           batch.each do |entity|
             new_entities << [entity.terms, entity.auto_solution_enabled, entity.solution, entity.position, clone.id, entity.searchable_terms]

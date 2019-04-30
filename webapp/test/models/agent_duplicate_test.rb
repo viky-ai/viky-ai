@@ -121,13 +121,16 @@ class AgentDuplicateTest < ActiveSupport::TestCase
       assert_equal elist_agent.listname, elist_new_agent.listname
       assert_equal elist_agent.visibility, elist_new_agent.visibility
       assert_not_equal elist_agent.id, elist_new_agent.id
-      entities = elist_agent.entities.zip(elist_new_agent.entities)
+      entities = elist_agent.entities.order(:position).zip(elist_new_agent.entities.order(:position))
       entities.each do |entity_agent, entity_new_agent|
         assert_equal entity_agent.terms, entity_new_agent.terms
         assert entity_agent.solution == entity_new_agent.solution
         assert_equal entity_agent.auto_solution_enabled, entity_new_agent.auto_solution_enabled
+        assert_equal entity_agent.position, entity_new_agent.position
+        assert_equal entity_agent.searchable_terms, entity_new_agent.searchable_terms
         assert_not_equal entity_agent.id, entity_new_agent.id
         assert_not_equal entity_agent.entities_list.id, entity_new_agent.entities_list.id
+
       end
 
       assert_equal elist_agent.interpretation_aliases.size, elist_new_agent.interpretation_aliases.size
