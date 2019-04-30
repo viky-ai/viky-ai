@@ -92,12 +92,12 @@ class EntitiesList < ApplicationRecord
           batch_min_position = (cursor - batch_size + 1).positive? ? cursor - batch_size + 1 : 0
           if entities.where(position: batch_min_position..batch_max_position).exists?
             batch = entities.where(position: batch_min_position..batch_max_position).order(position: :desc)
-            block << batch
+            block << [batch, batch_max_position, batch_min_position]
           end
           cursor = (cursor - batch_size).positive? ? cursor - batch_size : 0
         end
       else
-        block << entities.where('1 = 1')
+        block << [entities.where('1 = 1'), 0, 0]
       end
     end
   end

@@ -230,8 +230,19 @@ class EntitiesListTest < ActiveSupport::TestCase
     entities_list.entities = targets
     assert entities_list.save
 
-    entities_list.entities_in_ordered_batchs(4).each_with_index do |batch, index|
-      offset = index.zero? ? 2 : -2
+    entities_list.entities_in_ordered_batchs(4).each_with_index do |params, index|
+      batch = params[0]
+      max = params[1]
+      min = params[2]
+      if index.zero?
+        offset = 2
+        assert_equal 5, max
+        assert_equal 2, min
+      else
+        offset = -2
+        assert_equal 1, max
+        assert_equal 0, min
+      end
       assert_equal 3 + offset, batch[0].position
       assert_equal 2 + offset, batch[1].position
       assert_equal 1 + offset, batch[2].position if index.zero?
@@ -240,6 +251,10 @@ class EntitiesListTest < ActiveSupport::TestCase
 
     entities_list.entities = []
     assert entities_list.save
-    entities_list.entities_in_ordered_batchs(4).each { |batch| assert_empty batch }
+    entities_list.entities_in_ordered_batchs(4).each do |batch, max_position, min_position|
+      assert_empty batch
+      assert_equal 0, max_position
+      assert_equal 0, min_position
+    end
   end
 end
