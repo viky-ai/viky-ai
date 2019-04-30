@@ -41,11 +41,11 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     agent = agents(:terminator)
     current_user = users(:show_on_agent_weather)
     new_agent = AgentDuplicator.new(agent, current_user).duplicate
-    assert new_agent.save
+    assert 0, new_agent.errors.size
     assert_equal current_user.id, new_agent.owner.id
 
     another_agent = AgentDuplicator.new(agent, current_user).duplicate
-    assert another_agent.save
+    assert 0, another_agent.errors.size
   end
 
 
@@ -53,7 +53,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     agent = agents(:terminator)
     current_user = users(:show_on_agent_weather)
     new_agent = AgentDuplicator.new(agent, current_user).duplicate
-    assert new_agent.save
+    assert 0, new_agent.errors.size
 
     id   = agent.id
     slug = agent.slug
@@ -77,7 +77,8 @@ class AgentDuplicateTest < ActiveSupport::TestCase
 
     new_agent = AgentDuplicator.new(agent, users(:admin)).duplicate
 
-    assert new_agent.save
+    assert 0, new_agent.errors.size
+    
     assert_equal agent.readme.content, new_agent.readme.content
     assert_not_equal agent.readme.id, new_agent.readme.id
 
@@ -113,7 +114,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     )
 
     new_agent = AgentDuplicator.new(agent, users(:admin)).duplicate
-    assert new_agent.save
+    assert 0, new_agent.errors.size
 
     assert_equal agent.entities_lists.size, new_agent.entities_lists.size
     entities_list = agent.entities_lists.zip(new_agent.entities_lists)
