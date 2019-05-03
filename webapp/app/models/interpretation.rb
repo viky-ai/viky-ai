@@ -3,7 +3,6 @@ require 'unicode/emoji'
 class Interpretation < ApplicationRecord
   include Positionable
   positionable_ancestor :intent
-  unique_position true
 
   LOCALES = %w[* en fr es pt zh ar].freeze
 

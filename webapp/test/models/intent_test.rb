@@ -127,17 +127,17 @@ class IntentTest < ActiveSupport::TestCase
     agent = agents(:weather_confirmed)
     intent_0 = Intent.create(
       intentname: 'intent_0',
-      position: 0,
+      position: 1,
       agent: agent
     )
     intent_1 = Intent.create(
       intentname: 'intent_1',
-      position: 1,
+      position: 2,
       agent: agent
     )
     intent_2 = Intent.create(
       intentname: 'intent_2',
-      position: 2,
+      position: 3,
       agent: agent
     )
 
@@ -146,7 +146,7 @@ class IntentTest < ActiveSupport::TestCase
     Intent.update_positions(agent, [], new_positions)
 
     force_reset_model_cache([intent_0, intent_1, intent_2])
-    assert_equal [2, 1, 0], [intent_1.position, intent_2.position, intent_0.position]
+    assert_equal [3, 2, 1], [intent_1.position, intent_2.position, intent_0.position]
     assert_equal %w(is_private is_private is_private), [intent_1.visibility, intent_2.visibility, intent_0.visibility]
   end
 

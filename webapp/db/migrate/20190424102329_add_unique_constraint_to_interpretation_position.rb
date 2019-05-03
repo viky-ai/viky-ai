@@ -10,10 +10,18 @@ class AddUniqueConstraintToInterpretationPosition < ActiveRecord::Migration[5.1]
         end
       end
     end
-    add_index :interpretations, [:intent_id, :position], unique: true
+   
+    execute <<-SQL
+      ALTER TABLE interpretations
+        ADD CONSTRAINT index_interpretations_on_intent_id_and_position UNIQUE (intent_id, position)
+        DEFERRABLE INITIALLY IMMEDIATE;
+    SQL
   end
 
   def down
-    remove_index :interpretations, [:intent_id, :position]
+    execute <<-SQL
+      ALTER TABLE interpretations
+        DROP CONSTRAINT IF EXISTS index_interpretations_on_intent_id_and_position;
+    SQL
   end
 end

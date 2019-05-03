@@ -125,24 +125,24 @@ class EntitiesListTest < ActiveSupport::TestCase
     agent = agents(:weather_confirmed)
     entities_list_0 = EntitiesList.create(
       listname: 'intent_0',
-      position: 0,
+      position: 1,
       agent: agent
     )
     entities_list_1 = EntitiesList.create(
       listname: 'entities_list_1',
-      position: 1,
+      position: 2,
       agent: agent
     )
     entities_list_2 = EntitiesList.create(
       listname: 'entities_list_2',
-      position: 2,
+      position: 3,
       agent: agent
     )
 
     new_positions = [entities_list_1.id, entities_list_2.id, entities_list_0.id, '132465789']
     EntitiesList.update_positions(agent, [], new_positions)
     force_reset_model_cache([entities_list_0, entities_list_1, entities_list_2])
-    assert_equal [2, 1, 0], [entities_list_1.position, entities_list_2.position, entities_list_0.position]
+    assert_equal [3, 2, 1], [entities_list_1.position, entities_list_2.position, entities_list_0.position]
     assert_equal %w(is_private is_private is_private), [entities_list_1.visibility, entities_list_2.visibility, entities_list_0.visibility]
   end
 
