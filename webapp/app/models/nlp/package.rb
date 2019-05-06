@@ -201,6 +201,16 @@ class Nlp::Package
     end
 
     def build_entities_list(elist, encoder)
+      cache_key_base = [
+        'pkg',
+        VERSION,
+        @agent.slug,
+        'entities_list'.freeze,
+        elist.id,
+        elist.proximity,
+        'entities'.freeze,
+        'build_node'.freeze
+      ].join('/').freeze
       encoder.wrap_object do
         encoder.write_value('id', elist.id)
         encoder.write_value('slug', elist.slug)
@@ -208,19 +218,7 @@ class Nlp::Package
         encoder.wrap_array('expressions') do
           elist.entities_in_ordered_batchs.each do |batch, max_position, min_position|
             last_updated = batch.unscope(:order).pluck('MAX("entities"."updated_at")').first
-            cache_key = [
-              'pkg',
-              VERSION,
-              @agent.slug,
-              'entities_list'.freeze,
-              elist.id,
-              elist.proximity,
-              'entities'.freeze,
-              "?from=#{min_position}&to=#{max_position}",
-              (last_updated.to_f * 1000).to_i,
-              'build_node'.freeze
-            ].join('/')
-
+            cache_key = "#{cache_key_base}/#{(last_updated.to_f * 1000).to_i}?from=#{min_position}&to=#{max_position}"
             if @cache.exist? cache_key
               expressions = @cache.read cache_key
               encoder.write_string expressions
