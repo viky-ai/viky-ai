@@ -2,7 +2,8 @@ require 'yajl'
 
 class JsonChunkEncoder
 
-  FLUSH_THRESHOLD = 1_000
+  COUNT_FLUSH_THRESHOLD = 1_000
+  SIZE_FLUSH_THRESHOLD = 200_000
 
   SEPARATOR = ','.freeze
 
@@ -10,24 +11,22 @@ class JsonChunkEncoder
     @io = io
     @need_separator = false
     @buffer = []
+    @buffer_size = @buffer.size
     @cache_buffer = Hash.new { |hash, key| hash[key] = [] }
   end
 
   def write_object(object, cache_key = nil)
     json = Yajl::Encoder.encode(object)
-    @buffer << json
     @cache_buffer[cache_key] << json if cache_key.present?
-    flush if @buffer.size > FLUSH_THRESHOLD
+    buffered_write(json)
   end
 
   def write_value(key, value)
-    @buffer << "\"#{key}\":\"#{value}\""
-    flush if @buffer.size > FLUSH_THRESHOLD
+    buffered_write("\"#{key}\":\"#{value}\"")
   end
 
   def write_string(string)
-    @buffer << string
-    flush if @buffer.size > FLUSH_THRESHOLD
+    buffered_write(string)
   end
 
   def wrap_object(key = nil)
@@ -64,11 +63,21 @@ class JsonChunkEncoder
 
   private
 
+    def buffered_write(json)
+      @buffer << json
+      @buffer_size += json.size
+      buffer_full = @buffer.size > COUNT_FLUSH_THRESHOLD || @buffer_size > SIZE_FLUSH_THRESHOLD
+      flush if buffer_full
+    end
+
+
     def flush
       return if @buffer.blank?
+
       @io.write(SEPARATOR) if @need_separator
       @io.write(@buffer.join(SEPARATOR))
       @buffer.clear
+      @buffer_size = @buffer.size
       @need_separator = true
     end
 end
