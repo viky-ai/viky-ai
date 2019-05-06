@@ -60,5 +60,7 @@ module Webapp
     config.active_job.queue_name_delimiter = "_"
 
     config.exceptions_app = self.routes
+
+    config.active_record.schema_format = :sql
   end
 end
