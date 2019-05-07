@@ -14,11 +14,6 @@ static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr
     struct og_ucisr_output *output);
 static int json_dump_answer_callback(const char *buffer, size_t size, void *data);
 
-static og_status NlsExploreCheckJsonElement(struct og_listening_thread *lt, json_t *json_element);
-static og_status NlsExploreCheckJsonObject(struct og_listening_thread *lt, json_t *json_obj);
-static og_status NlsExploreCheckJsonArray(struct og_listening_thread *lt, json_t *json_arr);
-static og_status NlsCheckRequestString(struct og_listening_thread *lt, json_t *json_string_val);
-
 /**
  *  Returns 1 if server must stop, 0 otherwise
  *  Returns -1 on error.
@@ -131,31 +126,28 @@ static og_status OgListeningProcessEndpoint(struct og_listening_thread *lt, stru
     }
   }
 
+  // reset uci buffer : not used anymore body has been parsed
+  IFE(OgUciServerReadReset(lt->hucis, !lt->ctrl_nls->nls_ready));
+
   // Setup an empty json response
   response->default_body = json_object();
   response->body = response->default_body;
 
-  IF(NlsExploreCheckJsonElement(lt, request->body))
+  og_bool endpoint_status = OgNlsEndpoints(lt, request, response);
+  IFE(endpoint_status);
+
+  // free request body soon has possible
+  json_decrefp(&request->body);
+
+  // current endpoint not found
+  if (endpoint_status == FALSE)
   {
-    response->http_status = 422;
-    response->http_message = "Bad formatted input";
-  }
-  else
-  {
-    og_bool endpoint_status = OgNlsEndpoints(lt, request, response);
-    IFE(endpoint_status);
+    response->http_status = 404;
+    response->http_message = "No endpoint found";
 
-    // current endpoint not found
-    if (endpoint_status == FALSE)
-    {
-      response->http_status = 404;
-      response->http_message = "No endpoint found";
-
-      json_t *errors = json_array();
-      json_array_append_new(errors, json_string(response->http_message));
-      json_object_set_new(response->body, "errors", errors);
-
-    }
+    json_t *errors = json_array();
+    json_array_append_new(errors, json_string(response->http_message));
+    json_object_set_new(response->body, "errors", errors);
   }
 
   // convert json_t body to json string
@@ -207,75 +199,3 @@ static og_bool OgListeningAnswer(struct og_listening_thread *lt, struct og_ucisw
   return FALSE;
 }
 
-static og_status NlsExploreCheckJsonElement(struct og_listening_thread *lt, json_t *json_element)
-{
-  if (json_is_object(json_element) != FALSE)
-  {
-    IFE(NlsExploreCheckJsonObject(lt, json_element));
-  }
-  if (json_is_array(json_element) != FALSE)
-  {
-    IFE(NlsExploreCheckJsonArray(lt, json_element));
-  }
-  if (json_is_string(json_element) != FALSE)
-  {
-    IFE(NlsCheckRequestString(lt, json_element));
-  }
-  DONE;
-}
-
-static og_status NlsExploreCheckJsonObject(struct og_listening_thread *lt, json_t *json_obj)
-{
-  const char *key;
-  json_t *value;
-  json_object_foreach(json_obj, key, value)
-  {
-    if (strlen(key) == 0)
-    {
-      json_t *errors = json_array();
-      json_array_append_new(errors, json_string("NlsExploreCheckJsonObject : empty map key in request"));
-      json_object_set_new(lt->response->body, "errors", errors);
-      DPcErr;
-    }
-    if (strlen(key) > DOgNlsIntentPhraseMaxLength)
-    {
-      json_t *errors = json_array();
-      json_array_append_new(errors, json_string("NlsExploreCheckJsonObject : too long map key in request"));
-      json_object_set_new(lt->response->body, "errors", errors);
-      DPcErr;
-    }
-    IFE(NlsExploreCheckJsonElement(lt, value));
-  }
-  DONE;
-}
-
-static og_status NlsExploreCheckJsonArray(struct og_listening_thread *lt, json_t *json_arr)
-{
-  int array_size = json_array_size(json_arr);
-  for (int i = 0; i < array_size; i++)
-  {
-    json_t *json_element = json_array_get(json_arr, i);
-    IFE(NlsExploreCheckJsonElement(lt, json_element));
-  }
-  DONE;
-}
-
-static og_status NlsCheckRequestString(struct og_listening_thread *lt, json_t *json_string_val)
-{
-  const char* string_value = json_string_value(json_string_val);
-  if (strlen(string_value) == 0)
-  {
-    json_t *errors = json_array();
-    json_array_append_new(errors, json_string("NlsCheckRequestString : empty text in request"));
-    json_object_set_new(lt->response->body, "errors", errors);
-    DPcErr;
-  }
-  if (strlen(string_value) > DOgNlsIntentPhraseMaxLength)
-  {
-    json_t *errors = json_array();
-    json_array_append_new(errors, json_string("NlsCheckRequestString : too long text in request"));
-    json_object_set_new(lt->response->body, "errors", errors);
-    DPcErr;
-  }
-  DONE;
-}

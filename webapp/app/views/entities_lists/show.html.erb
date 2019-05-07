@@ -16,6 +16,10 @@
         <%= t('activerecord.attributes.entities_list.visibility_is_private').upcase %>
       </span>
     <% end %>
+    <span class="badge badge--small"
+          title="<%= t("views.entities_lists.proximity.description.#{@entities_list.proximity}") %>">
+      <%= t("views.entities_lists.proximity.#{@entities_list.proximity}") %>
+    </span>
   </div>
   <div class="header__tools">
     <% if @entities_list.aliased_intents.any? %>
@@ -30,20 +34,29 @@
     <% end %>
     <% if current_user.can?(:edit, @agent) %>
       <a href="<%= new_import_user_agent_entities_list_entities_path(@agent.owner, @agent, @entities_list) %>"
-         data-action="open-remote-modal" class="btn btn--small">
+         data-action="open-remote-modal" class="btn btn--small" id="open-import-modal">
         <span class="icon icon--x-small">
           <%= icon_upload %>
         </span>
         <%= t('views.entities_lists.show.import.btn') %>
       </a>
     <% end %>
-    <a href="<%= user_agent_entities_list_path(@agent.owner, @agent, @entities_list, format: 'csv') %>"
+    <a href="<%= export_user_agent_entities_list_path(@agent.owner, @agent, @entities_list, format: 'csv') %>"
        class="btn btn--small">
       <span class="icon icon--x-small">
         <%= icon_download %>
       </span>
       <%= t('views.entities_lists.show.export_btn') %>
     </a>
+    <% if current_user.can?(:edit, @agent) %>
+      <a href="<%= edit_user_agent_entities_list_path(@agent.owner, @agent, @entities_list) %>"
+         data-action="open-remote-modal" class="btn btn--small">
+        <span class="icon icon--x-small">
+          <%= icon_settings %>
+        </span>
+        <%= t('views.entities_lists.index.configure') %>
+      </a>
+    <% end %>
   </div>
 </div>
 

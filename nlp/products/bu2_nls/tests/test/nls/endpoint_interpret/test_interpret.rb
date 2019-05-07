@@ -112,7 +112,7 @@ module Nls
         end
 
         package = available_packages['datetime1']
-        expected_error = "NlsCheckRequestString : empty text in request"
+        expected_error = "NlpInterpretRequestBuildSentence: sentence is empty"
 
         exception = assert_raises RestClient::ExceptionWithResponse do
           Nls.interpret_package(package, "")
@@ -130,12 +130,12 @@ module Nls
 
         package = available_packages['datetime1']
 
-        sentence = "abcdefghij"
-        210.times do
+        sentence = "abcdefghi"
+        (64*1024/10).times do
           sentence << "abcdefghij"
         end
 
-        expected_error = "NlsCheckRequestString : too long text in request"
+        expected_error = "NlpInterpretRequestBuildSentence: too long text in sentence"
 
         exception = assert_raises RestClient::ExceptionWithResponse do
           Nls.interpret_package(package, sentence)
@@ -150,24 +150,9 @@ module Nls
 
         Nls.restart
 
-        json_query_special_char = JSON.parse(File.read(fixture_path("query_with_special_char.json")))
-
-        actual = Nls.interpret(json_query_special_char)
-
-        expected =
-        {
-          interpretations:
-          [
-            {
-              package: "viky.ai:datetime",
-              id: "0d981484-9313-11e7-abc4-cec278b6b50b",
-              slug: "special_char",
-              score: 1.0
-            }
-          ]
-        }
-
-        assert_json expected, actual
+        check_interpret("@#!|\"\\\n_¢ß¥£™©®ª×÷±²³¼½¾µ¿¶·¸",                                   interpretation: 'special_char_1')
+        check_interpret("º°¯§…¤¦≠¬ˆ¨‰自爾秦書わたしワタシ🎾",                                     interpretation: 'special_char_2')
+        check_interpret("ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØŒŠþÙÚÛÜÝŸàáâãäåæçèéêëìíîïðñòóôõöøœšÞùúûüýÿ", interpretation: 'special_char_3')
       end
 
       def test_no_sentence_match

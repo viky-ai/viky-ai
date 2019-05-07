@@ -164,12 +164,24 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
     post create_import_user_agent_entities_list_entities_url(users(:admin), agents(:weather), entities_lists(:weather_conditions)),
          params: {
            import: {
+             file: fixture_file_upload('files/import_entities.csv', 'text/csv'),
+             mode: 'replace'
+           },
+           format: :json
+         }
+    assert_response :ok
+  end
+
+  test "Import entities lists access-failed" do
+    sign_in users(:admin)
+    post create_import_user_agent_entities_list_entities_url(users(:admin), agents(:weather), entities_lists(:weather_conditions)),
+         params: {
+           import: {
              file: fixture_file_upload('files/import_entities.csv', 'text/csv')
            },
            format: :json
          }
-    assert_redirected_to user_agent_entities_list_url(users(:admin), agents(:weather), entities_lists(:weather_conditions))
-    assert_nil flash[:alert]
+    assert_response :unprocessable_entity
   end
 
   test "Import entities lists forbidden" do
@@ -177,7 +189,8 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
     post create_import_user_agent_entities_list_entities_url(users(:admin), agents(:weather), entities_lists(:weather_conditions)),
          params: {
            import: {
-             file: fixture_file_upload('files/import_entities.csv', 'text/csv')
+             file: fixture_file_upload('files/import_entities.csv', 'text/csv'),
+             mode: 'replace'
            },
            format: :json
          }

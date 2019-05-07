@@ -22,8 +22,8 @@ module Nls
         package = Package.new("glue_strength")
 
         car = package.new_interpretation("car", { scope: "public" })
-        car << Expression.new("bmw-serie-4", solution: "bmw_serie_4", keep_order: true, glued: true, glue_strength: "punctuation")
-        car << Expression.new("audi a4", solution: "audi_a4", keep_order: true, glued: true)
+        car << Expression.new("bmw-serie-4", solution: "bmw_serie_4", keep_order: true, glue_distance: 0, glue_strength: "punctuation")
+        car << Expression.new("audi a4", solution: "audi_a4", keep_order: true, glue_distance: 0)
 
         package
       end

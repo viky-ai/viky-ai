@@ -1,23 +1,27 @@
-<div class="btn-group"
-     data-behavior="submit-form"
-     data-form-selector=".agent_search">
+<div class="btn-group">
   <%= f.hidden_field :filter_owner %>
   <% active_css = @search.filter_owner == 'all' ? 'btn--primary' : '' %>
   <%= f.button t('views.agents.index.filter_owner.all'), class: "btn #{active_css}",
                data: {
+                   behavior: 'populate-input, submit-form',
                    input_selector: "input[name='search[filter_owner]']",
                    input_value: 'all',
+                   form_selector: ".agent_search"
                } %>
   <% active_css = @search.filter_owner == 'owned' ? 'btn--primary' : '' %>
   <%= f.button t('views.agents.index.filter_owner.owner'), class: "btn #{active_css}",
                data: {
+                   behavior: 'populate-input, submit-form',
                    input_selector: "input[name='search[filter_owner]']",
                    input_value: 'owned',
+                   form_selector: ".agent_search"
                } %>
   <% active_css = @search.filter_owner == 'favorites' ? 'btn--primary' : '' %>
   <%= f.button t('views.agents.index.filter_owner.favorites'), class: "btn #{active_css}",
                data: {
+                   behavior: 'populate-input, submit-form',
                    input_selector: "input[name='search[filter_owner]']",
                    input_value: 'favorites',
+                   form_selector: ".agent_search"
                } %>
 </div>

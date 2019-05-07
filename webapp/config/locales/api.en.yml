@@ -4,6 +4,7 @@ en:
       format_not_acceptable: "Format not acceptable. JSON only is accepted."
       access_denied: "Access denied: wrong token."
   nlp:
+    unavailable: 'NLS temporarily unavailable'
     interpret:
       invalid_agent_token: is not valid
       invalid_ownername: is incorrect, '%{ownername}' user doesn't exist

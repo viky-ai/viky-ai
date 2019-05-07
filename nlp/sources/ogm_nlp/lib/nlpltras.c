@@ -11,7 +11,7 @@ static og_status NlpLtrasWord(og_nlp_th ctrl_nlp_th, int Irequest_word);
 static og_status NlpLtrasWordPackage(og_nlp_th ctrl_nlp_th, int Irequest_word,
     struct interpret_package *interpret_package);
 static og_status NlpLtrasAddWord(og_nlp_th ctrl_nlp_th, int Irequest_word_basic, int length_corrected_word,
-    og_string corrected_word, double spelling_score);
+    og_string corrected_word, double ltras_score);
 
 og_status NlpLtrasInit(og_nlp_th ctrl_nlp_th)
 {
@@ -49,11 +49,73 @@ og_status NlpLtrasFlush(og_nlp_th ctrl_nlp_th)
 }
 
 /**
+ * Reset MinimumScore of each request
+ */
+og_status NlpLtrasRequestSetup(og_nlp_th ctrl_nlp_th)
+{
+
+  if (ctrl_nlp_th->hltras == NULL) CONT;
+
+  unsigned min_score_size = 32;
+  double min_score[min_score_size];
+  memset(min_score, 0, sizeof(double) * min_score_size);
+
+  // adjust  <minimum_scores> and <minimum_final_scores /> from ltras_conf.xml at request
+  switch (ctrl_nlp_th->spellchecking_level)
+  {
+    case nlp_spellchecking_level_low:
+    {
+      min_score[2] = 1.00;
+      min_score[3] = 0.98;
+      min_score[4] = 0.97;
+      min_score[5] = 0.97;
+      min_score[6] = 0.95;
+      min_score[8] = 0.90;
+      min_score[10] = 0.86;
+      min_score[20] = 0.86;
+      break;
+    }
+    case nlp_spellchecking_level_medium:
+    {
+      min_score[2] = 1.00;
+      min_score[3] = 0.98;
+      min_score[4] = 0.95;
+      min_score[5] = 0.90;
+      min_score[6] = 0.85;
+      min_score[8] = 0.80;
+      min_score[10] = 0.75;
+      min_score[20] = 0.75;
+      break;
+    }
+    case nlp_spellchecking_level_high:
+    {
+      min_score[2] = 0.98;
+      min_score[3] = 0.98;
+      min_score[4] = 0.85;
+      min_score[5] = 0.85;
+      min_score[6] = 0.90;
+      min_score[8] = 0.70;
+      min_score[10] = 0.70;
+      min_score[20] = 0.70;
+      break;
+    }
+    default:
+      break;
+  }
+
+  IFE(OgLtrasMinimumScoreSet(ctrl_nlp_th->hltras, min_score_size, min_score));
+  IFE(OgLtrasMinimumScoreFinalSet(ctrl_nlp_th->hltras, min_score_size, min_score));
+
+  DONE;
+}
+
+/**
  * Do a spell checking on each words and also a spell checking on the whole sentence
  */
 og_status NlpLtras(og_nlp_th ctrl_nlp_th)
 {
   if (ctrl_nlp_th->hltras == NULL) CONT;
+  if (ctrl_nlp_th->spellchecking_level == nlp_spellchecking_level_inactive) CONT;
   if (ctrl_nlp_th->basic_request_word_used <= 0) DONE;
   int nb_basic_request_word_for_ltras = ctrl_nlp_th->basic_request_word_used;
   if (ctrl_nlp_th->auto_complete) nb_basic_request_word_for_ltras--;
@@ -130,8 +192,8 @@ static og_status NlpLtrasWordPackage(og_nlp_th ctrl_nlp_th, int Irequest_word,
       IFE(OgUniToCp(ltra_word->length,trfs->Ba+ltra_word->start,DPcPathSize,&isword,sword,DOgCodePageUTF8,0,0));
       sprintf(words + strlen(words), "%s%s", (i ? " " : ""), sword);
     }
-    double score_spelling = pow(trf->final_score,4);
-    og_status status = NlpLtrasAddWord(ctrl_nlp_th, Irequest_word, strlen(words), words, score_spelling);
+
+    og_status status = NlpLtrasAddWord(ctrl_nlp_th, Irequest_word, strlen(words), words, trf->final_score);
     IFE(status);
   }
 
@@ -140,7 +202,7 @@ static og_status NlpLtrasWordPackage(og_nlp_th ctrl_nlp_th, int Irequest_word,
 }
 
 static og_status NlpLtrasAddWord(og_nlp_th ctrl_nlp_th, int Irequest_word_basic, int length_corrected_word,
-    og_string corrected_word, double spelling_score)
+    og_string corrected_word, double ltras_score)
 {
   struct request_word *request_word_basic = OgHeapGetCell(ctrl_nlp_th->hrequest_word, Irequest_word_basic);
   IFN(request_word_basic) DPcErr;
@@ -149,8 +211,9 @@ static og_status NlpLtrasAddWord(og_nlp_th ctrl_nlp_th, int Irequest_word_basic,
   {
     og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word_basic->start);
     IFN(string_request_word) DPcErr;
-    NlpLog(DOgNlpTraceLtras, "NlpLtrasAddWord: adding corrected word '%s' for basic word '%s' at position %d:%d",
-        corrected_word, string_request_word, request_word_basic->start_position, request_word_basic->length_position)
+    NlpLog(DOgNlpTraceLtras, "NlpLtrasAddWord: adding corrected word '%s' for basic word '%s' "
+        "at position %d:%d with ltras_score:%0.3f", corrected_word, string_request_word,
+        request_word_basic->start_position, request_word_basic->length_position, ltras_score);
   }
 
   size_t Irequest_word;
@@ -182,7 +245,8 @@ static og_status NlpLtrasAddWord(og_nlp_th ctrl_nlp_th, int Irequest_word_basic,
   request_word->regex_input_part = NULL;
   request_word->nb_matched_words = 1;
 
-  request_word->spelling_score = spelling_score;
+  request_word->spelling_score = pow(ltras_score, 4);
+  request_word->lang_id = DOgLangNil;
 
   DONE;
 }

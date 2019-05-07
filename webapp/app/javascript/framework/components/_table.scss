@@ -3,6 +3,7 @@ table{
   border-collapse: collapse;
   border-spacing: 0;
   line-height: 1.6em;
+  text-align: left;
   thead{
     th{
       border-bottom: 2px solid #eee;
@@ -33,8 +34,4 @@ table{
     color: rgba(black, .5);
     font-size: .875em;
   }
-}
-
-div:not(.markdown) > table thead th{
-  text-align: left;
 }

@@ -14,8 +14,6 @@ class User < ApplicationRecord
   scope :not_confirmed, -> { where(confirmed_at: nil) }
   scope :locked, -> { where.not(locked_at: nil) }
 
-  serialize :ui_state, JSON
-
   # Include default devise modules except :omniauthable
   devise :invitable, :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable,
@@ -29,9 +27,9 @@ class User < ApplicationRecord
 
   def can?(action, agent)
     return false unless [:edit, :show].include? action
-    return true if action == :show && agent.is_public?
+    return true  if action == :show && agent.is_public?
     return false if memberships.where(agent_id: agent.id).count == 0
-    return true if agent.owner.id == id
+    return true if agent.owner_id == id
 
     if action == :show
       true
@@ -42,7 +40,7 @@ class User < ApplicationRecord
   end
 
   def owner?(agent)
-    agent.owner.id == id
+    agent.owner_id == id
   end
 
   def name_or_username
@@ -61,7 +59,14 @@ class User < ApplicationRecord
   def self.search(q = {})
     conditions = where("1 = 1")
 
-    conditions = conditions.where("email LIKE ?", "%#{q[:email]}%")
+    unless q[:query].blank?
+      query = I18n.transliterate q[:query]
+      conditions = conditions.where(
+        "lower(email) LIKE lower(?) OR lower(username) LIKE lower(?)",
+        "%#{query}%",
+        "%#{query}%"
+      )
+    end
 
     case q[:sort_by]
     when "last_action"

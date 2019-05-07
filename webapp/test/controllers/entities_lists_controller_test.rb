@@ -70,9 +70,22 @@ class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
     patch user_agent_entities_list_url(users(:admin), agents(:weather), entities_lists(:weather_conditions)),
           params: {
             entities_list: { listname: 'my_new_name', description: 'The new entities list name' },
+            origin: 'index',
             format: :json
           }
     assert_redirected_to user_agent_entities_lists_path(users(:admin), agents(:weather))
+    assert_nil flash[:alert]
+  end
+
+  test 'Update proximity with access' do
+    sign_in users(:edit_on_agent_weather)
+    patch user_agent_entities_list_url(users(:admin), agents(:weather), entities_lists(:weather_conditions)),
+          params: {
+            entities_list: { description: 'The new entities list name', proximity: 'far' },
+            origin: 'show',
+            format: :json
+          }
+    assert_redirected_to user_agent_entities_list_path(users(:admin), agents(:weather), entities_lists(:weather_conditions))
     assert_nil flash[:alert]
   end
 

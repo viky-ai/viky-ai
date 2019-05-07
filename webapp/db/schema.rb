@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181121091528) do
+ActiveRecord::Schema.define(version: 20190412074505) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,6 +20,21 @@ ActiveRecord::Schema.define(version: 20181121091528) do
     t.uuid "source_id"
     t.uuid "target_id"
     t.index ["source_id", "target_id"], name: "index_agent_arcs_on_source_id_and_target_id", unique: true
+  end
+
+  create_table "agent_regression_checks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "sentence"
+    t.string "language"
+    t.datetime "now"
+    t.uuid "agent_id"
+    t.jsonb "expected"
+    t.jsonb "got"
+    t.integer "state", default: 0
+    t.integer "position", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "spellchecking"
+    t.index ["agent_id"], name: "index_agent_regression_checks_on_agent_id"
   end
 
   create_table "agents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -33,7 +48,9 @@ ActiveRecord::Schema.define(version: 20181121091528) do
     t.text "image_data"
     t.string "api_token"
     t.integer "visibility", default: 0
-    t.string "source_agent"
+    t.jsonb "source_agent"
+    t.datetime "nlp_updated_at"
+    t.jsonb "locales"
     t.index ["api_token"], name: "index_agents_on_api_token", unique: true
     t.index ["owner_id", "agentname"], name: "index_agents_on_owner_id_and_agentname", unique: true
   end
@@ -61,7 +78,7 @@ ActiveRecord::Schema.define(version: 20181121091528) do
   create_table "chat_statements", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "speaker"
     t.integer "nature", default: 0
-    t.string "content"
+    t.jsonb "content"
     t.uuid "chat_session_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -71,12 +88,28 @@ ActiveRecord::Schema.define(version: 20181121091528) do
   create_table "entities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.text "solution"
     t.boolean "auto_solution_enabled", default: true
-    t.text "terms"
+    t.jsonb "terms"
     t.uuid "entities_list_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "position", default: 0
+    t.text "searchable_terms"
+    t.index ["entities_list_id", "position"], name: "index_entities_on_entities_list_id_and_position", unique: true
     t.index ["entities_list_id"], name: "index_entities_on_entities_list_id"
+    t.index ["terms"], name: "index_entities_on_terms", using: :gin
+  end
+
+  create_table "entities_imports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.text "file_data"
+    t.integer "mode"
+    t.uuid "entities_list_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "status", default: 0
+    t.integer "duration", default: 0
+    t.integer "filesize", default: 0
+    t.uuid "user_id"
+    t.index ["entities_list_id"], name: "index_entities_imports_on_entities_list_id"
   end
 
   create_table "entities_lists", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -88,6 +121,8 @@ ActiveRecord::Schema.define(version: 20181121091528) do
     t.uuid "agent_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "proximity", default: 0
+    t.integer "entities_count", default: 0, null: false
     t.index ["agent_id"], name: "index_entities_lists_on_agent_id"
   end
 
@@ -120,7 +155,6 @@ ActiveRecord::Schema.define(version: 20181121091528) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "position", default: 0
-    t.string "locales"
     t.string "color"
     t.integer "visibility", default: 0
     t.index ["agent_id"], name: "index_intents_on_agent_id"
@@ -150,9 +184,9 @@ ActiveRecord::Schema.define(version: 20181121091528) do
     t.string "locale"
     t.integer "position", default: 0
     t.boolean "keep_order", default: false
-    t.boolean "glued", default: false
     t.text "solution"
     t.boolean "auto_solution_enabled", default: true
+    t.integer "proximity", default: 3
     t.index ["intent_id"], name: "index_interpretations_on_intent_id"
   end
 
@@ -206,7 +240,7 @@ ActiveRecord::Schema.define(version: 20181121091528) do
     t.string "name"
     t.text "bio"
     t.text "image_data"
-    t.string "ui_state", default: "{}"
+    t.jsonb "ui_state", default: {}
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
@@ -220,12 +254,14 @@ ActiveRecord::Schema.define(version: 20181121091528) do
 
   add_foreign_key "agent_arcs", "agents", column: "source_id", on_delete: :cascade
   add_foreign_key "agent_arcs", "agents", column: "target_id", on_delete: :cascade
+  add_foreign_key "agent_regression_checks", "agents", on_delete: :cascade
   add_foreign_key "agents", "users", column: "owner_id"
   add_foreign_key "bots", "agents", on_delete: :cascade
   add_foreign_key "chat_sessions", "bots", on_delete: :cascade
   add_foreign_key "chat_sessions", "users", on_delete: :cascade
   add_foreign_key "chat_statements", "chat_sessions", on_delete: :cascade
   add_foreign_key "entities", "entities_lists", on_delete: :cascade
+  add_foreign_key "entities_imports", "entities_lists", on_delete: :cascade
   add_foreign_key "entities_lists", "agents", on_delete: :cascade
   add_foreign_key "favorite_agents", "agents", on_delete: :cascade
   add_foreign_key "favorite_agents", "users", on_delete: :cascade

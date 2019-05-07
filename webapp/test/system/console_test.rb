@@ -8,12 +8,12 @@ class ConsoleTest < ApplicationSystemTestCase
 
     within('.console') do
       fill_in 'interpret[sentence]', with: "hello"
-      first('button').click
+      click_button 'console-send-sentence'
 
       Nlp::Interpret.any_instance.stubs('proceed').returns(
         {
           status: 200,
-          body: { interpretations: [] }
+          body: { 'interpretations' => [] }
         }
       )
 
@@ -24,19 +24,19 @@ class ConsoleTest < ApplicationSystemTestCase
   end
 
 
-  test 'console basic interaction with content & verbose mode' do
+  test 'console basic interaction with content, verbose mode, now and spellchecking' do
     go_to_agents_index
     click_link "My awesome weather bot admin/weather"
 
     within('.console') do
       fill_in 'interpret[sentence]', with: "Hello world viki.ai"
-      first('button').click
+      click_button 'console-send-sentence'
 
       Nlp::Interpret.any_instance.stubs('proceed').returns(
         {
           status: 200,
           body: {
-            interpretations: [
+            'interpretations' => [
               {
                 "id" => intents(:weather_forecast).id,
                 "slug" => "admin/weather/weather_forecast",
@@ -53,7 +53,7 @@ class ConsoleTest < ApplicationSystemTestCase
         {
           status: 200,
           body: {
-            interpretations: [
+            'interpretations' => [
               {
                 "id" => intents(:weather_forecast).id,
                 "slug" => "admin/weather/weather_forecast",
@@ -98,25 +98,32 @@ class ConsoleTest < ApplicationSystemTestCase
           }
         }
       )
-      all('.dropdown__trigger > .btn')[1].click
-      click_link 'Verbose ON'
+      click_button 'ON'
 
-      assert page.has_content?('Verbose ON')
+      assert first('button[data-input-value="true"]').matches_css?(".btn--primary")
       assert page.has_content?('1 interpretation found.')
       assert page.has_content?('Hello world viki.ai')
 
       # Play with Auto/Manual Datetime
       assert_equal 0, all("input[name='interpret[now]']").count
-      all('.dropdown__trigger > .btn')[2].click
-      click_link 'Manual now'
+      click_button 'Manual'
+      assert first('button[data-trigger-event="console-select-now-type-manual"]').matches_css?(".btn--primary")
       fill_in 'interpret[now]', with: "2017-12-05T15:14:01+01:00"
       assert_equal 1, all("input[name='interpret[now]']").count
 
-      all('.dropdown__trigger > .btn')[2].click
-      click_link 'Auto now'
+      find('button[data-trigger-event="console-select-now-type-auto"]').click
+      assert first('button[data-trigger-event="console-select-now-type-auto"]').matches_css?(".btn--primary")
       assert_equal 0, all("input[name='interpret[now]']").count
-    end
 
+      # Spellchecking
+      assert page.has_content?('Low')
+      all('.dropdown__trigger > .btn')[1].click
+      click_link 'High'
+
+      assert page.has_content?('High')
+      assert page.has_content?('1 interpretation found.')
+      assert page.has_content?('Hello world viki.ai')
+    end
   end
 
 
@@ -126,11 +133,11 @@ class ConsoleTest < ApplicationSystemTestCase
 
     within('.console') do
       fill_in 'interpret[sentence]', with: "hello"
-      first('button').click
+      click_button 'console-send-sentence'
       Nlp::Interpret.any_instance.stubs('proceed').returns(
         {
           status: 200,
-          body: { interpretations: [] }
+          body: { 'interpretations' => [] }
         }
       )
       assert page.has_content?('No interpretation found.')
@@ -173,20 +180,20 @@ class ConsoleTest < ApplicationSystemTestCase
     assert page.has_content?('No interpretation found.')
   end
 
+
   test "Highlighted text should be clickable and should show the matched interpretations" do
     go_to_agents_index
     click_link "My awesome weather bot admin/weather"
 
     within('.console') do
       fill_in 'interpret[sentence]', with: "weather"
-      all('.dropdown__trigger > .btn')[1].click
-      click_link 'Verbose ON'
+      click_button 'ON'
 
       Nlp::Interpret.any_instance.stubs('proceed').returns(
         {
           status: 200,
           body: {
-            interpretations: [
+            'interpretations' => [
               {
                 "id" => intents(:weather_forecast).id,
                 "slug" => "admin/weather/weather_forecast",
@@ -224,13 +231,25 @@ class ConsoleTest < ApplicationSystemTestCase
           }
         }
       )
-      assert page.has_content?('Verbose ON')
+      assert first('button[data-input-value="true"]').matches_css?(".btn--primary")
       assert page.has_content?('1 interpretation found.')
       assert page.has_content?('weather')
 
-      within('.intent__highlight') do
-        page.find('.highlight-words', :text => 'weather').click
+      within('.c-intent__highlight') do
+        # Show highlight
+        page.find('.highlight-words', text: 'weather').click
         assert page.has_link?('admin/weather/interpretations/weather_forecast')
+        click_link('admin/weather/interpretations/weather_forecast')
+
+        # Hide highlight
+        page.find('.highlight-words', text: 'weather').click
+        assert_not page.has_link?('admin/weather/interpretations/weather_forecast')
+
+        # Show highlight again
+        page.find('.highlight-words', text: 'weather').click
+        assert page.has_link?('admin/weather/interpretations/weather_forecast')
+
+        # Navigate througth highlighted interpretation
         click_link('admin/weather/interpretations/weather_forecast')
       end
     end
@@ -238,20 +257,20 @@ class ConsoleTest < ApplicationSystemTestCase
     assert page.has_content?('What the weather like tomorrow ?')
   end
 
+
   test "Console is persisted when navigating between matched expressions" do
     go_to_agents_index
     click_link "My awesome weather bot admin/weather"
 
     within('.console') do
       fill_in 'interpret[sentence]', with: "weather terminator"
-      all('.dropdown__trigger > .btn')[1].click
-      click_link 'Verbose ON'
+      click_button 'ON'
 
       Nlp::Interpret.any_instance.stubs('proceed').returns(
         {
           status: 200,
           body: {
-            interpretations: [
+            'interpretations' => [
               {
                 "id" => intents(:weather_forecast).id,
                 "slug" => "admin/weather/weather_forecast",
@@ -322,19 +341,20 @@ class ConsoleTest < ApplicationSystemTestCase
           }
         }
       )
-      assert page.has_content?('Verbose ON')
+      assert first('button[data-input-value="true"]').matches_css?(".btn--primary")
       assert page.has_content?('2 interpretations found.')
-      assert page.has_content?('weather terminator')
+      assert page.has_content?('My awesome weather')
 
-      page.find('.highlight-words', :text => 'terminator').click
+      page.find('.highlight-words', text: 'terminator').click
       assert page.has_link?('admin/terminator/interpretations/terminator_find')
       click_link('admin/terminator/interpretations/terminator_find')
     end
 
     assert page.has_content?('Where is Sarah Connor ?')
     within('.console') do
+      assert first('button[data-input-value="true"]').matches_css?(".btn--primary")
       assert page.has_content?('2 interpretations found.')
-      assert page.has_content?('weather terminator')
+      assert page.has_content?('My awesome weather')
     end
   end
 

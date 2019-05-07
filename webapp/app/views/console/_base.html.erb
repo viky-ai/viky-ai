@@ -1,209 +1,42 @@
 <a href="#" data-action="console-enter-fullscreen" class="toggle-console">Console</a>
 
 <aside class="console-container">
-  <div class="console" id="console" data-turbolinks-permanent>
-    <div class="console__header">
+  <div class="panels-switch">
+    <div class="panels-switch__panel" id="console" data-turbolinks-permanent>
 
-      <% if @agent.image.nil? %>
-        <% css_class = "background-color-gradient__#{@agent.color}" %>
-      <% else %>
-        <% css_class = "console__header__visual--image" %>
-        <% css_style = "background-image: url(#{@agent.image_url(:background)});" %>
-      <% end %>
-      <div class="console__header__visual <%= css_class %>" style="<%= css_style %>">
-        <% if @agent.is_public? %>
-          <span class="console__header__visual__ribbon">
-            <%= t('activerecord.attributes.agent.visibility_is_public') %>
-          </span>
-        <% end %>
-      </div>
-
-      <div class="console__header__content">
-        <div class="console__header__content__title">
-          <strong>
-            <%= @agent.name %>
-            <em>- <%= t('views.console.title') %></em>
-          </strong>
-          <small>
-            <span class="badge badge--small badge--success">GET</span>
-            <code>/api/v1/<%= @agent.slug %>/interpret.json</code>
-          </small>
+      <div class="console">
+        <div class="console__header">
+          <%= render 'console/header' %>
         </div>
-      </div>
 
-      <div class="console__header__actions">
-        <a href="?"
-           id="console-reset-btn"
-           class="btn btn--small btn--plain console-reset"
-           title="<%= t('views.console.reset.title') %>"
-           data-turbolinks="false"
-           style="display:none;">
-          <span class="icon icon--small">
-            <%= icon_refresh %>
-          </span>
-        </a>
+        <%= render 'console/form' %>
 
-        <a href="#" id="console-enter-fullscreen"
-           data-action="console-enter-fullscreen"
-           title="<%= t('views.console.fullscreen_enter') %>"
-           class="console__header__fullscreen_btn btn btn--small btn--plain">
-          <span class="icon icon--small">
-            <%= icon_fullscreen %>
-          </span>
-        </a>
-        <a href="#" id="console-leave-fullscreen"
-           data-action="console-leave-fullscreen"
-           title="<%= t('views.console.fullscreen_leave') %>"
-           class="console__header__fullscreen_btn btn btn--small btn--plain" style="display:none;">
-          <span class="icon icon--small">
-            <%= icon_close %>
-          </span>
+        <div class="console__tabs">
+          <div class="tabs tabs--small tabs--on-center" id="console-tabs"></div>
+        </div>
+
+        <div class="console__output" id="console-output"></div>
+
+        <a href="#" class="console__footer"
+           id="console-footer"
+           v-if='summary.visible'
+           data-action="console-show-cts">
+          <%= render 'console/tests_suite_summary' %>
         </a>
       </div>
 
     </div>
 
-    <%= form_with url: interpret_user_agent_path(@agent.owner, @agent), method: :get, id: 'js-console-form' do |f| %>
-      <input type='hidden' name='interpret[current_tab]' value="explain" id="console-current-tab-input" />
-      <input type='hidden' name='interpret[verbose]' value="false" class="js-verbose-input" />
-      <input type='hidden' name='interpret[language]' value="" class="js-language-input" />
+    <div class="panels-switch__panel panels-switch__panel--hide" id="console-ts" data-turbolinks-permanent>
 
-      <script>$('.js-verbose-input').val("false");</script>
-      <script>$('.js-language-input').val("*");</script>
-
-      <div class="field">
-        <div class="control">
-
-          <div class="dropdown">
-            <div class="dropdown__trigger">
-              <span class="btn btn--outline btn--small">
-                <span class="btn__label"><%= t('views.console.all_locales') %></span>
-                <span class="icon icon--x-small">
-                  <%= icon_arrow_down %>
-                </span>
-              </span>
-            </div>
-            <div class="dropdown__content dropdown__content--hidden">
-              <ul>
-                <% Locales::ALL.each do |l| %>
-                  <li>
-                    <a href="#" <% if l == "*" %>class="current"<% end %>
-                      data-behavior="populate-input, replace-trigger-label, submit-form"
-                      data-input-selector=".js-language-input"
-                      data-input-value="<%= l %>"
-                      data-form-selector="#js-console-form"
-                      data-replace-with="<% if l == "*" %><%= t('views.console.all_locales') %><% else %><%= l %><% end %>"
-                      data-replace-selector=".btn__label">
-                      <% if l == "*" %>
-                        <%= t('views.console.all_locales') %>
-                      <% else %>
-                        <%= l %>
-                      <% end %>
-                    </a>
-                  </li>
-                <% end %>
-              </ul>
-            </div>
-          </div>
-
-          <div class="dropdown">
-            <div class="dropdown__trigger">
-              <span class="btn btn--outline btn--small">
-                <span class="btn__label"><%= t('views.console.verbose_off') %></span>
-                <span class="icon icon--x-small">
-                  <%= icon_arrow_down %>
-                </span>
-              </span>
-            </div>
-            <div class="dropdown__content dropdown__content--hidden">
-              <ul>
-                <li>
-                  <a href="#" class="current"
-                    data-behavior="populate-input, replace-trigger-label, submit-form"
-                    data-input-selector=".js-verbose-input"
-                    data-input-value="false"
-                    data-form-selector="#js-console-form"
-                    data-replace-with="<%= t('views.console.verbose_off') %>"
-                    data-replace-selector=".btn__label">
-                    <%= t('views.console.verbose_off') %>
-                  </a>
-                </li>
-                <li>
-                  <a href="#"
-                    data-behavior="populate-input, replace-trigger-label, submit-form"
-                    data-input-selector=".js-verbose-input"
-                    data-input-value="true"
-                    data-form-selector="#js-console-form"
-                    data-replace-with="<%= t('views.console.verbose_on') %>"
-                    data-replace-selector=".btn__label">
-                    <%= t('views.console.verbose_on') %>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-
-          <div class="dropdown">
-            <div class="dropdown__trigger">
-              <span class="btn btn--outline btn--small">
-                <span class="btn__label"><%= t('views.console.datetime_auto') %></span>
-                <span class="icon icon--x-small">
-                  <%= icon_arrow_down %>
-                </span>
-              </span>
-            </div>
-            <div class="dropdown__content dropdown__content--hidden">
-              <ul>
-                <li>
-                  <a href="#" class="current"
-                    data-behavior="replace-trigger-label, submit-form, trigger-event"
-                    data-form-selector="#js-console-form"
-                    data-replace-with="<%= t('views.console.datetime_auto') %>"
-                    data-replace-selector=".btn__label"
-                    data-trigger-event="console-select-now-type-auto">
-                    <%= t('views.console.datetime_auto') %>
-                  </a>
-                </li>
-                <li>
-                  <a href="#"
-                    data-behavior="replace-trigger-label, trigger-event"
-                    data-replace-with="<%= t('views.console.datetime_manual') %>"
-                    data-replace-selector=".btn__label"
-                    data-trigger-event="console-select-now-type-manual">
-                    <%= t('views.console.datetime_manual') %>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-        </div>
+      <div class="console">
+        <%= render 'console/tests_suite' %>
       </div>
 
-      <div class='field field--console-now' id="js-console-now-input-container" style="display:none;">
-        <div class='control control--merged'>
-          <span class="addon"><%= t('views.console.datetime_addon') %></span>
-          <input type='text' name='interpret[now]' value="" />
-        </div>
-      </div>
-
-      <div class='field'>
-        <div class='control control--merged'>
-          <input type='text' placeholder='<%= t('views.console.sentence_placeholder') %>'
-                 name='interpret[sentence]' value="" dir="auto" />
-          <button class='btn btn--primary'
-                  data-disable-with='<span class="icon icon--small icon--spin"><%= icon_loading %></span>'>
-            <span class='icon icon--small'>
-              <%= icon_check %>
-            </span>
-          </button>
-        </div>
-      </div>
-    <% end %>
-
-    <div class="tabs tabs--small tabs--on-center" id="console-tabs"></div>
-    <div class="console__output" id="console-output"></div>
-
+    </div>
   </div>
 </aside>
+
+<script>
+  test_suite_data = <%= @agent.regression_checks_to_json.html_safe %>;
+</script>

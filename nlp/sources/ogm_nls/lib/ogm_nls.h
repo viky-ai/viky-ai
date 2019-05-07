@@ -24,7 +24,6 @@
 typedef struct og_listening_thread og_listening_thread;
 
 #define DOgNlsPortNumber  9345
-#define DOgNlsIntentPhraseMaxLength 0x800
 
 struct timeout_conf_context
 {
@@ -37,6 +36,7 @@ struct og_nls_env
 {
   char listenning_address[DPcPathSize];
   int listenning_port;
+  og_bool wait_to_be_ready;
 };
 
 struct og_nls_conf
@@ -122,7 +122,6 @@ struct og_listening_thread
   ogmutex_t *hmutex;
   struct og_loginfo loginfo[1];
 
-
   enum lt_running_state state;
   int request_running_start;
   int request_running_time;
@@ -152,7 +151,7 @@ struct og_listening_thread
   og_nlp_th hnlp_th;
 
   /** Endpoint in/out structure are kept here for memory release after request is finished */
-  struct og_nls_request  request[1];
+  struct og_nls_request request[1];
   struct og_nls_response response[1];
 
 };
@@ -200,6 +199,8 @@ struct og_ctrl_nls
   void *hucis;
   void *hucic;
 
+  og_bool nls_ready;
+
   struct og_listening_thread *Lt;
   int LtNumber;
 
@@ -215,13 +216,13 @@ struct og_ctrl_nls
   /** Nlp local thread memory : should not be use except in init phase */
   og_nlp_th hnlpi_main;
 
-
 };
 
 #define maxArrayLevel 10
 
 /** inls.c **/
 og_status OgNlsWritePidFile(og_nls ctrl_nls);
+void OgNlsMemLogPeakUsage(og_nls ctrl_nls, og_string context);
 
 /** nlsrun.c **/
 int NlsRunSendErrorStatus(void *ptr, struct og_socket_info *info, int error_status, og_string message);
@@ -270,7 +271,8 @@ og_status OgMaintenanceThreadFlush(struct og_maintenance_thread *mt);
 og_bool OgNlsEndpoints(struct og_listening_thread *lt, struct og_nls_request *request, struct og_nls_response *response);
 og_status OgNlsEndpointsCommonParameters(struct og_listening_thread *lt, struct og_nls_request *request);
 og_status OgNlsEndpointsParseParameters(struct og_listening_thread *lt, og_string url, struct og_nls_request *request);
-og_status OgNlsEndpointsParseParametersInUrlPath(struct og_listening_thread *lt, struct og_nls_request *request, og_string format);
+og_status OgNlsEndpointsParseParametersInUrlPath(struct og_listening_thread *lt, struct og_nls_request *request,
+    og_string format);
 og_status OgNlsEndpointsMemoryReset(struct og_listening_thread *lt);
 
 /** nls_endpoint_test.c **/
@@ -293,7 +295,12 @@ og_status NlsEndpointPackagesDelete(struct og_listening_thread *lt, struct og_nl
 og_status NlsEndpointList(struct og_listening_thread *lt, struct og_nls_request *request,
     struct og_nls_response *response);
 
+/** nls_endpoint_ready.c **/
+og_status NlsEndpointReadyGet(struct og_listening_thread *lt, struct og_nls_request *request,
+    struct og_nls_response *response);
+og_status NlsEndpointReadySet(struct og_listening_thread *lt, struct og_nls_request *request,
+    struct og_nls_response *response);
+
 /** nlsimport.c **/
 og_status NlsReadImportFiles(og_nls ctrl_nls);
-
 

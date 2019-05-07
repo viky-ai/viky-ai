@@ -26,6 +26,12 @@ class InterpretationsTest < ApplicationSystemTestCase
     click_link 'weather_forecast'
     assert page.has_text?('Interpretations / weather_forecast PUBLIC')
     assert page.has_text?('Not used by any interpretation')
+
+    within('.card .tabs') do
+      click_link 'en'
+    end
+    assert page.has_link?('What the weather like tomorrow ?')
+
     within('#interpretations-list') do
       click_link 'What the weather like tomorrow ?'
       assert page.has_text?('admin/weather/weather_question')
@@ -36,6 +42,7 @@ class InterpretationsTest < ApplicationSystemTestCase
       assert page.has_no_field?("input[name*='aliasname']")
     end
   end
+
 
   test 'Used by button in interpretation details' do
     admin_go_to_intent_show(agents(:terminator), intents(:simple_where))
@@ -52,9 +59,16 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Create an interpretation' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
+    within('.card .tabs') do
+      click_link 'en'
+    end
+
+    assert page.has_link?('What the weather like tomorrow ?')
     assert_equal "1", first('#current-locale-tab-badge').text
 
     first('trix-editor').click.set('Good morning')
+    all('.dropdown__trigger > .btn')[0].click
+    click_link 'Very close'
     click_button 'Add'
     assert page.has_text?('Good morning')
 
@@ -65,13 +79,19 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Create an interpretation with intent alias' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
+    within('.card .tabs') do
+      click_link 'en'
+    end
+
+    assert page.has_link?('What the weather like tomorrow ?')
     assert_equal 1, all('.interpretation-resume').count
     assert_equal "What the weather like", first('.interpretation-resume__alias-blue').text
 
     first('trix-editor').click.set('Salut Marcel')
     select_text_in_trix("trix-editor", 6, 12)
-    find_link('admin/weather/interpretations/weather_question').click
-
+    within '#popup-add-tag' do
+      find_link('admin/weather/interpretations/weather_question').click
+    end
     within('.aliases') do
       assert page.has_link?('admin/weather/interpretations/weather_question')
       assert page.has_text?('Marcel')
@@ -85,8 +105,9 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     first('trix-editor').click.set('Il fait beau ?')
     select_text_in_trix("trix-editor", 9, 12)
-    find_link('admin/weather/interpretations/weather_question').click
-
+    within '#popup-add-tag' do
+      find_link('admin/weather/interpretations/weather_question').click
+    end
     within('#interpretations-form .aliases') do
       click_link 'admin/weather/interpretations/weather_question'
     end
@@ -97,12 +118,19 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Create an interpretation with entities_list alias' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
+    within('.card .tabs') do
+      click_link 'en'
+    end
+
+    assert page.has_link?('What the weather like tomorrow ?')
     assert_equal 1, all('.interpretation-resume').count
     assert_equal "What the weather like", first('.interpretation-resume__alias-blue').text
 
     first('trix-editor').click.set('Y a-t-il du soleil ?')
     select_text_in_trix("trix-editor", 12, 18)
-    find_link('admin/weather/entities_lists/weather_conditions').click
+    within '#popup-add-tag' do
+      find_link('admin/weather/entities_lists/weather_conditions').click
+    end
 
     within('.aliases') do
       assert page.has_link?('admin/weather/entities_lists/weather_conditions')
@@ -128,18 +156,29 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Create an interpretation with numbers' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
+    within('.card .tabs') do
+      click_link 'en'
+    end
+
+    assert page.has_link?('What the weather like tomorrow ?')
     assert_equal 1, all('.interpretation-resume').count
     assert_equal "What the weather like", first('.interpretation-resume__alias-blue').text
 
     first('trix-editor').click.set("Le 01/01/2018 j'achète de l'Aspirine")
     select_text_in_trix("trix-editor", 3, 5)
-    find_link('Number').click
+    within '#popup-add-tag' do
+      find_link('Number').click
+    end
 
     select_text_in_trix("trix-editor", 6, 8)
-    find_link('Number').click
+    within '#popup-add-tag' do
+      find_link('Number').click
+    end
 
     select_text_in_trix("trix-editor", 9, 13)
-    find_link('Number').click
+    within '#popup-add-tag' do
+      find_link('Number').click
+    end
 
     within('.aliases') do
       inputs = all("input[name*='aliasname']")
@@ -163,30 +202,60 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
   end
 
+  test 'Create an interpretation with proximity value' do
+    admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
+
+    within('.card .tabs') do
+      click_link 'en'
+    end
+
+    within('#interpretations-list') do
+      assert page.has_text?('What the weather like tomorrow ?')
+      assert page.has_text?('Glued')
+    end
+
+    first('trix-editor').click.set('Sunny day')
+    all('.dropdown__trigger > .btn')[0].click
+    click_link 'Glued + Punc'
+    click_button 'Add'
+
+    within('#interpretations-list') do
+      assert page.has_text?('Sunny day')
+      assert page.has_text?('Glued + Punc')
+    end
+    assert_equal "2", first('#current-locale-tab-badge').text
+  end
+
 
   test 'Errors on interpretation creation' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
-    assert_equal "1", first('#current-locale-tab-badge').text
+    assert_equal "0", first('#current-locale-tab-badge').text
 
     first('trix-editor').click.set('')
     click_button 'Add'
     assert page.has_text?('Expression can\'t be blank')
 
-    assert_equal "1", first('#current-locale-tab-badge').text
+    assert_equal "0", first('#current-locale-tab-badge').text
   end
 
 
   test 'Errors on interpretation creation with alias' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
+    within('.card .tabs') do
+      click_link 'en'
+    end
+
+    assert page.has_link?('What the weather like tomorrow ?')
     assert_equal 1, all('.interpretation-resume').count
     assert_equal "What the weather like", first('.interpretation-resume__alias-blue').text
 
     first('trix-editor').click.set('Salut Marcel')
     select_text_in_trix("trix-editor", 6, 12)
-    find_link('admin/weather/interpretations/weather_question').click
-
+    within '#popup-add-tag' do
+      find_link('admin/weather/interpretations/weather_question').click
+    end
     within('.aliases') do
       assert page.has_text?('admin/weather/interpretations/weather_question')
       assert page.has_text?('Marcel')
@@ -201,11 +270,11 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Update an interpretation (simple)' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
-    within('.card') do
+    within('.card .tabs') do
       click_link 'fr'
     end
-    assert page.has_link?('Quel temps fera-t-il demain ?')
 
+    assert page.has_link?('Quel temps fera-t-il demain ?')
     assert_equal '1', first('#current-locale-tab-badge').text
 
     within('#interpretations-list') do
@@ -213,7 +282,6 @@ class InterpretationsTest < ApplicationSystemTestCase
       assert page.has_text?('Cancel')
       first('trix-editor').click.set('Salut à tous')
       check('interpretation[keep_order]')
-      check('interpretation[glued]')
       uncheck('interpretation[auto_solution_enabled]')
       fill_in_editor_field '10'
       click_button 'Update'
@@ -227,7 +295,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Update an interpretation (add alias)' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
-    within('.card') do
+    within('.card .tabs') do
       click_link 'en'
     end
     assert page.has_link?('What the weather like tomorrow ?')
@@ -266,7 +334,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Update an interpretation (remove alias)' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
-    within('.card') do
+    within('.card .tabs') do
       click_link 'en'
     end
     assert page.has_link?('What the weather like tomorrow ?')
@@ -276,18 +344,47 @@ class InterpretationsTest < ApplicationSystemTestCase
       assert page.has_text?('Cancel')
       select_text_in_trix("#interpretations-list trix-editor", 0, 21)
     end
-    find_link('Remove annotation(s)').click
+    within '#popup-remove-tag' do
+      find_link('Remove annotation(s)').click
+    end
     click_button 'Update'
 
     assert page.has_link?('What the weather like tomorrow ?')
     assert_equal 1, all('.interpretation-resume').count
   end
 
+  test 'Update an interpretation (change proximity)' do
+    admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
+
+    within('.card .tabs') do
+      click_link 'en'
+    end
+
+    assert page.has_link?('What the weather like tomorrow ?')
+    assert page.has_text?('Glued')
+
+    assert_equal '1', first('#current-locale-tab-badge').text
+
+    within('#interpretations-list') do
+      click_link 'What the weather like tomorrow ?'
+      assert page.has_text?('Cancel')
+      first('trix-editor').click.set('What the weather like today ?')
+      check('interpretation[keep_order]')
+      all('.dropdown__trigger > .btn')[0].click
+      click_link 'Far'
+      click_button 'Update'
+    end
+
+    assert page.has_link?('What the weather like today ?')
+    assert page.has_text?('Far')
+    assert_equal '1', first('#current-locale-tab-badge').text
+  end
+
 
   test 'Remove alias from summary board' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
-    within('.card') do
+    within('.card .tabs') do
       click_link 'en'
     end
     assert page.has_link?('What the weather like tomorrow ?')
@@ -315,11 +412,12 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Update an interpretation and cancel' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
-    within('.card') do
+    within('.card .tabs') do
       click_link 'en'
     end
 
     assert page.has_link?('What the weather like tomorrow ?')
+
     within('#interpretations-list') do
       click_link 'What the weather like tomorrow ?'
       assert page.has_text?('Cancel')
@@ -332,7 +430,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'change locale via drag & drop' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
-    expected = ["en 1", "fr 1", "+"]
+    expected = ["No language 0", "en 1", "fr 1", "es 0", "+"]
     assert_equal expected, all(".card > .tabs ul li").collect(&:text)
 
     # Does not works...
@@ -349,8 +447,11 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Delete an interpretation' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
-    assert page.has_link?('What the weather like tomorrow ?')
+    within('.card .tabs') do
+      click_link 'en'
+    end
 
+    assert page.has_link?('What the weather like tomorrow ?')
     assert_equal "1", first('#current-locale-tab-badge').text
 
     within('#interpretations-list') do
@@ -370,9 +471,11 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     first('trix-editor').click.set('Detect Sarah')
     select_text_in_trix('trix-editor', 7, 12)
-    assert page.has_link?('Regex')
 
-    click_link('Regex')
+    within '#popup-add-tag' do
+      assert page.has_link?('Regex')
+      click_link('Regex')
+    end
 
     within('.aliases') do
       assert page.has_link?('Railroad Diagram')
@@ -396,7 +499,6 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert_equal expected_regex, find("textarea[name*='reg_exp']").value
     assert page.has_text?('Valid Regex')
   end
-
 
   private
 

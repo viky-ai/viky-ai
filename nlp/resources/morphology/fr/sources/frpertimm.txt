@@ -1,0 +1,9 @@
+paté::=+Ncms-
+patée::paté+Ncfs-
+patées::paté+Ncfp-
+patés::paté+Ncmp-
+
+pâté::=+Ncms-
+pâtée::pâté+Ncfs-
+pâtées::pâté+Ncfp-
+pâtés::pâté+Ncmp-

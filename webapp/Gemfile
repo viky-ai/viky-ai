@@ -16,6 +16,9 @@ gem 'puma', '~> 3.7'
 
 gem 'oj'
 
+# Use last version of CSV gem
+gem 'csv'
+
 # Environment variables at boostrap time
 gem 'dotenv-rails', '~> 2.1', '>= 2.1.1'
 
@@ -47,7 +50,7 @@ gem 'local_time'
 gem 'sidekiq'
 
 # Use ElasticSearch for stats
-gem 'elasticsearch-model', '~> 5.0'
+gem 'elasticsearch', '~> 6.0'
 
 # Use Foreman to run app and dependencies
 gem 'foreman'
@@ -78,8 +81,8 @@ gem 'premailer-rails'
 # Duplicate model
 gem 'clowne'
 
-# Start rake tasks periodically
-gem 'whenever', '~> 0.10.0'
+# Emoji regex
+gem 'unicode-emoji'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
@@ -90,6 +93,9 @@ gem 'webpacker'
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'
 gem 'listen', '>= 3.0.5', '< 3.2'
+
+# Bulk inserts in active record
+gem 'activerecord-import'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

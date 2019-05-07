@@ -255,6 +255,8 @@ PUBLIC(og_status) OgNlpInterpret(og_nlp_th ctrl_nlp_th, struct og_nlp_interpret_
 
 static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json_t *json_answer)
 {
+  ogint64_t micro_clock_start = OgMicroClock();
+
   // reset previews interpretations
   IFE(NlpInterpretRequestReset(ctrl_nlp_th));
 
@@ -275,6 +277,9 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
     NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequest: list of regexes found for request:");
     IFE(NlpRegexLog(ctrl_nlp_th));
   }
+
+  // Setup ltras according to ctrl_nlp_th->spellchecking_level
+  IFE(NlpLtrasRequestSetup(ctrl_nlp_th));
 
   // ====================================
   // look for matching interpretation
@@ -298,6 +303,13 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
   }
 
   NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequest: finished interpreting request [\n%s]", json_request_string)
+
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceInterpret)
+  {
+    char v[128];
+    OgFormatThousand((int) (OgMicroClock() - micro_clock_start), v);
+    NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequest: finished after %s micro-seconds", v)
+  }
 
   DONE;
 }
@@ -354,6 +366,7 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
 
   ctrl_nlp_th->request_sentence = NULL;
   ctrl_nlp_th->date_now = NULL;
+  ctrl_nlp_th->spellchecking_level = nlp_spellchecking_level_low;
   ctrl_nlp_th->show_explanation = FALSE;
   ctrl_nlp_th->show_private = FALSE;
   ctrl_nlp_th->primary_package = NULL;
@@ -380,6 +393,7 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
   json_t *json_auto_complete = NULL;
   json_t *json_trace = NULL;
   json_t *json_date_now = NULL;
+  json_t *json_spellchecking = NULL;
 
   for (void *iter = json_object_iter(json_request); iter; iter = json_object_iter_next(json_request, iter))
   {
@@ -431,6 +445,10 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
     {
       json_date_now = json_object_iter_value(iter);
     }
+    else if (Ogstricmp(key, "spellchecking") == 0)
+    {
+      json_spellchecking = json_object_iter_value(iter);
+    }
     else
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestParse: unknow key '%s'", key);
@@ -473,7 +491,7 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
     }
     else
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestParse: json_show_explanation is not a string");
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestParse: json_show_explanation is not a boolean");
       DPcErr;
     }
   }
@@ -490,7 +508,7 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
     }
     else
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestParse: show-private is not a string");
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestParse: show-private is not a boolean");
       DPcErr;
     }
   }
@@ -546,6 +564,47 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
     }
   }
 
+  IFX(json_spellchecking)
+  {
+    if (json_is_null(json_spellchecking))
+    {
+      ctrl_nlp_th->spellchecking_level = nlp_spellchecking_level_inactive;
+      NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestParse: spellchecking set to 'inactive' (NULL)")
+    }
+    else if (json_is_string(json_spellchecking))
+    {
+      og_string spellchecking = json_string_value(json_spellchecking);
+      if (Ogstricmp(spellchecking, "inactive") == 0)
+      {
+        ctrl_nlp_th->spellchecking_level = nlp_spellchecking_level_inactive;
+      }
+      else if (Ogstricmp(spellchecking, "low") == 0)
+      {
+        ctrl_nlp_th->spellchecking_level = nlp_spellchecking_level_low;
+      }
+      else if (Ogstricmp(spellchecking, "medium") == 0)
+      {
+        ctrl_nlp_th->spellchecking_level = nlp_spellchecking_level_medium;
+      }
+      else if (Ogstricmp(spellchecking, "high") == 0)
+      {
+        ctrl_nlp_th->spellchecking_level = nlp_spellchecking_level_high;
+      }
+      else
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestParse: spellchecking is not a valid value : '%s' expecting"
+            " ('inactive', 'low', 'medium', 'high')", spellchecking);
+        DPcErr;
+      }
+      NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestParse: spellchecking set to %s", spellchecking)
+    }
+    else
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestParse: spellchecking is not a string");
+      DPcErr;
+    }
+  }
+
   // The Accept-Language string can be non extant
 
   // setup
@@ -569,10 +628,23 @@ static og_status NlpInterpretRequestBuildSentence(og_nlp_th ctrl_nlp_th, json_t 
   {
     ctrl_nlp_th->request_sentence = json_string_value(json_sentence);
 
+
     if (!g_utf8_validate(ctrl_nlp_th->request_sentence, -1, NULL))
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildSentence: sentence contain invalid UTF-8 : '%s'",
           ctrl_nlp_th->request_sentence);
+      DPcErr;
+    }
+
+    if (ctrl_nlp_th->request_sentence[0] == '\0')
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildSentence: sentence is empty");
+      DPcErr;
+    }
+
+    if (strlen(ctrl_nlp_th->request_sentence) >= DOgNlpInterpretationSentenceMaxLength )
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildSentence: too long text in sentence");
       DPcErr;
     }
 

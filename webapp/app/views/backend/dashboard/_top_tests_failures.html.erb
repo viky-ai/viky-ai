@@ -1,0 +1,59 @@
+<h2>
+  <%= t("views.backend.dashboard.top_tests_failures") %>
+</h2>
+
+<% unless @top_fail_tests_agents.exists? %>
+  <div class="dashboard-celebration">
+    <%= image_tag image_path("illustrations/celebration.svg")  %>
+    <p>
+      <%= t("views.backend.dashboard.no_top_tests_failure") %>
+    </p>
+  </div>
+<% else %>
+  <table>
+    <tbody>
+      <% @top_fail_tests_agents.each do |data| %>
+        <% agent = Agent.find(data['id']) %>
+        <tr title="<%= t("views.backend.dashboard.detail_test_failure",
+            agent_last_update: l(agent.updated_at, format: :long),
+            test_last_run: l(agent.agent_regression_checks.order('updated_at').last.updated_at, format: :long)) %>">
+          <td>
+            <% if current_user.can? :show, agent %>
+              <a href="<%= user_agent_path(agent.owner, agent) %>">
+                <strong>
+                  <%= agent.name %>
+                </strong>
+                <small><%= agent.slug %></small>
+              </a>
+            <% else %>
+              <strong><%= agent.name %></strong>
+              <small><%= agent.slug %></small>
+            <% end %>
+          </td>
+          <td>
+            <% failure_test_count = data['count'] %>
+            <% running_test = agent.agent_regression_checks.running %>
+            <% success_test = agent.agent_regression_checks.success %>
+            <% if success_test.exists? %>
+              <span class="ts-status ts-status--success"></span>
+              <%= number_with_delimiter(success_test.count) %>
+            <% end %>
+            <% unless failure_test_count.zero? %>
+              &nbsp; <span class="ts-status ts-status--failure"></span>
+              <%= number_with_delimiter(failure_test_count) %>
+            <% end %>
+            <% if running_test.exists? %>
+              &nbsp; <span class="ts-status ts-status--running"></span>
+              <%= number_with_delimiter(running_test.count) %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div class="top-pagination">
+    <%= paginate @top_fail_tests_agents, window: 1, param_name: :tests_page %>
+    <p class="pagination-info"><%= page_entries_info @top_fail_tests_agents %></p>
+  </div>
+<% end %>

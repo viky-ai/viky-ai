@@ -18,7 +18,7 @@ en:
         updated_time_ago: Updated
         search:
           not_found: No agent found
-          placeholder: Search by name or ID
+          placeholder: Search agents
         sort_by:
           name: Sort by name
           updated_at: Sort by last update
@@ -74,6 +74,7 @@ en:
         upload_info: "The maximum file size allowed is 2Mo. Preferably 16:9 format."
         api_token:
           generate_btn: Re-generate
+        locale_help: Not deactivable because used by interpretations and/or entities.
       new:
         title: Create a new agent
         btn: Create
@@ -113,3 +114,4 @@ en:
       agents_selection:
         title_html: 'Move <strong>%{name}</strong> to&hellip;'
         not_found: No agent found.
+      nlp_error: 'Error while updating package on NLS %{error}'

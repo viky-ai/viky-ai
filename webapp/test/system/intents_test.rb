@@ -70,7 +70,7 @@ class IntentsTest < ApplicationSystemTestCase
 
 
   test 'Reorganize intents' do
-    intent = Intent.new(intentname: 'test', locales: ['en'])
+    intent = Intent.new(intentname: 'test')
     intent.agent = agents(:weather)
     assert intent.save
 
@@ -99,41 +99,49 @@ class IntentsTest < ApplicationSystemTestCase
       assert page.has_text?('Choose a language')
       click_link('fr (French)')
     end
-    assert page.has_text?('fr')
+    assert page.has_text?('fr 0')
   end
 
 
-  test 'Remove locale of an intent' do
-    go_to_agent_intents('admin', 'weather')
-    click_link 'weather_forecast'
+  test 'locale navigation persistence' do
+    go_to_agent_intents('admin', 'terminator')
+    click_link 'terminator_find'
+    assert page.has_text?('+')
 
-    assert page.has_link?('en')
-    assert page.has_link?('fr')
-
-    within('.card') do
-      click_link 'en'
+    # Add fr locale
+    click_link '+'
+    within('.modal') do
+      assert page.has_text?('Choose a language')
+      click_link('fr (French)')
     end
-    within('#interpretations-list') do
-      click_link 'What the weather like tomorrow ?'
-      assert page.has_text?('Cancel')
-      all('a').last.click
-    end
+    assert page.has_text?('fr 0')
+    assert_equal "fr 0", first('li[data-locale] a.current').text
 
-    assert page.has_text?('Do you want to remove it ?')
-    click_link 'Yes, remove "en" tab'
-    within('.card') do
-      assert page.has_no_link?('en')
-      assert page.has_link?('fr')
+    # Add es locale
+    click_link '+'
+    within('.modal') do
+      assert page.has_text?('Choose a language')
+      click_link('es (Spanish)')
     end
+    assert page.has_text?('es 0')
+    assert_equal "es 0", first('li[data-locale] a.current').text
 
-    assert page.has_text?('Quel temps fera-t-il demain ?')
-
-    within('#interpretations-list') do
-      click_link 'Quel temps fera-t-il demain ?'
-      assert page.has_text?('Cancel')
-      all('a').last.click
+    # Leaves and comes back
+    within '.header__breadcrumb' do
+      click_link 'Interpretations'
     end
-    assert page.has_text?('Start adding expressions using the form below.')
+    click_link 'terminator_find'
+    assert page.has_text?('+')
+    assert_equal "es 0", first('li[data-locale] a.current').text
+
+    # Switch to fr, leaves and comes back
+    click_link 'fr 0'
+    within '.header__breadcrumb' do
+      click_link 'Interpretations'
+    end
+    click_link 'terminator_find'
+    assert page.has_text?('+')
+    assert_equal "fr 0", first('li[data-locale] a.current').text
   end
 
 

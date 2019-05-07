@@ -14,14 +14,26 @@ en:
       warnings:
         one: "1 Warning"
         other: "%{count} Warnings"
-      verbose_on: Verbose ON
-      verbose_off: Verbose OFF
-      datetime_auto: Auto now
-      datetime_manual: Manual now
-      datetime_addon: Now (ISO 8601)
+      verbose:
+        label: "Verbose"
+        enable: "ON"
+        disable: "OFF"
+      datetime:
+        label: "Now"
+        auto: "Auto"
+        manual: "Manual"
+        addon: "Now (ISO 8601)"
       go_to_api_endpoint: Go to API endpoint
       download_package: Download package
-      all_locales: "Language: Auto"
+      locales:
+        label: "Language"
+        all: "Auto"
+      spellchecking:
+        label: "Spellchecking"
+        inactive: "Inactive"
+        low: "Low"
+        medium: "Medium"
+        high: "High"
       fullscreen_enter: Enter in fullscreen mode
       fullscreen_leave: Leave fullscreen mode
       expression_text: Expression
@@ -31,3 +43,27 @@ en:
       reset:
         title: Reset console to the current agent
       no_access: You do not have access to this agent.
+      regression_check:
+        add: "Add to tests suite"
+        update: Update
+        sentence_too_long:
+          Adding this to the tests suite is not possible because the text to
+          analyze exceeds 200 characters ({{test.sentence.length}} characters).
+        summary:
+          tests_suite: Tests suite
+          tests:
+            zero: "0 test"
+            one: "1 test"
+            other: "%{count} tests"
+          running:
+            zero: "0 running"
+            one: "1 running"
+            other: "%{count} running"
+          success:
+            zero: "0 success"
+            one: "1 success"
+            other: "%{count} success"
+          failures:
+            zero: "0 failure"
+            one: "1 failure"
+            other: "%{count} failures"

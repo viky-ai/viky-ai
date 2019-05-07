@@ -1,0 +1,33 @@
+<h2>
+  <%= t("views.backend.dashboard.top_predecessors") %>
+</h2>
+
+<table>
+  <tbody>
+    <% @top_predecessors_agents.each do |data| %>
+      <% agent = Agent.find(data['id']) %>
+      <tr>
+        <td>
+          <% if current_user.can? :show, agent %>
+            <a href="<%= user_agent_path(agent.owner, agent) %>">
+              <strong>
+                <%= agent.name %>
+              </strong>
+              <small><%= agent.slug %></small>
+            </a>
+          <% else %>
+            <strong><%= agent.name %></strong>
+            <small><%= agent.slug %></small>
+          <% end %>
+        </td>
+        <td><%= number_with_delimiter(data['count']) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div class="top-pagination">
+  <%= paginate @top_predecessors_agents, window: 1, param_name: :predecessors_page %>
+  <p class="pagination-info"><%= page_entries_info @top_predecessors_agents %></p>
+</div>
+

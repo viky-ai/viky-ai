@@ -8,14 +8,27 @@
   @include display_flex();
   justify-content: space-between;
   flex-wrap: wrap;
-  height: 3.5em;
+  height: 3em;
 }
+
 .h-nav__header{
-  padding: 1em;
+  padding: 0;
+  a{
+    display: block;
+    padding: .75em 1.25em;
+    &:hover,
+    &:focus{
+      background-color: rgba(black, .5);
+    }
+    svg{
+      display: block;
+    }
+  }
   &.h-nav__header--hidden{
     display: none;
   }
 }
+
 .h-nav__content{
   & > ul{
     padding: 0;
@@ -24,17 +37,18 @@
     & > li{
       & > a{
         display:block;
-        padding: 1em 1em calc(1em - 4px) 1em;
+        padding: .75em .75em calc(.75em - 4px) .75em;
         color: rgba(white, .7);
         text-decoration: none;
         border-bottom: 4px solid transparent;
         white-space: nowrap;
+
         &:hover,
         &:focus{
           color: #fff;
           background-color: rgba(black, .5);
           .icon svg{
-            fill: rgba(white, .9);
+            fill: rgba(white, .6);
           }
         }
         &.current{
@@ -51,17 +65,20 @@
 
   .dropdown{
     .dropdown__trigger{
-      display:block;
-      padding: 1rem;
-      color: rgba(white, .7);
+      display: block;
+      padding: .75rem 1rem;
+      color: rgba(white, .6);
       text-decoration: none;
       .icon svg{
-        fill: rgba(white, .7);
+        fill: rgba(white, .6);
       }
       &:hover,
       &:focus{
         color: #fff;
         background-color: rgba(black, .5);
+        .icon svg{
+          fill: rgba(white, .9);
+        }
       }
     }
     .dropdown__content{
@@ -70,20 +87,27 @@
         font-size: 1em;
         color: rgba(white, .7);
         .icon svg{
-          fill: rgba(white, .7);
+          fill: rgba(white, .4);
         }
         &.current,
         &:hover{
           background-color: rgba(black, .5);
           color: #fff;
+          .icon svg{
+            fill: rgba(white, .6);
+          }
         }
+      }
+      ul li.separator{
+        border-top: 1px solid rgba(#fff, .1);
+        box-shadow: 0 -1px #000;
       }
     }
 
   }
 
   &.h-nav__content--hide-user-data{
-    .user span{
+    .user .user__info{
       display: none;
     }
   }

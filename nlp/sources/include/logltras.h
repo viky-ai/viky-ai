@@ -227,6 +227,12 @@ DEFPUBLIC(og_status) OgLtrasParse(void *hltras, struct og_ltras_input *input, st
 DEFPUBLIC(og_status) OgLtrasFlowChart(void *hltras, struct og_ltras_input *input, struct og_ltra_trfs **output);
 
 /**
+ * Set a minimum score array
+ */
+DEFPUBLIC(int) OgLtrasMinimumScoreSet(void *hltras, unsigned minimum_score_size, double *minimum_score);
+DEFPUBLIC(int) OgLtrasMinimumScoreFinalSet(void *hltras, unsigned minimum_score_size, double *minimum_score);
+
+/**
  * Initialize handle of base automaton
  *
  * @param hltras handle for ltras
@@ -633,6 +639,7 @@ DEFPUBLIC(int) OgLtrasModuleId(void *hltras,char *module_name,int *pmodule_id);
  * @return function status : CORRECT else ERREUR
  */
 DEFPUBLIC(og_status) OgLtrasModuleReadConf(void *hltras, char *filename);
+DEFPUBLIC(og_status) OgLtrasModuleReadConfInterpolateScores(void *hltras, double *ms);
 
 
 /**

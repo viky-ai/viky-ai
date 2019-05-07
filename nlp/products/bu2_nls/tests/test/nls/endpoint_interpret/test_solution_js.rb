@@ -25,7 +25,7 @@ module Nls
 
       def create_hello_emoji_test_package
         package = Package.new("hello_emoji_test_package")
-        package.default_glued = true
+        package.default_glue_distance = 0
         package.default_keep_order = true
 
         interpretation = package.new_interpretation("hello_emoji_test")
@@ -33,13 +33,13 @@ module Nls
         interpretation << Expression.new("emoji 🔥", solution: '`"🔥"`')
         interpretation << Expression.new("emoji 🔥+👋", solution: '`"🔥+👋"`')
         interpretation << Expression.new("emoji array 🔥+👋", solution: '`[ "🔥", "👋" ]`')
-        interpretation << Expression.new("emoji abject 🔥+👋", solution: '`{ fire: "🔥", hand: "👋" }`')
+        interpretation << Expression.new("emoji object 🔥+👋", solution: '`{ fire: "🔥", hand: "👋" }`')
         package
       end
 
       def create_solution_test_package
         package = Package.new("solution_test_package")
-        package.default_glued = true
+        package.default_glue_distance = 0
         package.default_keep_order = true
 
         interpretation = package.new_interpretation("solution_test_js")
@@ -106,7 +106,7 @@ module Nls
 
         matches = package.new_interpretation("matches")
         matches.new_expression("@{match}", aliases: { match: match })
-        matches.new_expression("@{match} @{matches}", aliases: { match: match, matches: matches }, glued: false)
+        matches.new_expression("@{match} @{matches}", aliases: { match: match, matches: matches }, glue_distance: 20)
 
         solution_test_combine = package.new_interpretation("solution_test_combine")
         solution_test_combine.new_expression("sol combine @{match}", aliases: { match: matches })
@@ -115,24 +115,24 @@ module Nls
         solution_test_2combine.new_expression("sol list combine @{combine}", aliases: { combine: solution_test_combine })
 
         js_isolation_0 = package.new_interpretation("js_isolation_0")
-        js_isolation_0 << Expression.new("jsisolationzero", solution: "`'js_isolation_0';`", keep_order: true, glued: false)
+        js_isolation_0 << Expression.new("jsisolationzero", solution: "`'js_isolation_0';`", keep_order: true, glue_distance: 20)
 
         js_isolation_1 = package.new_interpretation("js_isolation_1")
-        js_isolation_1 << Expression.new("@{js_isolation_0} jsisolationun", aliases: { js_isolation_0: js_isolation_0 }, solution: "`var undef_variable = 'should not be defined'; 'js_isolation_1';`", keep_order: true, glued: false)
-        js_isolation_1 << Expression.new("jsisolationun", solution: "`var undef_variable = 'should not be defined'; 'js_isolation_1';`", keep_order: true, glued: false)
-        js_isolation_1 << Expression.new("jsisolationun moment", solution: "`moment = null; 'js_isolation_1';`", keep_order: true, glued: false)
-        js_isolation_1 << Expression.new("jsisolationun duktapenlp", solution: "`duktape_nlp = null; 'js_isolation_1';`", keep_order: true, glued: false)
+        js_isolation_1 << Expression.new("@{js_isolation_0} jsisolationun", aliases: { js_isolation_0: js_isolation_0 }, solution: "`var undef_variable = 'should not be defined'; 'js_isolation_1';`", keep_order: true, glue_distance: 20)
+        js_isolation_1 << Expression.new("jsisolationun", solution: "`var undef_variable = 'should not be defined'; 'js_isolation_1';`", keep_order: true, glue_distance: 20)
+        js_isolation_1 << Expression.new("jsisolationun moment", solution: "`moment = null; 'js_isolation_1';`", keep_order: true, glue_distance: 20)
+        js_isolation_1 << Expression.new("jsisolationun duktapenlp", solution: "`duktape_nlp = null; 'js_isolation_1';`", keep_order: true, glue_distance: 20)
 
         js_isolation_2 = package.new_interpretation("js_isolation_2")
-        js_isolation_2 << Expression.new("@{js_isolation_1} jsisolationdeux"    , aliases: { js_isolation_1: js_isolation_1 }, solution: "`{ js_isolation_0: js_isolation_0, js_isolation_1: js_isolation_1, js_isolation_2: 'js_isolation_2' }`", keep_order: true, glued: false)
-        js_isolation_2 << Expression.new("@{js_isolation_1} jsisolationdeux bis", aliases: { js_isolation_1: js_isolation_1 }, solution: "`{ js_isolation_1: js_isolation_1, js_isolation_2: 'js_isolation_2', bug: undef_variable }`", keep_order: true, glued: false)
-        js_isolation_2 << Expression.new("jsisolationdeux", solution: "`{ bug: undef_variable }`", keep_order: true, glued: false)
+        js_isolation_2 << Expression.new("@{js_isolation_1} jsisolationdeux"    , aliases: { js_isolation_1: js_isolation_1 }, solution: "`{ js_isolation_0: js_isolation_0, js_isolation_1: js_isolation_1, js_isolation_2: 'js_isolation_2' }`", keep_order: true, glue_distance: 20)
+        js_isolation_2 << Expression.new("@{js_isolation_1} jsisolationdeux bis", aliases: { js_isolation_1: js_isolation_1 }, solution: "`{ js_isolation_1: js_isolation_1, js_isolation_2: 'js_isolation_2', bug: undef_variable }`", keep_order: true, glue_distance: 20)
+        js_isolation_2 << Expression.new("jsisolationdeux", solution: "`{ bug: undef_variable }`", keep_order: true, glue_distance: 20)
 
         js_isolation_moment_1 = package.new_interpretation("js_isolation_moment_1")
-        js_isolation_moment_1 << Expression.new('js_isolation_moment', solution: "leaks", keep_order: true, glued: false)
+        js_isolation_moment_1 << Expression.new('js_isolation_moment', solution: "leaks", keep_order: true, glue_distance: 20)
 
         js_isolation_moment = package.new_interpretation('js_isolation_moment')
-        js_isolation_moment << Expression.new('@{moment}', aliases: { moment: js_isolation_moment_1, }, solution: "`moment`", keep_order: true, glued: false)
+        js_isolation_moment << Expression.new('@{moment}', aliases: { moment: js_isolation_moment_1, }, solution: "`moment`", keep_order: true, glue_distance: 20)
 
         package
       end
@@ -315,6 +315,30 @@ module Nls
       def test_solution_moment_isolation
         check_interpret("js_isolation_moment", interpretation: "js_isolation_moment")
         check_interpret("sol date", interpretation: "solution_test_js", solution: "2017-12-03T00:00:00.000Z")
+      end
+
+      def test_big_solution
+
+        solution = {}
+        (1024*128).times do |i|
+          solution["js_key_#{i}"] = "js_value_#{i}"
+        end
+
+        package = Package.new('big_sol_test_package')
+        package.default_glue_distance = 0
+        package.default_keep_order = true
+        interpretation = package.new_interpretation('big_sol_test')
+        interpretation << Expression.new("big sol test", solution: "`#{JSON.pretty_generate(solution)}`")
+        Nls.package_update(package)
+
+        File.open("/tmp/temp.json","w") do |f|
+          f.write(solution.to_json)
+        end
+
+        assert_raises RestClient::InternalServerError, "NlpJsEval : js script size is too long" do
+          check_interpret('big sol test', interpretation: 'big_sol_test', solution: solution)
+        end
+
       end
 
     end

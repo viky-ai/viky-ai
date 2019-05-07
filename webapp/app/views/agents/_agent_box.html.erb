@@ -6,33 +6,36 @@
     <% css_style = "background-image: url(#{agent.image_url(:background)});" %>
   <% end %>
 
-  <a href="<%= user_agent_path(agent.owner, agent.agentname) %>"
-     class="agent-box__header <%= css_class %>"
-     style="<%= css_style %>">
-    <% if agent.is_public? %>
-      <span class="agent-box__header__ribbon">
-        <%= t('activerecord.attributes.agent.visibility_is_public') %>
-      </span>
-    <% end %>
-    <span class="agent-box__header__role">
-      <% if current_user.owner? agent %>
-        <span class="badge badge--small badge--primary">
-          <%= t('views.agents.show.owner') %>
-        </span>
-      <% elsif agent.collaborator? current_user %>
-        <span class="merged-badges">
-          <span class="badge badge--small">
-            <%= t('views.agents.show.collaborator') %>
-          </span>
-          <span class="badge badge--small badge--primary">
-            <% if current_user.can? :edit, agent %>
-              <%= t('views.agents.show.edit') %>
-            <% else %>
-              <%= t('views.agents.show.show') %>
-            <% end %>
-          </span>
+  <a href="<%= user_agent_path(agent.owner, agent.agentname) %>">
+    <div class="agent-box__header <%= css_class %>" style="<%= css_style %>">
+      <% if agent.is_public? %>
+        <span class="agent-box__header__ribbon">
+          <%= t('activerecord.attributes.agent.visibility_is_public') %>
         </span>
       <% end %>
+      <span class="agent-box__header__role">
+        <% if current_user.owner? agent %>
+          <span class="badge badge--small badge--primary">
+            <%= t('views.agents.show.owner') %>
+          </span>
+        <% elsif agent.collaborator? current_user %>
+          <span class="merged-badges">
+            <span class="badge badge--small badge--black">
+              <%= t('views.agents.show.collaborator') %>
+            </span>
+            <span class="badge badge--small badge--primary">
+              <% if current_user.can? :edit, agent %>
+                <%= t('views.agents.show.edit') %>
+              <% else %>
+                <%= t('views.agents.show.show') %>
+              <% end %>
+            </span>
+          </span>
+        <% end %>
+      </span>
+    </div>
+    <span class="agent-box__avatar">
+      <img src="<%= agent.owner.image_url(:square) %>" />
     </span>
     <h2>
       <%= agent.name %>
@@ -47,17 +50,22 @@
 
   <div class="agent-box__content">
     <div class="agent-box__content__info">
-      <p class="primary">
-        <%= t('views.agents.show.x_collaborators', count: agent.collaborators.count) %>
-      </p>
-      <p class="secondary">
-        <% if agent.updated_at == agent.created_at %>
-          <%= t('views.agents.index.created_time_ago') %>
-        <% else %>
-          <%= t('views.agents.index.updated_time_ago') %>
-        <% end %>
-        <%= local_time_ago(agent.updated_at) %>
-      </p>
+      <% collaborators_count = agent.collaborators.count %>
+      <% if collaborators_count > 0 %>
+        <div class="avatars-list">
+          <% agent.collaborators.limit(15).each do |collaborator| %>
+            <img src="<%= collaborator.image_url(:square) %>"
+                 title="<%= collaborator.name_or_username %>" />
+          <% end %>
+        </div>
+      <% end %>
+      <%= t('views.agents.show.x_collaborators', count: collaborators_count) %>.
+      <% if agent.updated_at == agent.created_at %>
+        <%= t('views.agents.index.created_time_ago') %>
+      <% else %>
+        <%= t('views.agents.index.updated_time_ago') %>
+      <% end %>
+      <%= local_time_ago(agent.updated_at) %>.
     </div>
 
     <div class="agent-box__content__actions">
@@ -65,7 +73,7 @@
         <% if current_user.can? :edit, agent %>
           <div class="dropdown">
             <div class="dropdown__trigger">
-              <button class="btn btn--small"><span class="icon"><%= icon_dots %></span></button>
+              <button class="btn btn--small"><span class="icon icon--x-small"><%= icon_dots %></span></button>
             </div>
             <div class="dropdown__content dropdown__content--hidden dropdown__content--on-right">
               <ul>

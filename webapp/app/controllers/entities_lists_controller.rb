@@ -12,19 +12,21 @@ class EntitiesListsController < ApplicationController
   end
 
   def show
-    respond_to do |format|
-      format.html { @entity = Entity.new }
-      format.csv do
-        filename = "#{@owner.username}_#{@agent.agentname}_#{@entities_list.listname}_#{Time.current.strftime('%Y-%m-%d')}.csv"
-        response.headers['Content-Disposition'] = 'attachment; filename="' + filename + '"'
-        render :show
-      end
+    @entity = Entity.new
+    @paginate_is_enabled = paginate_is_enabled?
+    @entities = @entities_list
+      .entities
+      .order(position: :desc, created_at: :desc)
+      .search(params[:search])
+    if @paginate_is_enabled
+      @entities = @entities.page(params[:page]).per(20)
     end
   end
 
   def new
     @entities_list = EntitiesList.new(
-      visibility: EntitiesList.visibilities.key(EntitiesList.visibilities[:is_private])
+      visibility: EntitiesList.visibilities.key(EntitiesList.visibilities[:is_private]),
+      proximity: 'glued'
     )
     render partial: 'new'
   end
@@ -53,11 +55,16 @@ class EntitiesListsController < ApplicationController
   end
 
   def update
+    request_origin = params[:origin]
     respond_to do |format|
       if @entities_list.update(entities_list_params)
         format.json {
-          redirect_to user_agent_entities_lists_path(@owner, @agent),
-            notice: t('views.entities_lists.edit.success_message')
+          if request_origin == "index"
+            redirect_url = user_agent_entities_lists_path(@owner, @agent)
+          elsif request_origin == "show"
+            redirect_url = user_agent_entities_list_path(@owner, @agent, @entities_list)
+          end
+          redirect_to redirect_url, notice: t('views.entities_lists.edit.success_message')
         }
       else
         format.json {
@@ -114,13 +121,17 @@ class EntitiesListsController < ApplicationController
 
   private
 
+    def paginate_is_enabled?
+      @entities_list.entities_count > 100
+    end
+
     def set_entities_list
       entities_list_id = params[:entities_list_id] || params[:id]
       @entities_list = @agent.entities_lists.friendly.find(entities_list_id)
     end
 
     def entities_list_params
-      params.require(:entities_list).permit(:listname, :description, :visibility)
+      params.require(:entities_list).permit(:listname, :description, :visibility, :proximity)
     end
 
     def set_owner

@@ -79,7 +79,7 @@
         {
           "expression": "of the",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "en"
         },
         {
@@ -93,7 +93,7 @@
         {
           "expression": "de la",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         },
         {
@@ -131,7 +131,7 @@
         {
           "expression": "in the",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "en"
         },
         {
@@ -147,7 +147,7 @@
         {
           "expression": "il y a",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         }
       ]
@@ -185,7 +185,7 @@
         {
           "expression": "for the",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "en"
         },
         {
@@ -203,19 +203,19 @@
         {
           "expression": "pour le",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         },
         {
           "expression": "pour les",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         },
         {
           "expression": "pour la",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         },
         {

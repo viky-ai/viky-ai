@@ -74,13 +74,9 @@ class CardListHelper
 
   @updateBlankslates: ->
     if $(".card-list > li").length == 0
-      if $(".card .tabs > ul > li").length <= 2
-        $("#blankslate-start").show()
-      else
-        $("#blankslate-start-or-remove").show()
+      $("#blankslate-start").show()
     else
       $("#blankslate-start").hide()
-      $("#blankslate-start-or-remove").hide()
 
   @updateDraggable: ->
     if $('.tabs > ul > li.js-draggable-locale').length > 0

@@ -258,7 +258,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
         }
       ]
     })
-    assert !interpretation.save
+    assert_not interpretation.save
     expected = ['Interpretation aliases aliasname has already been taken']
     assert_equal expected, interpretation.errors.full_messages
   end
@@ -266,7 +266,11 @@ class InterpretationAliasTest < ActiveSupport::TestCase
 
   test 'Redefine deleted aliasname' do
     interpretation = interpretations(:weather_forecast_tomorrow)
-    interpretation.update({
+
+    expected = ["question", "when"]
+    assert_equal expected, interpretation.interpretation_aliases.pluck(:aliasname)
+
+    assert interpretation.update({
       interpretation_aliases_attributes: [
         {
           id: interpretation_aliases(:weather_forecast_tomorrow_question).id,
@@ -284,7 +288,8 @@ class InterpretationAliasTest < ActiveSupport::TestCase
         }
       ]
     })
-    assert interpretation.save
+    expected = ["when", "who"]
+    assert_equal expected, interpretation.interpretation_aliases.pluck(:aliasname)
   end
 
 
@@ -292,22 +297,22 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     interpretation_alias = interpretation_aliases(:weather_forecast_tomorrow_question)
 
     interpretation_alias.aliasname = '7up'
-    assert !interpretation_alias.validate
+    assert_not interpretation_alias.validate
     expected = ['Parameter name is invalid']
     assert_equal expected, interpretation_alias.errors.full_messages
 
     interpretation_alias.aliasname = 'a-b'
-    assert !interpretation_alias.validate
+    assert_not interpretation_alias.validate
     expected = ['Parameter name is invalid']
     assert_equal expected, interpretation_alias.errors.full_messages
 
     interpretation_alias.aliasname = 'ab('
-    assert !interpretation_alias.validate
+    assert_not interpretation_alias.validate
     expected = ['Parameter name is invalid']
     assert_equal expected, interpretation_alias.errors.full_messages
 
     interpretation_alias.aliasname = 'function'
-    assert !interpretation_alias.validate
+    assert_not interpretation_alias.validate
     expected = ['Parameter name is invalid']
     assert_equal expected, interpretation_alias.errors.full_messages
 
@@ -319,6 +324,15 @@ class InterpretationAliasTest < ActiveSupport::TestCase
 
     interpretation_alias.aliasname = 'ab2'
     assert interpretation_alias.validate
+  end
+
+
+  test 'Aliasname can be of maximum 2048 bytes' do
+    interpretation_alias = interpretation_aliases(:weather_forecast_tomorrow_question)
+
+    interpretation_alias.aliasname = 'Ò' * 1025
+    assert_not interpretation_alias.validate
+    assert_equal 'Parameter name (2.002 KB) is too long (maximum is 2 KB)', interpretation_alias.errors.full_messages[0]
   end
 
 
@@ -343,8 +357,11 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       ]
     })
     assert interpretation.save
+    expected = ["who1", "who2"]
+    assert_equal expected, interpretation.interpretation_aliases.pluck(:aliasname)
+
     assert interpretation.update({
-       :interpretation_aliases_attributes => [
+       interpretation_aliases_attributes: [
          {
            id: interpretation.interpretation_aliases.first.id,
            position_start: 0,
@@ -361,7 +378,10 @@ class InterpretationAliasTest < ActiveSupport::TestCase
          }
        ]
     })
+    expected = ["who2", "who1"]
+    assert_equal expected, interpretation.interpretation_aliases.pluck(:aliasname)
   end
+
 
   test 'Alias type regex should have a regular expression' do
     regexp_invalid = InterpretationAlias.new(
@@ -387,6 +407,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     assert regexp_valid.save
   end
 
+
   test 'Regular expression should be valid' do
     regexp_invalid = InterpretationAlias.new(
       position_start: 0,
@@ -400,5 +421,42 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     assert_not_nil regexp_invalid.errors[:reg_exp]
     expected_msg = ['Regular expression should be valid']
     assert_equal expected_msg, regexp_invalid.errors.full_messages
+  end
+
+
+  test 'Regular expression should be less than 4096 bytes' do
+    test_regexp = InterpretationAlias.new(
+      position_start: 0,
+      position_end: 5,
+      aliasname: 'where',
+      interpretation_id: interpretations(:terminator_find_sarah).id,
+      nature: 'type_regex',
+      reg_exp: "[a#{'b' * 4097}c]"
+    )
+    assert !test_regexp.save
+    assert_not_nil test_regexp.errors[:reg_exp]
+    assert_equal ['Regular expression (4.005 KB) is too long (maximum is 4 KB)'], test_regexp.errors.full_messages
+
+    test_regexp.reg_exp = "[a#{'b' * 4000}c]"
+    assert test_regexp.save
+  end
+
+
+  test 'Any and List option compability' do
+    interpretation_alias = InterpretationAlias.new(
+      aliasname: "say_my_name",
+      position_start: 8,
+      position_end: 21,
+      interpretation: interpretations(:weather_forecast_demain),
+      interpretation_aliasable: intents(:weather_question),
+      is_list: true,
+      any_enabled: true,
+    )
+    assert_not interpretation_alias.save
+    expected = ['Options "List" and "Any" are not compatibles on the same annotation.']
+    assert_equal expected, interpretation_alias.errors.full_messages
+
+    interpretation_alias.any_enabled = false
+    assert interpretation_alias.save
   end
 end

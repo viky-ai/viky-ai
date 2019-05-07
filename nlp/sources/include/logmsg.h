@@ -106,7 +106,7 @@ DEFPUBLIC(FILE *) OgLogGetConsoleStream(void *handle);
 #ifdef _EXECINFO_H
 #define OG_LOG_BACKTRACE(hmsg, str_error_message)  { void *DPT_trace[255]; int DPT_trace_size = backtrace(DPT_trace, sizeof(DPT_trace)); char **DPT_messages = backtrace_symbols(DPT_trace, DPT_trace_size); OgLogCritical(hmsg, "%s, backtrace :", str_error_message); for (int DPT_i = 0; DPT_i < DPT_trace_size; DPT_i++) { OgLogCritical(hmsg, "\t%s", DPT_messages[DPT_i]); } OgLogCritical(hmsg, "\t%s\n", "..."); free(DPT_messages); }
 #else
-#define OG_LOG_BACKTRACE(hmsg, str_error_message)  { OgLogCritical(hmsg, "%s, no backtrace available (no execinfo.h)", str_error_message) }
+#define OG_LOG_BACKTRACE(hmsg, str_error_message)  { OgLogCritical(hmsg, "%s, no backtrace available (no execinfo.h)", str_error_message); }
 #endif
 
 #define _LOGMSGALIVE_

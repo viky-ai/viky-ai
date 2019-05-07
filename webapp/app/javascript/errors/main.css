@@ -1,5 +1,3 @@
-@import '../framework/abstracts/mixins';
-
 body,
 html{
   height: 100%;
@@ -24,7 +22,7 @@ html{
 }
 
 .container{
-  @include display_flex();
+  display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;

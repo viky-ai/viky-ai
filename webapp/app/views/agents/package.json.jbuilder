@@ -22,7 +22,8 @@ json.interpretations @interpretations do |intent|
     end
     json.locale interpretation[:locale]               unless interpretation[:locale].blank?
     json.keep_order interpretation[:keep_order]       unless interpretation[:keep_order].blank?
-    json.glued interpretation[:glued]                 unless interpretation[:glued].blank?
+
+    json.glue_distance interpretation[:glue_distance]
     json.glue_strength interpretation[:glue_strength] unless interpretation[:glue_strength].blank?
     json.solution interpretation[:solution]           unless interpretation[:solution].blank?
   end

@@ -28,6 +28,7 @@ sources/external_dependencies/glib/**/*.test
 sources/external_dependencies/glib/**/*.log
 sources/external_dependencies/glib/**/*.trs
 
+resources/morphology/fr/build
 
 # Duktape temp file
 sources/external_dependencies/duktape/dist
