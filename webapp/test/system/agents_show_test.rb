@@ -17,6 +17,32 @@ class AgentsShowTest < ApplicationSystemTestCase
     assert page.has_text?("Unauthorized operation.")
   end
 
+  test "Navigation to agent show when user is a collaborator in another agent with same name" do
+    user = users(:show_on_agent_weather)
+
+    new_agent = Agent.new(
+      name: "Weather agent 2",
+      agentname: agents(:weather).agentname,
+      description: "Agent A decription",
+      visibility: 'is_public',
+      nlp_updated_at: '2019-01-21 10:07:53.484942',
+    )
+    new_agent.memberships << Membership.new(user_id: user.id, rights: "all")
+    assert new_agent.save
+
+    login_as(user.email, 'BimBamBoom')
+    go_to_agents_index
+    fill_in 'search_query', with: 'weather'
+    click_button '#search'
+
+    assert page.has_text?('My awesome weather bot admin/weather')
+    assert page.has_text?('Weather agent 2 show_on_agent_weather/weather')
+    
+    click_link 'Weather agent 2 show_on_agent_weather/weather'
+    assert_equal '/agents/show_on_agent_weather/weather', current_path
+    assert page.has_text?('Weather agent 2 show_on_agent_weather/weather')
+  end
+
 
   test 'No redirection when configuring from show' do
     go_to_agents_index

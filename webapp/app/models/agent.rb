@@ -40,6 +40,8 @@ class Agent < ApplicationRecord
   before_validation :clean_agentname
   before_destroy :check_collaborators_presence, prepend: true
 
+  scope :owned_by, ->(user) { where(owner_id: user.id) }
+
   after_update_commit do |record|
     if @need_nlp_push || record.previous_changes[:agentname].present?
       agent_regression_checks.update_all(state: 'running')

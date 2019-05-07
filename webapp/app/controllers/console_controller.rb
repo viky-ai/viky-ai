@@ -2,7 +2,7 @@ class ConsoleController < ApplicationController
 
   def interpret
     owner = User.friendly.find(params[:user_id])
-    agent = owner.agents.friendly.find(params[:id])
+    agent = owner.agents.owned_by(owner).friendly.find(params[:id])
 
     access_denied unless current_user.can? :show, agent
 
