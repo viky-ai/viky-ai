@@ -36,32 +36,18 @@ class EntitiesList < ApplicationRecord
       I18n.t('activerecord.attributes.entity.auto_solution_enabled'),
       I18n.t('activerecord.attributes.entity.solution')
     ])
-
-    # We need SQL pagination in order to minimise RAM usage.
-    #
-    # Paginate with a cursor intead of using Rails find_in_batches
-    # Because we need an order sql clause.
-    #
-    cursor_max = entities.order("position DESC").first.position
-    cursor_min = entities.order("position ASC").first.position
-    cursor = cursor_max + 1
-    while cursor > cursor_min do
-      io.write(
-        CSV.generate do |csv|
-          entities.select(:terms, :auto_solution_enabled, :solution, :position)
-            .where("position < ?", cursor)
-            .order("position DESC")
-            .limit(1_000)
-            .each do |entity|
-              terms = entity.terms.collect { |t|
-                t['locale'] == Locales::ANY ? t['term'] : "#{t['term']}:#{t['locale']}"
-              }.join('|')
-              csv << [terms, entity.auto_solution_enabled, entity.solution]
-            cursor = entity.position
+    io.write(
+      CSV.generate do |csv|
+        entities_in_ordered_batchs.each do |batch, _, _|
+          batch.select(:terms, :auto_solution_enabled, :solution, :position).each do |entity|
+            terms = entity.terms.collect { |t|
+              t['locale'] == Locales::ANY ? t['term'] : "#{t['term']}:#{t['locale']}"
+            }.join('|')
+            csv << [terms, entity.auto_solution_enabled, entity.solution]
           end
         end
-      )
-    end
+      end
+    )
   end
 
   def to_csv
