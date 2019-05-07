@@ -1,6 +1,7 @@
 stages:
   - prerequist
-  - build
+  - build_1
+  - build_2
   - test
   - docker_tag
   - deploy
@@ -39,22 +40,22 @@ build_elastic:
     - docker_build ${DOCKER_IMAGE_ELASTICSEARCH} deployment/docker_tools/elasticsearch
 
 build_doc:
-  stage: prerequist
+  stage: build_1
   script:
     - docker_build ${DOCKER_IMAGE_DOC}      doc    "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_doc_run"
 
 build_webapp:
-  stage: build
+  stage: build_2
   script:
     - docker_build ${DOCKER_IMAGE_APP}      webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_run"
 
 build_webapp_test:
-  stage: build
+  stage: build_2
   script:
     - docker_build ${DOCKER_IMAGE_APP}_test webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_test"
 
 build_nlp:
-  stage: build
+  stage: build_2
   script:
     - docker_build ${DOCKER_IMAGE_NLP}      nlp "--target run_image"
     - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--target test_image"
