@@ -62,7 +62,7 @@ class DependenciesController < ApplicationController
     def set_owner_and_agent
       begin
         @owner = User.friendly.find(params[:user_id])
-        @agent = @owner.agents.owned_by(@owner).friendly.find(params[:agent_id])
+        @agent = Agent.owned_by(@owner).friendly.find(params[:agent_id])
       rescue ActiveRecord::RecordNotFound
         redirect_to '/404'
       end

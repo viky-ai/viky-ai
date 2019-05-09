@@ -117,7 +117,7 @@ class MembershipsController < ApplicationController
 
     def set_agent
       owner = User.friendly.find(params[:user_id])
-      @agent = owner.agents.owned_by(owner).friendly.find(params[:agent_id])
+      @agent = Agent.owned_by(owner).friendly.find(params[:agent_id])
     end
 
     def build_agent_content(agent)

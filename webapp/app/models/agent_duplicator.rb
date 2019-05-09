@@ -34,7 +34,7 @@ class AgentDuplicator
 
     def self.rename_agent(source, record, new_owner)
       new_agentname    = "#{source.agentname}-copy"
-      agent_count  = new_owner.agents.where('agentname ILIKE ?', "#{new_agentname}%").count
+      agent_count  = Agent.owned_by(new_owner).where('agentname ILIKE ?', "#{new_agentname}%").count
       record.agentname = agent_count.zero? ? new_agentname : "#{new_agentname}-#{agent_count}"
       record.name = agent_count.zero? ? "#{source.name} [COPY]" : "#{source.name} [COPY #{agent_count}]"
     end
