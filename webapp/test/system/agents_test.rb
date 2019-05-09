@@ -99,6 +99,31 @@ class AgentsTest < ApplicationSystemTestCase
     assert page.has_text?('My new updated agent')
   end
 
+  test 'Configure an agent where user has edit rights; The user owns another agent with the same name' do
+    user = users(:edit_on_agent_weather)
+
+    new_agent = Agent.new(
+      name: "Weather agent 2",
+      agentname: agents(:weather).agentname,
+      description: "Agent A decription",
+      visibility: 'is_public',
+      nlp_updated_at: '2019-05-09 10:07:53.484942'
+    )
+    new_agent.memberships << Membership.new(user_id: user.id, rights: "all")
+    assert new_agent.save
+
+    user_go_to_agent_show(user, agents(:weather))
+    click_link 'Configure'
+    within('.modal') do
+      assert page.has_text? 'Configure agent'
+      fill_in 'Name', with: 'Updated weather agent of admin'
+      click_button 'Update'
+    end
+    assert page.has_text? 'Your agent has been successfully updated.'
+    assert_equal '/agents/admin/weather', current_path
+    assert page.has_text? 'Updated weather agent of admin'
+  end
+
 
   test 'Cancel configure from index' do
     admin_go_to_agents_index

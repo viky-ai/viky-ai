@@ -17,7 +17,7 @@ class AgentsShowTest < ApplicationSystemTestCase
     assert page.has_text?("Unauthorized operation.")
   end
 
-  test "Navigation to agent show when user is a collaborator in another agent with same name" do
+  test "Navigation to agent show where user is a collaborator; The user owns another agent with same name" do
     user = users(:show_on_agent_weather)
 
     new_agent = Agent.new(
