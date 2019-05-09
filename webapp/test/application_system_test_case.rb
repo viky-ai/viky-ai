@@ -45,14 +45,13 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     all('.h-nav a').last.click
   end
 
-  def go_to_agents_index
+  def admin_go_to_agents_index
     admin_login
     assert page.has_text?("Agents")
   end
 
-  def go_to_agent_intents(user, agent)
-    admin_login
-    visit user_agent_path(user, agent)
+  def go_to_agent_intents(agent)
+    visit user_agent_path(agent.owner, agent)
     assert page.has_link?('Interpretations')
     click_link 'Interpretations'
     within(".agent-header__content__nav .current") do
@@ -60,9 +59,8 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     end
   end
 
-  def go_to_agent_entities_lists(user, agent)
-    admin_login
-    visit user_agent_path(user, agent)
+  def go_to_agent_entities_lists(agent)
+    visit user_agent_path(agent.owner, agent)
     assert page.has_link?('Entities')
     click_link 'Entities'
     within(".agent-header__content__nav .current") do
@@ -70,13 +68,17 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     end
   end
 
-  def go_to_agent_show(user, agent)
-    admin_login
-    visit user_agent_path(user, agent)
-    assert page.has_text?("Overview")
+  def go_to_agent_show(agent)
+    visit user_agent_path(agent.owner, agent)
+    assert page.has_text?('Overview')
   end
 
-  def go_to_chatbots
+  def user_go_to_agent_show(user, agent)
+    login_as user.email, 'BimBamBoom'
+    go_to_agent_show(agent)
+  end
+
+  def admin_go_to_chatbots
     admin_login
     visit chatbots_path
     assert page.has_text?("Choose a chatbot on the left.")
