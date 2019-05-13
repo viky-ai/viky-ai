@@ -201,10 +201,20 @@ static og_status NlpPackageExpressionDump(og_nlp_th ctrl_nlp_th, package_t packa
     DPcErr;
   }
 
+  if (expression->pos != -1)
+  {
+    json_t *json_pos = json_integer(expression->pos);
+    IF(json_object_set_new(json_expression, "pos", json_pos))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping expression pos");
+      DPcErr;
+    }
+  }
+
   json_t *json_text = json_string(expression->text);
   IF(json_object_set_new(json_expression, "expression", json_text))
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping expression");
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping expression text");
     DPcErr;
   }
 

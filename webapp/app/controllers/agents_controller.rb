@@ -131,12 +131,15 @@ class AgentsController < ApplicationController
     render json: { api_token: @agent.api_token }
   end
 
+  # TODO change it to stream API
   def full_export
+    io = StringIO.new
+    Nlp::Package.new(@agent).full_json_export(io)
     respond_to do |format|
       format.json {
         filename = "#{@agent.slug}.#{Time.current.strftime('%Y-%m-%d_%H-%M-%S')}.json"
         response.headers["Content-Disposition"] = "inline; filename=\"#{filename}\""
-        render json: JSON.pretty_generate(Nlp::Package.new(@agent).full_json_export)
+        render json: io.string
       }
     end
   end
