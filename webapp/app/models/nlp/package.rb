@@ -7,7 +7,7 @@ class Nlp::Package
   class_attribute :sync_active
   self.sync_active = true
 
-  VERSION = 1  # Used to invalidate cache
+  VERSION = 2 # Used to invalidate cache
 
   JSON_HEADERS = {"Content-Type" => "application/json", "Accept" => "application/json"}
 
