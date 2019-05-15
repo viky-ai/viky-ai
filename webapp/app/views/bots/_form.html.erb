@@ -1,4 +1,4 @@
-<%= form_with model: [current_user, @agent, @bot], data: { type: 'json' }, class: 'bot-form' do |f| %>
+<%= form_with model: [@owner, @agent, @bot], data: { type: 'json' }, class: 'bot-form' do |f| %>
 
   <div class="field">
     <div class="control">

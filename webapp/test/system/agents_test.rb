@@ -3,7 +3,7 @@ require "application_system_test_case"
 class AgentsTest < ApplicationSystemTestCase
 
   test 'Navigation to agents index' do
-    go_to_agents_index
+    admin_go_to_agents_index
     assert page.has_text?("Agents")
     assert_equal "My awesome weather bot", first('.agent-box h2').text
   end
@@ -11,7 +11,7 @@ class AgentsTest < ApplicationSystemTestCase
 
   test 'blank slate' do
     Agent.delete_all
-    go_to_agents_index
+    admin_go_to_agents_index
     assert page.has_text?("Create your first agent")
 
     click_link 'New agent'
@@ -28,7 +28,7 @@ class AgentsTest < ApplicationSystemTestCase
   # Delete
   #
   test 'Button to delete agent is not present' do
-    go_to_agents_index
+    admin_go_to_agents_index
     all('.dropdown__trigger > button').first.click
     assert !page.has_link?("Delete")
   end
@@ -40,7 +40,7 @@ class AgentsTest < ApplicationSystemTestCase
       assert m.destroy
     end
 
-    go_to_agents_index
+    admin_go_to_agents_index
     first('.dropdown__trigger > button').click
     assert page.has_link?("Delete")
   end
@@ -54,7 +54,7 @@ class AgentsTest < ApplicationSystemTestCase
     end
 
     before_count = Agent.count
-    go_to_agents_index
+    admin_go_to_agents_index
 
     first('.dropdown__trigger > button').click
     click_link 'Delete'
@@ -80,7 +80,7 @@ class AgentsTest < ApplicationSystemTestCase
   # Configure
   #
   test 'Configure from index' do
-    go_to_agents_index
+    admin_go_to_agents_index
     first('.dropdown__trigger > button').click
     click_link 'Configure'
     assert page.has_text?('Configure agent')
@@ -99,9 +99,34 @@ class AgentsTest < ApplicationSystemTestCase
     assert page.has_text?('My new updated agent')
   end
 
+  test 'Configure an agent where user has edit rights; The user owns another agent with the same name' do
+    user = users(:edit_on_agent_weather)
+
+    new_agent = Agent.new(
+      name: "Weather agent 2",
+      agentname: agents(:weather).agentname,
+      description: "Agent A decription",
+      visibility: 'is_public',
+      nlp_updated_at: '2019-05-09 10:07:53.484942'
+    )
+    new_agent.memberships << Membership.new(user_id: user.id, rights: "all")
+    assert new_agent.save
+
+    user_go_to_agent_show(user, agents(:weather))
+    click_link 'Configure'
+    within('.modal') do
+      assert page.has_text? 'Configure agent'
+      fill_in 'Name', with: 'Updated weather agent of admin'
+      click_button 'Update'
+    end
+    assert page.has_text? 'Your agent has been successfully updated.'
+    assert_equal '/agents/admin/weather', current_path
+    assert page.has_text? 'Updated weather agent of admin'
+  end
+
 
   test 'Cancel configure from index' do
-    go_to_agents_index
+    admin_go_to_agents_index
     first('.dropdown__trigger > button').click
     click_link 'Configure'
     assert page.has_text?('Configure agent')
@@ -115,7 +140,7 @@ class AgentsTest < ApplicationSystemTestCase
   # Search
   #
   test 'Agents can be found by name' do
-    go_to_agents_index
+    admin_go_to_agents_index
     fill_in 'search_query', with: '800'
     click_button '#search'
     assert page.has_content?('T-800')
@@ -125,7 +150,7 @@ class AgentsTest < ApplicationSystemTestCase
 
 
   test 'Agents can be found by agentname' do
-    go_to_agents_index
+    admin_go_to_agents_index
     fill_in 'search_query', with: 'inator'
     click_button '#search'
     assert page.has_content?('T-800')
@@ -135,7 +160,7 @@ class AgentsTest < ApplicationSystemTestCase
 
 
   test 'Empty search agent' do
-    go_to_agents_index
+    admin_go_to_agents_index
     fill_in 'search_query', with: 'inator'
     click_button '#search'
     assert page.has_content?('T-800')
@@ -149,7 +174,7 @@ class AgentsTest < ApplicationSystemTestCase
 
 
   test 'Agents can be sorted by last updated date' do
-    go_to_agents_index
+    admin_go_to_agents_index
     find('.dropdown__trigger', text: 'Sort by name').click
     find('.dropdown__content', text: 'Sort by last update').click
 
@@ -169,7 +194,7 @@ class AgentsTest < ApplicationSystemTestCase
     agent.visibility = Agent.visibilities[:is_public]
     assert agent.save
 
-    go_to_agents_index
+    admin_go_to_agents_index
     assert page.has_content?('admin/terminator')
     assert page.has_content?('admin/weather')
     assert page.has_content?('confirmed/weather')
@@ -194,7 +219,7 @@ class AgentsTest < ApplicationSystemTestCase
     assert FavoriteAgent.create(user: admin, agent: agent_public)
     assert FavoriteAgent.create(user: admin, agent: agents(:weather))
 
-    go_to_agents_index
+    admin_go_to_agents_index
     assert page.has_content?('admin/terminator')
     assert page.has_content?('admin/weather')
     assert page.has_content?('confirmed/weather')
@@ -216,7 +241,7 @@ class AgentsTest < ApplicationSystemTestCase
     agent.visibility = Agent.visibilities[:is_public]
     assert agent.save
 
-    go_to_agents_index
+    admin_go_to_agents_index
     find('.dropdown__trigger', text: 'Sort by name').click
     find('.dropdown__content', text: 'Sort by last update').click
     click_button 'Private'
@@ -227,7 +252,7 @@ class AgentsTest < ApplicationSystemTestCase
 
     click_link "My awesome weather bot admin/weather"
     assert page.has_content?('Sharing overview')
-    go_to_agents_index
+    admin_go_to_agents_index
     assert page.has_content?('admin/weather')
     assert page.has_no_content?('admin/terminator')
     assert page.has_no_content?('confirmed/weather')
@@ -239,7 +264,7 @@ class AgentsTest < ApplicationSystemTestCase
 
 
   test 'Agents search can be reset' do
-    go_to_agents_index
+    admin_go_to_agents_index
     fill_in 'search_query', with: 'weather'
     click_button '#search'
     assert page.has_content?('1 agent found. Reset search')
@@ -250,7 +275,7 @@ class AgentsTest < ApplicationSystemTestCase
   # Token
   #
   test "Api Token is shown in edit" do
-    go_to_agents_index
+    admin_go_to_agents_index
 
     first('.dropdown__trigger > button').click
     click_link 'Configure'

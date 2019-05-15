@@ -323,11 +323,11 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
     def get_entities_import(elist, io, mode = 'append')
       io.rewind
-      File.open('tmp/temp.csv', 'w+') do |f|
+      File.open(File.join(Rails.root, 'tmp', 'temp.csv'), 'w+') do |f|
         IO.copy_stream(io, f)
       end
       EntitiesImport.new(
-        file:File.open('tmp/temp.csv'),
+        file:File.open(File.join(Rails.root, 'tmp', 'temp.csv')),
         mode: mode,
         entities_list: elist,
         user: users(:admin)

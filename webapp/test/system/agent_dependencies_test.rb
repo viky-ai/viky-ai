@@ -5,7 +5,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
 
 
   test "Add agent dependency" do
-    go_to_agents_index
+    admin_go_to_agents_index
     click_link "My awesome weather bot admin/weather"
     assert page.has_text?('Dependencies (0) - Dependents (0)')
 
@@ -34,7 +34,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
 
 
   test "Use alias from successor agent and delete dependency" do
-    go_to_agents_index
+    admin_go_to_agents_index
     click_link "My awesome weather bot admin/weather"
     assert page.has_text?('Dependencies (0) - Dependents (0)')
 
@@ -124,7 +124,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     admin = users(:admin)
     assert FavoriteAgent.create(user: admin, agent: agent_public)
 
-    go_to_agents_index
+    admin_go_to_agents_index
     click_link 'My awesome weather bot admin/weather'
     assert page.has_text?('Dependencies (0) - Dependents (0)')
 
@@ -142,7 +142,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     agent_public.visibility = Agent.visibilities[:is_public]
     assert agent_public.save
 
-    go_to_agents_index
+    admin_go_to_agents_index
     click_link 'My awesome weather bot admin/weather'
     assert page.has_text?('Dependencies (0) - Dependents (0)')
 

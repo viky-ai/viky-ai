@@ -3,7 +3,7 @@ require 'application_system_test_case'
 class BotsTest < ApplicationSystemTestCase
 
   test 'Navigate to bots list' do
-    go_to_agents_index
+    admin_go_to_agents_index
     assert page.has_text?('admin/weather')
     click_link 'My awesome weather bot admin/weather'
     assert page.has_text?('Bots')

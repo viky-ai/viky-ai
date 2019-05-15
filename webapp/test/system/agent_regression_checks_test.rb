@@ -8,7 +8,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
   end
 
   test 'Add new test' do
-    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 200,
@@ -46,7 +46,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
   end
 
   test 'Add a new test for entities list' do
-    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 200,
@@ -83,7 +83,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
   end
 
   test 'Add new test with language, now and spellchecking' do
-    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 200,
@@ -141,7 +141,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
   end
 
   test 'Try to add a new test but sentence is too long' do
-    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 200,
       body: {
@@ -165,7 +165,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
 
   test 'Can only add test for the first intent' do
-    go_to_agent_show(users(:admin), agents(:terminator))
+    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 200,
       body: {
@@ -196,7 +196,8 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
 
   test 'Detect interpretation already tested' do
-    go_to_agent_show(users(:admin), agents(:weather))
+    admin_login
+    go_to_agent_show(agents(:weather))
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 200,
       body: {
@@ -230,7 +231,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
 
   test 'Display tests suite panel' do
-    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
     within('.console') do
       assert page.has_content?('3 tests')
       assert page.has_content?('1 running, 1 success, 1 failure')
@@ -255,7 +256,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
 
   test 'Edit and delete button should be disabled for running tests' do
-    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
     within('.console') do
       assert page.has_content?('3 tests')
@@ -278,7 +279,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
 
   test 'Delete test - success' do
-    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
     within('.console') do
       assert page.has_content?('3 tests')
@@ -312,7 +313,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
 
   test 'Send test' do
-    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 200,
@@ -375,7 +376,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     @regression_weather_condition.state = 'failure'
     assert @regression_weather_condition.save
 
-    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
     within('.console') do
       assert page.has_content?('3 tests')
@@ -406,7 +407,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     @regression_weather_question.state = 'failure'
     assert @regression_weather_question.save
 
-    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
     within('.console') do
       assert page.has_content?('3 tests')

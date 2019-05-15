@@ -3,7 +3,7 @@ require "application_system_test_case"
 class ConsoleTest < ApplicationSystemTestCase
 
   test 'console basic interaction' do
-    go_to_agents_index
+    admin_go_to_agents_index
     click_link "My awesome weather bot admin/weather"
 
     within('.console') do
@@ -25,7 +25,7 @@ class ConsoleTest < ApplicationSystemTestCase
 
 
   test 'console basic interaction with content, verbose mode, now and spellchecking' do
-    go_to_agents_index
+    admin_go_to_agents_index
     click_link "My awesome weather bot admin/weather"
 
     within('.console') do
@@ -128,7 +128,7 @@ class ConsoleTest < ApplicationSystemTestCase
 
 
   test "console is persisted during agent nagivation, operation" do
-    go_to_agents_index
+    admin_go_to_agents_index
     click_link "My awesome weather bot admin/weather"
 
     within('.console') do
@@ -182,7 +182,7 @@ class ConsoleTest < ApplicationSystemTestCase
 
 
   test "Highlighted text should be clickable and should show the matched interpretations" do
-    go_to_agents_index
+    admin_go_to_agents_index
     click_link "My awesome weather bot admin/weather"
 
     within('.console') do
@@ -259,7 +259,7 @@ class ConsoleTest < ApplicationSystemTestCase
 
 
   test "Console is persisted when navigating between matched expressions" do
-    go_to_agents_index
+    admin_go_to_agents_index
     click_link "My awesome weather bot admin/weather"
 
     within('.console') do

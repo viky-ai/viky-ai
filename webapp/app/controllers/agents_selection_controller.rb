@@ -27,7 +27,7 @@ class AgentsSelectionController < ApplicationController
     end
 
     def set_agent
-      @agent = @owner.agents.friendly.find(params[:id])
+      @agent = Agent.owned_by(@owner).friendly.find(params[:id])
     end
 
     def search_params
