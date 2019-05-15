@@ -84,22 +84,19 @@ class InterpretationsCloner < Clowne::Cloner
 end
 
 class EntitiesListsCloner < Clowne::Cloner
-  
+
   after_persist do |origin, clone|
-    unless origin.entities_count.zero?
-      columns = [:terms, :auto_solution_enabled, :solution, :position, :entities_list_id, :searchable_terms]
-      begin
-        origin.entities.find_in_batches.each do |batch|
-          new_entities = []
-          batch.each do |entity|
-            new_entities << [entity.terms, entity.auto_solution_enabled, entity.solution, entity.position, clone.id, entity.searchable_terms]
-          end
-          Entity.import!(columns, new_entities)
+    begin
+      origin.entities.find_in_batches.each do |batch|
+        new_entities = batch.map do |entity|
+          [entity.terms, entity.auto_solution_enabled, entity.solution, entity.position, clone.id, entity.searchable_terms]
         end
-      rescue ActiveRecord::RecordInvalid => e
-        clone.agent.errors[:base] << e.record.errors.to_a
-        raise ActiveRecord::Rollback
+        columns = [:terms, :auto_solution_enabled, :solution, :position, :entities_list_id, :searchable_terms]
+        Entity.import!(columns, new_entities)
       end
+    rescue ActiveRecord::RecordInvalid => e
+      clone.agent.errors[:base] << e.record.errors.to_a
+      raise ActiveRecord::Rollback
     end
   end
 end
