@@ -303,23 +303,23 @@ class AgentTest < ActiveSupport::TestCase
 
 
   test "Test agent slug" do
-    agent = users(:admin).agents.friendly.find("weather")
+    agent = Agent.owned_by(users(:admin)).friendly.find("weather")
     assert_equal "My awesome weather bot", agent.name
 
     agent.agentname = 'new-weather'
     assert agent.save
-    agent = users(:admin).agents.friendly.find("weather")
+    agent = Agent.owned_by(users(:admin)).friendly.find("weather")
     assert_equal "My awesome weather bot", agent.name
-    agent = users(:admin).agents.friendly.find("new-weather")
+    agent = Agent.owned_by(users(:admin)).friendly.find("new-weather")
     assert_equal "My awesome weather bot", agent.name
 
     agent.agentname = 'new-new-weather'
     assert agent.save
-    agent = users(:admin).agents.friendly.find("weather")
+    agent = Agent.owned_by(users(:admin)).friendly.find("weather")
     assert_equal "My awesome weather bot", agent.name
-    agent = users(:admin).agents.friendly.find("new-weather")
+    agent = Agent.owned_by(users(:admin)).friendly.find("new-weather")
     assert_equal "My awesome weather bot", agent.name
-    agent = users(:admin).agents.friendly.find("new-new-weather")
+    agent = Agent.owned_by(users(:admin)).friendly.find("new-new-weather")
     assert_equal "My awesome weather bot", agent.name
   end
 

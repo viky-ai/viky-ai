@@ -55,6 +55,8 @@ class Agent < ApplicationRecord
   after_destroy do
     Nlp::Package.new(self).destroy
   end
+  
+  scope :owned_by, ->(user) { where(owner_id: user.id) }
 
   def self.search(q = {})
     conditions = where('1 = 1')

@@ -201,21 +201,31 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     new_agent = AgentDuplicator.new(agent, users(:admin)).duplicate
     assert new_agent.save
 
-    assert_equal @regression_weather_forecast.sentence, new_agent.agent_regression_checks.first.sentence
-    assert_nil new_agent.agent_regression_checks.first.now
-    assert_equal @regression_weather_forecast.language, new_agent.agent_regression_checks.first.language
-    assert_equal @regression_weather_forecast.expected, new_agent.agent_regression_checks.first.expected
-    assert_equal @regression_weather_forecast.got, new_agent.agent_regression_checks.first.got
-    assert_equal @regression_weather_forecast.state, new_agent.agent_regression_checks.first.state
-    assert_equal @regression_weather_forecast.position, new_agent.agent_regression_checks.first.position
+    duplicated_tests = new_agent.agent_regression_checks.order(:position)
+    assert_equal 3, duplicated_tests.size
+    assert_equal @regression_weather_forecast.sentence, duplicated_tests.first.sentence
+    assert_nil duplicated_tests.first.now
+    assert_equal @regression_weather_forecast.language, duplicated_tests.first.language
+    assert_equal @regression_weather_forecast.expected, duplicated_tests.first.expected
+    assert_equal @regression_weather_forecast.got, duplicated_tests.first.got
+    assert_equal @regression_weather_forecast.state, duplicated_tests.first.state
+    assert_equal @regression_weather_forecast.position, duplicated_tests.first.position
 
-    assert_equal @regression_weather_question.sentence, new_agent.agent_regression_checks.second.sentence
-    assert_equal @regression_weather_question.now, new_agent.agent_regression_checks.second.now
-    assert_equal @regression_weather_question.language, new_agent.agent_regression_checks.second.language
-    assert_equal @regression_weather_question.expected, new_agent.agent_regression_checks.second.expected
-    assert_nil new_agent.agent_regression_checks.second.got
-    assert_equal @regression_weather_question.state, new_agent.agent_regression_checks.second.state
-    assert_equal @regression_weather_question.position, new_agent.agent_regression_checks.second.position
+    assert_equal @regression_weather_question.sentence, duplicated_tests.second.sentence
+    assert_equal @regression_weather_question.now, duplicated_tests.second.now
+    assert_equal @regression_weather_question.language, duplicated_tests.second.language
+    assert_equal @regression_weather_question.expected, duplicated_tests.second.expected
+    assert_nil duplicated_tests.second.got
+    assert_equal @regression_weather_question.state, duplicated_tests.second.state
+    assert_equal @regression_weather_question.position, duplicated_tests.second.position
+
+    assert_equal @regression_weather_condition.sentence, duplicated_tests.third.sentence
+    assert_equal @regression_weather_condition.now, duplicated_tests.third.now
+    assert_equal @regression_weather_condition.language, duplicated_tests.third.language
+    assert_equal @regression_weather_condition.expected, duplicated_tests.third.expected
+    assert_nil duplicated_tests.third.got
+    assert_equal @regression_weather_condition.state, duplicated_tests.third.state
+    assert_equal @regression_weather_condition.position, duplicated_tests.third.position
   end
 
 end

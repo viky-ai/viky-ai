@@ -1,4 +1,4 @@
-<%= form_with model: [current_user, agent], data: { type: 'json' }, class: 'js-agent-form' do |f| %>
+<%= form_with model: [owner, agent], data: { type: 'json' }, class: 'js-agent-form' do |f| %>
 
 
   <% if ["edit", "update"].include? action_name %>

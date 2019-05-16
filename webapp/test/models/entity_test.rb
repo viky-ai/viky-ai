@@ -224,12 +224,7 @@ class EntityTest < ActiveSupport::TestCase
     new_positions = [entity_1.id, entity_2.id, entity_0.id, '132465789']
     Entity.update_positions(entities_list, new_positions)
     force_reset_model_cache([entity_0, entity_1, entity_2])
-    assert_equal [1_000_003, 1_000_002, 1_000_001], [entity_1.position, entity_2.position, entity_0.position]
-
-    new_positions = [entity_0.id, entity_1.id, entity_2.id]
-    Entity.update_positions(entities_list, new_positions)
-    force_reset_model_cache([entity_0, entity_1, entity_2])
-    assert_equal [2, 1, 0], [entity_0.position, entity_1.position, entity_2.position]
+    assert_equal [2, 1, 0], [entity_1.position, entity_2.position, entity_0.position]
   end
 
 

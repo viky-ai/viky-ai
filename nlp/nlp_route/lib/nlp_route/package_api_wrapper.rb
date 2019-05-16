@@ -8,8 +8,7 @@ module NlpRoute
     VIKY_URL = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
     NLP_URL =  ENV.fetch('VIKYAPP_NLP_URL') { 'http://localhost:9345' }
     VIKYAPP_INTERNAL_API_TOKEN = ENV.fetch('VIKYAPP_INTERNAL_API_TOKEN') { 'Uq6ez5IUdd' }
-    REQUEST_WAIT = 1 / 200 # 50ms
-    FAILURE_THRESHOLD = 3
+    INIT_TIMEOUT = ENV.fetch('VIKYAPP_NLP_INIT_TIMEOUT') { "#{60_000}" }
 
     # list all package from webapp
     def list_id
@@ -33,7 +32,12 @@ module NlpRoute
     # Send package to NLP
     def update_or_create(id, package)
       puts " + PackageApiWrapper POST #{NLP_URL}/packages/#{id}"
-      RestClient.post "#{NLP_URL}/packages/#{id}?timeout=45000", package[:data]
+      RestClient::Request.execute(
+        url: "#{NLP_URL}/packages/#{id}?timeout=#{INIT_TIMEOUT}",
+        method: :post,
+        read_timeout: (INIT_TIMEOUT.to_i + 100),
+        payload: package[:data]
+      )
     end
 
     # delete package to NLP

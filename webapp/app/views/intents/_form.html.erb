@@ -1,4 +1,4 @@
-<%= form_with model: [current_user, @agent, @intent], data: { type: 'json' }, class: 'js-intent-form' do |f| %>
+<%= form_with model: [@owner, @agent, @intent], data: { type: 'json' }, class: 'js-intent-form' do |f| %>
   <div class="intent-name-and-visibility">
     <div class="field">
       <%= f.label :intentname %>

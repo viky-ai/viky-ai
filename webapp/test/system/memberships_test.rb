@@ -3,7 +3,7 @@ require "application_system_test_case"
 class MembershipsTest < ApplicationSystemTestCase
 
   test 'Display sharing overview' do
-    go_to_agents_index
+    admin_go_to_agents_index
 
     first('.dropdown__trigger > button').click
     click_link 'Share'
@@ -32,7 +32,7 @@ class MembershipsTest < ApplicationSystemTestCase
 
 
   test 'update collaborator right' do
-    go_to_agents_index
+    admin_go_to_agents_index
 
     first('.dropdown__trigger > button').click
     click_link 'Share'
@@ -56,7 +56,7 @@ class MembershipsTest < ApplicationSystemTestCase
 
 
   test 'Try to delete collaborator right and cancel' do
-    go_to_agents_index
+    admin_go_to_agents_index
 
     first('.dropdown__trigger > button').click
     click_link 'Share'
@@ -76,7 +76,7 @@ class MembershipsTest < ApplicationSystemTestCase
 
 
   test 'Delete collaborator' do
-    go_to_agents_index
+    admin_go_to_agents_index
 
     first('.dropdown__trigger > button').click
     click_link 'Share'
@@ -106,7 +106,7 @@ class MembershipsTest < ApplicationSystemTestCase
   # Share agent
   #
   test 'Share agent with multiple users at the same time' do
-    go_to_agents_index
+    admin_go_to_agents_index
 
     agent_terminator_dropdown = all('.dropdown__trigger > button').last
     agent_terminator_dropdown.click
@@ -122,7 +122,7 @@ class MembershipsTest < ApplicationSystemTestCase
 
 
   test 'Share agent with multiple users at the same time with one error' do
-    go_to_agents_index
+    admin_go_to_agents_index
 
     first('.dropdown__trigger > button').click
     click_link 'Share'

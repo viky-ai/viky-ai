@@ -1,8 +1,11 @@
 require 'test_helper'
-require 'model_test_helper'
 
 class EntitiesImportTest < ActiveSupport::TestCase
 
+  def teardown
+    File.delete('tmp/temp.csv') if File.exist?('tmp/temp.csv')
+    File.delete('tmp/temp.png') if File.exist?('tmp/temp.png')
+  end
 
   test 'Basic import creation and entities list association' do
     entities_list = entities_lists(:weather_conditions)
@@ -320,11 +323,11 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
     def get_entities_import(elist, io, mode = 'append')
       io.rewind
-      File.open('tmp/temp.csv', 'w+') do |f|
+      File.open(File.join(Rails.root, 'tmp', 'temp.csv'), 'w+') do |f|
         IO.copy_stream(io, f)
       end
       EntitiesImport.new(
-        file:File.open('tmp/temp.csv'),
+        file:File.open(File.join(Rails.root, 'tmp', 'temp.csv')),
         mode: mode,
         entities_list: elist,
         user: users(:admin)
