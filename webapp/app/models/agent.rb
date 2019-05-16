@@ -48,6 +48,8 @@ class Agent < ApplicationRecord
 
   after_update_commit do |record|
     if @need_nlp_push || record.previous_changes[:agentname].present?
+      agent_regression_checks.update_all(state: 'running')
+      notify_tests_suite_ui
       sync_nlp
     end
   end
@@ -322,8 +324,6 @@ class Agent < ApplicationRecord
     end
 
     def sync_nlp
-      agent_regression_checks.update_all(state: 'running')
-      notify_tests_suite_ui
       Nlp::Package.new(self).push
       @need_nlp_push = false
     end

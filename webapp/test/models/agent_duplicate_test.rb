@@ -199,7 +199,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     assert @regression_weather_forecast.save
 
     new_agent = AgentDuplicator.new(agent, users(:admin)).duplicate
-    assert new_agent.save
+    assert new_agent.persisted?
 
     duplicated_tests = new_agent.agent_regression_checks.order(:position)
     assert_equal 3, duplicated_tests.size
@@ -227,5 +227,4 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     assert_equal @regression_weather_condition.state, duplicated_tests.third.state
     assert_equal @regression_weather_condition.position, duplicated_tests.third.position
   end
-
 end
