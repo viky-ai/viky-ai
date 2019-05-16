@@ -17,7 +17,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     )
     new_agent = AgentDuplicator.new(agent, users(:admin)).duplicate
 
-    assert_nil new_agent.id
+    assert 0, new_agent.errors.size
     assert_equal "#{agent.name} [COPY]", new_agent.name
     assert_equal agent.description, new_agent.description
     assert_equal agent.color, new_agent.color
@@ -25,9 +25,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     assert_equal 'is_private', new_agent.visibility
     assert_equal agent.locales, new_agent.locales
     assert_not_equal agent.api_token, new_agent.api_token
-    assert_nil new_agent.owner
 
-    assert new_agent.save
     assert_not_equal agent.id, new_agent.id
     assert_equal users(:admin).id, new_agent.owner.id
     assert_not_equal agent.created_at, new_agent.created_at
@@ -43,11 +41,11 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     agent = agents(:terminator)
     current_user = users(:show_on_agent_weather)
     new_agent = AgentDuplicator.new(agent, current_user).duplicate
-    assert new_agent.save
+    assert 0, new_agent.errors.size
     assert_equal current_user.id, new_agent.owner.id
 
     another_agent = AgentDuplicator.new(agent, current_user).duplicate
-    assert another_agent.save
+    assert 0, another_agent.errors.size
   end
 
 
@@ -55,7 +53,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     agent = agents(:terminator)
     current_user = users(:show_on_agent_weather)
     new_agent = AgentDuplicator.new(agent, current_user).duplicate
-    assert new_agent.save
+    assert 0, new_agent.errors.size
 
     id   = agent.id
     slug = agent.slug
@@ -79,7 +77,8 @@ class AgentDuplicateTest < ActiveSupport::TestCase
 
     new_agent = AgentDuplicator.new(agent, users(:admin)).duplicate
 
-    assert new_agent.save
+    assert 0, new_agent.errors.size
+    
     assert_equal agent.readme.content, new_agent.readme.content
     assert_not_equal agent.readme.id, new_agent.readme.id
 
@@ -115,7 +114,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     )
 
     new_agent = AgentDuplicator.new(agent, users(:admin)).duplicate
-    assert new_agent.save
+    assert 0, new_agent.errors.size
 
     assert_equal agent.entities_lists.size, new_agent.entities_lists.size
     entities_list = agent.entities_lists.zip(new_agent.entities_lists)
@@ -123,13 +122,16 @@ class AgentDuplicateTest < ActiveSupport::TestCase
       assert_equal elist_agent.listname, elist_new_agent.listname
       assert_equal elist_agent.visibility, elist_new_agent.visibility
       assert_not_equal elist_agent.id, elist_new_agent.id
-      entities = elist_agent.entities.zip(elist_new_agent.entities)
+      entities = elist_agent.entities.order(:position).zip(elist_new_agent.entities.order(:position))
       entities.each do |entity_agent, entity_new_agent|
         assert_equal entity_agent.terms, entity_new_agent.terms
         assert entity_agent.solution == entity_new_agent.solution
         assert_equal entity_agent.auto_solution_enabled, entity_new_agent.auto_solution_enabled
+        assert_equal entity_agent.position, entity_new_agent.position
+        assert_equal entity_agent.searchable_terms, entity_new_agent.searchable_terms
         assert_not_equal entity_agent.id, entity_new_agent.id
         assert_not_equal entity_agent.entities_list.id, entity_new_agent.entities_list.id
+
       end
 
       assert_equal elist_agent.interpretation_aliases.size, elist_new_agent.interpretation_aliases.size
