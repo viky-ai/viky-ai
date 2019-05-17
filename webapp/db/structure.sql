@@ -83,7 +83,7 @@ CREATE TABLE public.agent_regression_checks (
     expected jsonb,
     got jsonb,
     state integer DEFAULT 0,
-    "position" integer DEFAULT 0,
+    "position" integer DEFAULT '-1'::integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     spellchecking integer
@@ -180,7 +180,7 @@ CREATE TABLE public.entities (
     entities_list_id uuid,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    "position" integer DEFAULT 0,
+    "position" integer DEFAULT '-1'::integer,
     searchable_terms text
 );
 
@@ -210,7 +210,7 @@ CREATE TABLE public.entities_imports (
 CREATE TABLE public.entities_lists (
     id uuid DEFAULT public.gen_random_uuid() NOT NULL,
     listname character varying,
-    "position" integer DEFAULT 0,
+    "position" integer DEFAULT '-1'::integer,
     color character varying,
     description text,
     visibility integer DEFAULT 0,
@@ -279,7 +279,7 @@ CREATE TABLE public.intents (
     agent_id uuid,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    "position" integer DEFAULT 0,
+    "position" integer DEFAULT '-1'::integer,
     color character varying,
     visibility integer DEFAULT 0
 );
@@ -315,7 +315,7 @@ CREATE TABLE public.interpretations (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     locale character varying,
-    "position" integer DEFAULT 0,
+    "position" integer DEFAULT '-1'::integer,
     keep_order boolean DEFAULT false,
     solution text,
     auto_solution_enabled boolean DEFAULT true,
@@ -1094,6 +1094,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190408083049'),
 ('20190412074505'),
 ('20190424102329'),
-('20190503151110');
+('20190503151110'),
+('20190517140227');
 
 

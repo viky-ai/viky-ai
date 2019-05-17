@@ -16,7 +16,8 @@ class AgentDuplicateTest < ActiveSupport::TestCase
       updated_at: '2017-01-02 00:00:00'
     )
     new_agent = AgentDuplicator.new(agent, users(:admin)).duplicate
-
+    assert new_agent.persisted?
+    
     assert 0, new_agent.errors.size
     assert_equal "#{agent.name} [COPY]", new_agent.name
     assert_equal agent.description, new_agent.description
@@ -36,16 +37,15 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     assert_equal "#{agent.agentname}-copy-1", another_agent.agentname
   end
 
-
   test 'Duplicate public agent' do
     agent = agents(:terminator)
     current_user = users(:show_on_agent_weather)
     new_agent = AgentDuplicator.new(agent, current_user).duplicate
-    assert 0, new_agent.errors.size
+    assert new_agent.persisted?
     assert_equal current_user.id, new_agent.owner.id
 
     another_agent = AgentDuplicator.new(agent, current_user).duplicate
-    assert 0, another_agent.errors.size
+    assert another_agent.persisted?
   end
 
 
@@ -53,7 +53,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     agent = agents(:terminator)
     current_user = users(:show_on_agent_weather)
     new_agent = AgentDuplicator.new(agent, current_user).duplicate
-    assert 0, new_agent.errors.size
+    assert new_agent.persisted?
 
     id   = agent.id
     slug = agent.slug
@@ -77,8 +77,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
 
     new_agent = AgentDuplicator.new(agent, users(:admin)).duplicate
 
-    assert 0, new_agent.errors.size
-    
+    assert new_agent.persisted?
     assert_equal agent.readme.content, new_agent.readme.content
     assert_not_equal agent.readme.id, new_agent.readme.id
 
@@ -226,5 +225,58 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     assert_nil duplicated_tests.third.got
     assert_equal @regression_weather_condition.state, duplicated_tests.third.state
     assert_equal @regression_weather_condition.position, duplicated_tests.third.position
+  end
+
+  test 'The order of agent associations with property position should be maintained' do
+    agent = agents(:weather)
+    assert agent.entities_lists.destroy_all
+    assert agent.intents.destroy(intents(:weather_question))
+    
+    intent = intents(:weather_forecast)
+    assert intent.interpretations.destroy_all
+
+    interpretation_0 = Interpretation.create(
+      expression: 'interpretation_0',
+      locale: Locales::ANY,
+      position: 0,
+      intent: intent
+    )
+    interpretation_1 = Interpretation.create(
+      expression: 'interpretation_1',
+      locale: Locales::ANY,
+      position: 1,
+      intent: intent
+    )
+    interpretation_2 = Interpretation.create(
+      expression: 'interpretation_2',
+      locale: Locales::ANY,
+      position: 2,
+      intent: intent
+    )
+
+    new_positions = [interpretation_2.id, interpretation_0.id, interpretation_1.id]
+    Interpretation.update_positions(intent, new_positions)
+    force_reset_model_cache([interpretation_0, interpretation_1, interpretation_2])
+    assert_equal [2, 1, 0], [interpretation_2.position, interpretation_0.position, interpretation_1.position]
+
+    new_agent = AgentDuplicator.new(agent, users(:admin)).duplicate
+    assert new_agent.persisted?
+
+    assert_equal agent.intents.size, new_agent.intents.size
+    intents = agent.intents.zip(new_agent.intents)
+    intents.each do |intent_agent, intent_new_agent|
+      assert_not_equal intent_agent.id, intent_new_agent.id
+      assert_equal intent_agent.intentname, intent_new_agent.intentname
+      assert_equal intent_agent.position, intent_new_agent.position
+
+      assert_equal intent_agent.interpretations.size, intent_new_agent.interpretations.size
+      interpretations = intent_agent.interpretations.order(:position).zip(intent_new_agent.interpretations.order(:position))
+      interpretations.each do |inter_agent, inter_new_agent|
+        assert_equal inter_agent.expression, inter_new_agent.expression
+        assert_equal inter_agent.position, inter_new_agent.position
+        assert_not_equal inter_agent.id, inter_new_agent.id
+        assert_not_equal inter_agent.intent.id, inter_new_agent.intent.id
+      end
+    end
   end
 end
