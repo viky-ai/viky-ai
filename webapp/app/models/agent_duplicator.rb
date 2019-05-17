@@ -12,7 +12,7 @@ class AgentDuplicator
       include_association :entities_lists, clone_with: EntitiesListsCloner
       include_association :intents, clone_with: IntentsCloner
       include_association :out_arcs
-      include_association :agent_regression_checks
+      include_association :agent_regression_checks, clone_with: AgentRegressionChecksCloner
 
       nullify :api_token
 
@@ -103,4 +103,19 @@ end
 
 class IntentsCloner < Clowne::Cloner
   include_association :interpretations, clone_with: InterpretationsCloner
+end
+
+class AgentRegressionChecksCloner < Clowne::Cloner
+  after_persist do |origin, clone, mapper:, **|
+    next if clone.expected.blank? || clone.expected['package'] != origin.agent.id
+
+    if origin.expected['root_type'] == 'entities_list'
+      origin_reference = origin.agent.entities_lists.find(clone.expected['id'])
+    else
+      origin_reference = origin.agent.intents.find(clone.expected['id'])
+    end
+    clone.expected['id'] = mapper.clone_of(origin_reference).id
+    clone.expected['package'] = clone.agent.id
+    clone.save
+  end
 end
