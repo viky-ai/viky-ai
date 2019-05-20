@@ -190,6 +190,12 @@ class AgentDuplicateTest < ActiveSupport::TestCase
   test 'Duplicate agent with regression tests' do
     create_agent_regression_check_fixtures
     agent = agents(:weather)
+    @regression_weather_forecast.expected = {
+      root_type: 'intent',
+      package: agents(:weather_confirmed).id,
+      id: intents(:weather_confirmed_question).id,
+      solution: ''
+    }
     @regression_weather_forecast.got = {
       'package' => intents(:weather_forecast).agent.id,
       'id' => intents(:weather_forecast).id,
@@ -213,7 +219,13 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     assert_equal @regression_weather_question.sentence, duplicated_tests.second.sentence
     assert_equal @regression_weather_question.now, duplicated_tests.second.now
     assert_equal @regression_weather_question.language, duplicated_tests.second.language
-    assert_equal @regression_weather_question.expected, duplicated_tests.second.expected
+    new_expected = {
+      'package' => new_agent.id,
+      'id' => new_agent.intents.where(intentname: 'weather_question').first.id,
+      'solution' => interpretations(:weather_question_like).solution.to_json.to_s,
+      'root_type' => 'intent'
+    }
+    assert_equal new_expected, duplicated_tests.second.expected
     assert_nil duplicated_tests.second.got
     assert_equal @regression_weather_question.state, duplicated_tests.second.state
     assert_equal @regression_weather_question.position, duplicated_tests.second.position
@@ -221,7 +233,13 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     assert_equal @regression_weather_condition.sentence, duplicated_tests.third.sentence
     assert_equal @regression_weather_condition.now, duplicated_tests.third.now
     assert_equal @regression_weather_condition.language, duplicated_tests.third.language
-    assert_equal @regression_weather_condition.expected, duplicated_tests.third.expected
+    new_expected = {
+      'package' => new_agent.id,
+      'id' => new_agent.entities_lists.where(listname: 'weather_conditions').first.id,
+      'solution' => entities(:weather_sunny).solution.to_json.to_s,
+      'root_type' => 'entities_list'
+    }
+    assert_equal new_expected, duplicated_tests.third.expected
     assert_nil duplicated_tests.third.got
     assert_equal @regression_weather_condition.state, duplicated_tests.third.state
     assert_equal @regression_weather_condition.position, duplicated_tests.third.position

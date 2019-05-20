@@ -9,7 +9,6 @@ class ImportEntitiesJobTest < ActiveJob::TestCase
 
 
   test 'Successful job execution' do
-    user = users(:admin)
     entities_list = entities_lists(:weather_conditions)
     ImportEntitiesJob.perform_now(@weather_conditions_import)
     assert_equal 3, entities_list.entities.count
@@ -20,17 +19,16 @@ class ImportEntitiesJobTest < ActiveJob::TestCase
 
 
   test 'Unsuccessful job execution' do
-    user = users(:admin)
     entities_list = entities_lists(:weather_conditions)
 
-    file_path = File.join(Rails.root, 'tmp', 'weather_condition_import.csv')
-    CSV.open(file_path, "wb") do |csv|
-      csv << ["terms", "auto solution", "solution"]
-      csv << ["cloudy", "blabla", "\"{'weather': 'cloudy'}\"\n"]
+    Tempfile.open(['temp', '.csv']) do |file|
+      CSV.open(file.path, "wb") do |csv|
+        csv << ["terms", "auto solution", "solution"]
+        csv << ["cloudy", "blabla", "\"{'weather': 'cloudy'}\"\n"]
+      end
+      @weather_conditions_import.file = file
+      assert @weather_conditions_import.save
     end
-
-    @weather_conditions_import.file = File.open(file_path)
-    assert @weather_conditions_import.save
 
     ImportEntitiesJob.perform_now(@weather_conditions_import)
     assert_equal 2, entities_list.entities.count
@@ -42,14 +40,13 @@ class ImportEntitiesJobTest < ActiveJob::TestCase
 
 
   def create_entities_import_fixtures
-    file_path = File.join(Rails.root, 'tmp', 'weather_condition_import.csv')
-    CSV.open(file_path, "wb") do |csv|
+    file = Tempfile.new(['weather_condition_import', '.csv'])
+    CSV.open(file.path, "wb") do |csv|
       csv << ["terms", "auto solution", "solution"]
       csv << ["cloudy", "True", "\"{'weather': 'cloudy'}\"\n"]
     end
-
     @weather_conditions_import = EntitiesImport.new({
-      file: File.open(file_path),
+      file: file,
       mode: 'append',
       entities_list: entities_lists(:weather_conditions),
       user: users(:admin)
