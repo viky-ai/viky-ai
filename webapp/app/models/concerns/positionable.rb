@@ -85,11 +85,12 @@ module Positionable
       ancestor = self.send(self.class.ancestor_classname)
       return if ancestor.nil?
       children_method = ActiveModel::Naming.plural(self)
-      if self.position.zero?
-        if ancestor.send(children_method).count.zero?
-          self.position = 0
-        else
+      # Change the position only when it has its default value
+      if self.position == -1
+        if ancestor.send(children_method).exists?
           self.position = ancestor.send(children_method).maximum(:position) + 1
+        else
+          self.position = 0
         end
       end
     end
