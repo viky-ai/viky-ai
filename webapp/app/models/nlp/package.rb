@@ -7,14 +7,15 @@ class Nlp::Package
   class_attribute :sync_active
   self.sync_active = true
 
-  VERSION = 1  # Used to invalidate cache
+  VERSION = 2 # Used to invalidate cache
 
   JSON_HEADERS = {"Content-Type" => "application/json", "Accept" => "application/json"}
 
   REDIS_URL = ENV.fetch("VIKYAPP_REDIS_PACKAGE_NOTIFIER") { 'redis://localhost:6379/3' }
 
-  def initialize(agent)
+  def initialize(agent, cache = Rails.cache)
     @agent = agent
+    @cache = cache
   end
 
   def self.reinit
@@ -50,18 +51,25 @@ class Nlp::Package
     notify(:update)
   end
 
-  def generate_json
-    ApplicationController.render(
-      template: 'agents/package',
-      assigns: { agent: @agent, interpretations: build_tree },
-      format: :json
-    )
+  def generate_json(io)
+    encoder = io.instance_of?(JsonChunkEncoder) ? io : JsonChunkEncoder.new(io)
+    encoder.wrap_object do
+      encoder.write_value('id', @agent.id)
+      encoder.write_value('slug', @agent.slug)
+      encoder.wrap_array('interpretations') do
+        write_intent(encoder)
+        write_entities_list(encoder)
+      end
+    end
   end
 
-  def full_json_export
+  def full_json_export(io)
     packages_list = full_packages_map(@agent).values
-    packages_list.collect do |package|
-      JSON.parse(Nlp::Package.new(package).generate_json)
+    encoder = JsonChunkEncoder.new io
+    encoder.wrap_array do
+      packages_list.each do |package|
+        Nlp::Package.new(package).generate_json(encoder)
+      end
     end
   end
 
@@ -90,135 +98,165 @@ class Nlp::Package
       result
     end
 
-    def build_tree
-      interpretations = []
-      slug = @agent.slug
+    def write_intent(encoder)
       @agent.intents.order(position: :desc).each do |intent|
-        cache_key = ['pkg', VERSION, slug, 'intent', intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
-        interpretations += Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
-          build_internals_list_nodes(intent)
-        end
-        interpretations << Rails.cache.fetch("#{cache_key}/build_node"){ build_intent(intent) }
+        cache_key = ['pkg', VERSION, @agent.slug, 'intent'.freeze, intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
+        build_internals_list_nodes(intent, encoder, cache_key)
+        build_intent(intent, encoder, cache_key)
       end
+    end
+
+    def write_entities_list(encoder)
       @agent.entities_lists.order(position: :desc).each do |elist|
-        cache_key = ['pkg', VERSION, slug, 'entities_list', elist.id, (elist.updated_at.to_f * 1000).to_i].join('/')
-        interpretations += Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
-          build_internals_list_nodes(elist)
-        end
-        interpretations << Rails.cache.fetch("#{cache_key}/build_node"){ build_entities_list(elist) }
+        build_entities_list(elist, encoder)
       end
-      interpretations
     end
 
-    def build_internals_list_nodes(intent)
-      interpretations = []
+    def build_internals_list_nodes(intent, encoder, cache_key)
+      cache_key = "#{cache_key}/build_internals_list_nodes"
+      if @cache.exist? cache_key
+        interpretations = @cache.read cache_key
+        encoder.write_string interpretations
+      else
+        InterpretationAlias
+          .includes(:interpretation)
+          .where(is_list: true, interpretations: { intent_id: intent.id })
+          .order('interpretations.position DESC, interpretations.locale ASC')
+          .order(:position_start).each do |ialias|
 
-      InterpretationAlias
-        .includes(:interpretation)
-        .where(is_list: true, interpretations: { intent_id: intent.id })
-        .order('interpretations.position DESC, interpretations.locale ASC')
-        .order(:position_start).each do |ialias|
+          interpretation_hash = {}
+          interpretation_hash['id']   = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
+          interpretation_hash['slug'] = "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive"
+          interpretation_hash['scope'] = 'hidden'
 
-        interpretation_hash = {}
-        interpretation_hash[:id]   = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
-        interpretation_hash[:slug] = "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive"
-        interpretation_hash[:scope] = 'hidden'
+          expressions = []
 
-        expressions = []
-
-        expression = {}
-        expression[:expression] = "@{#{ialias.aliasname}}"
-        expression[:id] = ialias.interpretation.id
-        expression[:aliases] = []
-        expression[:aliases] << build_internal_alias(ialias)
-        expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
-        expression[:glue_distance] = ialias.interpretation.proximity.get_distance
-        expression[:glue_strength] = 'punctuation' if ialias.interpretation.proximity_accepts_punctuations?
-        expressions << expression
-
-        expression = {}
-        expression[:expression] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
-        expression[:id] = ialias.interpretation.id
-        expression[:aliases] = []
-        expression[:aliases] << build_internal_alias(ialias)
-        expression[:aliases] << build_internal_alias(ialias, true)
-        expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
-        expression[:glue_distance] = ialias.interpretation.proximity.get_distance
-        expression[:glue_strength] = 'punctuation' if ialias.interpretation.proximity_accepts_punctuations?
-        expressions << expression
-        interpretation_hash[:expressions] = expressions
-        interpretations << interpretation_hash
-      end
-      interpretations
-
-    end
-
-    def build_intent(intent)
-      interpretation_hash = {}
-      interpretation_hash[:id] = intent.id
-      interpretation_hash[:slug] = intent.slug
-      interpretation_hash[:scope] = intent.is_public? ? 'public' : 'private'
-      expressions = []
-
-      intent.interpretations.order(position: :desc, locale: :asc).each do |interpretation|
-        expression = {}
-        expression[:expression] = interpretation.expression_with_aliases
-        expression[:id]         = interpretation.id
-        expression[:aliases]    = build_aliases(interpretation)
-        expression[:locale]     = interpretation.locale     unless interpretation.locale == Locales::ANY
-        expression[:keep_order] = interpretation.keep_order if interpretation.keep_order
-        expression[:glue_distance] = interpretation.proximity.get_distance
-        expression[:glue_strength] = 'punctuation' if interpretation.proximity_accepts_punctuations?
-        expression[:solution]   = build_interpretation_solution(interpretation)
-        expressions << expression
-
-        interpretation.interpretation_aliases
-          .where(any_enabled: true, is_list: false)
-          .order(position_start: :asc).each do |ialias|
-          expressions << build_any_node(ialias, expression)
-        end
-      end
-      interpretation_hash[:expressions] = expressions
-      interpretation_hash
-    end
-
-    def build_entities_list(elist)
-      interpretation_hash = {}
-      interpretation_hash[:id] = elist.id
-      interpretation_hash[:slug] = elist.slug
-      interpretation_hash[:scope] = elist.is_public? ? 'public' : 'private'
-      expressions = []
-
-      elist.entities.find_each do |entity|
-        entity.terms.each do |term|
           expression = {}
-          expression[:expression] = term['term']
-          expression[:id] = entity.id
-          expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
-          expression[:solution] = build_entities_list_solution(entity)
-          expression[:keep_order] = true
-          expression[:glue_distance] = elist.proximity.get_distance
-          expression[:glue_strength] = 'punctuation' if elist.proximity_glued?
+          expression['expression'] = "@{#{ialias.aliasname}}"
+          expression['pos'] = ialias.interpretation.position
+          expression['aliases'] = []
+          expression['aliases'] << build_internal_alias(ialias)
+          expression['keep-order'] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
+          expression['glue-distance'] = ialias.interpretation.proximity.get_distance
+          expression['glue-strength'] = 'punctuation'.freeze if ialias.interpretation.proximity_accepts_punctuations?
           expressions << expression
+
+          expression = {}
+          expression['expression'] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
+          expression['pos'] = ialias.interpretation.position
+          expression['aliases'] = []
+          expression['aliases'] << build_internal_alias(ialias)
+          expression['aliases'] << build_internal_alias(ialias, true)
+          expression['keep-order'] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
+          expression['glue-distance'] = ialias.interpretation.proximity.get_distance
+          expression['glue-strength'] = 'punctuation'.freeze if ialias.interpretation.proximity_accepts_punctuations?
+          expressions << expression
+
+          interpretation_hash[:expressions] = expressions
+          encoder.write_object(interpretation_hash, cache_key)
+        end
+        payload = encoder.withdraw_cache_payload(cache_key)
+        @cache.write(cache_key, payload) if payload.present?
+      end
+    end
+
+    def build_intent(intent, encoder, cache_key)
+      cache_key = "#{cache_key}/build_node"
+      encoder.wrap_object do
+        encoder.write_value('id', intent.id)
+        encoder.write_value('slug', intent.slug)
+        encoder.write_value('scope', intent.is_public? ? 'public' : 'private')
+        encoder.wrap_array('expressions') do
+          if @cache.exist? cache_key
+            expressions = @cache.read cache_key
+            encoder.write_string expressions
+          else
+            intent.interpretations.order(position: :desc, locale: :asc).each do |interpretation|
+              expression = {}
+              expression['expression']    = interpretation.expression_with_aliases
+              expression['pos']           = interpretation.position
+              aliases = build_aliases(interpretation)
+              expression['aliases']       = aliases unless aliases.empty?
+              expression['locale']        = interpretation.locale unless interpretation.locale == Locales::ANY
+              expression['keep-order']    = interpretation.keep_order if interpretation.keep_order
+              expression['glue-distance'] = interpretation.proximity.get_distance
+              expression['glue-strength'] = 'punctuation'.freeze if interpretation.proximity_accepts_punctuations?
+              solution = build_interpretation_solution(interpretation)
+              expression['solution']      = solution unless solution.blank?
+
+              encoder.write_object(expression, cache_key)
+
+              interpretation.interpretation_aliases
+                .where(any_enabled: true, is_list: false)
+                .order(position_start: :asc).each do |ialias|
+                any_node = build_any_node(ialias, expression)
+                encoder.write_object(any_node, cache_key)
+              end
+            end
+            payload = encoder.withdraw_cache_payload(cache_key)
+            @cache.write(cache_key, payload) if payload.present?
+          end
         end
       end
-      interpretation_hash[:expressions] = expressions
-      interpretation_hash
+    end
+
+    def build_entities_list(elist, encoder)
+      cache_key_base = [
+        'pkg',
+        VERSION,
+        @agent.slug,
+        'entities_list'.freeze,
+        elist.id,
+        elist.proximity,
+        'entities'.freeze,
+        'build_node'.freeze
+      ].join('/').freeze
+      encoder.wrap_object do
+        encoder.write_value('id', elist.id)
+        encoder.write_value('slug', elist.slug)
+        encoder.write_value('scope', elist.is_public? ? 'public' : 'private')
+        encoder.wrap_array('expressions') do
+          elist.entities_in_ordered_batchs.each do |batch, max_position, min_position|
+            last_updated = batch.unscope(:order).pluck('MAX("entities"."updated_at")').first
+            cache_key = "#{cache_key_base}/#{(last_updated.to_f * 1000).to_i}?from=#{min_position}&to=#{max_position}"
+            if @cache.exist? cache_key
+              expressions = @cache.read cache_key
+              encoder.write_string expressions
+            else
+              batch.each do |entity|
+                entity.terms.each do |term|
+                  expression = {}
+                  expression[:expression] = term['term']
+                  expression[:pos] = entity.position
+                  expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
+                  expression[:solution] = build_entities_list_solution(entity)
+                  expression['keep-order'] = true
+                  expression['glue-distance'] = elist.proximity.get_distance
+                  expression['glue-strength'] = 'punctuation'.freeze if elist.proximity_glued?
+                  encoder.write_object(expression, cache_key)
+                end
+              end
+              payload = encoder.withdraw_cache_payload(cache_key)
+              @cache.write(cache_key, payload) if payload.present?
+            end
+          end
+        end
+      end
     end
 
     def build_any_node(ialias, expression)
       any_aliasname = ialias.aliasname
       any_expression = expression.deep_dup
-      old_aliases = expression[:aliases]
-      any_expression[:aliases] = []
+      old_aliases = expression['aliases']
+      any_expression['aliases'] = []
       old_aliases.each do |jsonalias|
-        if jsonalias[:alias] == any_aliasname
-          any_expression[:aliases] << {
-            alias: any_aliasname,
-            type: 'any'
+        if jsonalias['alias'] == any_aliasname
+          any_expression['aliases'] << {
+            'alias': any_aliasname,
+            'type': 'any'
           }
         else
-          any_expression[:aliases] << jsonalias
+          any_expression['aliases'] << jsonalias
         end
       end
       any_expression
@@ -227,17 +265,17 @@ class Nlp::Package
     def build_internal_alias(ialias, recursive=false)
       if recursive
         {
-          alias: "#{ialias.aliasname}_recursive",
-          slug: "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive",
-          id: "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive",
-          package: @agent.id
+          'alias': "#{ialias.aliasname}_recursive",
+          'slug': "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive",
+          'id': "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive",
+          'package': @agent.id
         }
       else
         {
-          alias: ialias.aliasname,
-          slug: ialias.interpretation_aliasable.slug,
-          id: ialias.interpretation_aliasable.id,
-          package: @agent.id
+          'alias': ialias.aliasname,
+          'slug': ialias.interpretation_aliasable.slug,
+          'id': ialias.interpretation_aliasable.id,
+          'package': @agent.id
         }
       end
     end
@@ -249,46 +287,43 @@ class Nlp::Package
     end
 
     def build_alias(ialias)
-      result = {
-        alias: ialias.aliasname
-      }
+      result = {}
+      result['alias'] = ialias.aliasname
       if ialias.type_number?
-        result[:type] = 'number'
+        result['type'] = 'number'
       elsif ialias.type_regex?
-        result[:type] = 'regex'
-        result[:regex] = ialias.reg_exp
+        result['type'] = 'regex'
+        result['regex'] = ialias.reg_exp
       else
-        result[:package] = @agent.id
+        result['package'] = @agent.id
         if ialias.is_list
-          result[:slug] = "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive"
-          result[:id] = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
+          result['slug'] = "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive"
+          result['id'] = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
         else
-          result[:slug] = ialias.interpretation_aliasable.slug
-          result[:id] = ialias.interpretation_aliasable.id
+          result['slug'] = ialias.interpretation_aliasable.slug
+          result['id'] = ialias.interpretation_aliasable.id
         end
       end
       result
     end
 
     def build_interpretation_solution(interpretation)
-      result = ''
-      if interpretation.auto_solution_enabled
-        if interpretation.interpretation_aliases.empty?
-          result = interpretation.expression
-        end
+      if interpretation.auto_solution_enabled and interpretation.interpretation_aliases.empty?
+        interpretation.expression
+      elsif interpretation.solution.present?
+        "`#{interpretation.solution}`"
       else
-        result = "`#{interpretation.solution}`" unless interpretation.solution.blank?
+        ''
       end
-      result
     end
 
     def build_entities_list_solution(entity)
-      result = ''
       if entity.auto_solution_enabled
-        result = entity.terms.first['term']
+        entity.terms.first['term']
+      elsif entity.solution.present?
+        "`#{entity.solution}`"
       else
-        result = "`#{entity.solution}`" unless entity.solution.blank?
+        ''
       end
-      result
     end
 end

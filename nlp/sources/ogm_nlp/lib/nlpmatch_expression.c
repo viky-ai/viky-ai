@@ -161,10 +161,10 @@ static og_bool NlpMatchExpressionsZoneRecursive(og_nlp_th ctrl_nlp_th, struct ex
       if (ctrl_nlp_th->accept_any_expressions == FALSE)
       {
         NlpLog(DOgNlpTraceMinimal, "NlpMatchExpressionsZone: stop searching match, because nb_combinations > %d "
-            " on expression '%s' in '%s' at Irequest_input_part=%d", DOgNlpMaxNbExpressionCombinations, expression->id,
+            " on expression %d in '%s' at Irequest_input_part=%d", DOgNlpMaxNbExpressionCombinations, expression->pos,
             expression->interpretation->slug, Irequest_input_part);
         NlpWarningAdd(ctrl_nlp_th, "NlpMatchExpressionsZone: stop searching match, because nb_combinations > %d "
-            " on expression '%s' in '%s' at Irequest_input_part=%d", DOgNlpMaxNbExpressionCombinations, expression->id,
+            " on expression %d in '%s' at Irequest_input_part=%d", DOgNlpMaxNbExpressionCombinations, expression->pos,
             expression->interpretation->slug, Irequest_input_part);
       }
       return TRUE;

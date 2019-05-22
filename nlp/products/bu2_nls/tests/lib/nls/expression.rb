@@ -9,6 +9,7 @@ module Nls
     attr_reader :keep_order
     attr_reader :glue_strength
     attr_reader :glue_distance
+    attr_accessor :pos
     attr_accessor :solution
     attr_accessor :interpretation
 
@@ -86,6 +87,7 @@ module Nls
 
     def to_h
       hash = {}
+      hash['pos'] = @pos unless @pos.nil?
       hash['expression'] = @expression
       hash['keep-order'] = true if @keep_order
       hash['glue-strength'] = @glue_strength if @glue_strength != "total"

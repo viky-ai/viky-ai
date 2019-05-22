@@ -144,16 +144,7 @@ static og_status NlpConsolidatePrepareExpression(og_nlp_th ctrl_nlp_th, package_
     struct expression_compile *expression_compile = all_expression_compile + i;
     struct expression *expression = all_expression + i;
 
-    if (expression_compile->id_start < 0)
-    {
-      expression->id = NULL;
-    }
-    else
-    {
-      expression->id = OgHeapGetCell(package->hexpression_ba, expression_compile->id_start);
-      IFN(expression->id) DPcErr;
-    }
-
+    expression->pos = expression_compile->pos;
     expression->text = OgHeapGetCell(package->hexpression_ba, expression_compile->text_start);
     IFN(expression->text) DPcErr;
 
@@ -531,8 +522,8 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
   if (expression->input_parts_nb > (DOgMatchZoneInputPartSize - 1))
   {
     NlpLog(DOgNlpTraceMinimal, "NlpConsolidateExpression: expression skipped : too many input_part (%d > %d) "
-        "for expression '%s' in interpretation '%s' '%s' in package '%s'", expression->input_parts_nb,
-        DOgMatchZoneInputPartSize - 1, expression->id, interpretation->slug, interpretation->id, package->id);
+        "for expression %d in interpretation '%s' '%s' in package '%s'", expression->input_parts_nb,
+        DOgMatchZoneInputPartSize - 1, expression->pos, interpretation->slug, interpretation->id, package->id);
     CONT;
   }
 

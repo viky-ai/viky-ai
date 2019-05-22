@@ -28,14 +28,10 @@ og_status NlpInterpretTreeJson(og_nlp_th ctrl_nlp_th, struct request_expression 
   }
 
   json_t *json_expression = json_object();
-  IFX(request_expression->expression->id)
+  IF(json_object_set_new(json_expression, "pos", json_integer(request_expression->expression->pos)))
   {
-    json_t *json_expression_id = json_string(request_expression->expression->id);
-    IF(json_object_set_new(json_expression, "id", json_expression_id))
-    {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_expression_id");
-      DPcErr;
-    }
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_expression_pos");
+    DPcErr;
   }
 
   json_t *json_expression_text = json_string(request_expression->expression->text);

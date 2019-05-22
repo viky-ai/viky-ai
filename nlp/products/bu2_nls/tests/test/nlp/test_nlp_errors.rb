@@ -72,7 +72,7 @@ module Nlp
 
       actual = nlp([ "-c #{pwd}/input.json"])
 
-      expected_error = "NlpCompilePackageExpression: text is too long"
+      expected_error = "NlpCompilePackageExpression: expression text is too long"
 
       assert_response_has_error expected_error, actual
     end

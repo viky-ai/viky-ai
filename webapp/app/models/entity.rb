@@ -18,6 +18,7 @@ class Entity < ApplicationRecord
   before_validation :build_solution
   before_validation :build_searchable_terms
   after_save :update_agent_locales
+  after_create :touch_entities_list
   after_destroy :touch_entities_list
 
   def self.search(query = nil)
@@ -147,7 +148,7 @@ class Entity < ApplicationRecord
 
     def touch_entities_list
       # belongs_to :entities_list, touch: true, counter_cache: true
-      # Touch option fails on entity deletion.
+      # Touch option fails on entity creation and deletion.
       entities_list.touch
     end
 end

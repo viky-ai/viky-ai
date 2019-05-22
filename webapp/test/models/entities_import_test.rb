@@ -1,8 +1,11 @@
 require 'test_helper'
-require 'model_test_helper'
 
 class EntitiesImportTest < ActiveSupport::TestCase
 
+  def teardown
+    File.delete('tmp/temp.csv') if File.exist?('tmp/temp.csv')
+    File.delete('tmp/temp.png') if File.exist?('tmp/temp.png')
+  end
 
   test 'Basic import creation and entities list association' do
     entities_list = entities_lists(:weather_conditions)
