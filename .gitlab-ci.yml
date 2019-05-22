@@ -14,16 +14,15 @@ image: docker:stable
     - kubernetes
 
 variables:
-  CI_SERVICE_HOST: '127.0.0.1'
+  CI_SERVICE_HOST: "127.0.0.1"
   GIT_SUBMODULE_STRATEGY: recursive
-  DOCKER_HOST: 'tcp://dood:2375'
+  DOCKER_HOST: "tcp://dood:2375"
   DOCKER_DRIVER: overlay2
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
   DOCKER_IMAGE_DOC: $CI_REGISTRY_IMAGE/doc
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
   DOCKER_IMAGE_TOOLS_RUBY: $CI_REGISTRY_IMAGE/tools_ruby_base
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
-  DOCKER_IMAGE_ELASTICSEARCH: $CI_REGISTRY_IMAGE/elasticsearch
 
 # Build docker image
 
@@ -43,14 +42,6 @@ build_backup:
   stage: prerequist
   script:
     - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup
-
-build_elastic:
-  <<: *kubernetes_runner
-  services:
-    - docker:stable-dind
-  stage: prerequist
-  script:
-    - docker_build ${DOCKER_IMAGE_ELASTICSEARCH} deployment/docker_tools/elasticsearch
 
 build_doc:
   stage: build_1
@@ -79,8 +70,6 @@ build_nlp:
     - docker_build ${DOCKER_IMAGE_NLP}      nlp "--target run_image"
     - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--target test_image"
 
-
-
 # Test
 .test_webapp: &test_webapp
   stage: test
@@ -93,7 +82,7 @@ build_nlp:
     - postgres:9.6-alpine
     - redis:3.2-alpine
     - name: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
-      command: ['bin/elasticsearch', '-Ediscovery.type=single-node'] # Important other wise, port 9200 will never be exposed
+      command: ["bin/elasticsearch", "-Ediscovery.type=single-node"] # Important other wise, port 9200 will never be exposed
   before_script:
     - export VIKYAPP_DB_USERNAME="${POSTGRES_USER}"
     - export VIKYAPP_DB_PASSWORD="${POSTGRES_PASSWORD}"
@@ -190,16 +179,6 @@ tag_backup:
   script:
     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_BACKUP}
 
-tag_elastic:
-  <<: *kubernetes_runner
-  stage: docker_tag
-  only:
-    - develop
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - docker_tag_latest ${DOCKER_IMAGE_ELASTICSEARCH}
-
 # Deploy any branches on rancher dev
 deploy_dev:
   <<: *kubernetes_runner
@@ -241,7 +220,7 @@ deploy_preprod:
     name: viky-preprod
     url: https://viky-beta.viky.ai
   variables:
-    VIKYAPP_AUTO_BACKUP: 'true'
+    VIKYAPP_AUTO_BACKUP: "true"
     VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
     VIKYAPP_BASEURL: https://viky-beta.viky.ai
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
@@ -451,7 +430,6 @@ cache_clear_preprod:
     - rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis redis-cli flushall
   when: manual
   allow_failure: true
-
 
 # ---------------------------------------------------------------------------
 
