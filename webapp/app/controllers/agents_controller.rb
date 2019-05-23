@@ -1,4 +1,6 @@
 class AgentsController < ApplicationController
+  include ActionController::Live
+
   before_action :set_owner_and_agent, except: [:index, :new, :create]
   before_action :check_user_rights, except: [:index, :new, :create]
 
@@ -131,16 +133,14 @@ class AgentsController < ApplicationController
     render json: { api_token: @agent.api_token }
   end
 
-  # TODO change it to stream API
   def full_export
-    io = StringIO.new
-    Nlp::Package.new(@agent).full_json_export(io)
-    respond_to do |format|
-      format.json {
-        filename = "#{@agent.slug}.#{Time.current.strftime('%Y-%m-%d_%H-%M-%S')}.json"
-        response.headers["Content-Disposition"] = "inline; filename=\"#{filename}\""
-        render json: io.string
-      }
+    filename = "#{@agent.slug}.#{Time.current.strftime('%Y-%m-%d_%H-%M-%S')}.json"
+    response.headers["Content-Disposition"] = "attachment; filename=\"#{filename}\""
+    response.headers['Content-Type'] = 'application/json'
+    begin
+      Nlp::Package.new(@agent).full_json_export(response.stream)
+    ensure
+      response.stream.close
     end
   end
 
