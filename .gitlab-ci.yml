@@ -40,9 +40,13 @@ build_backup:
   services:
     - docker:stable-dind
   stage: prerequist
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
   variables:
+    CI_COMMIT_REF_NAME: ${CI_COMMIT_REF_NAME}
     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
   script:
+    - echo $CI_COMMIT_REF_NAME
     - echo $VIKYAPP_DEPLOY_RANCHER_STACK
     - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup "--build-arg VIKYAPP_DEPLOY_RANCHER_STACK=${VIKYAPP_DEPLOY_RANCHER_STACK}"
 
