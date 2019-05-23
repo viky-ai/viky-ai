@@ -43,6 +43,7 @@ build_backup:
   variables:
     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
   script:
+    - echo $VIKYAPP_DEPLOY_RANCHER_STACK
     - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup "--build-arg VIKYAPP_DEPLOY_RANCHER_STACK=${VIKYAPP_DEPLOY_RANCHER_STACK}"
 
 build_doc:
