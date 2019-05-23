@@ -1,6 +1,4 @@
 class AgentsController < ApplicationController
-  include ActionController::Live
-
   before_action :set_owner_and_agent, except: [:index, :new, :create]
   before_action :check_user_rights, except: [:index, :new, :create]
 
@@ -131,17 +129,6 @@ class AgentsController < ApplicationController
   def generate_token
     @agent.ensure_api_token
     render json: { api_token: @agent.api_token }
-  end
-
-  def full_export
-    filename = "#{@agent.slug}.#{Time.current.strftime('%Y-%m-%d_%H-%M-%S')}.json"
-    response.headers["Content-Disposition"] = "attachment; filename=\"#{filename}\""
-    response.headers['Content-Type'] = 'application/json'
-    begin
-      Nlp::Package.new(@agent).full_json_export(response.stream)
-    ensure
-      response.stream.close
-    end
   end
 
   def add_favorite
