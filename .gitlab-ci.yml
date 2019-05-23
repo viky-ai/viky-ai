@@ -40,6 +40,8 @@ build_backup:
   services:
     - docker:stable-dind
   stage: prerequist
+  variables:
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
   script:
     - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup
 
