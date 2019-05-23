@@ -44,6 +44,7 @@ build_backup:
     - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup
 
 build_doc:
+  <<: *kubernetes_runner
   stage: build_1
   script:
     - docker_build ${DOCKER_IMAGE_DOC}      doc    "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_doc_run"
@@ -57,6 +58,7 @@ build_webapp:
     - docker_build ${DOCKER_IMAGE_APP}      webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_run"
 
 build_webapp_test:
+  <<: *kubernetes_runner
   stage: build_2
   script:
     - docker_build ${DOCKER_IMAGE_APP}_test webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_test"
@@ -129,6 +131,7 @@ test_nlp:
 
 # Tag docker image to lasted
 tag_doc:
+  <<: *kubernetes_runner
   stage: docker_tag
   only:
     - develop
@@ -387,6 +390,7 @@ backup_restore_dev:
 
 # Cache
 cache_clear_dev:
+  <<: *kubernetes_runner
   stage: admin
   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
   except:
@@ -410,6 +414,7 @@ cache_clear_dev:
   allow_failure: true
 
 cache_clear_preprod:
+  <<: *kubernetes_runner
   stage: admin
   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
   only:
