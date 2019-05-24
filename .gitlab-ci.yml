@@ -195,13 +195,15 @@ deploy_dev:
     VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
   script:
-    - echo $KUBECONFIG
-    - export export KUBECONFIG=$KUBECONFIG
-    - echo "Deploy ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
-    - echo "Deploy ..."
-    - helm init --client-only
-    - helm upgrade --install ${CI_ENVIRONMENT_SLUG}-infra --namespace "viky-${CI_ENVIRONMENT_SLUG}" deployment/kubernetes/viky-infra/
-    - helm upgrade --install ${CI_ENVIRONMENT_SLUG}-platform --namespace "viky-${CI_ENVIRONMENT_SLUG}" deployment/kubernetes/viky-platform/
+    - export KUBECONFIG=$KUBECONFIG
+    - echo "Init helm ..."
+    - helm init --client-only --wait
+    - echo "Create registry secret"
+    - kubectl create secret docker-registry pertimm-registry --docker-server="${CI_REGISTRY}" --docker-username="${CI_REGISTRY_USER}" --docker-password="${CI_REGISTRY_PASSWORD}"
+    - echo "Deploy Infrastructure"
+    - helm upgrade --wait --install ${CI_ENVIRONMENT_SLUG}-infra --namespace "viky-${CI_ENVIRONMENT_SLUG}" deployment/kubernetes/viky-infra/
+    - echo "Create registry secret"
+    - helm upgrade --wait --install ${CI_ENVIRONMENT_SLUG}-platform --namespace "viky-${CI_ENVIRONMENT_SLUG}" deployment/kubernetes/viky-platform/
 
 # # Deploy master on rancher preprod
 # deploy_preprod:
