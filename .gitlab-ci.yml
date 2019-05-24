@@ -1,9 +1,9 @@
 stages:
-  - prerequist
-  - build_1
-  - build_2
-  - test
-  - docker_tag
+  # - prerequist
+  # - build_1
+  # - build_2
+  # - test
+  # - docker_tag
   - deploy
   # - admin
 
@@ -27,153 +27,153 @@ variables:
 
 # Build docker image
 
-build_ruby_base:
-  <<: *kubernetes_runner
-  stage: prerequist
-  script:
-    - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}      deployment/docker_tools/ruby_base "--target image_ruby_base"
-    - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}_test deployment/docker_tools/ruby_base "--target image_ruby_base_test"
+# build_ruby_base:
+#   <<: *kubernetes_runner
+#   stage: prerequist
+#   script:
+#     - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}      deployment/docker_tools/ruby_base "--target image_ruby_base"
+#     - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}_test deployment/docker_tools/ruby_base "--target image_ruby_base_test"
 
-build_backup:
-  <<: *kubernetes_runner
-  stage: prerequist
-  script:
-    - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup
+# build_backup:
+#   <<: *kubernetes_runner
+#   stage: prerequist
+#   script:
+#     - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup
 
-build_doc:
-  <<: *kubernetes_runner
-  stage: build_1
-  script:
-    - docker_build ${DOCKER_IMAGE_DOC}      doc    "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_doc_run"
+# build_doc:
+#   <<: *kubernetes_runner
+#   stage: build_1
+#   script:
+#     - docker_build ${DOCKER_IMAGE_DOC}      doc    "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_doc_run"
 
-build_webapp:
-  <<: *kubernetes_runner
-  stage: build_2
-  script:
-    - docker_build ${DOCKER_IMAGE_APP}      webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_run"
+# build_webapp:
+#   <<: *kubernetes_runner
+#   stage: build_2
+#   script:
+#     - docker_build ${DOCKER_IMAGE_APP}      webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_run"
 
-build_webapp_test:
-  <<: *kubernetes_runner
-  stage: build_2
-  script:
-    - docker_build ${DOCKER_IMAGE_APP}_test webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_test"
+# build_webapp_test:
+#   <<: *kubernetes_runner
+#   stage: build_2
+#   script:
+#     - docker_build ${DOCKER_IMAGE_APP}_test webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_test"
 
-build_nlp:
-  <<: *kubernetes_runner
-  stage: build_2
-  script:
-    - docker_build ${DOCKER_IMAGE_NLP}      nlp "--target run_image"
-    - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--target test_image"
+# build_nlp:
+#   <<: *kubernetes_runner
+#   stage: build_2
+#   script:
+#     - docker_build ${DOCKER_IMAGE_NLP}      nlp "--target run_image"
+#     - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--target test_image"
 
-# Test
-.test_webapp: &test_webapp
-  stage: test
-  image: ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
-  variables:
-    POSTGRES_USER: superman
-    POSTGRES_PASSWORD: sup_3rman
-    POSTGRES_DB: vikyapp_test
-  services:
-    - postgres:9.6-alpine
-    - redis:3.2-alpine
-    - name: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
-      command: ["bin/elasticsearch", "-Ediscovery.type=single-node"] # Important other wise, port 9200 will never be exposed
-  before_script:
-    - export VIKYAPP_DB_USERNAME="${POSTGRES_USER}"
-    - export VIKYAPP_DB_PASSWORD="${POSTGRES_PASSWORD}"
-    - export VIKYAPP_DB_HOST="${CI_SERVICE_HOST:-postgres}"
-    - export VIKYAPP_ACTIONCABLE_REDIS_URL="redis://${CI_SERVICE_HOST:-redis}:6379/1"
-    - export VIKYAPP_ACTIVEJOB_REDIS_URL="redis://${CI_SERVICE_HOST:-redis}:6379/2"
-    - export VIKYAPP_STATISTICS_URL="http://${CI_SERVICE_HOST:-elasticsearch}:9200"
-    - cd /webapp
-  artifacts:
-    expire_in: 1 week
-    reports:
-      junit: "reports/TEST-*.xml"
+# # Test
+# .test_webapp: &test_webapp
+#   stage: test
+#   image: ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
+#   variables:
+#     POSTGRES_USER: superman
+#     POSTGRES_PASSWORD: sup_3rman
+#     POSTGRES_DB: vikyapp_test
+#   services:
+#     - postgres:9.6-alpine
+#     - redis:3.2-alpine
+#     - name: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
+#       command: ["bin/elasticsearch", "-Ediscovery.type=single-node"] # Important other wise, port 9200 will never be exposed
+#   before_script:
+#     - export VIKYAPP_DB_USERNAME="${POSTGRES_USER}"
+#     - export VIKYAPP_DB_PASSWORD="${POSTGRES_PASSWORD}"
+#     - export VIKYAPP_DB_HOST="${CI_SERVICE_HOST:-postgres}"
+#     - export VIKYAPP_ACTIONCABLE_REDIS_URL="redis://${CI_SERVICE_HOST:-redis}:6379/1"
+#     - export VIKYAPP_ACTIVEJOB_REDIS_URL="redis://${CI_SERVICE_HOST:-redis}:6379/2"
+#     - export VIKYAPP_STATISTICS_URL="http://${CI_SERVICE_HOST:-elasticsearch}:9200"
+#     - cd /webapp
+#   artifacts:
+#     expire_in: 1 week
+#     reports:
+#       junit: "reports/TEST-*.xml"
 
-test_webapp_unit:
-  <<: *kubernetes_runner
-  <<: *test_webapp
-  script:
-    - cd /webapp
-    - if [ "${SKIP_TEST:-false}" != "true" ]; then ./bin/docker_run_test.sh unit ; fi
+# test_webapp_unit:
+#   <<: *kubernetes_runner
+#   <<: *test_webapp
+#   script:
+#     - cd /webapp
+#     - if [ "${SKIP_TEST:-false}" != "true" ]; then ./bin/docker_run_test.sh unit ; fi
 
-# Test
-test_webapp_system:
-  <<: *kubernetes_runner
-  <<: *test_webapp
-  script:
-    - if [ "${SKIP_TEST:-false}" != "true" ]; then ./bin/docker_run_test.sh system ; fi
+# # Test
+# test_webapp_system:
+#   <<: *kubernetes_runner
+#   <<: *test_webapp
+#   script:
+#     - if [ "${SKIP_TEST:-false}" != "true" ]; then ./bin/docker_run_test.sh system ; fi
 
-test_nlp:
-  <<: *kubernetes_runner
-  stage: test
-  image: ${DOCKER_IMAGE_NLP}_test:${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
-  services:
-    - redis:3.2-alpine
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - export VIKYAPP_REDIS_PACKAGE_NOTIFIER="redis://${CI_SERVICE_HOST:-redis}:6379/3"
-    - if [ "${SKIP_TEST:-false}" != "true" ]; then /docker_run_test.sh ; fi
-  artifacts:
-    expire_in: 1 week
-    reports:
-      junit:
-        - "reports/TEST-*.xml"
+# test_nlp:
+#   <<: *kubernetes_runner
+#   stage: test
+#   image: ${DOCKER_IMAGE_NLP}_test:${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
+#   services:
+#     - redis:3.2-alpine
+#   variables:
+#     GIT_STRATEGY: none
+#   script:
+#     - export VIKYAPP_REDIS_PACKAGE_NOTIFIER="redis://${CI_SERVICE_HOST:-redis}:6379/3"
+#     - if [ "${SKIP_TEST:-false}" != "true" ]; then /docker_run_test.sh ; fi
+#   artifacts:
+#     expire_in: 1 week
+#     reports:
+#       junit:
+#         - "reports/TEST-*.xml"
 
-# Tag docker image to lasted
-tag_doc:
-  <<: *kubernetes_runner
-  stage: docker_tag
-  only:
-    - develop
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - docker_tag_latest ${DOCKER_IMAGE_DOC}
+# # Tag docker image to lasted
+# tag_doc:
+#   <<: *kubernetes_runner
+#   stage: docker_tag
+#   only:
+#     - develop
+#   variables:
+#     GIT_STRATEGY: none
+#   script:
+#     - docker_tag_latest ${DOCKER_IMAGE_DOC}
 
-tag_webapp:
-  <<: *kubernetes_runner
-  stage: docker_tag
-  only:
-    - develop
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - docker_tag_latest ${DOCKER_IMAGE_APP}
-    - docker_tag_latest ${DOCKER_IMAGE_APP}_test
+# tag_webapp:
+#   <<: *kubernetes_runner
+#   stage: docker_tag
+#   only:
+#     - develop
+#   variables:
+#     GIT_STRATEGY: none
+#   script:
+#     - docker_tag_latest ${DOCKER_IMAGE_APP}
+#     - docker_tag_latest ${DOCKER_IMAGE_APP}_test
 
-tag_nlp:
-  <<: *kubernetes_runner
-  stage: docker_tag
-  only:
-    - develop
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - docker_tag_latest ${DOCKER_IMAGE_NLP}
+# tag_nlp:
+#   <<: *kubernetes_runner
+#   stage: docker_tag
+#   only:
+#     - develop
+#   variables:
+#     GIT_STRATEGY: none
+#   script:
+#     - docker_tag_latest ${DOCKER_IMAGE_NLP}
 
-tag_ruby_base:
-  <<: *kubernetes_runner
-  stage: docker_tag
-  only:
-    - develop
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}
-    - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}_test
+# tag_ruby_base:
+#   <<: *kubernetes_runner
+#   stage: docker_tag
+#   only:
+#     - develop
+#   variables:
+#     GIT_STRATEGY: none
+#   script:
+#     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}
+#     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}_test
 
-tag_backup:
-  <<: *kubernetes_runner
-  stage: docker_tag
-  only:
-    - develop
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - docker_tag_latest ${DOCKER_IMAGE_TOOLS_BACKUP}
+# tag_backup:
+#   <<: *kubernetes_runner
+#   stage: docker_tag
+#   only:
+#     - develop
+#   variables:
+#     GIT_STRATEGY: none
+#   script:
+#     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_BACKUP}
 
 # Deploy any branches on rancher dev
 deploy_dev:
@@ -182,7 +182,7 @@ deploy_dev:
   except:
     - master
     - tags
-  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
+  image: alpine/helm:2.13.1
   dependencies:
     - build_webapp
     - build_nlp
@@ -195,6 +195,8 @@ deploy_dev:
     VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
   script:
+    - echo $KUBECONFIG
+    - export export KUBECONFIG=$KUBECONFIG
     - echo "Deploy ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - echo "Deploy ..."
     - helm init --client-only
