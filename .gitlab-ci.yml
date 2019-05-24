@@ -45,7 +45,7 @@ elastic_keystore:
   stage: prerequist
   script:
     - chmod +x ./deployment/kubernetes/generateS3Keystore.sh
-    - /bin/bash -c "deployment/kubernetes/generateS3Keystore.sh"
+    - deployment/kubernetes/generateS3Keystore.sh
   # artifacts:
   #   paths:
   #     - ~/pertimm-tmp/elasticsearch.keystore
