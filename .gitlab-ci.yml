@@ -197,11 +197,13 @@ deploy_dev:
     S3_ACCESS_KEY: $S3_ACCESS_KEY
     S3_SECRET_KEY: $S3_SECRET_KEY
   services:
-    - docker:dind
+    - name: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
+      alias: elastic
+      command: ["bin/elasticsearch", "-Ediscovery.type=single-node"] # Important other wise, port 9200 will never be exposed
   script:
     # - bin/elasticsearch-keystore --help
-    - docker -v
-    - docker ps
+    - curl "http://elastic:9200"
+    - elastic --help
     - export KUBECONFIG=$KUBECONFIG
     - echo "Init helm ..."
     - helm init --client-only --wait
