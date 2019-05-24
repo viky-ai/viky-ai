@@ -182,7 +182,7 @@ deploy_dev:
   except:
     - master
     - tags
-  image: alpine/helm:2.13.1
+  image: dtzar/helm-kubectl:2.14.0
   # dependencies:
   #   - build_webapp
   #   - build_nlp
