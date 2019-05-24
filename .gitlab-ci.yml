@@ -12,9 +12,7 @@ image: docker:stable
 before_script:
   - echo "Logging to GitLab Container Registry with CI credentials ..."
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  - echo $DOCKER_TAG_TO_BUILD
-  - echo $(eval echo $DOCKER_TAG_TO_BUILD)
-  - if [ -n "${DOCKER_TAG_TO_BUILD}" ]; then eval 'export DOCKER_TAG_TO_BUILD=$DOCKER_TAG_TO_BUILD' ; docker pull $DOCKER_TAG_TO_BUILD || true ; fi
+  - if [ -n "${DOCKER_TAG_TO_BUILD}" ]; then export DOCKER_TAG_TO_BUILD=$(eval echo $DOCKER_TAG_TO_BUILD) ; docker pull $DOCKER_TAG_TO_BUILD || true ; fi
 
 after_script:
   - if [ -n "${DOCKER_TAG_TO_BUILD}" ]; then docker push $DOCKER_TAG_TO_BUILD; fi
