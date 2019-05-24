@@ -189,7 +189,7 @@ deploy_dev:
   environment:
     name: ${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-    on_stop: delete_env
+    # on_stop: delete_env
   variables:
     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
     VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
