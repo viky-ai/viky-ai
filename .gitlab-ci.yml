@@ -13,9 +13,7 @@ before_script:
   - echo "Logging to GitLab Container Registry with CI credentials ..."
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   - echo $DOCKER_TAG_TO_BUILD
-  - echo eval $DOCKER_TAG_TO_BUILD
-  - eval 'export DOCKER_TAG_TO_BUILD=$DOCKER_TAG_TO_BUILD'
-  - eval $DOCKER_TAG_TO_BUILD
+  - echo $(eval echo $DOCKER_TAG_TO_BUILD)
   - if [ -n "${DOCKER_TAG_TO_BUILD}" ]; then eval 'export DOCKER_TAG_TO_BUILD=$DOCKER_TAG_TO_BUILD' ; docker pull $DOCKER_TAG_TO_BUILD || true ; fi
 
 after_script:
