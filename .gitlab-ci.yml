@@ -200,8 +200,8 @@ deploy_dev:
     - echo "Deploy ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - echo "Deploy ..."
     - helm init --client-only
-    - helm upgrade --install ${CI_ENVIRONMENT_SLUG}-infra --namespace "viky-${CI_ENVIRONMENT_SLUG}" viky deployment/kubernetes/viky-infra/
-    - helm upgrade --install ${CI_ENVIRONMENT_SLUG}-platform --namespace "viky-${CI_ENVIRONMENT_SLUG}" viky deployment/kubernetes/viky-platform/
+    - helm upgrade --install ${CI_ENVIRONMENT_SLUG}-infra --namespace "viky-${CI_ENVIRONMENT_SLUG}" deployment/kubernetes/viky-infra/
+    - helm upgrade --install ${CI_ENVIRONMENT_SLUG}-platform --namespace "viky-${CI_ENVIRONMENT_SLUG}" deployment/kubernetes/viky-platform/
 
 # # Deploy master on rancher preprod
 # deploy_preprod:
