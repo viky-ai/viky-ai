@@ -12,7 +12,7 @@ image: docker:stable
 before_script:
   - echo "Logging to GitLab Container Registry with CI credentials ..."
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  - if [ -n "${DOCKER_TAG_TO_BUILD}" ]; then docker pull $DOCKER_TAG_TO_BUILD || true ; fi
+  - if [ -n "${DOCKER_TAG_TO_BUILD}" ]; then eval 'export DOCKER_TAG_TO_BUILD=$DOCKER_TAG_TO_BUILD' ; docker pull $DOCKER_TAG_TO_BUILD || true ; fi
 
 after_script:
   - if [ -n "${DOCKER_TAG_TO_BUILD}" ]; then docker push $DOCKER_TAG_TO_BUILD; fi
@@ -40,7 +40,7 @@ build_ruby_base:
     - docker:stable-dind
   stage: prerequist
   variables:
-    DOCKER_TAG_TO_BUILD: "${DOCKER_IMAGE_TOOLS_RUBY}"
+    DOCKER_TAG_TO_BUILD: ${DOCKER_IMAGE_TOOLS_RUBY}
   script:
     - docker build --target image_ruby_base       -t ${DOCKER_TAG_TO_BUILD}       deployment/docker_tools/ruby_base/
 
@@ -50,7 +50,7 @@ build_ruby_base_test:
     - docker:stable-dind
   stage: prerequist
   variables:
-    DOCKER_TAG_TO_BUILD: "${DOCKER_IMAGE_TOOLS_RUBY}_test"
+    DOCKER_TAG_TO_BUILD: ${DOCKER_IMAGE_TOOLS_RUBY}_test
   script:
     - docker build --target image_ruby_base_test  -t ${DOCKER_TAG_TO_BUILD}  deployment/docker_tools/ruby_base/
 
@@ -60,7 +60,7 @@ build_backup:
     - docker:stable-dind
   stage: prerequist
   variables:
-    DOCKER_TAG_TO_BUILD: "${DOCKER_IMAGE_TOOLS_BACKUP}"
+    DOCKER_TAG_TO_BUILD: ${DOCKER_IMAGE_TOOLS_BACKUP}
   script:
     - docker build -t ${DOCKER_TAG_TO_BUILD} deployment/docker_tools/backup/
 
@@ -68,7 +68,7 @@ build_doc:
   <<: *kubernetes_runner
   stage: build_1
   variables:
-    DOCKER_TAG_TO_BUILD: "$DOCKER_IMAGE_DOC"
+    DOCKER_TAG_TO_BUILD: $DOCKER_IMAGE_DOC
   script:
     - docker build --build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_doc_run -t ${DOCKER_TAG_TO_BUILD} doc/
 
@@ -78,7 +78,7 @@ build_webapp:
     - docker:stable-dind
   stage: build_2
   variables:
-    DOCKER_TAG_TO_BUILD: "$DOCKER_IMAGE_APP"
+    DOCKER_TAG_TO_BUILD: $DOCKER_IMAGE_APP
   script:
     - docker build --build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_run -t ${DOCKER_TAG_TO_BUILD} webapp/
 
@@ -86,7 +86,7 @@ build_webapp_test:
   <<: *kubernetes_runner
   stage: build_2
   variables:
-    DOCKER_TAG_TO_BUILD: "${DOCKER_IMAGE_APP}_test"
+    DOCKER_TAG_TO_BUILD: ${DOCKER_IMAGE_APP}_test
   script:
     - docker build --build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_test -t ${DOCKER_TAG_TO_BUILD} webapp/
 
@@ -96,7 +96,7 @@ build_nlp:
     - docker:stable-dind
   stage: build_2
   variables:
-    DOCKER_TAG_TO_BUILD: "$DOCKER_IMAGE_NLP"
+    DOCKER_TAG_TO_BUILD: $DOCKER_IMAGE_NLP
   script:
     - docker build --target run_image -t ${DOCKER_TAG_TO_BUILD} nlp/
 
@@ -106,7 +106,7 @@ build_nlp_test:
     - docker:stable-dind
   stage: build_2
   variables:
-    DOCKER_TAG_TO_BUILD: "${DOCKER_IMAGE_NLP}_test"
+    DOCKER_TAG_TO_BUILD: ${DOCKER_IMAGE_NLP}_test
   script:
     - docker build --target test_image -t ${DOCKER_TAG_TO_BUILD} nlp/
 # # Test
