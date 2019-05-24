@@ -14,6 +14,7 @@ image: docker:stable
     - kubernetes
 
 variables:
+  SKIP_TEST: "true"
   CI_SERVICE_HOST: "127.0.0.1"
   GIT_SUBMODULE_STRATEGY: recursive
   DOCKER_HOST: "tcp://dood:2375"
@@ -174,30 +175,31 @@ tag_backup:
   script:
     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_BACKUP}
 
-# # Deploy any branches on rancher dev
-# deploy_dev:
-#   <<: *kubernetes_runner
-#   stage: deploy
-#   except:
-#     - master
-#     - tags
-#   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
-#   dependencies:
-#     - build_webapp
-#     - build_nlp
-#   environment:
-#     name: ${CI_COMMIT_REF_NAME}
-#     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#     on_stop: delete_env
-#   variables:
-#     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-#     VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
-#   script:
-#     - echo "Deploy ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
-#     - cd deployment
-#     - echo "Deploy ..."
-#     - rancher --wait --environment dev up --stack ${VIKYAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml  --file docker-compose-infra.yml --file docker-compose-rancher.yml -d --batch-size 1 --pull --force-upgrade --confirm-upgrade --prune
+# Deploy any branches on rancher dev
+deploy_dev:
+  <<: *kubernetes_runner
+  stage: deploy
+  except:
+    - master
+    - tags
+  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
+  dependencies:
+    - build_webapp
+    - build_nlp
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+    on_stop: delete_env
+  variables:
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
+    VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+    VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
+  script:
+    - echo "Deploy ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - echo "Deploy ..."
+    - helm init --client-only
+    - helm upgrade --install ${CI_ENVIRONMENT_SLUG}-infra --namespace "viky-${CI_ENVIRONMENT_SLUG}" viky deployment/kubernetes/viky-infra/
+    - helm upgrade --install ${CI_ENVIRONMENT_SLUG}-platform --namespace "viky-${CI_ENVIRONMENT_SLUG}" viky deployment/kubernetes/viky-platform/
 
 # # Deploy master on rancher preprod
 # deploy_preprod:
