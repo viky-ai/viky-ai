@@ -199,6 +199,7 @@ deploy_dev:
     - echo "Init helm ..."
     - helm init --client-only --wait
     - echo "Create registry secret"
+    - kubectl create namespace "viky-${CI_ENVIRONMENT_SLUG}" || true
     - kubectl delete secret pertimm-registry --namespace "viky-${CI_ENVIRONMENT_SLUG}" || true
     - kubectl create secret docker-registry pertimm-registry --namespace "viky-${CI_ENVIRONMENT_SLUG}" --docker-server="${CI_REGISTRY}" --docker-username="${CI_REGISTRY_USER}" --docker-password="${CI_REGISTRY_PASSWORD}"
     - echo "Deploy Infrastructure"
