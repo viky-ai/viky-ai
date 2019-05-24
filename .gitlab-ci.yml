@@ -2,8 +2,8 @@ stages:
   - prerequist
   - build_1
   - build_2
-  # - test
-  # - docker_tag
+  - test
+  - docker_tag
   # - deploy
   # - admin
 
