@@ -44,12 +44,6 @@ build_backup:
   script:
     - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup
 
-build_elastic:
-  <<: *kubernetes_runner
-  stage: prerequist
-  script:
-    - docker_build ${DOCKER_IMAGE_ELASTICSEARCH} deployment/docker_tools/elasticsearch
-
 build_doc:
   <<: *kubernetes_runner
   stage: build_1
