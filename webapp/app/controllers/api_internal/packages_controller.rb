@@ -2,16 +2,13 @@ class ApiInternal::PackagesController < ApiInternal::ApplicationController
   include ActionController::Live
 
   def index
-    # sort agent by number of entities
-    agent_by_entites_count = Agent
-      .select('agents.id as id, COUNT(entities.id) as count')
-      .left_outer_joins(entities_lists: :entities)
-      .group(:id)
-      .order('count DESC, agents.updated_at DESC')
-
-    @agents = Agent
-      .select(:id)
-      .from("(#{agent_by_entites_count.to_sql}) as a")
+    # Sort agent ids by number of entities
+    render json: Agent
+        .left_outer_joins(:entities_lists)
+        .group(:id)
+        .order('SUM(entities_lists.entities_count) DESC, agents.updated_at DESC')
+        .pluck(:id)
+        .to_json
   end
 
   def show
