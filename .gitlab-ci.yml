@@ -183,9 +183,9 @@ deploy_dev:
     - master
     - tags
   image: alpine/helm:2.13.1
-  dependencies:
-    - build_webapp
-    - build_nlp
+  # dependencies:
+  #   - build_webapp
+  #   - build_nlp
   environment:
     name: ${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
