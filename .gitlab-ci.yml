@@ -44,10 +44,13 @@ elastic_keystore:
   <<: *kubernetes_runner
   stage: prerequist
   script:
+    - ls -l ./ || true
+    - ls -l deployment || true
+    - ls -l deployment/kubernetes || true
     - deployment/kubernetes/generateS3Keystore.sh
   artifacts:
     paths:
-      - ~/pertimm-tmp/
+      - ~/pertimm-tmp/elasticsearch.keystore
     expire_in: 1 hour
 
 # build_doc:
