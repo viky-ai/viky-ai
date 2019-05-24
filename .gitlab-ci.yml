@@ -9,14 +9,6 @@ stages:
 
 image: docker:stable
 
-before_script:
-  - echo "Logging to GitLab Container Registry with CI credentials ..."
-  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  - if [ -n "${DOCKER_TAG_TO_BUILD}" ]; then export DOCKER_TAG_TO_BUILD=$(eval echo $DOCKER_TAG_TO_BUILD) ; docker pull $DOCKER_TAG_TO_BUILD || true ; fi
-
-after_script:
-  - if [ -n "${DOCKER_TAG_TO_BUILD}" ]; then docker push $DOCKER_TAG_TO_BUILD; fi
-
 .kubernetes_runner: &kubernetes_runner
   tags:
     - kubernetes
@@ -36,79 +28,58 @@ variables:
 
 build_ruby_base:
   <<: *kubernetes_runner
-  services:
-    - docker:stable-dind
   stage: prerequist
-  variables:
-    DOCKER_TAG_TO_BUILD: ${DOCKER_IMAGE_TOOLS_RUBY}
   script:
-    - docker build --target image_ruby_base       -t ${DOCKER_TAG_TO_BUILD}       deployment/docker_tools/ruby_base/
+    - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}      deployment/docker_tools/ruby_base "--target image_ruby_base"
 
 build_ruby_base_test:
   <<: *kubernetes_runner
-  services:
-    - docker:stable-dind
   stage: prerequist
-  variables:
-    DOCKER_TAG_TO_BUILD: ${DOCKER_IMAGE_TOOLS_RUBY}_test
   script:
-    - docker build --target image_ruby_base_test  -t ${DOCKER_TAG_TO_BUILD}  deployment/docker_tools/ruby_base/
+    - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}_test deployment/docker_tools/ruby_base "--target image_ruby_base_test"
 
 build_backup:
   <<: *kubernetes_runner
-  services:
-    - docker:stable-dind
   stage: prerequist
-  variables:
-    DOCKER_TAG_TO_BUILD: ${DOCKER_IMAGE_TOOLS_BACKUP}
   script:
-    - docker build -t ${DOCKER_TAG_TO_BUILD} deployment/docker_tools/backup/
+    - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup
+
+build_elastic:
+  <<: *kubernetes_runner
+  stage: prerequist
+  script:
+    - docker_build ${DOCKER_IMAGE_ELASTICSEARCH} deployment/docker_tools/elasticsearch
 
 build_doc:
   <<: *kubernetes_runner
   stage: build_1
-  variables:
-    DOCKER_TAG_TO_BUILD: $DOCKER_IMAGE_DOC
   script:
-    - docker build --build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_doc_run -t ${DOCKER_TAG_TO_BUILD} doc/
+    - docker_build ${DOCKER_IMAGE_DOC}      doc    "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_doc_run"
 
 build_webapp:
   <<: *kubernetes_runner
-  services:
-    - docker:stable-dind
   stage: build_2
-  variables:
-    DOCKER_TAG_TO_BUILD: $DOCKER_IMAGE_APP
   script:
-    - docker build --build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_run -t ${DOCKER_TAG_TO_BUILD} webapp/
+    - docker_build ${DOCKER_IMAGE_APP}      webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_run"
 
 build_webapp_test:
   <<: *kubernetes_runner
   stage: build_2
-  variables:
-    DOCKER_TAG_TO_BUILD: ${DOCKER_IMAGE_APP}_test
   script:
-    - docker build --build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_test -t ${DOCKER_TAG_TO_BUILD} webapp/
+    - docker_build ${DOCKER_IMAGE_APP}_test webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_test"
 
 build_nlp:
   <<: *kubernetes_runner
-  services:
-    - docker:stable-dind
   stage: build_2
-  variables:
-    DOCKER_TAG_TO_BUILD: $DOCKER_IMAGE_NLP
   script:
-    - docker build --target run_image -t ${DOCKER_TAG_TO_BUILD} nlp/
+    - docker_build ${DOCKER_IMAGE_NLP}      nlp "--target run_image"
 
 build_nlp_test:
   <<: *kubernetes_runner
-  services:
-    - docker:stable-dind
   stage: build_2
-  variables:
-    DOCKER_TAG_TO_BUILD: ${DOCKER_IMAGE_NLP}_test
   script:
-    - docker build --target test_image -t ${DOCKER_TAG_TO_BUILD} nlp/
+    - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--target test_image"
+
 # # Test
 # .test_webapp: &test_webapp
 #   stage: test
@@ -472,3 +443,77 @@ build_nlp_test:
 #     - rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis redis-cli flushall
 #   when: manual
 #   allow_failure: true
+
+before_script:
+  - |
+    # Auto DevOps variables and functions
+    [[ "$TRACE" == "1" ]] && set -x
+
+    function viky_backup ()
+    {
+      echo "Backing up data ..."
+      rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
+
+      if [ $? -ne 0 ]; then
+        (>&2 echo "Backing up data FAILED")
+      fi
+      echo ""
+      return 0
+    }
+
+
+    function docker_build ()
+    {
+      # login to private registry
+      docker_login
+
+      local CI_DOCKER_IMAGE="$1"
+      local CI_DOCKER_DIR="$2"
+      local CI_DOCKER_IMAGE_BUILD_OPT="$3"
+
+      echo "Build docker image ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} from dir ${CI_DOCKER_DIR} ..."
+      docker build --pull ${CI_DOCKER_IMAGE_BUILD_OPT} -t ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${CI_DOCKER_DIR}
+      echo ""
+
+      echo "Pushing ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} to GitLab Container Registry ..."
+      docker push ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
+      echo ""
+    }
+
+    function docker_tag_latest ()
+    {
+      # login to private registry
+      docker_login
+
+      local CI_DOCKER_IMAGE="$1"
+
+      echo "Pulling ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}"
+      docker pull ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
+
+      echo "Taggging ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} to ${CI_DOCKER_IMAGE}:latest"
+      docker tag ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${CI_DOCKER_IMAGE}:latest
+
+      echo "Pushing ${CI_DOCKER_IMAGE}:latest to GitLab Container Registry ..."
+      docker push ${CI_DOCKER_IMAGE}:latest
+      echo ""
+    }
+
+    function docker_login ()
+    {
+      if [[ -n "$CI_REGISTRY_USER" ]]; then
+        echo "Logging to GitLab Container Registry with CI credentials ..."
+        echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin "${CI_REGISTRY}"
+        echo ""
+      fi
+    }
+
+    function rancher_exec ()
+    {
+      local RANCHER_ENV=$1
+
+      # simulate a tty with script command https://github.com/rancher/rancher/issues/7971#issuecomment-286856228
+      local CURRENT_COMMAND="rancher --wait --environment ${RANCHER_ENV} exec -t ${@:2}"
+      echo "Exec : ${CURRENT_COMMAND}"
+      script --return --flush --quiet --command "${CURRENT_COMMAND}" /dev/null
+      return $?
+    }
