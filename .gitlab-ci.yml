@@ -202,8 +202,8 @@ deploy_dev:
       command: ["bin/elasticsearch", "-Ediscovery.type=single-node"] # Important other wise, port 9200 will never be exposed
   script:
     # - bin/elasticsearch-keystore --help
+    - curl "http://elasticsearch:9200"
     - curl "http://elastic:9200"
-    - elastic --help
     - export KUBECONFIG=$KUBECONFIG
     - echo "Init helm ..."
     - helm init --client-only --wait
