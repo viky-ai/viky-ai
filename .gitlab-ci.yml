@@ -201,7 +201,7 @@ deploy_dev:
       alias: elastic
       command: ["bin/elasticsearch", "-Ediscovery.type=single-node"] # Important other wise, port 9200 will never be exposed
   script:
-    - bin/elasticsearch-keystore --help
+    -  # bin/elasticsearch-keystore --help
     - elastic --help
     - export KUBECONFIG=$KUBECONFIG
     - echo "Init helm ..."
