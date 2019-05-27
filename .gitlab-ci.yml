@@ -229,8 +229,8 @@ deploy_dev:
     - kubectl create secret generic es-keystore-secret --namespace="viky-${CI_ENVIRONMENT_SLUG}" --from-file "elasticsearch.keystore"
     - echo "Deploy Viky Infrastructure"
     - helm upgrade --wait --install ${CI_ENVIRONMENT_SLUG}-infra --namespace "viky-${CI_ENVIRONMENT_SLUG}" deployment/kubernetes/viky-infra/
-    # - echo "Deploy Viky Platform"
-    # - helm upgrade --wait --install ${CI_ENVIRONMENT_SLUG}-platform --namespace "viky-${CI_ENVIRONMENT_SLUG}" deployment/kubernetes/viky-platform/
+    - echo "Deploy Viky Platform"
+    - helm upgrade --wait --install ${CI_ENVIRONMENT_SLUG}-platform --namespace "viky-${CI_ENVIRONMENT_SLUG}" deployment/kubernetes/viky-platform/
 
 # # Deploy master on rancher preprod
 # deploy_preprod:
