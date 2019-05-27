@@ -220,6 +220,9 @@ deploy_dev:
     - helm init --client-only --wait
     - echo "Create namespace"
     - kubectl create namespace "${NAMESPACE}" || true
+    - echo "Create old secrets"
+    - kubectl delete secret es-keystore-secret --namespace "viky-${CI_ENVIRONMENT_SLUG}" || true
+    - kubectl delete secret pertimm-registry --namespace "viky-${CI_ENVIRONMENT_SLUG}" || true
     - echo "Create Pertimm Registry Secret"
     - kubectl create secret docker-registry pertimm-registry --namespace "${NAMESPACE}" --docker-server="${CI_REGISTRY}" --docker-username="${CI_REGISTRY_USER}" --docker-password="${CI_REGISTRY_PASSWORD}" || true
     - echo "Create ES Keystore secret"
