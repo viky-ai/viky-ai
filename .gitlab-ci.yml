@@ -227,7 +227,7 @@ deploy_dev:
     - echo "Deploy Viky Infrastructure"
     - helm upgrade --force --wait --install "${NAMESPACE}-infra" --timeout 600 --namespace "${NAMESPACE}" deployment/kubernetes/viky-infra/
     - echo "Deploy Viky Platform"
-    - helm upgrade --force --wait --set webapp.url="https://${NAMESPACE}-kube.pertimm.net",webapp.image.tag="${VIKY_IMAGE_TAG}",webapp.image.nlp="${VIKY_IMAGE_TAG}" --install "${NAMESPACE}-platform" --namespace "${NAMESPACE}" deployment/kubernetes/viky-platform/
+    - helm upgrade --force --wait --set webapp.image.nlp="${VIKY_IMAGE_TAG}" --install "${NAMESPACE}-platform" --namespace "${NAMESPACE}" deployment/kubernetes/viky-platform/
 
 # # Deploy master on rancher preprod
 # deploy_preprod:
