@@ -230,7 +230,7 @@ deploy_dev:
     - echo "Deploy Viky Infrastructure"
     - helm upgrade --force --wait --install "${NAMESPACE}-infra" --timeout 600 --namespace "${NAMESPACE}" deployment/kubernetes/viky-infra/
     - echo "Deploy Viky Platform"
-    - 'echo "nlp:\n\timage:\n\t\ttag: $CI_COMMIT_REF_SLUG\nwebapp:\n\turl: $NAMESPACE\n\timage:\n\t\ttag: $CI_COMMIT_REF_SLUG\n" > custom-values.yml'
+    - deployment/kubernetes/generateOverrideValuesFile.sh
     - echo ls -l
     - cat custom-values.yml
     - helm upgrade --force --wait --values custom-values.yml --install "${NAMESPACE}-platform" --namespace "${NAMESPACE}" deployment/kubernetes/viky-platform/
