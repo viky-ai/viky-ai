@@ -230,7 +230,10 @@ deploy_dev:
     - echo "Deploy Viky Infrastructure"
     - helm upgrade --force --wait --install "${NAMESPACE}-infra" --timeout 600 --namespace "${NAMESPACE}" deployment/kubernetes/viky-infra/
     - echo "Deploy Viky Platform"
-    - helm upgrade --force --wait --set webapp.url="https://${NAMESPACE}-kube.pertimm.net",webapp.image.tag="${VIKY_IMAGE_TAG}",webapp.image.nlp="${VIKY_IMAGE_TAG}" --install "${NAMESPACE}-platform" --namespace "${NAMESPACE}" deployment/kubernetes/viky-platform/
+    - generate_values_override_file "${NAMESPACE}" 
+    - echo ls -l
+    - cat custom-values.yml
+    - helm upgrade --force --wait --values custom-values.yml --install "${NAMESPACE}-platform" --namespace "${NAMESPACE}" deployment/kubernetes/viky-platform/
 
 # # Deploy master on rancher preprod
 # deploy_preprod:
@@ -544,4 +547,20 @@ before_script:
       echo "Exec : ${CURRENT_COMMAND}"
       script --return --flush --quiet --command "${CURRENT_COMMAND}" /dev/null
       return $?
+    }
+
+    function generate_values_override_file()
+    {
+      local NAMESPACE="$1"
+
+      cat >> custom-values.yml <<EOL
+      nlp:
+        image:
+          tag: $CI_COMMIT_REF_SLUG
+
+      webapp:
+        url: NAMESPACE
+        image:
+          tag: $CI_COMMIT_REF_SLUG
+      EOL
     }
