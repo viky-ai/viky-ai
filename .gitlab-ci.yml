@@ -43,6 +43,8 @@ variables:
 elastic_keystore:
   <<: *kubernetes_runner
   stage: prerequist
+  variables:
+    ES_IGNORE_SECRET_GENERATION: "true"
   script:
     - chmod +x ./deployment/kubernetes/generateS3Keystore.sh
     - deployment/kubernetes/generateS3Keystore.sh
