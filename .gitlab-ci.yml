@@ -189,44 +189,48 @@ elastic_keystore:
 #   script:
 #     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_BACKUP}
 
-# # Deploy any branches on rancher dev
-# deploy_dev:
-#   <<: *kubernetes_runner
-#   stage: deploy
-#   except:
-#     - master
-#     - tags
-#   image: dtzar/helm-kubectl:2.13.1
-#   # dependencies:
-#   #   - build_webapp
-#   #   - build_nlp
-#   environment:
-#     name: ${CI_COMMIT_REF_NAME}
-#     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#     # on_stop: delete_env
-#   variables:
-#     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-#     VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
-#     S3_ACCESS_KEY: $S3_ACCESS_KEY
-#     S3_SECRET_KEY: $S3_SECRET_KEY
-#   services:
-#     - name: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
-#       alias: elastic
-#       command: ["bin/elasticsearch", "-Ediscovery.type=single-node"] # Important other wise, port 9200 will never be exposed
-#   script:
-#     - export KUBECONFIG=$KUBECONFIG
-#     - echo "Init helm ..."
-#     - helm init --client-only --wait
-#     - echo "Create namespace"
-#     - kubectl create namespace "viky-${CI_ENVIRONMENT_SLUG}" || true
-#     - echo "Create registry secret"
-#     - kubectl delete secret pertimm-registry --namespace "viky-${CI_ENVIRONMENT_SLUG}" || true
-#     - kubectl create secret docker-registry pertimm-registry --namespace "viky-${CI_ENVIRONMENT_SLUG}" --docker-server="${CI_REGISTRY}" --docker-username="${CI_REGISTRY_USER}" --docker-password="${CI_REGISTRY_PASSWORD}"
-#     - echo "Deploy Viky Infrastructure"
-#     - helm upgrade --wait --install ${CI_ENVIRONMENT_SLUG}-infra --namespace "viky-${CI_ENVIRONMENT_SLUG}" deployment/kubernetes/viky-infra/
-#     - echo "Deploy Viky Platform"
-#     - helm upgrade --wait --install ${CI_ENVIRONMENT_SLUG}-platform --namespace "viky-${CI_ENVIRONMENT_SLUG}" deployment/kubernetes/viky-platform/
+# Deploy any branches on rancher dev
+deploy_dev:
+  <<: *kubernetes_runner
+  stage: deploy
+  except:
+    - master
+    - tags
+  image: dtzar/helm-kubectl:2.13.1
+  dependencies:
+    - elastic_keystore
+  #   - build_webapp
+  #   - build_nlp
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+    # on_stop: delete_env
+  variables:
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
+    VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+    VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
+    S3_ACCESS_KEY: $S3_ACCESS_KEY
+    S3_SECRET_KEY: $S3_SECRET_KEY
+  services:
+    - name: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
+      alias: elastic
+      command: ["bin/elasticsearch", "-Ediscovery.type=single-node"] # Important other wise, port 9200 will never be exposed
+  script:
+    - export KUBECONFIG=$KUBECONFIG
+    - echo "Init helm ..."
+    - helm init --client-only --wait
+    - echo "Create namespace"
+    - kubectl create namespace "viky-${CI_ENVIRONMENT_SLUG}" || true
+    - echo "Create registry secret"
+    - kubectl delete secret pertimm-registry --namespace "viky-${CI_ENVIRONMENT_SLUG}" || true
+    - echo "Create Pertimm Registry Secret"
+    - kubectl create secret docker-registry pertimm-registry --namespace "viky-${CI_ENVIRONMENT_SLUG}" --docker-server="${CI_REGISTRY}" --docker-username="${CI_REGISTRY_USER}" --docker-password="${CI_REGISTRY_PASSWORD}"
+    - echo "Create ES Keystore secret"
+    - kubectl create secret generic es-keystore-secret --namespace="viky-${CI_ENVIRONMENT_SLUG}" --from-file "elasticsearch.keystore"
+    - echo "Deploy Viky Infrastructure"
+    - helm upgrade --wait --install ${CI_ENVIRONMENT_SLUG}-infra --namespace "viky-${CI_ENVIRONMENT_SLUG}" deployment/kubernetes/viky-infra/
+    - echo "Deploy Viky Platform"
+    - helm upgrade --wait --install ${CI_ENVIRONMENT_SLUG}-platform --namespace "viky-${CI_ENVIRONMENT_SLUG}" deployment/kubernetes/viky-platform/
 
 # # Deploy master on rancher preprod
 # deploy_preprod:
