@@ -48,9 +48,9 @@ elastic_keystore:
   script:
     - chmod +x ./deployment/kubernetes/generateS3Keystore.sh
     - deployment/kubernetes/generateS3Keystore.sh
+    - ls -l
   artifacts:
     paths:
-      - ls -l
       - elasticsearch.keystore
     expire_in: 1 hour
 
