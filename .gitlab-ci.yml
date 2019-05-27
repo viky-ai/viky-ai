@@ -48,10 +48,10 @@ elastic_keystore:
   script:
     - chmod +x ./deployment/kubernetes/generateS3Keystore.sh
     - deployment/kubernetes/generateS3Keystore.sh
-  # artifacts:
-  #   paths:
-  #     - ~/pertimm-tmp/elasticsearch.keystore
-  #   expire_in: 1 hour
+  artifacts:
+    paths:
+      - ~/pertimm-tmp/elasticsearch.keystore
+    expire_in: 1 hour
 
 # build_doc:
 #   <<: *kubernetes_runner
