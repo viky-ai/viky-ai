@@ -50,7 +50,7 @@ elastic_keystore:
     - deployment/kubernetes/generateS3Keystore.sh
   artifacts:
     paths:
-      - ~/pertimm-tmp/elasticsearch.keystore
+      - /root/pertimm-tmp/elasticsearch.keystore
     expire_in: 1 hour
 
 # build_doc:
