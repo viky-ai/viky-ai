@@ -4,7 +4,7 @@
   <h4><%= t('views.intents.index.list_title') %></h4>
   <div>
     <% if current_user.can? :edit, @agent %>
-      <a href="<%= new_user_agent_intent_path(current_user, @agent) %>"
+      <a href="<%= new_user_agent_intent_path(@owner, @agent) %>"
          class="btn btn--primary"
          data-action="open-remote-modal">
         <span class="icon icon--small"><%= icon_add_circle %></span> <%= t('views.intents.index.new') %>

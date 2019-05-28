@@ -131,16 +131,6 @@ class AgentsController < ApplicationController
     render json: { api_token: @agent.api_token }
   end
 
-  def full_export
-    respond_to do |format|
-      format.json {
-        filename = "#{@agent.slug}.#{Time.current.strftime('%Y-%m-%d_%H-%M-%S')}.json"
-        response.headers["Content-Disposition"] = "inline; filename=\"#{filename}\""
-        render json: JSON.pretty_generate(Nlp::Package.new(@agent).full_json_export)
-      }
-    end
-  end
-
   def add_favorite
     favorite = FavoriteAgent.new(user: current_user, agent: @agent)
     if favorite.save
@@ -184,7 +174,7 @@ class AgentsController < ApplicationController
     def set_owner_and_agent
       begin
         @owner = User.friendly.find(params[:user_id])
-        @agent = @owner.agents.friendly.find(params[:id])
+        @agent = Agent.owned_by(@owner).friendly.find(params[:id])
       rescue ActiveRecord::RecordNotFound
         redirect_to '/404'
       end

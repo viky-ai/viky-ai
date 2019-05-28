@@ -27,6 +27,7 @@ og_status NlsEndpointReadySet(struct og_listening_thread *lt, struct og_nls_requ
 {
   if (!lt->ctrl_nls->nls_ready)
   {
+    OgNlsMemLogPeakUsage(lt->ctrl_nls, "NlsEndpointReadySet");
     OgMsg(lt->ctrl_nls->hmsg, "", DOgMsgDestInLog + DOgMsgDestMBox, "NLS is now ready.");
   }
   lt->ctrl_nls->nls_ready = TRUE;

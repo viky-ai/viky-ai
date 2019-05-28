@@ -73,7 +73,7 @@ class AgentRegressionChecksController < ApplicationController
     end
 
     def set_agent
-      @agent = @owner.agents.friendly.find(params[:agent_id])
+      @agent = Agent.owned_by(@owner).friendly.find(params[:agent_id])
     end
 
     def set_regression_check

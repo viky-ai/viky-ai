@@ -246,7 +246,16 @@ og_status NlsLtReset(struct og_listening_thread *lt)
   IFE(OgNlpThreadedReset(lt->hnlp_th));
 
   IFE(NlsLtResetOptions(lt));
-  IFE(OgHeapReset(lt->h_json_answer));
+
+  if(lt->ctrl_nls->nls_ready)
+  {
+    IFE(OgHeapReset(lt->h_json_answer));
+  }
+  else
+  {
+    // if not ready try to reduce memory more efficiently
+    IFE(OgHeapResetToMinimal(lt->h_json_answer));
+  }
 
   DONE;
 }

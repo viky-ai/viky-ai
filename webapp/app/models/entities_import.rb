@@ -129,9 +129,7 @@ class EntitiesImport < ApplicationRecord
       if file.storage.is_a? Shrine::Storage::FileSystem
         file.storage.path(file.id)
       else # for test environment when Shrine uses in-memory storage
-        file_path = Rails.root.join('tmp', 'test_vikyai_entities_import.csv')
-        File.delete(file_path) if File.exists? file_path
-        tempfile = File.open(file_path, 'w+')
+        tempfile = Tempfile.open(["test", ".csv"])
         file.open { |f| tempfile.write(f.read) }
         tempfile.close
         tempfile.path

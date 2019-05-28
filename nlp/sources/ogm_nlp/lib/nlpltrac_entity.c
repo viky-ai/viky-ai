@@ -144,9 +144,10 @@ og_status NlpLtracEntityPackage(og_nlp_th ctrl_nlp_th, package_t package)
 
     IFE(NlpLtracEntityPackageWrite(ctrl_nlp_th, package));
 
-    // Reducing the memory of the automaton to avoid keep temporary memory
-    IFE(OgAutResize(ctrl_nlp_th->ha_prepare_entity, 0x10));
   }
+
+  // Reducing the memory of the automaton to avoid keep temporary memory
+  IFE(OgAutResize(ctrl_nlp_th->ha_prepare_entity, 0x10));
 
   DONE;
 }
@@ -177,8 +178,8 @@ og_status NlpLtracEntityPrepareInit(og_nlp_th ctrl_nlp_th, og_string name)
 
 og_status NlpLtracEntityPrepareReset(og_nlp_th ctrl_nlp_th)
 {
-  IFE(OgAutReset(ctrl_nlp_th->ha_prepare_entity));
-  IFE(OgHeapReset(ctrl_nlp_th->hprepare_entity));
+  IFE(OgAutResize(ctrl_nlp_th->ha_prepare_entity, 0x10));
+  IFE(OgHeapResetToMinimal(ctrl_nlp_th->hprepare_entity));
   DONE;
 }
 
@@ -314,6 +315,8 @@ static og_status NlpLtracEntityCreate(og_nlp_th ctrl_nlp_th)
 static og_status NlpLtracEntityAdd(og_nlp_th ctrl_nlp_th, unsigned char *word, int word_length, int frequency)
 {
   if (word_length <= 0) DONE;
+
+  if (word_length >= DOgNlpMaxLtracWordSize) DONE;
 
   int uni_length;
   unsigned char uni[DPcPathSize];

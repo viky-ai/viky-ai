@@ -7,7 +7,7 @@ en:
           select_import:
             title: Import entities
             wait_message: Uploading file, please wait...
-            max_file_size: "The maximum file size allowed is 5Mo."
+            max_file_size: "The maximum file size allowed is 30Mo."
             mode:
               label: Import behavior
               append: Append to current entities

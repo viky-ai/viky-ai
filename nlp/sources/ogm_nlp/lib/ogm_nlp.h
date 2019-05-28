@@ -43,6 +43,7 @@
 #define DOgNlpMaximumRegexStringSizeLogged  512 // Must be smaller than DPcPathSize
 #define DOgNlpMaxEntitySize   512
 #define DOgNlpMaxNbWordsPerEntity 10
+#define DOgNlpMaxLtracWordSize 50
 
 #define DOgNlpMaximumOwnedLock      16
 
@@ -211,7 +212,8 @@ enum nlp_glue_strength
 
 struct expression_compile
 {
-  int id_start;
+  // unique position in intepretation
+  int pos;
   int text_start;
   og_bool keep_order;
   enum nlp_glue_strength glue_strength;
@@ -232,7 +234,7 @@ struct expression
   /** Parent */
   struct interpretation *interpretation;
 
-  og_string id;
+  int pos;
 
   og_string text;
 

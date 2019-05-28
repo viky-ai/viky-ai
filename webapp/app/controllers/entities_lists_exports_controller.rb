@@ -3,7 +3,7 @@ class EntitiesListsExportsController < ApplicationController
 
   def show
     @owner = User.friendly.find(params[:user_id])
-    @agent = @owner.agents.friendly.find(params[:agent_id])
+    @agent = Agent.owned_by(@owner).friendly.find(params[:agent_id])
     @entities_list = @agent.entities_lists.friendly.find(params[:id])
 
     access_denied unless current_user.can? :show, @agent

@@ -222,6 +222,7 @@ struct og_ctrl_nls
 
 /** inls.c **/
 og_status OgNlsWritePidFile(og_nls ctrl_nls);
+void OgNlsMemLogPeakUsage(og_nls ctrl_nls, og_string context);
 
 /** nlsrun.c **/
 int NlsRunSendErrorStatus(void *ptr, struct og_socket_info *info, int error_status, og_string message);

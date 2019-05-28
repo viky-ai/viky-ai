@@ -89,6 +89,7 @@ DEFPUBLIC(void *) OgUciServerInit(pr(struct og_uci_server_param *));
 DEFPUBLIC(int) OgUciServerFlush(pr(void *));
 DEFPUBLIC(int) OgUciServerRead(pr_(void *) pr_(struct og_ucisr_input *) pr(struct og_ucisr_output *));
 DEFPUBLIC(int) OgUciServerWrite(pr_(void *) pr(struct og_ucisw_input *));
+DEFPUBLIC(og_status) OgUciServerReadReset(void *handle, og_bool reset_to_minimal);
 DEFPUBLIC(int) OgUcisMem(void *hucis, int must_log, int module_level,ogint64_t *pmem);
 
 DEFPUBLIC(void *) OgUciClientInit(pr(struct og_uci_client_param *));

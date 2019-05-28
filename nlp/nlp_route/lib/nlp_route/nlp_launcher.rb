@@ -9,19 +9,41 @@ require 'parallel'
 
 module NlpRoute
   class NlpLauncher
+
+    MASSIF = false
+
     @@nls_background = nil
+
+    def pidfile()
+      pidfile = "#{NlpLauncher.pwd}/ogm_nls.pid"
+    end
 
     # get all package from webapp in json format and store in /nlp/import/ then start nlp
     def start(start_nlp = true)
       if start_nlp
-        pidfile = "#{NlpLauncher.pwd}/ogm_nls.pid"
         FileUtils.rm(pidfile, force: true)
 
         starting = true
 
+        command = './ogm_nls'
+
+        if MASSIF
+          commands = []
+          commands << 'G_DEBUG=resident-modules'
+          commands << 'G_SLICE=always-malloc'
+          commands << 'NLP_JS_DUK_GC_PERIOD=1'
+          commands << 'valgrind --tool=massif'
+          commands << '--time-unit=ms'
+          commands << '--threshold=0.1'
+          commands << '--max-snapshots=500'
+          commands << '--detailed-freq=1'
+          commands << '--massif-out-file=massif-output.txt'
+          commands << command
+          command = commands.join(' ')
+        end
+
         @@nls_background = Thread.new do
-          command = './ogm_nls'
-          Thread.current.name = "Nls : #{command}"
+          Thread.current.name = "Nls launcher"
           begin
             NlpLauncher.exec(command)
           rescue StandardError => e
@@ -58,7 +80,6 @@ module NlpRoute
     end
 
     def stop
-      pidfile = "#{NlpLauncher.pwd}/ogm_nls.pid"
       `pkill --signal SIGTERM --pidfile #{pidfile}` if File.exist?(pidfile)
 
       @@nls_background.join if !@@nls_background.nil? && @@nls_background.alive?
@@ -69,10 +90,15 @@ module NlpRoute
       start_time = Time.now
       puts 'Loading all packages ...'
 
+      parallel = (ENV.fetch('VIKYAPP_NLP_PARALLEL_LOAD') { "8" }).to_i
+
       # Load all packages ids
       wrapper = PackageApiWrapper.new
       packages_ids = wrapper.list_id
-      payloads = Parallel.map(packages_ids, in_threads: Parallel.processor_count) do |package_id|
+
+      puts "#{packages_ids.size} packages to process"
+
+      payloads = Parallel.map(packages_ids, in_threads: parallel) do |package_id|
         payloads = []
         begin
           retries ||= 3
@@ -110,7 +136,10 @@ module NlpRoute
       end
 
       duration = Time.now - start_time
-      puts "Loading all packages in #{'%.2f' % duration}s."
+
+      nls_memory = `ps -p $(cat #{pidfile}) -o rss | head -n 2 | tail -n +2`.strip.to_i rescue 0
+
+      puts "Loading all (#{packages_ids.size}) packages in #{'%.2f' % duration}s using #{nls_memory / 1024} MB memory."
 
     end
 

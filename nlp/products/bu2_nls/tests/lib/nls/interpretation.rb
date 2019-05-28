@@ -38,7 +38,9 @@ module Nls
         raise "Expression (#{new_expression}, #{new_expression.class}) added must a #{Expression.name} in interpretation (#{@package.slug}/#{@slug})"
       end
 
+      pos = @expressions.count
       @expressions << new_expression
+      new_expression.pos = pos
       new_expression.interpretation = self
     end
     alias_method '<<', 'add_expression'

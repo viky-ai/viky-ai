@@ -12,7 +12,7 @@
         <%= t('views.bots.confirm_destroy.content_html', name: @bot.name) %>
       </p>
       <%= form_for(@bot,
-                   url: user_agent_bot_path(current_user, @agent, @bot),
+                   url: user_agent_bot_path(@owner, @agent, @bot),
                    method: :delete,
                    html: {
                      data: { validation: :delete }

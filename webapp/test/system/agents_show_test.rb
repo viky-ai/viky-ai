@@ -3,7 +3,7 @@ require "application_system_test_case"
 class AgentsShowTest < ApplicationSystemTestCase
 
   test 'Navigation to agent show' do
-    go_to_agents_index
+    admin_go_to_agents_index
     click_link "My awesome weather bot admin/weather"
     assert page.has_text?('admin/weather')
     assert page.has_text?('Sharing overview')
@@ -17,9 +17,35 @@ class AgentsShowTest < ApplicationSystemTestCase
     assert page.has_text?("Unauthorized operation.")
   end
 
+  test "Navigation to agent show where user is a collaborator; The user owns another agent with same name" do
+    user = users(:show_on_agent_weather)
+
+    new_agent = Agent.new(
+      name: "Weather agent 2",
+      agentname: agents(:weather).agentname,
+      description: "Agent A decription",
+      visibility: 'is_public',
+      nlp_updated_at: '2019-01-21 10:07:53.484942',
+    )
+    new_agent.memberships << Membership.new(user_id: user.id, rights: "all")
+    assert new_agent.save
+
+    login_as(user.email, 'BimBamBoom')
+    assert page.has_text?("Agents")
+    fill_in 'search_query', with: 'weather'
+    click_button '#search'
+
+    assert page.has_text?('My awesome weather bot admin/weather')
+    assert page.has_text?('Weather agent 2 show_on_agent_weather/weather')
+    
+    click_link 'Weather agent 2 show_on_agent_weather/weather'
+    assert_equal '/agents/show_on_agent_weather/weather', current_path
+    assert page.has_text?('Weather agent 2 show_on_agent_weather/weather')
+  end
+
 
   test 'No redirection when configuring from show' do
-    go_to_agents_index
+    admin_go_to_agents_index
     click_link 'My awesome weather bot admin/weather'
     assert page.has_text?('Sharing overview')
     click_link 'Configure'
@@ -38,7 +64,7 @@ class AgentsShowTest < ApplicationSystemTestCase
 
 
   test 'Transfer agent ownership' do
-    go_to_agents_index
+    admin_go_to_agents_index
     assert page.has_content?('admin/terminator')
     click_link 'T-800'
     click_link 'Transfer ownership'
@@ -53,7 +79,7 @@ class AgentsShowTest < ApplicationSystemTestCase
 
 
   test 'Transfer agent ownership whereas another agent with the same agentname throw an error' do
-    go_to_agents_index
+    admin_go_to_agents_index
     assert page.has_content?('admin/weather')
     click_link 'My awesome weather bot'
     click_link 'Transfer ownership'
@@ -66,7 +92,7 @@ class AgentsShowTest < ApplicationSystemTestCase
 
 
   test 'Share from agent show if owner' do
-    go_to_agents_index
+    admin_go_to_agents_index
     click_link 'T-800'
     click_link 'Share'
     click_link 'Invite collaborators'
@@ -92,14 +118,14 @@ class AgentsShowTest < ApplicationSystemTestCase
 
 
   test 'Access to unkown agent' do
-    go_to_agents_index
+    admin_go_to_agents_index
     visit user_agent_path('admin', 'unknown-agent')
     assert_equal '/404', current_path
   end
 
 
   test 'Add an owned agent to favorites' do
-    go_to_agents_index
+    admin_go_to_agents_index
     click_link 'My awesome weather bot admin/weather'
     click_link 'Add favorite'
     assert page.has_text?('Remove favorite')
@@ -120,7 +146,7 @@ class AgentsShowTest < ApplicationSystemTestCase
     weather = agents(:weather)
     assert FavoriteAgent.create(user: admin, agent: weather)
 
-    go_to_agents_index
+    admin_go_to_agents_index
     click_link 'My awesome weather bot admin/weather'
     click_link 'Remove favorite'
     assert page.has_text?('Add favorite')
@@ -133,13 +159,14 @@ class AgentsShowTest < ApplicationSystemTestCase
       content: 'My awesome readme !!!'
     )
 
-    go_to_agent_show(users(:admin), agents(:weather))
+    admin_login
+    go_to_agent_show(agents(:weather))
 
     perform_enqueued_jobs do
       DuplicateAgentJob.perform_later(agents(:weather), users(:admin)) # click_link 'Duplicate'
     end
 
-    go_to_agents_index
+    admin_go_to_agents_index
     assert page.has_text?('admin/weather-copy')
 
     click_link 'admin/weather-copy'
@@ -147,7 +174,7 @@ class AgentsShowTest < ApplicationSystemTestCase
     assert page.has_link?('Interpretations 2')
     assert page.has_link?('Entities 2')
 
-    go_to_agent_intents('admin', 'weather-copy')
+    click_link 'Interpretations'
     click_link 'weather_forecast'
     assert page.has_text?('Interpretations / weather_forecast PUBLIC')
 

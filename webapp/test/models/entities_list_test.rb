@@ -125,31 +125,33 @@ class EntitiesListTest < ActiveSupport::TestCase
     agent = agents(:weather_confirmed)
     entities_list_0 = EntitiesList.create(
       listname: 'intent_0',
-      position: 0,
+      position: 1,
       agent: agent
     )
     entities_list_1 = EntitiesList.create(
       listname: 'entities_list_1',
-      position: 1,
+      position: 2,
       agent: agent
     )
     entities_list_2 = EntitiesList.create(
       listname: 'entities_list_2',
-      position: 2,
+      position: 3,
       agent: agent
     )
 
     new_positions = [entities_list_1.id, entities_list_2.id, entities_list_0.id, '132465789']
     EntitiesList.update_positions(agent, [], new_positions)
     force_reset_model_cache([entities_list_0, entities_list_1, entities_list_2])
-    assert_equal [2, 1, 0], [entities_list_1.position, entities_list_2.position, entities_list_0.position]
+    assert_equal [3, 2, 1], [entities_list_1.position, entities_list_2.position, entities_list_0.position]
     assert_equal %w(is_private is_private is_private), [entities_list_1.visibility, entities_list_2.visibility, entities_list_0.visibility]
   end
 
 
   test 'Export entities_list' do
     entities_list = entities_lists(:weather_dates)
-    csv = entities_list.to_csv
+    string_io = StringIO.new
+    entities_list.to_csv_in_io(string_io)
+    csv = string_io.string
     expected = ["Terms,Auto solution,Solution",
                 "aujourd'hui:fr|tout à l'heure:fr|today:en,false,\"{\"\"date\"\": \"\"today\"\"}\"",
                 "tomorrow,false,\"{\"\"date\"\": \"\"tomorrow\"\"}\"",
@@ -165,7 +167,9 @@ class EntitiesListTest < ActiveSupport::TestCase
     sun.solution = ''
     sun.save
 
-    csv = entities_list.to_csv
+    string_io = StringIO.new
+    entities_list.to_csv_in_io(string_io)
+    csv = string_io.string
     expected = ["Terms,Auto solution,Solution",
                 "sun,true,sun",
                 "pluie:fr|rain:en,true,pluie",
@@ -209,4 +213,48 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert_equal expected, actual
   end
 
+
+  test 'List entities by batch orderer by position' do
+    entities_list = entities_lists(:terminator_targets)
+    targets = (0...6).map do |target_id|
+      Entity.create!(
+        auto_solution_enabled: true,
+        solution: "target_#{target_id}",
+        terms: [
+          { term: "target_#{target_id}", locale: '*' }
+        ],
+        position: target_id,
+        entities_list: entities_list
+      )
+    end
+    entities_list.entities = targets
+    assert entities_list.save
+
+    entities_list.entities_in_ordered_batchs(4).each_with_index do |params, index|
+      batch = params[0]
+      max = params[1]
+      min = params[2]
+      if index.zero?
+        offset = 2
+        assert_equal 5, max
+        assert_equal 2, min
+      else
+        offset = -2
+        assert_equal 1, max
+        assert_equal 0, min
+      end
+      assert_equal 3 + offset, batch[0].position
+      assert_equal 2 + offset, batch[1].position
+      assert_equal 1 + offset, batch[2].position if index.zero?
+      assert_equal 0 + offset, batch[3].position if index.zero?
+    end
+
+    entities_list.entities = []
+    assert entities_list.save
+    entities_list.entities_in_ordered_batchs(4).each do |batch, max_position, min_position|
+      assert_empty batch
+      assert_equal 0, max_position
+      assert_equal 0, min_position
+    end
+  end
 end

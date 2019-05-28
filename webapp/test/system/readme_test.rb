@@ -4,19 +4,20 @@ class ReadmeTest < ApplicationSystemTestCase
 
 
   test 'Readme blankslate' do
-    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
     assert page.has_text?('There is no README defined for this agent')
   end
 
 
   test 'Readme show' do
-    go_to_agent_show(users(:admin), agents(:terminator))
+    admin_login
+    go_to_agent_show(agents(:terminator))
     assert page.has_text?('Readme for terminator agent')
   end
 
 
   test 'Readme creation default state' do
-    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
     click_link 'Add a README'
     within('.modal') do
       assert page.has_text? 'Create README'
@@ -26,7 +27,7 @@ class ReadmeTest < ApplicationSystemTestCase
 
 
   test 'Readme creation live preview' do
-    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
     click_link 'Add a README'
     within('.modal') do
       assert page.has_text? 'Create README'
@@ -37,7 +38,7 @@ class ReadmeTest < ApplicationSystemTestCase
 
 
   test 'Readme creation failure' do
-    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
     click_link 'Add a README'
     within('.modal') do
       assert page.has_text? 'Create README'
@@ -49,7 +50,7 @@ class ReadmeTest < ApplicationSystemTestCase
 
 
   test 'Readme creation success' do
-    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
     click_link 'Add a README'
     within('.modal') do
       assert page.has_text? 'Create README'
@@ -62,7 +63,8 @@ class ReadmeTest < ApplicationSystemTestCase
 
 
   test 'Readme edit failure' do
-    go_to_agent_show(users(:admin), agents(:terminator))
+    admin_login
+    go_to_agent_show(agents(:terminator))
     click_link 'Edit'
     within('.modal') do
       assert page.has_text? 'Edit README'
@@ -74,7 +76,8 @@ class ReadmeTest < ApplicationSystemTestCase
 
 
   test 'Readme edit success' do
-    go_to_agent_show(users(:admin), agents(:terminator))
+    admin_login
+    go_to_agent_show(agents(:terminator))
     click_link 'Edit'
     within('.modal') do
       assert page.has_text? 'Edit README'
@@ -87,8 +90,8 @@ class ReadmeTest < ApplicationSystemTestCase
 
 
   test 'Readme deletion' do
-    go_to_agent_show(users(:admin), agents(:terminator))
-
+    admin_login
+    go_to_agent_show(agents(:terminator))
     click_link 'Delete'
     within('.modal') do
       assert page.has_text?('Are you sure?')

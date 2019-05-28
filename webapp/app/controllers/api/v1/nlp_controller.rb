@@ -56,7 +56,7 @@ class Api::V1::NlpController < Api::V1::ApplicationController
     # Auto render 404.json on ActiveRecord::RecordNotFound exception
     def validate_owner_and_agent
       @owner = User.friendly.find(params[:ownername])
-      @agent = @owner.agents.friendly.find(params[:agentname])
+      @agent = Agent.owned_by(@owner).friendly.find(params[:agentname])
     end
 
     def check_agent_token
