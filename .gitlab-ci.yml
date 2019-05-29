@@ -230,10 +230,9 @@ deploy_dev:
     - echo "Generate Override values"
     - deployment/kubernetes/generateOverrideValuesFile.sh
     - echo "Deploy Viky Infrastructure"
+    - cat custom-values.yml
     - helm upgrade --force --wait --values custom-values.yml --install "${NAMESPACE}-infra" --timeout 600 --namespace "${NAMESPACE}" deployment/kubernetes/viky-infra/
     - echo "Deploy Viky Platform"
-    - echo ls -l
-    - cat custom-values.yml
     - helm upgrade --force --wait --values custom-values.yml --install "${NAMESPACE}-platform" --namespace "${NAMESPACE}" deployment/kubernetes/viky-platform/
 
 # # Deploy master on rancher preprod
