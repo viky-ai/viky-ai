@@ -210,6 +210,7 @@ deploy_dev:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
     NAMESPACE: viky-${CI_ENVIRONMENT_SLUG}
+    VIKY_DOMAIN: viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
   services:
     - name: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
       alias: elastic
