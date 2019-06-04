@@ -38,7 +38,7 @@ build_backup:
   <<: *kubernetes_runner
   stage: prerequist
   script:
-    - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup
+    - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup "--build-arg VIKYAPP_BACKUP_PASSWORD=${VIKYAPP_BACKUP_PASSWORD}"
 
 elastic_keystore:
   <<: *kubernetes_runner
