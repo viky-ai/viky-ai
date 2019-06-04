@@ -46,8 +46,8 @@ elastic_keystore:
   variables:
     ES_IGNORE_SECRET_GENERATION: "true"
   script:
-    - chmod +x ./deployment/kubernetes/generateS3Keystore.sh
-    - deployment/kubernetes/generateS3Keystore.sh
+    - chmod +x ./deployment/kubernetes/bin/generateS3Keystore.sh
+    - deployment/kubernetes/bin/generateS3Keystore.sh
     - ls -l
   artifacts:
     paths:
@@ -229,7 +229,7 @@ deploy_dev:
     - echo "Create ES Keystore secret"
     - kubectl create secret generic es-keystore-secret --namespace="${NAMESPACE}" --from-file "elasticsearch.keystore"  || true
     - echo "Generate Override values"
-    - deployment/kubernetes/generateOverrideValuesFile.sh
+    - deployment/kubernetes/bin/generateOverrideValuesFile.sh
     - echo "Deploy Viky Infrastructure"
     - cat custom-values.yml
     - helm upgrade --force --wait --values custom-values.yml --install "${NAMESPACE}-infra" --timeout 600 --namespace "${NAMESPACE}" deployment/kubernetes/viky-infra/
