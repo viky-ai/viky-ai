@@ -389,7 +389,7 @@ backup_preprod:
 backup_restore_dev:
   <<: *kubernetes_runner
   stage: admin
-  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
+  image: dtzar/helm-kubectl:2.13.1
   except:
     - master
     - tags
