@@ -5,7 +5,7 @@ stages:
   - test
   - docker_tag
   - deploy
-  # - admin
+  - admin
 
 image: docker:stable
 
@@ -211,10 +211,6 @@ deploy_dev:
     S3_SECRET_KEY: ${S3_SECRET_KEY}
     NAMESPACE: viky-${CI_ENVIRONMENT_SLUG}
     VIKY_DOMAIN: viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
-  services:
-    - name: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
-      alias: elastic
-      command: ["bin/elasticsearch", "-Ediscovery.type=single-node"] # Important other wise, port 9200 will never be exposed
   script:
     - export KUBECONFIG=$KUBECONFIG
     - echo "Init helm ..."
@@ -236,234 +232,181 @@ deploy_dev:
     - echo "Deploy Viky Platform"
     - helm upgrade --force --wait --values custom-values.yml,deployment/kubernetes/viky-platform/custom-values/production.yaml --install "${NAMESPACE}-platform" --namespace "${NAMESPACE}" deployment/kubernetes/viky-platform/
 
-# # Deploy master on rancher preprod
-# deploy_preprod:
-#   <<: *kubernetes_runner
-#   stage: deploy
-#   only:
-#     - master
-#   except:
-#     - tags
-#   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
-#   dependencies:
-#     - build_webapp
-#     - build_nlp
-#   environment:
-#     name: viky-preprod
-#     url: https://viky-beta.viky.ai
-#   variables:
-#     VIKYAPP_AUTO_BACKUP: "true"
-#     VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
-#     VIKYAPP_BASEURL: https://viky-beta.viky.ai
-#     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
-#   script:
-#     - echo "Deploy ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/preprod ( ${CI_ENVIRONMENT_URL} )"
-#     - cd deployment
-#     - viky_backup
-#     - echo "Deploy ..."
-#     - rancher --wait --environment preprod up --stack ${VIKYAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml --file docker-compose-infra.yml --file docker-compose-rancher.yml -d --batch-size 1 --pull --force-upgrade --confirm-upgrade --prune
+# Deploy master on rancher preprod
+deploy_preprod:
+  <<: *kubernetes_runner
+  stage: deploy
+  only:
+    - master
+  except:
+    - tags
+  image: dtzar/helm-kubectl:2.13.1
+  dependencies:
+    - elastic_keystore
+    - build_webapp
+    - build_nlp
+  environment:
+    name: viky-preprod
+    url: https://viky-beta-kube.viky.ai
+  variables:
+    VIKYAPP_AUTO_BACKUP: "true"
+    VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
+    S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+    S3_SECRET_KEY: ${S3_SECRET_KEY}
+    NAMESPACE: beta
+    VIKY_DOMAIN: viky-beta-kube.viky.ai
+  script:
+    - export KUBECONFIG=$KUBECONFIG
+    - echo "Init helm ..."
+    - helm init --client-only --wait
+    - echo "Create namespace"
+    - kubectl create namespace "${NAMESPACE}" || true
+    - echo "Create old secrets"
+    - kubectl delete secret es-keystore-secret --namespace "viky-${CI_ENVIRONMENT_SLUG}" || true
+    - kubectl delete secret pertimm-registry --namespace "viky-${CI_ENVIRONMENT_SLUG}" || true
+    - echo "Create Pertimm Registry Secret"
+    - kubectl create secret docker-registry pertimm-registry --namespace "${NAMESPACE}" --docker-server="${PERTIMM_REGISTRY_URL}" --docker-username="${PERTIMM_REGISTRY_USERNAME}" --docker-password="${PERTIMM_REGISTRY_PASSWORD}" --docker-email="${PERTIMM_REGISTRY_EMAIL}" || true
+    - echo "Create ES Keystore secret"
+    - kubectl create secret generic es-keystore-secret --namespace="${NAMESPACE}" --from-file "elasticsearch.keystore"  || true
+    - echo "Generate Override values"
+    - deployment/kubernetes/bin/generateOverrideValuesFile.sh
+    - echo "Deploy Viky Infrastructure"
+    - cat custom-values.yml
+    - helm upgrade --force --wait --values custom-values.yml,deployment/kubernetes/viky-infra/custom-values/production.yaml --install "${NAMESPACE}-infra" --timeout 600 --namespace "${NAMESPACE}" deployment/kubernetes/viky-infra/
+    - echo "Deploy Viky Platform"
+    - helm upgrade --force --wait --values custom-values.yml,deployment/kubernetes/viky-platform/custom-values/production.yaml --install "${NAMESPACE}-platform" --namespace "${NAMESPACE}" deployment/kubernetes/viky-platform/
 
-# # remove environment
-# delete_env:
-#   <<: *kubernetes_runner
-#   stage: admin
-#   except:
-#     - master
-#     - tags
-#   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
-#   environment:
-#     name: ${CI_COMMIT_REF_NAME}
-#     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#     action: stop
-#   variables:
-#     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-#     VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
-#   script:
-#     - echo "Remove ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
-#     - rancher --debug --environment dev rm --stop --type stack ${VIKYAPP_DEPLOY_RANCHER_STACK}
-#   when: manual
-#   allow_failure: true
 
-# # invite admin user
-# invite_admin_dev:
-#   <<: *kubernetes_runner
-#   stage: admin
-#   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
-#   except:
-#     - master
-#     - tags
-#   environment:
-#     name: ${CI_COMMIT_REF_NAME}
-#     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#   variables:
-#     GIT_STRATEGY: none
-#     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-#     VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#   script:
-#     - echo "Add user ${GITLAB_USER_EMAIL} as admin on ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
-#     - TASK_CMD="./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]"
-#     - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-app-master-1 ${TASK_CMD}
-#   when: manual
-#   allow_failure: true
+# remove environment
+delete_env:
+  <<: *kubernetes_runner
+  stage: admin
+  except:
+    - master
+    - tags
+  image: dtzar/helm-kubectl:2.13.1
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
+    action: stop
+  variables:
+    NAMESPACE: viky-${CI_ENVIRONMENT_SLUG}
+  script:
+    - export KUBECONFIG=$KUBECONFIG
+    - echo "Init helm ..."
+    - helm init --client-only --wait
+    - helm delete --purge "${NAMESPACE}-platform"
+    - helm delete --purge "${NAMESPACE}-infra"
+  when: manual
+  allow_failure: true
 
-# # invite admin user
-# invite_admin_preprod:
-#   <<: *kubernetes_runner
-#   stage: admin
-#   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
-#   only:
-#     - master
-#   environment:
-#     name: viky-preprod
-#     url: https://viky-beta.viky.ai
-#   variables:
-#     GIT_STRATEGY: none
-#     VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
-#     VIKYAPP_BASEURL: https://viky-beta.viky.ai
-#   script:
-#     - echo "Add user ${GITLAB_USER_EMAIL} as admin on ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
-#     - TASK_CMD="./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]"
-#     - rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-app-master-1 ${TASK_CMD}
-#   when: manual
-#   allow_failure: true
+# invite admin user
+invite_admin_dev:
+  <<: *kubernetes_runner
+  stage: admin
+  image: dtzar/helm-kubectl:2.13.1
+  except:
+    - master
+    - tags
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
+  variables:
+    GIT_STRATEGY: none
+    NAMESPACE: viky-${CI_ENVIRONMENT_SLUG}
+  script:
+    - export KUBECONFIG=$KUBECONFIG
+    - echo "Init helm ..."
+    - helm init --client-only --wait
+    - PODNAME=$(kubectl get pods --namespace=$NAMESPACE -l app=webapp --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
+    - kubectl --namespace=$NAMESPACE exec $PODNAME ./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]
+  when: manual
+  allow_failure: true
 
-# # backup
-# backup_dev:
-#   <<: *kubernetes_runner
-#   stage: admin
-#   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
-#   except:
-#     - master
-#     - tags
-#   environment:
-#     name: ${CI_COMMIT_REF_NAME}
-#     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#   variables:
-#     GIT_STRATEGY: none
-#     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-#     VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#   script:
-#     - echo "Backup platform data from ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
-#     - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
-#   when: manual
-#   allow_failure: true
+# invite admin user
+invite_admin_preprod:
+  <<: *kubernetes_runner
+  stage: admin
+  image: dtzar/helm-kubectl:2.13.1
+  only:
+    - master
+  environment:
+    name: viky-preprod
+    url: https://viky-beta-kube.viky.ai
+  variables:
+    GIT_STRATEGY: none
+    NAMESPACE: beta
+  script:
+    - export KUBECONFIG=$KUBECONFIG
+    - PODNAME=$(kubectl get pods --namespace=$NAMESPACE -l app=webapp --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
+    - kubectl --namespace=$NAMESPACE exec $PODNAME ./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]
+  when: manual
+  allow_failure: true
 
-# # backup
-# backup_preprod:
-#   <<: *kubernetes_runner
-#   stage: admin
-#   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
-#   only:
-#     - master
-#   environment:
-#     name: viky-preprod
-#     url: https://viky-beta.viky.ai
-#   variables:
-#     GIT_STRATEGY: none
-#     VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
-#     VIKYAPP_BASEURL: https://viky-beta.viky.ai
-#   script:
-#     - echo "Backup platform data from ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
-#     - rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
-#   when: manual
-#   allow_failure: true
+# backup
+backup_dev:
+  <<: *kubernetes_runner
+  stage: admin
+  image: dtzar/helm-kubectl:2.13.1
+  except:
+    - master
+    - tags
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
+  variables:
+    GIT_STRATEGY: none
+    NAMESPACE: viky-${CI_ENVIRONMENT_SLUG}
+  script:
+    - export KUBECONFIG=$KUBECONFIG
+    - PODNAME=$(kubectl get pods --namespace=$NAMESPACE -l app=webapp-backup --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
+    - kubectl exec --namespace=$NAMESPACE $PODNAME  bash /backup/backup.sh
+  when: manual
+  allow_failure: true
 
-# # backup restore
-# backup_restore_dev:
-#   <<: *kubernetes_runner
-#   stage: admin
-#   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
-#   except:
-#     - master
-#     - tags
-#   environment:
-#     name: ${CI_COMMIT_REF_NAME}
-#     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#   variables:
-#     GIT_STRATEGY: none
-#     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-#     VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#   script:
-#     - echo "Restore data from preprod (https://viky-beta.viky.ai) to ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
-#     - echo "Ensure platform ${VIKYAPP_DEPLOY_RANCHER_STACK} is starting ..."
-#     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}                 --type stack
-#     - echo "Backup current data ..."
-#     - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 /backup/backup.sh
-#     - sleep 5
-#     - echo "Stopping platform ${VIKYAPP_DEPLOY_RANCHER_STACK} ..."
-#     - rancher --wait --environment dev stop ${VIKYAPP_DEPLOY_RANCHER_STACK}                 --type stack
-#     - sleep 5
-#     - echo "Restart databases and backup tools ..."
-#     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-postgresql  --type service
-#     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis       --type service
-#     - sleep 5
-#     - echo "Restart backup tools ..."
-#     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/backup                --type service
-#     - sleep 5
-#     - echo "Restoring data ..."
-#     - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 /backup/restore.sh
-#     - sleep 2
-#     - echo "Restart sevices in right order ..."
-#     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/stats-service --type service
-#     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/es-master     --type service
-#     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/es-cerebro    --type service
-#     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/es-data       --type service
-#     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/es-kibana     --type service
-#     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/app-master    --type service
-#     - sleep 2
-#     - echo "Restarting rest of platform ..."
-#     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}                --type stack
-#   when: manual
-#   allow_failure: true
+# backup
+backup_preprod:
+  <<: *kubernetes_runner
+  stage: admin
+  image: dtzar/helm-kubectl:2.13.1
+  only:
+    - master
+  environment:
+    name: viky-preprod
+    url: https://viky-beta-kube.viky.ai
+  variables:
+    GIT_STRATEGY: none
+    NAMESPACE: beta
+  script:
+    - export KUBECONFIG=$KUBECONFIG
+    - PODNAME=$(kubectl get pods --namespace=$NAMESPACE -l app=webapp-backup --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
+    - kubectl exec --namespace=$NAMESPACE $PODNAME  bash /backup/backup.sh
+  when: manual
+  allow_failure: true
 
-# # Cache
-# cache_clear_dev:
-#   <<: *kubernetes_runner
-#   stage: admin
-#   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
-#   except:
-#     - master
-#     - tags
-#   environment:
-#     name: ${CI_COMMIT_REF_NAME}
-#     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#   variables:
-#     GIT_STRATEGY: none
-#     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-#     VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#   script:
-#     - echo "Clear cache to ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
-#     - echo "Ensure platform ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis is started ..."
-#     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis       --type service || echo "Redis is already running."
-#     - sleep 5
-#     - echo "Clear all cache ..."
-#     - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis redis-cli flushall
-#   when: manual
-#   allow_failure: true
-
-# cache_clear_preprod:
-#   <<: *kubernetes_runner
-#   stage: admin
-#   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
-#   only:
-#     - master
-#   environment:
-#     name: viky-preprod
-#     url: https://viky-beta.viky.ai
-#   variables:
-#     GIT_STRATEGY: none
-#     VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
-#     VIKYAPP_BASEURL: https://viky-beta.viky.ai
-#   script:
-#     - echo "Clear cache to ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/prod ( ${CI_ENVIRONMENT_URL} )"
-#     - echo "Ensure platform ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis is started ..."
-#     - rancher --wait --environment preprod start ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis       --type service || echo "Redis is already running."
-#     - sleep 5
-#     - echo "Clear all cache ..."
-#     - rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis redis-cli flushall
-#   when: manual
-#   allow_failure: true
+# backup restore
+backup_restore_dev:
+  <<: *kubernetes_runner
+  stage: admin
+  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
+  except:
+    - master
+    - tags
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
+  variables:
+    GIT_STRATEGY: none
+    NAMESPACE: viky-${CI_ENVIRONMENT_SLUG}
+  script:
+    - export KUBECONFIG=$KUBECONFIG
+    - PODNAME_REDIS=$(kubectl get pods --namespace=$NAMESPACE -l app=redis --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
+    - kubectl exec --namespace=$NAMESPACE $PODNAME_REDIS redis-cli flushall
+    - PODNAME=$(kubectl get pods --namespace=$NAMESPACE -l app=webapp-backup --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
+    - kubectl exec --namespace=$NAMESPACE $PODNAME  bash /backup/backup.sh
+    - kubectl exec --namespace=$NAMESPACE $PODNAME  bash /backup/restore.sh
+  when: manual
+  allow_failure: true
 
 before_script:
   - |
