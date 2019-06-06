@@ -225,7 +225,7 @@ deploy_dev:
     - kubectl delete secret es-keystore-secret --namespace "viky-${CI_ENVIRONMENT_SLUG}" || true
     - kubectl delete secret pertimm-registry --namespace "viky-${CI_ENVIRONMENT_SLUG}" || true
     - echo "Create Pertimm Registry Secret"
-    - kubectl create secret docker-registry pertimm-registry --namespace "${NAMESPACE}" --docker-server="${CI_REGISTRY}" --docker-username="${CI_REGISTRY_USER}" --docker-password="${CI_REGISTRY_PASSWORD}" || true
+    - kubectl create secret docker-registry pertimm-registry --namespace "${NAMESPACE}" --docker-server="${PERTIMM_REGISTRY_URL}" --docker-username="${PERTIMM_REGISTRY_USERNAME}" --docker-password="${PERTIMM_REGISTRY_PASSWORD}" --docker-email="${PERTIMM_REGISTRY_EMAIL}" || true
     - echo "Create ES Keystore secret"
     - kubectl create secret generic es-keystore-secret --namespace="${NAMESPACE}" --from-file "elasticsearch.keystore"  || true
     - echo "Generate Override values"
