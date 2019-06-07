@@ -73,14 +73,15 @@ class EntitiesList < ApplicationRecord
       if entities.exists?
         cursor_max, cursor_min = entities.pluck('MAX("entities"."position"), MIN("entities"."position")').first
         cursor = cursor_max
-        while cursor > cursor_min do
+        loop do
           batch_max_position = cursor
-          batch_min_position = (cursor - batch_size + 1).positive? ? cursor - batch_size + 1 : 0
+          batch_min_position = (cursor - batch_size + 1).positive? ? cursor - batch_size + 1 : cursor_min
           if entities.where(position: batch_min_position..batch_max_position).exists?
             batch = entities.where(position: batch_min_position..batch_max_position).order(position: :desc)
             block << [batch, batch_max_position, batch_min_position]
           end
-          cursor = (cursor - batch_size).positive? ? cursor - batch_size : 0
+          cursor = (cursor - batch_size).positive? ? cursor - batch_size : cursor_min
+          break if cursor <= cursor_min
         end
       else
         block << [entities.where('1 = 1'), 0, 0]
