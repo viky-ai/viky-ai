@@ -257,4 +257,28 @@ class EntitiesListTest < ActiveSupport::TestCase
       assert_equal 0, min_position
     end
   end
+
+  test 'List entities in order when only one entity is in the list' do
+    entities_list = entities_lists(:terminator_targets)
+    single_entity = Entity.create!(
+      auto_solution_enabled: true,
+      solution: 'target_0',
+      terms: [
+        { term: 'target_0', locale: '*' }
+      ],
+      position: 0,
+      entities_list: entities_list
+    )
+    entities_list.entities = [single_entity]
+    assert entities_list.save
+
+    result = 0
+    entities_list.entities_in_ordered_batchs(4).each do |batch, max_position, min_position|
+      result += 1
+      assert_equal 0, max_position
+      assert_equal 0, min_position
+      assert_equal 'target_0', batch.first.solution
+    end
+    assert_equal 1, result
+  end
 end
