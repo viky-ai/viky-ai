@@ -3,7 +3,7 @@ require 'application_system_test_case'
 class EntitiesListsTest < ApplicationSystemTestCase
 
   test 'Create an entities list' do
-    go_to_agent_entities_lists('admin', 'terminator')
+    admin_go_to_agent_entities_lists(agents('terminator'))
     click_link 'New entities list'
     within('.modal') do
       assert page.has_text? 'Create a new entities list'
@@ -19,7 +19,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
 
 
   test 'Errors on entities list creation' do
-    go_to_agent_entities_lists('admin', 'terminator')
+    admin_go_to_agent_entities_lists(agents('terminator'))
     click_link 'New entities list'
     within('.modal') do
       assert page.has_text? 'Create a new entities list'
@@ -35,7 +35,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
 
 
   test 'Update an entities list' do
-    go_to_agent_entities_lists('admin', 'weather')
+    admin_go_to_agent_entities_lists(agents('weather'))
     within '#entities_lists-list-is_public' do
       first('.dropdown__trigger > button').click
       click_link 'Configure'
@@ -54,7 +54,8 @@ class EntitiesListsTest < ApplicationSystemTestCase
 
 
   test 'Delete an entities list' do
-    go_to_agent_entities_lists('admin', 'weather')
+    agent = agents(:weather)
+    admin_go_to_agent_entities_lists(agent)
     within '#entities_lists-list-is_public' do
       first('.dropdown__trigger > button').click
       click_link 'Delete'
@@ -70,7 +71,6 @@ class EntitiesListsTest < ApplicationSystemTestCase
     end
     assert page.has_text?('Entities list with the name: weather_conditions has successfully been deleted.')
 
-    agent = agents(:weather)
     assert_equal user_agent_entities_lists_path(agent.owner, agent), current_path
   end
 
@@ -78,7 +78,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
   test 'Reorganize entities lists' do
     entities_list = EntitiesList.new(listname: 'test', agent: agents(:weather))
     assert entities_list.save
-    go_to_agent_entities_lists('admin', 'weather')
+    admin_go_to_agent_entities_lists(agents('weather'))
     assert page.has_link? 'New entities list'
     # assert_equal ['test', 'weather_conditions'], all('.card-list__item__name').collect(&:text)
     #
@@ -96,7 +96,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
   test 'Move entities list to another agent' do
     assert EntitiesList.create(listname: 'Other list', agent: agents(:terminator))
 
-    go_to_agent_entities_lists('admin', 'terminator')
+    admin_go_to_agent_entities_lists(agents('terminator'))
     within '#entities_lists-list-is_private' do
       first('.dropdown__trigger > button').click
       assert page.has_no_link?('Move to My awesome weather bot')
@@ -116,7 +116,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
       assert page.has_link?('Move to My awesome weather bot')
     end
 
-    go_to_agent_entities_lists('admin', 'weather')
+    admin_go_to_agent_entities_lists(agents('weather'))
     within '#entities_lists-list-is_private' do
       assert page.has_text?('terminator_targets')
       first('.dropdown__trigger > button').click
@@ -132,7 +132,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
     assert agent_public.save
     assert FavoriteAgent.create(user: admin, agent: agent_public)
 
-    go_to_agent_entities_lists('admin', 'terminator')
+    admin_go_to_agent_entities_lists(agents('terminator'))
     within '#entities_lists-list-is_private' do
       first('.dropdown__trigger > button').click
       click_link 'Move to'
@@ -154,7 +154,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
     assert agent_public.save
     assert FavoriteAgent.create(user: admin, agent: agent_public)
 
-    go_to_agent_entities_lists('admin', 'terminator')
+    admin_go_to_agent_entities_lists(agents('terminator'))
     within '#entities_lists-list-is_private' do
       first('.dropdown__trigger > button').click
       click_link 'Move to'
@@ -171,7 +171,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
 
 
   test 'aliased intents' do
-    go_to_agent_entities_lists('admin', 'weather')
+    admin_go_to_agent_entities_lists(agents('weather'))
 
     within '#entities_lists-list-is_public' do
       assert all('li').first.has_no_link?('Used by...')
@@ -190,6 +190,13 @@ class EntitiesListsTest < ApplicationSystemTestCase
     end
     expected = "/agents/admin/weather/interpretations#smooth-scroll-to-intent-#{intents(:weather_forecast).id}"
     assert current_url.include?(expected)
+  end
+
+  private
+
+  def admin_go_to_agent_entities_lists(agent)
+    admin_login
+    go_to_agent_entities_lists(agent)
   end
 
 end

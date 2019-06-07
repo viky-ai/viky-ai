@@ -139,7 +139,7 @@ class EntitiesListsController < ApplicationController
     end
 
     def set_agent
-      @agent = @owner.agents.friendly.find(params[:agent_id])
+      @agent = Agent.owned_by(@owner).friendly.find(params[:agent_id])
     end
 
     def check_user_rights
@@ -152,7 +152,7 @@ class EntitiesListsController < ApplicationController
       when 'move_to_agent'
         if current_user.can? :edit, @agent
           user_destination = User.friendly.find(params[:user])
-          @agent_destination = user_destination.agents.friendly.find(params[:agent])
+          @agent_destination = Agent.owned_by(user_destination).friendly.find(params[:agent])
           access_denied unless current_user.can? :edit, @agent_destination
         else
           access_denied

@@ -3,7 +3,7 @@ require 'application_system_test_case'
 class IntentsTest < ApplicationSystemTestCase
 
   test 'Create an intent' do
-    go_to_agent_intents('admin', 'terminator')
+    admin_go_to_agent_intents(agents('terminator'))
     click_link 'New interpretation'
     within('.modal') do
       assert page.has_text? 'Create a new interpretation'
@@ -17,7 +17,7 @@ class IntentsTest < ApplicationSystemTestCase
 
 
   test 'Errors on intent creation' do
-    go_to_agent_intents('admin', 'terminator')
+    admin_go_to_agent_intents(agents('terminator'))
     click_link 'New interpretation'
     within('.modal') do
       assert page.has_text? 'Create a new interpretation'
@@ -31,7 +31,7 @@ class IntentsTest < ApplicationSystemTestCase
 
 
   test 'Update an intent' do
-    go_to_agent_intents('admin', 'weather')
+    admin_go_to_agent_intents(agents('weather'))
     within '#intents-list-is_public' do
       first('.dropdown__trigger > button').click
       click_link 'Configure'
@@ -48,7 +48,9 @@ class IntentsTest < ApplicationSystemTestCase
 
 
   test 'Delete an intent' do
-    go_to_agent_intents('admin', 'weather')
+    agent = agents(:weather)
+
+    admin_go_to_agent_intents(agent)
     within '#intents-list-is_public' do
       first('.dropdown__trigger > button').click
       click_link 'Delete'
@@ -64,7 +66,6 @@ class IntentsTest < ApplicationSystemTestCase
     end
     assert page.has_text?('Interpretation with the name: weather_forecast has successfully been deleted.')
 
-    agent = agents(:weather)
     assert_equal user_agent_intents_path(agent.owner, agent), current_path
   end
 
@@ -74,7 +75,7 @@ class IntentsTest < ApplicationSystemTestCase
     intent.agent = agents(:weather)
     assert intent.save
 
-    go_to_agent_intents('admin', 'weather')
+    admin_go_to_agent_intents(agents('weather'))
     assert_equal ['test', 'weather_forecast', 'weather_question'], all('.card-list__item__name').collect(&:text)
 
     assert_equal 3, all('.card-list__item__draggable').size
@@ -89,7 +90,7 @@ class IntentsTest < ApplicationSystemTestCase
 
 
   test 'Add locale to an intent' do
-    go_to_agent_intents('admin', 'terminator')
+    admin_go_to_agent_intents(agents('terminator'))
     click_link 'terminator_find'
 
     assert page.has_text?('+')
@@ -104,7 +105,7 @@ class IntentsTest < ApplicationSystemTestCase
 
 
   test 'locale navigation persistence' do
-    go_to_agent_intents('admin', 'terminator')
+    admin_go_to_agent_intents(agents('terminator'))
     click_link 'terminator_find'
     assert page.has_text?('+')
 
@@ -150,7 +151,7 @@ class IntentsTest < ApplicationSystemTestCase
     intent.visibility = Intent.visibilities[:is_private]
     assert intent.save
 
-    go_to_agent_intents('admin', 'weather')
+    admin_go_to_agent_intents(agents('weather'))
     within '#intents-list-is_private' do
       first('.dropdown__trigger > button').click
       assert page.has_no_link?('Move to T-800')
@@ -170,7 +171,7 @@ class IntentsTest < ApplicationSystemTestCase
       assert page.has_link?('Move to T-800')
     end
 
-    go_to_agent_intents('admin', 'terminator')
+    admin_go_to_agent_intents(agents('terminator'))
     within '#intents-list-is_private' do
       assert page.has_text?('weather_question')
       first('.dropdown__trigger > button').click
@@ -186,7 +187,7 @@ class IntentsTest < ApplicationSystemTestCase
     assert agent_public.save
     assert FavoriteAgent.create(user: admin, agent: agent_public)
 
-    go_to_agent_intents('admin', 'terminator')
+    admin_go_to_agent_intents(agents('terminator'))
     within '#intents-list-is_public' do
       first('.dropdown__trigger > button').click
       click_link 'Move to'
@@ -208,7 +209,7 @@ class IntentsTest < ApplicationSystemTestCase
     assert agent_public.save
     assert FavoriteAgent.create(user: admin, agent: agent_public)
 
-    go_to_agent_intents('admin', 'terminator')
+    admin_go_to_agent_intents(agents('terminator'))
     within '#intents-list-is_public' do
       first('.dropdown__trigger > button').click
       click_link 'Move to'
@@ -224,7 +225,7 @@ class IntentsTest < ApplicationSystemTestCase
   end
 
   test 'Used by menu' do
-    go_to_agent_intents('admin', 'terminator')
+    admin_go_to_agent_intents(agents('terminator'))
 
     within '#intents-list-is_public' do
       assert first('li').has_no_link?('Used by...')
@@ -244,4 +245,11 @@ class IntentsTest < ApplicationSystemTestCase
 
     assert current_url.include?("/agents/admin/terminator/interpretations#smooth-scroll-to-intent-#{intents(:terminator_find).id}")
   end
+
+  private
+
+    def admin_go_to_agent_intents(agent)
+      admin_login
+      go_to_agent_intents(agent)
+    end
 end

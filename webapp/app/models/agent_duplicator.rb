@@ -12,7 +12,7 @@ class AgentDuplicator
       include_association :entities_lists, clone_with: EntitiesListsCloner
       include_association :intents, clone_with: IntentsCloner
       include_association :out_arcs
-      include_association :agent_regression_checks
+      include_association :agent_regression_checks, clone_with: AgentRegressionChecksCloner
 
       nullify :api_token
 
@@ -28,13 +28,17 @@ class AgentDuplicator
       end
     end
     fix_interpretation_aliases(new_agent.to_record)
+    ActiveRecord::Base.transaction do
+      new_agent.persist
+    end
+    new_agent.to_record
   end
 
   private
 
     def self.rename_agent(source, record, new_owner)
       new_agentname    = "#{source.agentname}-copy"
-      agent_count  = new_owner.agents.where('agentname ILIKE ?', "#{new_agentname}%").count
+      agent_count  = Agent.owned_by(new_owner).where('agentname ILIKE ?', "#{new_agentname}%").count
       record.agentname = agent_count.zero? ? new_agentname : "#{new_agentname}-#{agent_count}"
       record.name = agent_count.zero? ? "#{source.name} [COPY]" : "#{source.name} [COPY #{agent_count}]"
     end
@@ -80,9 +84,38 @@ class InterpretationsCloner < Clowne::Cloner
 end
 
 class EntitiesListsCloner < Clowne::Cloner
-  include_association :entities
+
+  after_persist do |origin, clone|
+    begin
+      origin.entities.find_in_batches.each do |batch|
+        new_entities = batch.map do |entity|
+          [entity.terms, entity.auto_solution_enabled, entity.solution, entity.position, clone.id, entity.searchable_terms]
+        end
+        columns = [:terms, :auto_solution_enabled, :solution, :position, :entities_list_id, :searchable_terms]
+        Entity.import!(columns, new_entities)
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      clone.agent.errors[:base] << e.record.errors.to_a
+      raise ActiveRecord::Rollback
+    end
+  end
 end
 
 class IntentsCloner < Clowne::Cloner
   include_association :interpretations, clone_with: InterpretationsCloner
+end
+
+class AgentRegressionChecksCloner < Clowne::Cloner
+  after_persist do |origin, clone, mapper:, **|
+    next if clone.expected.blank? || clone.expected['package'] != origin.agent.id
+
+    if origin.expected['root_type'] == 'entities_list'
+      origin_reference = origin.agent.entities_lists.find(clone.expected['id'])
+    else
+      origin_reference = origin.agent.intents.find(clone.expected['id'])
+    end
+    clone.expected['id'] = mapper.clone_of(origin_reference).id
+    clone.expected['package'] = clone.agent.id
+    clone.save
+  end
 end

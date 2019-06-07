@@ -6,7 +6,7 @@
   <h4><%= t('views.bots.index.list_title') %></h4>
   <div>
     <% if current_user_can_edit %>
-      <a href="<%= new_user_agent_bot_path(current_user, @agent) %>"
+      <a href="<%= new_user_agent_bot_path(@owner, @agent) %>"
          class="btn btn--primary"
          data-action="open-remote-modal">
         <span class="icon icon--small"><%= icon_add_circle %></span> <%= t('views.bots.index.new') %>

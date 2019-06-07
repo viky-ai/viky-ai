@@ -40,18 +40,25 @@ class Agent < ApplicationRecord
   before_validation :clean_agentname
   before_destroy :check_collaborators_presence, prepend: true
 
+  after_create_commit do
+    if intents.any? || entities_lists.any?
+      sync_nlp
+    end
+  end
+
   after_update_commit do |record|
     if @need_nlp_push || record.previous_changes[:agentname].present?
       agent_regression_checks.update_all(state: 'running')
       notify_tests_suite_ui
-      Nlp::Package.new(self).push
-      @need_nlp_push = false
+      sync_nlp
     end
   end
 
   after_destroy do
     Nlp::Package.new(self).destroy
   end
+  
+  scope :owned_by, ->(user) { where(owner_id: user.id) }
 
   def self.search(q = {})
     conditions = where('1 = 1')
@@ -251,7 +258,6 @@ class Agent < ApplicationRecord
     end
   end
 
-
   private
 
     def search_available_agents(conditions, q)
@@ -315,5 +321,10 @@ class Agent < ApplicationRecord
         timestamp: Time.now.to_f * 1000,
         payload: JSON.parse(regression_checks_to_json)
       )
+    end
+
+    def sync_nlp
+      Nlp::Package.new(self).push
+      @need_nlp_push = false
     end
 end

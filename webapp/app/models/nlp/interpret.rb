@@ -61,7 +61,7 @@ class Nlp::Interpret
   end
 
   def agent
-    User.friendly.find(ownername).agents.friendly.find(agentname)
+    Agent.owned_by(owner).friendly.find(agentname)
   end
 
   def packages

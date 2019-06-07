@@ -3,7 +3,7 @@ require "application_system_test_case"
 class AgentsNewTest < ApplicationSystemTestCase
 
   def go_to_agents_creation
-    go_to_agents_index
+    admin_go_to_agents_index
     click_link('New agent')
     within(".modal") do
       assert page.has_text? 'Create a new agent'
@@ -12,7 +12,7 @@ class AgentsNewTest < ApplicationSystemTestCase
 
 
   test "Navigation to agent creation" do
-    go_to_agents_index
+    admin_go_to_agents_index
     assert page.has_text? 'New agent'
     click_link 'New agent'
 
@@ -42,7 +42,7 @@ class AgentsNewTest < ApplicationSystemTestCase
       "T-800",
       "Wall-e",
     ]
-    go_to_agents_index
+    admin_go_to_agents_index
     assert_equal expected, (all('.agent-box h2').collect {|n| n.text})
 
     expected = [
@@ -77,7 +77,7 @@ class AgentsNewTest < ApplicationSystemTestCase
       "T-800",
       "Wall-e",
     ]
-    go_to_agents_index
+    admin_go_to_agents_index
     assert_equal expected, (all('.agent-box h2').collect {|n| n.text})
     assert all('.agent-box__header').last[:style].include? "background-image"
   end
@@ -100,7 +100,7 @@ class AgentsNewTest < ApplicationSystemTestCase
       "T-800",
       "Wall-e",
     ]
-    go_to_agents_index
+    admin_go_to_agents_index
     assert_equal expected, (all('.agent-box h2').collect {|n| n.text})
     expected = [
       "agent-box__header background-color-gradient__black",

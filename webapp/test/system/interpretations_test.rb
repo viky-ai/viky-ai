@@ -3,7 +3,7 @@ require 'application_system_test_case'
 class InterpretationsTest < ApplicationSystemTestCase
 
   test 'navigation' do
-    go_to_agents_index
+    admin_go_to_agents_index
     assert page.has_text?('admin/weather')
     click_link 'My awesome weather bot admin/weather'
     assert page.has_link?('Interpretations')
@@ -504,7 +504,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     def admin_go_to_intent_show(agent, intent)
       admin_login
-      visit user_agent_intent_path(users(:admin), agent, intent)
+      visit user_agent_intent_path(agent.owner, agent, intent)
       visibility = intent.is_public? ? 'PUBLIC' : 'PRIVATE'
       assert page.has_text?("Interpretations / #{intent.intentname} #{visibility}")
     end

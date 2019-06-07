@@ -3,7 +3,7 @@ require "application_system_test_case"
 class ChatbotTest < ApplicationSystemTestCase
 
   test 'Display a simple statement in the chat' do
-    go_to_chatbots
+    admin_go_to_chatbots
     within('.chatbots-list') do
       first('a').click
     end
@@ -30,7 +30,7 @@ class ChatbotTest < ApplicationSystemTestCase
     )
     assert wip_bot.save
 
-    go_to_chatbots
+    admin_go_to_chatbots
     within('.chatbots-list') do
       assert page.has_text?('Weather')
       assert page.has_text?('Arnold WIP')
@@ -39,7 +39,7 @@ class ChatbotTest < ApplicationSystemTestCase
 
     wip_bot.wip_enabled = false
     assert wip_bot.save
-    go_to_chatbots
+    admin_go_to_chatbots
     within('.chatbots-list') do
       assert page.has_text?('Weather')
       assert page.has_text?('Arnold WIP')
@@ -52,7 +52,7 @@ class ChatbotTest < ApplicationSystemTestCase
   # Search
   #
   test 'Bot can be found by name' do
-    go_to_chatbots
+    admin_go_to_chatbots
     within('.chatbots-list--for-index') do
       fill_in 'search_query', with: 'nol'
       click_button '#search'
@@ -62,7 +62,7 @@ class ChatbotTest < ApplicationSystemTestCase
   end
 
   test 'Bot filtered by release state' do
-    go_to_chatbots
+    admin_go_to_chatbots
     within('.chatbots-list--for-index') do
       all('.dropdown__trigger > button').first.click
       click_link 'Exclude WIP'
@@ -79,7 +79,7 @@ class ChatbotTest < ApplicationSystemTestCase
   end
 
   test 'Bot search without result display a message' do
-    go_to_chatbots
+    admin_go_to_chatbots
     within('.chatbots-list--for-index') do
       fill_in 'search_query', with: 'azerty'
       click_button '#search'
@@ -89,15 +89,15 @@ class ChatbotTest < ApplicationSystemTestCase
   end
 
   test 'Keep chatbot search criteria' do
-    go_to_chatbots
+    admin_go_to_chatbots
     within('.chatbots-list--for-index') do
       fill_in 'search_query', with: 'ath'
       click_button '#search'
       assert page.has_no_content?('Arnold')
       assert page.has_content?('Weather')
     end
-    go_to_agents_index
-    go_to_chatbots
+    admin_go_to_agents_index
+    admin_go_to_chatbots
     within('.chatbots-list--for-index') do
       assert page.has_text? 'ath'
       assert page.has_no_content?('Arnold')
@@ -109,7 +109,7 @@ class ChatbotTest < ApplicationSystemTestCase
     wip_bot = bots(:terminator_bot)
     wip_bot.wip_enabled = false
     assert wip_bot.save
-    go_to_chatbots
+    admin_go_to_chatbots
     within('.chatbots-list--for-index') do
       assert page.has_no_text?('WIP')
     end

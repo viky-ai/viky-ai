@@ -3,7 +3,7 @@ require 'application_system_test_case'
 class EntitiesTest < ApplicationSystemTestCase
 
   test 'Navigate to an entity' do
-    go_to_agents_index
+    admin_go_to_agents_index
     assert_text('admin/weather')
     click_link 'My awesome weather bot admin/weather'
     assert_text('Entities')
