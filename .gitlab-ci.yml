@@ -52,7 +52,7 @@ elastic_keystore:
   artifacts:
     paths:
       - elasticsearch.keystore
-    expire_in: 1 hour
+    # expire_in: 1 hour
 
 build_doc:
   <<: *kubernetes_runner
@@ -101,7 +101,7 @@ build_nlp:
     - export VIKYAPP_STATISTICS_URL="http://${CI_SERVICE_HOST:-elasticsearch}:9200"
     - cd /webapp
   artifacts:
-    expire_in: 1 week
+    # expire_in: 1 week
     reports:
       junit: "reports/TEST-*.xml"
 
@@ -131,7 +131,7 @@ test_nlp:
     - export VIKYAPP_REDIS_PACKAGE_NOTIFIER="redis://${CI_SERVICE_HOST:-redis}:6379/3"
     - if [ "${SKIP_TEST:-false}" != "true" ]; then /docker_run_test.sh ; fi
   artifacts:
-    expire_in: 1 week
+    # expire_in: 1 week
     reports:
       junit:
         - "reports/TEST-*.xml"
