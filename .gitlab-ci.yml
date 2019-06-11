@@ -297,7 +297,7 @@ delete_env:
     - helm init --client-only --wait
     - helm delete --purge "${NAMESPACE}-platform"
     - helm delete --purge "${NAMESPACE}-infra"
-    - kubectl delete ${NAMESPACE}
+    - kubectl delete namespace ${NAMESPACE}
   when: manual
   allow_failure: true
 
