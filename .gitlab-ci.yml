@@ -349,6 +349,7 @@ backup_dev:
   <<: *kubernetes_runner
   stage: admin
   image: dtzar/helm-kubectl:2.13.1
+  dependencies: []
   except:
     - master
     - tags
@@ -361,7 +362,7 @@ backup_dev:
   script:
     - export KUBECONFIG=$KUBECONFIG
     - PODNAME=$(kubectl get pods --namespace=$NAMESPACE -l app=webapp-backup --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
-    - kubectl exec --namespace=$NAMESPACE $PODNAME  bash /backup/backup.sh
+    - kubectl exec --namespace=$NAMESPACE $PODNAME  bash /backup/backup.sh "${NAMESPACE}"
   when: manual
   allow_failure: true
 
@@ -370,6 +371,7 @@ backup_preprod:
   <<: *kubernetes_runner
   stage: admin
   image: dtzar/helm-kubectl:2.13.1
+  dependencies: []
   only:
     - master
   environment:
@@ -381,7 +383,7 @@ backup_preprod:
   script:
     - export KUBECONFIG=$KUBECONFIG
     - PODNAME=$(kubectl get pods --namespace=$NAMESPACE -l app=webapp-backup --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
-    - kubectl exec --namespace=$NAMESPACE $PODNAME  bash /backup/backup.sh
+    - kubectl exec --namespace=$NAMESPACE $PODNAME  bash /backup/backup.sh "${NAMESPACE}"
   when: manual
   allow_failure: true
 
@@ -390,6 +392,7 @@ backup_restore_dev:
   <<: *kubernetes_runner
   stage: admin
   image: dtzar/helm-kubectl:2.13.1
+  dependencies: []
   except:
     - master
     - tags
@@ -404,8 +407,8 @@ backup_restore_dev:
     - PODNAME_REDIS=$(kubectl get pods --namespace=$NAMESPACE -l app=redis --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
     - kubectl exec --namespace=$NAMESPACE $PODNAME_REDIS redis-cli flushall
     - PODNAME=$(kubectl get pods --namespace=$NAMESPACE -l app=webapp-backup --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
-    - kubectl exec --namespace=$NAMESPACE $PODNAME  bash /backup/backup.sh
-    - kubectl exec --namespace=$NAMESPACE $PODNAME  bash /backup/restore.sh
+    - kubectl exec --namespace=$NAMESPACE $PODNAME  bash /backup/backup.sh "${NAMESPACE}"
+    - kubectl exec --namespace=$NAMESPACE $PODNAME  bash /backup/restore.sh "${NAMESPACE}"
   when: manual
   allow_failure: true
 
@@ -417,7 +420,7 @@ before_script:
     function viky_backup ()
     {
       echo "Backing up data ..."
-      rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
+      rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh "${NAMESPACE}"
 
       if [ $? -ne 0 ]; then
         (>&2 echo "Backing up data FAILED")
