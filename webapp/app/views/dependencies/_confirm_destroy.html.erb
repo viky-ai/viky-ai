@@ -24,7 +24,7 @@
 
       <%= form_for(
             agent,
-            url: user_agent_dependency_path(owner, agent, successor),
+            url: user_agent_dependency_path(owner, agent, successor.id),
             method: :delete,
             html: { data: { validation: :delete }}) do |delete_form| %>
         <div class="field">
