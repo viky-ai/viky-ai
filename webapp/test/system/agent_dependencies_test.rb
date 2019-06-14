@@ -154,4 +154,26 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
       assert page.has_text?('PUBLIC T-800 admin/terminator')
     end
   end
+
+
+  test 'Delete the expected dependency even when there is a duplicate agentname on another user' do
+    terminator = agents(:terminator)
+    weather_confirmed = agents(:weather_confirmed)
+    assert AgentArc.create(source: terminator, target: weather_confirmed)
+
+    admin_go_to_agents_index
+    click_link 'T-800 admin/terminator'
+    within('.agents-compact-grid') do
+      assert page.has_text?('Weather bot confirmed/weather')
+      click_link 'Delete'
+    end
+    within('.modal') do
+      assert page.has_text?('Type DELETE to confirm')
+      fill_in 'validation', with: 'DELETE'
+      click_button('Delete')
+    end
+    within('.agents-compact-grid') do
+      assert page.has_no_text?('Weather bot confirmed/weather')
+    end
+  end
 end

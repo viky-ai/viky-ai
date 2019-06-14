@@ -523,7 +523,7 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
 
     sign_in users(:show_on_agent_weather)
 
-    delete user_agent_dependency_path(users(:admin), agents(:weather), agents(:terminator))
+    delete user_agent_dependency_path(users(:admin), agents(:weather), agents(:terminator).id)
 
     assert_redirected_to agents_url
     assert_equal "Unauthorized operation.", flash[:alert]
@@ -534,7 +534,7 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
 
     sign_in users(:edit_on_agent_weather)
 
-    delete user_agent_dependency_path(users(:admin), agents(:weather), agents(:terminator))
+    delete user_agent_dependency_path(users(:admin), agents(:weather), agents(:terminator).id)
 
     assert_redirected_to user_agent_url(users(:admin), agents(:weather))
   end
