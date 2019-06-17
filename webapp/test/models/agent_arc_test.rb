@@ -236,4 +236,14 @@ class AgentArcTest < ActiveSupport::TestCase
     }
     assert !AgentSelectSearch.new(user, criteria).empty?
   end
+
+
+  test 'Sync with NLP when a dependency is added' do
+    Nlp::Package.any_instance.expects(:push).at_least(3)
+    agent_a = create_agent('Agent A')
+    agent_b = create_agent('Agent B')
+    force_reset_model_cache([agent_a, agent_b])
+
+    assert AgentArc.create(source: agent_a, target: agent_b)
+  end
 end
