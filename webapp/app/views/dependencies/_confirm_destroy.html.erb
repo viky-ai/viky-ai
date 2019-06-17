@@ -9,18 +9,13 @@
     </h5>
     <div class="modal__main__content">
 
-      <% count = AgentArc.where(
-            { agent: agent, depends_on: successor}
-          ).first.target_related_interpretation_aliases.count %>
-
       <%= t('views.dependencies.confirm_destroy.info_html', successor: successor.name, agent: agent.name ) %>
-      <% if count == 0 %>
-        <%= t('views.dependencies.confirm_destroy.warning_html',
-              successor: successor.name, agent: agent.name, count: count ) %>
-      <% else %>
-        <%= t('views.dependencies.confirm_destroy.warning_html',
-              successor: successor.name, agent: agent.name, count: count ) %>
-      <% end %>
+
+      <% count = AgentArc.where(
+          { agent: agent, depends_on: successor}
+      ).first.target_related_interpretation_aliases.count %>
+      <%= t('views.dependencies.confirm_destroy.warning_html',
+            successor: successor.name, agent: agent.name, count: count ) %>
 
       <%= form_for(
             agent,
