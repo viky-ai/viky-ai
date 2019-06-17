@@ -2,6 +2,11 @@ class ApplicationController < ActionController::Base
   impersonates :user
   protect_from_forgery with: :exception
   before_action :authenticate_user!
+  skip_before_action :authenticate_user!, only: [:connexion_state]
+
+  def connexion_state
+    render partial: "connexion_state"
+  end
 
   def access_denied
     respond_to do |format|

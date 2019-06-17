@@ -1,5 +1,5 @@
 namespace :doc do
-  desc "Build doc static site"
+  desc "Build doc static site (for development)"
   task :build do
     doc_dir = '../../doc'
     if File.directory?(doc_dir)
