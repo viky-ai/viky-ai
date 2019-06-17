@@ -178,12 +178,14 @@ Rails.application.routes.draw do
 
   get 'brain', to: 'brain#index'
 
-  devise_scope :user do
-    unauthenticated :user do
-      root 'devise/sessions#new', as: :unauthenticated_root
-    end
-    authenticate :user do
-      root to: 'agents#index', as: :authenticated_root
+  unless File.exist? File.join(Rails.root, 'public', 'index.html')
+    devise_scope :user do
+      unauthenticated :user do
+        root 'devise/sessions#new', as: :unauthenticated_root
+      end
+      authenticate :user do
+        root to: 'agents#index', as: :authenticated_root
+      end
     end
   end
 
