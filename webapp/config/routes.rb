@@ -178,12 +178,13 @@ Rails.application.routes.draw do
 
   get 'brain', to: 'brain#index'
 
-  unauthenticated :user do
-    root to: "marketing#index", as: :unauthenticated_root
-  end
-
-  authenticate :user do
-    root to: 'agents#index', as: :authenticated_root
+  devise_scope :user do
+    unauthenticated :user do
+      root 'devise/sessions#new', as: :unauthenticated_root
+    end
+    authenticate :user do
+      root to: 'agents#index', as: :authenticated_root
+    end
   end
 
   match "/404", to: "errors#not_found", via: :all
