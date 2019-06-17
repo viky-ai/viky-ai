@@ -711,4 +711,10 @@ class AgentTest < ActiveSupport::TestCase
     agent.nlp_updated_at = '2018-01-01 01:01:01.000000'
     assert agent.synced_with_nlp?
   end
+
+
+  test 'New agent must sync with NLP' do
+    Nlp::Package.any_instance.expects(:push)
+    create_agent('Agent A')
+  end
 end

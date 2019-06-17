@@ -41,9 +41,7 @@ class Agent < ApplicationRecord
   before_destroy :check_collaborators_presence, prepend: true
 
   after_create_commit do
-    if intents.any? || entities_lists.any?
-      sync_nlp
-    end
+    sync_nlp
   end
 
   after_update_commit do |record|
