@@ -4,6 +4,9 @@ class AgentArc < ApplicationRecord
   belongs_to :target, foreign_key: 'target_id', class_name: 'Agent', inverse_of: :in_arcs
   belongs_to :source, foreign_key: 'source_id', class_name: 'Agent', inverse_of: :out_arcs
 
+  alias_attribute :agent, :source
+  alias_attribute :depends_on, :target
+
   validates :source, presence: true
   validates :target, uniqueness: { scope: [:source] }, presence: true
   validate :check_acyclic

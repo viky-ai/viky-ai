@@ -10,7 +10,7 @@
     <div class="modal__main__content">
 
       <% count = AgentArc.where(
-            { source_id: agent.id, target_id: successor.id}
+            { agent: agent, depends_on: successor}
           ).first.target_related_interpretation_aliases.count %>
 
       <%= t('views.dependencies.confirm_destroy.info_html', successor: successor.name, agent: agent.name ) %>

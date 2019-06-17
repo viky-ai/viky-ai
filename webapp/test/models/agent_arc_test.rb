@@ -246,4 +246,11 @@ class AgentArcTest < ActiveSupport::TestCase
 
     assert AgentArc.create(source: agent_a, target: agent_b)
   end
+
+  test 'Alias attributes for more readable code' do
+    agent_a = create_agent("Agent A")
+    agent_b = create_agent("Agent B")
+
+    assert AgentArc.create agent: agent_a, depends_on: agent_b
+  end
 end
