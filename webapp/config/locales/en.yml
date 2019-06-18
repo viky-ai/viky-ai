@@ -17,11 +17,11 @@ en:
     internal_error:
       title: Error 500
       comment: Oops, an error was rised on server side.
-      action_message_html: Sorry, we will try to fix that. Please go back to your <a href="/">Agents list</a>.
+      action_message_html: Sorry, we will try to fix that. You can come back to <a href="/">Home</a>.
     not_found:
       title: Error 404
       comment: The requested page does not exist.
-      action_message_html: Please go back to your <a href="/">Agents list</a>.
+      action_message_html: You can come back to <a href="/">Home</a>.
   locales:
     no_locale: No language
     fr: French
