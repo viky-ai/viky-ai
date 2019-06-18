@@ -22,9 +22,8 @@
 # Ignore static doc files
 /public/index.html
 /public/site_assets
-/public/guides
+/public/doc
 /public/blog
-/public/api
 
 # Ignore node & yarn files
 /node_modules
