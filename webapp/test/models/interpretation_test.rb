@@ -345,4 +345,13 @@ class InterpretationTest < ActiveSupport::TestCase
     force_reset_model_cache interpretation
     assert interpretation.save
   end
+
+  test 'Change interpretation locale' do
+    forecast = interpretations(:weather_forecast_tomorrow)
+    previous_locale = ''
+    assert_difference "Interpretation.where(locale: '*').count" do
+      previous_locale = forecast.update_locale '*'
+    end
+    assert_equal 'en', previous_locale
+  end
 end
