@@ -17,6 +17,12 @@
     font-size: 1em;
     a{
       display: inline-block;
+      &:hover,
+      &:focus{
+        svg path:last-child{
+          fill: #3bb8d7;
+        }
+      }
     }
   }
 
