@@ -34,7 +34,7 @@ module Positionable
       def get_unique_index_name(parent)
         parent_column = build_parent_column(parent)
         index_def = connection.indexes(self.table_name).select do |index|
-          index.columns.eql?([parent_column, 'position'])
+          index.columns.include?(parent_column) && index.columns.include?('position')
         end
         index_def.first.nil? ? '' : index_def.first.name
       end
@@ -62,7 +62,7 @@ module Positionable
         parent_column = build_parent_column(parent)
         old_position_values = current.collect(&:position)
         transaction do
-          if connection.index_exists?(self.table_name, [parent_column, :position])
+          if connection.indexes(self.table_name).any? { |index| index.columns.include?(parent_column) && index.columns.include?('position') }
             # defer the unique constraint on position until the end of this transaction
             index_name = get_unique_index_name(parent)
             connection.execute "SET CONSTRAINTS #{index_name} DEFERRED" unless index_name.blank?

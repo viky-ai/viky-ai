@@ -354,4 +354,28 @@ class InterpretationTest < ActiveSupport::TestCase
     end
     assert_equal 'en', previous_locale
   end
+
+  test 'Position interpretation in new locale' do
+    intent = intents(:weather_forecast)
+    assert intent.interpretations.destroy_all
+
+    Interpretation.create(
+      expression: 'interpretation_0',
+      locale: '*',
+      position: 0,
+      intent: intent
+    )
+    interpretation_1 = Interpretation.create(
+      expression: 'interpretation_1',
+      locale: '*',
+      position: 1,
+      intent: intent
+    )
+
+    previous_locale = ''
+    assert_difference "Interpretation.where(locale: 'en').count" do
+      previous_locale = interpretation_1.update_locale 'en'
+    end
+    assert_equal '*', previous_locale
+  end
 end
