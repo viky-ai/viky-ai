@@ -19,7 +19,7 @@ class InterpretationTest < ActiveSupport::TestCase
     interpretation_alias.interpretation_aliasable = intents(:weather_question)
     assert interpretation_alias.save
 
-    assert_equal 2, interpretation.position
+    assert_equal 1, interpretation.position
     assert_equal 'Good morning John', interpretation.expression
     assert_equal intents(:weather_forecast).id, interpretation.intent.id
     assert_equal false, interpretation.keep_order
@@ -377,5 +377,27 @@ class InterpretationTest < ActiveSupport::TestCase
       previous_locale = interpretation_1.update_locale 'en'
     end
     assert_equal '*', previous_locale
+  end
+
+  test 'Interpretation creation scope position to language' do
+    intent = intents(:weather_forecast)
+    assert intent.interpretations.destroy_all
+
+    Interpretation.create(
+      expression: 'interpretation_0',
+      locale: '*',
+      intent: intent
+    )
+    Interpretation.create(
+      expression: 'interpretation_1',
+      locale: '*',
+      intent: intent
+    )
+    english_interpretation = Interpretation.create(
+      expression: 'interpretation_3',
+      locale: 'en',
+      intent: intent
+    )
+    assert_equal 0, english_interpretation.position
   end
 end

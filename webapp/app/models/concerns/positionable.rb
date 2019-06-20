@@ -87,11 +87,12 @@ module Positionable
       children_method = ActiveModel::Naming.plural(self)
       # Change the position only when it has its default value
       if self.position == -1
-        if ancestor.send(children_method).exists?
-          self.position = ancestor.send(children_method).maximum(:position) + 1
+        if self.respond_to? :locale
+          children_collection = ancestor.send(children_method).where(locale: self.locale)
         else
-          self.position = 0
+          children_collection = ancestor.send(children_method)
         end
+        self.position = children_collection.exists? ? children_collection.maximum(:position) + 1 : 0
       end
     end
 end
