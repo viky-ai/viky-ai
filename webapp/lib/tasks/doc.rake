@@ -9,7 +9,10 @@ namespace :doc do
         end
       end
       if File.directory?(doc_dir + "/_site")
-        system 'cp -R ../../doc/_site/ public/'
+        system 'cp -R ../../doc/_site/blog/ public/blog/'
+        system 'cp -R ../../doc/_site/doc/ public/doc/'
+        system 'cp -R ../../doc/_site/site_assets/ public/site_assets/'
+        system 'cp  ../../doc/_site/index.html public/index.html'
       end
     else
       puts "#{doc_dir} directory do not exists."
