@@ -218,6 +218,8 @@ struct expression_compile
   og_bool keep_order;
   enum nlp_glue_strength glue_strength;
   int glue_distance;
+  og_bool respect_case;
+  og_bool respect_accent;
   int alias_start, aliases_nb;
   int locale;
   int input_part_start, input_parts_nb;
@@ -241,6 +243,9 @@ struct expression
   og_bool keep_order;
   enum nlp_glue_strength glue_strength;
   int glue_distance;
+
+  og_bool case_sensitive;
+  og_bool accent_sensitive;
 
   int locale;
 
@@ -984,6 +989,7 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th);
 
 /* nlpmatch_word.c */
 og_status NlpMatchWords(og_nlp_th ctrl_nlp_th);
+og_bool NlpMatchCaseAccent(og_nlp_th ctrl_nlp_th, struct request_word *request_word, struct input_part *input_part);
 
 og_status NlpMatchWordChainRequestWords(og_nlp_th ctrl_nlp_th);
 og_status NlpMatchWordChainUpdateWordCount(og_nlp_th ctrl_nlp_th);
