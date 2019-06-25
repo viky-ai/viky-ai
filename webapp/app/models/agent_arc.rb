@@ -2,13 +2,20 @@ require 'rgl/topsort' # acyclic
 
 class AgentArc < ApplicationRecord
   belongs_to :target, foreign_key: 'target_id', class_name: 'Agent', inverse_of: :in_arcs
-  belongs_to :source, foreign_key: 'source_id', class_name: 'Agent', touch: true, inverse_of: :out_arcs
+  belongs_to :source, foreign_key: 'source_id', class_name: 'Agent', inverse_of: :out_arcs
+
+  alias_attribute :agent, :source
+  alias_attribute :depends_on, :target
 
   validates :source, presence: true
   validates :target, uniqueness: { scope: [:source] }, presence: true
   validate :check_acyclic
 
+  before_destroy { source.touch }
   before_destroy :remove_target_related_interpretation_aliases
+
+  after_create_commit { sync_nlp_source }
+  after_update_commit { sync_nlp_source }
 
   def target_related_interpretation_aliases
     InterpretationAlias.find_by_sql ["
@@ -56,5 +63,10 @@ class AgentArc < ApplicationRecord
       return if graph.acyclic?
 
       errors.add(:cycle, I18n.t('errors.agent_arc.cycle_detected'))
+    end
+
+    def sync_nlp_source
+      source.need_nlp_sync
+      source.touch
     end
 end

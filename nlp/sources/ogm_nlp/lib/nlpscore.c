@@ -66,8 +66,13 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
     }
 
   }
+
+  // Should not happen, but safer to do it
+  if (score->coverage != 0)
+  {
   score->spelling /= score->coverage;
   score->locale /= score->coverage;
+  }
 
   if (request_expression->expression->alias_any_input_part_position >= 0)
   {
@@ -194,3 +199,20 @@ static og_status NlpCalculateScoreMatchScope(og_nlp_th ctrl_nlp_th, struct reque
   }
   DONE;
 }
+
+#if 0
+// used to debug a double that is the result of division by zero
+// put a break point at toto = 1;
+static int bad_double(double d)
+{
+  int toto;
+  char buffer[DPcPathSize];
+  sprintf(buffer, "%.2f", d);
+  if (strstr(buffer, "nan"))
+  {
+    toto = 1;
+  }
+  return toto;
+}
+#endif
+

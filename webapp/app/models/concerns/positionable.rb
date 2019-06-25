@@ -34,7 +34,7 @@ module Positionable
       def get_unique_index_name(parent)
         parent_column = build_parent_column(parent)
         index_def = connection.indexes(self.table_name).select do |index|
-          index.columns.eql?([parent_column, 'position'])
+          index.columns.include?(parent_column) && index.columns.include?('position')
         end
         index_def.first.nil? ? '' : index_def.first.name
       end
@@ -62,7 +62,7 @@ module Positionable
         parent_column = build_parent_column(parent)
         old_position_values = current.collect(&:position)
         transaction do
-          if connection.index_exists?(self.table_name, [parent_column, :position])
+          if connection.indexes(self.table_name).any? { |index| index.columns.include?(parent_column) && index.columns.include?('position') }
             # defer the unique constraint on position until the end of this transaction
             index_name = get_unique_index_name(parent)
             connection.execute "SET CONSTRAINTS #{index_name} DEFERRED" unless index_name.blank?
@@ -87,11 +87,12 @@ module Positionable
       children_method = ActiveModel::Naming.plural(self)
       # Change the position only when it has its default value
       if self.position == -1
-        if ancestor.send(children_method).exists?
-          self.position = ancestor.send(children_method).maximum(:position) + 1
+        if self.respond_to? :locale
+          children_collection = ancestor.send(children_method).where(locale: self.locale)
         else
-          self.position = 0
+          children_collection = ancestor.send(children_method)
         end
+        self.position = children_collection.exists? ? children_collection.maximum(:position) + 1 : 0
       end
     end
 end
