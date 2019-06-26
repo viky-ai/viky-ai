@@ -1,7 +1,6 @@
 stages:
   - prerequist
-  - build_1
-  - build_2
+  - build
   - test
   - docker_tag
   - deploy
@@ -20,7 +19,6 @@ variables:
   DOCKER_HOST: "tcp://dood:2375"
   DOCKER_DRIVER: overlay2
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
-  DOCKER_IMAGE_DOC: $CI_REGISTRY_IMAGE/doc
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
   DOCKER_IMAGE_TOOLS_RUBY: $CI_REGISTRY_IMAGE/tools_ruby_base
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
@@ -54,27 +52,18 @@ elastic_keystore:
       - elasticsearch.keystore
     # expire_in: 1 hour
 
-build_doc:
-  <<: *kubernetes_runner
-  stage: build_1
-  script:
-    - docker_build ${DOCKER_IMAGE_DOC}      doc    "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_doc_run"
-
 build_webapp:
-  <<: *kubernetes_runner
-  stage: build_2
+  stage: build
   script:
     - docker_build ${DOCKER_IMAGE_APP}      webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_run"
 
 build_webapp_test:
-  <<: *kubernetes_runner
-  stage: build_2
+  stage: build
   script:
     - docker_build ${DOCKER_IMAGE_APP}_test webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_test"
 
 build_nlp:
-  <<: *kubernetes_runner
-  stage: build_2
+  stage: build
   script:
     - docker_build ${DOCKER_IMAGE_NLP}      nlp "--target run_image"
     - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--target test_image"
@@ -137,16 +126,6 @@ test_nlp:
         - "reports/TEST-*.xml"
 
 # Tag docker image to lasted
-tag_doc:
-  <<: *kubernetes_runner
-  stage: docker_tag
-  only:
-    - develop
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - docker_tag_latest ${DOCKER_IMAGE_DOC}
-
 tag_webapp:
   <<: *kubernetes_runner
   stage: docker_tag

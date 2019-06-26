@@ -63,7 +63,7 @@
 
       <% if user_can_edit_dependency %>
         <div class="agent-compact__actions">
-          <a href="<%= user_agent_dependency_confirm_destroy_path(@agent.owner, @agent.agentname, agent) %>"
+          <a href="<%= user_agent_dependency_confirm_destroy_path(@agent.owner, @agent.agentname, agent.id) %>"
              class="btn btn--outline btn--small"
              data-action="open-remote-modal"><%= t('views.dependencies.index.delete') %></a>
         </div>

@@ -28,7 +28,7 @@ class DependenciesController < ApplicationController
   end
 
   def confirm_destroy
-    @successor = Agent.friendly.find(params[:dependency_id])
+    @successor = Agent.find(params[:dependency_id])
     render partial: 'confirm_destroy', locals: {
       owner: @owner,
       agent: @agent,
@@ -37,7 +37,7 @@ class DependenciesController < ApplicationController
   end
 
   def destroy
-    @successor = Agent.friendly.find(params[:id])
+    @successor = Agent.find(params[:id])
     arc = AgentArc.where(source: @agent.id, target: @successor).first
     if arc.destroy
       redirect_to user_agent_path(@agent.owner, @agent.agentname)

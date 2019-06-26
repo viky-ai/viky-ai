@@ -67,8 +67,8 @@ class AuthenticationTest < ApplicationSystemTestCase
     # TODO: Remove this as soon as possible
     User.any_instance.stubs('active_for_authentication?').returns(false)
 
-    click_button 'Sign up'
-    assert_equal '/', current_path
+    click_button "Sign up"
+    assert_equal "/users/sign_in", current_path
 
     message  = "A message with a confirmation link has been sent to your email address. "
     message << "Please follow the link to activate your account."
@@ -99,7 +99,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     User.any_instance.stubs('active_for_authentication?').returns(false)
 
     click_button 'Sign up'
-    assert_equal '/', current_path
+    assert_equal "/users/sign_in", current_path
 
     message  = "A message with a confirmation link has been sent to your email address. "
     message << "Please follow the link to activate your account."
@@ -135,14 +135,14 @@ class AuthenticationTest < ApplicationSystemTestCase
   test 'Successful log in' do
     login_as 'confirmed@viky.ai', 'BimBamBoom'
 
-    assert_equal '/', current_path
+    assert_equal '/agents', current_path
     assert page.has_content?("Signed in successfully.")
   end
 
 
   test 'Successful log in then log out' do
     login_as 'confirmed@viky.ai', 'BimBamBoom'
-    assert_equal '/', current_path
+    assert_equal '/agents', current_path
     assert page.has_content?("Signed in successfully.")
 
     logout
@@ -162,7 +162,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     User.any_instance.stubs('active_for_authentication?').returns(false)
 
     click_button 'Sign up'
-    assert_equal '/', current_path
+    assert_equal "/users/sign_in", current_path
 
     message  = "A message with a confirmation link has been sent to your email address. "
     message << "Please follow the link to activate your account."
@@ -184,7 +184,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     click_button 'Log in'
 
     # I'm in!
-    assert_equal '/', current_path
+    assert_equal '/agents', current_path
     assert page.has_content?("Signed in successfully.")
   end
 
@@ -216,7 +216,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
     message = "Your password has been changed successfully. You are now signed in."
     assert page.has_content?(message)
-    assert_equal '/', current_path
+    assert_equal '/agents', current_path
   end
 
 
@@ -284,7 +284,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     fill_in 'Email', with: 'confirmed@viky.ai'
     fill_in 'Password', with: 'BimBamBoom'
     click_button 'Log in'
-    assert_equal '/', current_path
+    assert_equal '/agents', current_path
     assert page.has_content?("Signed in successfully.")
   end
 
@@ -346,12 +346,10 @@ class AuthenticationTest < ApplicationSystemTestCase
 
   test "Registration not possible if feature is disabled" do
     Feature.disable_user_registration
-    visit '/'
-    assert !page.has_content?("Sign up")
 
     visit new_user_registration_path
     assert page.has_content?("User registration is temporarily disabled.")
-    assert_equal '/', current_path
+    assert_equal "/users/sign_in", current_path
   end
 
 end

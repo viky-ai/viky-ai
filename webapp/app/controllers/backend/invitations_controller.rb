@@ -4,7 +4,6 @@ class Backend::InvitationsController < Devise::InvitationsController
 
   layout :switch_layout
 
-
   # POST /resource/invitation
   def create
     self.resource = invite_resource
@@ -26,7 +25,7 @@ class Backend::InvitationsController < Devise::InvitationsController
     unless (user_signed_in? && current_user.admin?)
       if user_signed_in?
         flash[:alert] = t('controllers.backend.application.not_admin')
-        redirect_to authenticated_root_path
+        redirect_to "/agents"
       else
         flash[:alert] = t('controllers.backend.application.not_signed_in')
         redirect_to new_user_session_path
@@ -38,6 +37,10 @@ class Backend::InvitationsController < Devise::InvitationsController
 
     def configure_permitted_parameters
       devise_parameter_sanitizer.permit(:accept_invitation, keys: [:username, :password])
+    end
+
+    def after_accept_path_for(resource)
+      "/agents"
     end
 
   private

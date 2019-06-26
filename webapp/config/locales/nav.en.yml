@@ -1,7 +1,6 @@
 en:
   views:
     nav:
-      doc: Doc
       agents: Agents
       chatbots: Chatbots
       backend:
