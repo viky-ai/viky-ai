@@ -53,16 +53,19 @@ elastic_keystore:
     # expire_in: 1 hour
 
 build_webapp:
+  <<: *kubernetes_runner
   stage: build
   script:
     - docker_build ${DOCKER_IMAGE_APP}      webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_run"
 
 build_webapp_test:
+  <<: *kubernetes_runner
   stage: build
   script:
     - docker_build ${DOCKER_IMAGE_APP}_test webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_test"
 
 build_nlp:
+  <<: *kubernetes_runner
   stage: build
   script:
     - docker_build ${DOCKER_IMAGE_NLP}      nlp "--target run_image"
