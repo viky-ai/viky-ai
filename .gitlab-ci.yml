@@ -9,7 +9,7 @@ stages:
 image: docker:dind
 
 variables:
-  SKIP_TEST: "false"
+  SKIP_TEST: "true"
   GIT_SUBMODULE_STRATEGY: recursive
   DOCKER_DRIVER: overlay
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
@@ -160,7 +160,7 @@ deploy_dev:
     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
     VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
-    DOC_STACK: "doc-develop-platform-dev"
+    DOC_STACK: "doc-develop-platform-dev/doc"
   script:
     - echo "Deploy ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - cd deployment
@@ -186,7 +186,7 @@ deploy_preprod:
     VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
     VIKYAPP_BASEURL: https://viky-beta.viky.ai
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
-    DOC_STACK: "viky-beta-doc"
+    DOC_STACK: "viky-beta-doc/doc"
   script:
     - echo "Deploy ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/preprod ( ${CI_ENVIRONMENT_URL} )"
     - cd deployment
