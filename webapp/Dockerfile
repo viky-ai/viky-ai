@@ -10,9 +10,6 @@ ARG VIKY_IMAGE_TAG=latest
 # image_ruby_deps : tools_ruby_base + app dependencies
 #################################################
 
-# copy static file from doc
-FROM docker-registry.pertimm.net/viky.ai/platform/doc:${VIKY_IMAGE_TAG} AS viki_doc
-
 FROM docker-registry.pertimm.net/viky.ai/platform/tools_ruby_base:${VIKY_IMAGE_TAG} AS image_ruby_run
 
 # App specific
@@ -48,9 +45,6 @@ RUN ./bin/rails assets:precompile
 RUN mkdir -p /webapp/tmp/
 RUN mkdir -p /webapp/tmp/pids/
 RUN mkdir -p /webapp/log/
-
-# copy doc
-COPY --from=viki_doc /doc /webapp/public/doc
 
 ENV RAILS_SERVE_STATIC_FILES=true
 ENV RAILS_LOG_TO_STDOUT=1

@@ -127,7 +127,6 @@ class ProfileTest < ApplicationSystemTestCase
     assert !page.has_content?("Password is too short (minimum is 6 characters)")
 
     logout
-    click_link "Log in"
     fill_in 'Email', with: 'admin@viky.ai'
     fill_in 'Password', with: 'shortshort'
     click_button 'Log in'

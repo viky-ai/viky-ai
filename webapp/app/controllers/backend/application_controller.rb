@@ -9,7 +9,7 @@ class Backend::ApplicationController < ApplicationController
       unless (user_signed_in? && current_user.admin?)
         if user_signed_in?
           flash[:alert] = t('controllers.backend.application.not_admin')
-          redirect_to unauthenticated_root_path
+          redirect_to agents_path
         else
           flash[:alert] = t('controllers.backend.application.not_signed_in')
           redirect_to new_user_session_path

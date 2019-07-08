@@ -7,7 +7,7 @@ class RegistrationsController < Devise::RegistrationsController
     if Feature.user_registration_enabled?
       super
     else
-      redirect_to '/', alert: t('controllers.registrations.disabled_message')
+      redirect_to new_user_session_path, alert: t('controllers.registrations.disabled_message')
     end
   end
 
@@ -16,7 +16,7 @@ class RegistrationsController < Devise::RegistrationsController
     if Feature.user_registration_enabled?
       super
     else
-      redirect_to '/', alert: t('controllers.registrations.disabled_message')
+      redirect_to new_user_session_path, alert: t('controllers.registrations.disabled_message')
     end
   end
 
@@ -38,6 +38,14 @@ class RegistrationsController < Devise::RegistrationsController
 
     def configure_permitted_parameters
       devise_parameter_sanitizer.permit(:sign_up, keys: [:username, :email, :password])
+    end
+
+    def after_sign_up_path_for(resource)
+      "/users/sign_in"
+    end
+
+    def after_inactive_sign_up_path_for(resource)
+      "/users/sign_in"
     end
 
 end
