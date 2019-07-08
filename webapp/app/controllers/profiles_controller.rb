@@ -34,7 +34,7 @@ class ProfilesController < ApplicationController
 
   def destroy
     if @profile.destroy
-      redirect_to unauthenticated_root_path, notice: t('views.profile.confirm_destroy.success_message')
+      redirect_to new_user_session_path, notice: t('views.profile.confirm_destroy.success_message')
     else
       redirect_to edit_profile_path, alert: t(
         'views.profile.confirm_destroy.errors_message',
@@ -46,7 +46,7 @@ class ProfilesController < ApplicationController
   def stop_impersonating
     stop_impersonating_user
     cookies.delete :impersonated_user_id # Needed for ActionCable
-    redirect_to "/", notice: t('views.profile.stop_switch.success_message')
+    redirect_to agents_path, notice: t('views.profile.stop_switch.success_message')
   end
 
 

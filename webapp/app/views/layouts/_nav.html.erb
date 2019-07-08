@@ -18,12 +18,6 @@
           <%= t('views.nav.chatbots') %>
         </a>
       </li>
-      <li>
-        <a href="<%= doc_url %>" data-turbolinks="false" target="_blank">
-          <%= t('views.nav.doc') %>
-          <span class="icon icon--x-small"><%= icon_open_in_new %></span>
-        </a>
-      </li>
 
       <% if current_user.admin %>
         <% cerebro_url = Rails.env.development? ? 'http://localhost:9201' : '/cerebro/'%>

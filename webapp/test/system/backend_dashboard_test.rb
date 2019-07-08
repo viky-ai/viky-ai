@@ -13,7 +13,7 @@ class BackendDashboardTest < ApplicationSystemTestCase
     login_as 'confirmed@viky.ai', 'BimBamBoom'
     visit backend_dashboard_path
     assert page.has_content?('You do not have permission to access this interface.')
-    assert_equal '/', current_path
+    assert_equal '/agents', current_path
   end
 
 
