@@ -194,6 +194,7 @@ static og_bool NlpMatchExpressionsZoneRecursive(og_nlp_th ctrl_nlp_th, struct ex
 struct input_part_position
 {
   int start, end;
+  og_bool any_at_start, any_at_end;
 };
 
 static og_bool NlpInputPartsTooFar(og_nlp_th ctrl_nlp_th, struct expression *expression, int Irequest_input_part,
@@ -222,13 +223,47 @@ static og_bool NlpInputPartsTooFar(og_nlp_th ctrl_nlp_th, struct expression *exp
     request_position = request_positions + request_input_part->request_position_start
         + request_input_part->request_positions_nb - 1;
     input_part_position[i].end = request_position->start + request_position->length;
+    input_part_position[i].any_at_start = FALSE;
+    input_part_position[i].any_at_end = FALSE;
+
+    if (expression->alias_any_input_part_position >= 0)
+    {
+      struct input_part *input_part = request_input_part->input_part;
+      for (int j = 0; j < expression->input_parts_nb; j++)
+      {
+        if (expression->input_parts + j == input_part)
+        {
+          if (expression->any_input_part_position - 1 == j) input_part_position[i].any_at_end = TRUE;
+          else if (expression->any_input_part_position == j) input_part_position[i].any_at_start = TRUE;
+        }
+      }
+    }
+
   }
   g_qsort_with_data(input_part_position, start + 1, sizeof(struct input_part_position), NlpInputPartPositionCmp,
       ctrl_nlp_th);
+
+  if (expression->alias_any_input_part_position >= 0)
+  {
+    if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatchExpressionZone)
+    {
+      NlpLog(DOgNlpTraceMatchExpressionZone, "NlpInputPartsTooFar at %d/%d: input_part positions:", start + 1,
+          start + length);
+      for (int i = 0; i <= start; i++)
+      {
+        OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%d: %s%d - %d%s", i,
+            (input_part_position[i].any_at_start ? "any " : ""), input_part_position[i].start,
+            input_part_position[i].end, (input_part_position[i].any_at_end ? "any " : ""));
+      }
+    }
+  }
+
   int max_distance = 0;
   for (int i = 0; i + 1 <= start; i++)
   {
     int distance = input_part_position[i + 1].start - input_part_position[i].end;
+    if (input_part_position[i+1].any_at_start) distance = 0;
+    if (input_part_position[i].any_at_end) distance = 0;
     if (max_distance < distance) max_distance = distance;
   }
   int glue_distance = expression->glue_distance;
