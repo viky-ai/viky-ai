@@ -74,7 +74,7 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
   score->locale /= score->coverage;
   }
 
-  if (request_expression->expression->alias_any_input_part_position >= 0)
+  if (request_expression->expression->any_input_part_position >= 0)
   {
     if (request_expression->Irequest_any >= 0)
     {

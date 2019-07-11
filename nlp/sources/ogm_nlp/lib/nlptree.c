@@ -94,7 +94,7 @@ static og_status NlpInterpretTreeAttachAnyRecursive(og_nlp_th ctrl_nlp_th, struc
 
   }
 
-  if (request_expression->expression->alias_any_input_part_position >= 0)
+  if (request_expression->expression->any_input_part_position >= 0)
   {
     IFE(NlpRequestAnyAddClosest(ctrl_nlp_th, root_expression, request_expression));
   }
@@ -188,7 +188,7 @@ static og_status NlpInterpretTreeLogRecursive(og_nlp_th ctrl_nlp_th, struct requ
       }
     }
 
-    if (request_expression->expression->alias_any_input_part_position >= 0)
+    if (request_expression->expression->any_input_part_position >= 0)
     {
       if (request_expression->Irequest_any >= 0)
       {
