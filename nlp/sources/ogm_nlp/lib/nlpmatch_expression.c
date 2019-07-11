@@ -63,7 +63,7 @@ og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th)
 
     if (!ctrl_nlp_th->accept_any_expressions)
     {
-      if (expression->alias_any_input_part_position >= 0) continue;
+      if (expression->any_input_part_position >= 0) continue;
     }
 
     struct match_zone_input_part match_zone_input_part[DOgMatchZoneInputPartSize];
@@ -226,7 +226,7 @@ static og_bool NlpInputPartsTooFar(og_nlp_th ctrl_nlp_th, struct expression *exp
     input_part_position[i].any_at_start = FALSE;
     input_part_position[i].any_at_end = FALSE;
 
-    if (expression->alias_any_input_part_position >= 0)
+    if (expression->any_input_part_position >= 0)
     {
       struct input_part *input_part = request_input_part->input_part;
       for (int j = 0; j < expression->input_parts_nb; j++)
@@ -243,7 +243,7 @@ static og_bool NlpInputPartsTooFar(og_nlp_th ctrl_nlp_th, struct expression *exp
   g_qsort_with_data(input_part_position, start + 1, sizeof(struct input_part_position), NlpInputPartPositionCmp,
       ctrl_nlp_th);
 
-  if (expression->alias_any_input_part_position >= 0)
+  if (expression->any_input_part_position >= 0)
   {
     if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatchExpressionZone)
     {
