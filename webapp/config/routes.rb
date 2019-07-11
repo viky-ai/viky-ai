@@ -33,6 +33,8 @@ Rails.application.routes.draw do
     end
   end
 
+  get 'play', to: 'play#index'
+
   scope '/agents' do
     resources :favorites, only: [:create, :destroy]
     resources :users, path: '', only: [] do

@@ -1,0 +1,7 @@
+en:
+  views:
+    play:
+      blankslate:
+        title: Welcome to playground!
+        content: This UI allows you to test multiple agents on long texts. Start by choosing some agents to play with.
+        btn: Choose agents

@@ -14,6 +14,11 @@
         </a>
       </li>
       <li>
+        <a href="<%= play_path %>" <% if ['play'].include? controller_path %>class="current"<% end %>>
+          <%= t('views.nav.play') %>
+        </a>
+      </li>
+      <li>
         <a href="<%= chatbots_path %>" <% if ['chatbots'].include? controller_path %>class="current"<% end %>>
           <%= t('views.nav.chatbots') %>
         </a>

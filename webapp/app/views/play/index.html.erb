@@ -1,0 +1,17 @@
+<br /><br />
+
+<div class="blankslate">
+  <div class="blankslate__illustration">
+    <img src='<%= asset_path("robot-happy.png") %>'
+         srcset='<%= asset_path("robot-happy.png") %> 1x,
+                 <%= asset_path("robot-happy@2x.png") %> 2x'
+         style='width: 80px'/>
+  </div>
+  <div class="blankslate__content">
+    <h2><%= t('views.play.blankslate.title') %></h2>
+    <p>
+      <%= t('views.play.blankslate.content') %>
+    </p>
+    <a href="#" class="btn btn--primary"><%= t('views.play.blankslate.btn') %></a>
+  </div>
+</div>
