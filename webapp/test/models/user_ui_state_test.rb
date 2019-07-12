@@ -6,7 +6,7 @@ class UserUiStateTest < ActiveSupport::TestCase
     user = users(:edit_on_agent_weather)
     agent = agents(:weather)
     user.ui_state = {"last_agent_move"=>"414211c7-d6cb-44f1-8b0c-bb6c192b92b6"}
-    user.save
+    assert user.save
     user_state = UserUiState.new(user)
     assert_nil user_state.last_destination_agent(agent)
   end
@@ -17,7 +17,7 @@ class UserUiStateTest < ActiveSupport::TestCase
     agent = agents(:weather)
     destination_agent_id = agents(:terminator).id
     user.ui_state = {"last_agent_move"=>destination_agent_id}
-    user.save
+    assert user.save
     user_state = UserUiState.new(user)
     assert_not_nil user_state.last_destination_agent(agent)
   end
@@ -32,17 +32,32 @@ class UserUiStateTest < ActiveSupport::TestCase
 
     # Set existing locale for agent weather
     user_state.agent_locale = "fr"
-    user_state.save
+    assert user_state.save
 
     user_state = UserUiState.new(user)
     assert_equal "fr", user_state.agent_locale(agent)
 
     # Set missing locale for agent weather
     user_state.agent_locale = "pt"
-    user_state.save
+    assert user_state.save
 
     user_state = UserUiState.new(user)
     assert_equal "*", user_state.agent_locale(agent)
+  end
+
+
+  test "play_agents_selection" do
+    # Initial state
+    user = users(:edit_on_agent_weather)
+    user_state = UserUiState.new(user)
+    assert_equal [], user_state.play_agents_selection
+
+    # Set existing locale for agent weather
+    user_state.play_agents_selection = ["a", "b"]
+    assert user_state.save
+
+    user_state = UserUiState.new(user)
+    assert_equal ["a", "b"], user_state.play_agents_selection
   end
 
 end

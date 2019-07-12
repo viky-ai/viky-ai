@@ -65,6 +65,16 @@ class UserUiState
     result
   end
 
+  def play_agents_selection=(selection)
+    @state.merge!(
+      play_agents_selection: selection
+    )
+  end
+
+  def play_agents_selection
+    @state['play_agents_selection'] || []
+  end
+
   def save
     @user.ui_state = @state
     @user.save(touch: false)
