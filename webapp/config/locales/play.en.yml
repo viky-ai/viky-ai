@@ -5,3 +5,15 @@ en:
         title: Welcome to playground!
         content: This UI allows you to test multiple agents on long texts. Start by choosing some agents to play with.
         btn: Choose agents
+      chooser:
+        title: Choose playground's agents
+        btn_submit: Let's go
+        status_one: selected agent
+        status_more: selected agents
+        status_max: Maximum reached
+      aside:
+        title: Playground's Agents
+        btn_edit: Edit
+      main:
+        title: Play UI Form
+

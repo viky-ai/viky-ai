@@ -30,6 +30,9 @@ import './authentication/main.scss';
 import './chatbots/main.scss';
 window.App.Statement = require('./chatbots/statements');
 
+import './play/main.scss';
+import './play/chooser.coffee';
+
 import './agents/agent_form.coffee';
 import './agents/main.scss';
 import './agents/transfer_ownership_form.coffee';

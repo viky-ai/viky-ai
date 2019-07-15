@@ -33,7 +33,10 @@ Rails.application.routes.draw do
     end
   end
 
-  get 'play', to: 'play#index'
+  namespace :play do
+    resource :selection, only: [:edit, :update]
+  end
+  get 'play/(:ownername/:agentname)', to: 'play#index'
 
   scope '/agents' do
     resources :favorites, only: [:create, :destroy]
