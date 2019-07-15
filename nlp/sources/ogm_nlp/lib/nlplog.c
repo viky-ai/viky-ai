@@ -308,9 +308,9 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, stru
   }
 
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
-      "    Expression '%s' with locale %s%s%s%s%s%s%s alias_any_input_part_position=%d", text, string_locale, pos_string,
+      "    Expression '%s' with locale %s%s%s%s%s%s%s alias_any_input_part_position=%d any_input_part_position=%d" , text, string_locale, pos_string,
       expression->keep_order ? " keep-order" : "", string_glue_distance,  string_glue_strength, recursive,
-      super_list, expression->alias_any_input_part_position);
+      super_list, expression->alias_any_input_part_position, expression->any_input_part_position);
 
   for (int i = 0; i < expression->aliases_nb; i++)
   {
