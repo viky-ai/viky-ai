@@ -586,6 +586,9 @@ struct request_expression
   json_t *json_solution;
 
   enum nlp_super_list_status super_list_status;
+
+  int start_position;
+  int end_position;
 };
 
 #define DOgMatchZoneInputPartSize 0x25
@@ -798,6 +801,7 @@ struct og_ctrl_nlp_threaded
   og_heap hrequest_word;
   og_heap hba;
   enum nlp_spellchecking_level spellchecking_level;
+  og_bool enable_list;
 
   /** Heap of struct request_input_part */
   og_heap hrequest_input_part;

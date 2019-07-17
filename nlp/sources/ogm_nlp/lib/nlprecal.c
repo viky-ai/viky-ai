@@ -84,6 +84,36 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
     IFE(NlpSortedRequestExpressionsLog(ctrl_nlp_th, "List of sorted request expressions after any validation:"));
   }
 
+  if (ctrl_nlp_th->enable_list)
+  {
+    // Getting expression that will be sent
+    struct expression *expression = NULL;
+    for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
+    {
+      struct request_expression *request_expression = iter->data;
+      if (request_expression->keep_as_result)
+      {
+        expression = request_expression->expression;
+        break;
+      }
+    }
+    if (expression)
+    {
+      for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
+      {
+        struct request_expression *request_expression = iter->data;
+        if (expression == request_expression->expression)
+        {
+          request_expression->keep_as_result = TRUE;
+        }
+      }
+    }
+    if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+    {
+      IFE(NlpSortedRequestExpressionsLog(ctrl_nlp_th, "List of sorted request expressions after enable list:"));
+    }
+  }
+
   for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
   {
     struct request_expression *request_expression = iter->data;

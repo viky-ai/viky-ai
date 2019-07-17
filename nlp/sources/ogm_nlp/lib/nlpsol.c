@@ -19,6 +19,7 @@ static og_status NlpSolutionBuildRawTextGetAnyPositions(og_nlp_th ctrl_nlp_th,
     struct request_expression *request_expression, int *pstart_position_any, int *pend_position_any);
 static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_package_solution);
+static og_status NlpSolutionCalculatePositions(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_status NlpSolutionClean(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_status NlpSolutionCleanRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
     struct request_expression *request_expression);
@@ -26,6 +27,7 @@ static og_status NlpSolutionCleanRecursive(og_nlp_th ctrl_nlp_th, struct request
 og_status NlpSolutionCalculate(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
   IFE(NlpSolutionClean(ctrl_nlp_th, request_expression));
+  IFE(NlpSolutionCalculatePositions(ctrl_nlp_th,request_expression));
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceSolution)
   {
@@ -847,10 +849,8 @@ static og_status NlpSolutionBuildRawTextToString(og_nlp_th ctrl_nlp_th, int buff
   DONE;
 }
 
-static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+static og_status NlpSolutionCalculatePositions(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
-  // Adding the "raw_text" variable for use in javascript
-  unsigned char *raw_text_name = "raw_text";
   struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
       request_expression->request_position_start);
   IFN(request_position) DPcErr;
@@ -870,7 +870,20 @@ static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_e
 
   int end_position = end_position_expression;
   if (end_position < end_position_any) end_position = end_position_any;
+  request_expression->start_position = start_position;
+  request_expression->end_position = end_position;
+  DONE;
+}
 
+static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+{
+  // Adding the "raw_text" variable for use in javascript
+  unsigned char *raw_text_name = "raw_text";
+
+  IFE(NlpSolutionCalculatePositions(ctrl_nlp_th,request_expression));
+
+  int start_position = request_expression->start_position;
+  int end_position = request_expression->end_position;
   int length_position = end_position - start_position;
 
   const unsigned char *raw_text_string = ctrl_nlp_th->request_sentence + start_position;
