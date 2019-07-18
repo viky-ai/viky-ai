@@ -701,14 +701,14 @@ static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct req
 // TODO Activate at the end, and change all impacted tests
   if (ctrl_nlp_th->enable_list)
   {
-    json_t *json_start_position = json_integer(request_expression->start_position);
+    json_t *json_start_position = json_integer(request_expression->start_position_char);
     IF(json_object_set_new(json_interpretation, "start_position", json_start_position))
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_start_position");
       DPcErr;
     }
 
-    json_t *json_end_position = json_integer(request_expression->end_position);
+    json_t *json_end_position = json_integer(request_expression->end_position_char);
     IF(json_object_set_new(json_interpretation, "end_position", json_end_position))
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_end_position");

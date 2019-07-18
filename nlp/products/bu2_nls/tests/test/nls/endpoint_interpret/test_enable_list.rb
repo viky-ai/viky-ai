@@ -23,16 +23,21 @@ module Nls
 
         abcd = package.new_interpretation("abcd", { scope: "public" })
         abcd << Expression.new("aaa", solution: "aaa")
-        abcd << Expression.new("bbbb", solution: "bbbb")
-        abcd << Expression.new("ccccc", solution: "ccccc")
+        abcd << Expression.new("bbb", solution: "bbb")
+        abcd << Expression.new("ccc", solution: "ccc")
+        abcd << Expression.new("aaa bbb", solution: "aaa bbb")
 
         package
       end
 
       def test_enable_list
 
-        expected = { interpretation: "abcd", solution: "aaa" }
-        check_interpret("aaa bbbb cccc", expected)
+        expected = { interpretation: "abcd", solution: "aaa bbb" }
+        check_interpret("aaa bbb", expected)
+
+        #enable_list option to be implemented and check_interpret_list also (not check_interpret_array).
+        #expected = [{ interpretation: "abcd", solution: "aaa" },{ interpretation: "abcd", solution: "ccc" }]
+        #check_interpret_list("aaa ccc", expected)
 
       end
 

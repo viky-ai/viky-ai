@@ -113,6 +113,7 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
   }
 
   IFE(NlpGlueInit(ctrl_nlp_th));
+  IFE(NlpEnableListInit(ctrl_nlp_th));
   IFE(NlpWhyNotMatchingInit(ctrl_nlp_th, param->name));
   IFE(NlpMatchGroupNumbersInit(ctrl_nlp_th));
   IFE(NlpRequestExpressionListsSortInit(ctrl_nlp_th, param->name));
@@ -155,6 +156,7 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
 
   IFE(NlpMatchGroupNumbersFlush(ctrl_nlp_th));
   IFE(NlpGlueFlush(ctrl_nlp_th));
+  IFE(NlpEnableListFlush(ctrl_nlp_th));
   IFE(NlpWhyNotMatchingFlush(ctrl_nlp_th));
   IFE(NlpRequestExpressionListsSortFlush(ctrl_nlp_th));
   IFE(NlpExplainHighlightFlush(ctrl_nlp_th));
@@ -347,6 +349,7 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
   }
 
   IFE(NlpGlueReset(ctrl_nlp_th));
+  IFE(NlpEnableListReset(ctrl_nlp_th));
   IFE(NlpWhyNotMatchingReset(ctrl_nlp_th));
   IFE(NlpWarningReset(ctrl_nlp_th));
 
