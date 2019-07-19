@@ -22,28 +22,39 @@ class Nlp::Interpret
   before_validation :set_default
 
   def proceed
-    begin
-      response = send_nlp_request
-      status   = response[:status].to_i
-      body     = response[:body]
-      log_body = body
-    rescue EOFError => e
-      # NLP has crashed
-      status   = 503
-      body     = { errors: [I18n.t('nlp.unavailable')] }
-      log_body = { errors: [I18n.t('nlp.unavailable'), 'NLP have just crashed'] }
-    rescue Errno::ECONNREFUSED => e
-      # no more NLP is running
-      status   = 503
-      body     = { errors: [I18n.t('nlp.unavailable')] }
-      log_body = { errors: [I18n.t('nlp.unavailable'), 'No more NLP server are available', e.message] }
-    rescue => e
-      # unexpected error
-      status   = 500
-      log_body = { errors: [I18n.t('nlp.unavailable'), e.inspect] }
-      raise
-    ensure
-      save_request_in_elastic(status, log_body)
+    if valid?
+      begin
+        response = send_nlp_request
+        status   = response[:status].to_i
+        body     = response[:body]
+        log_body = body
+      rescue EOFError => e
+        # NLP has crashed
+        status   = 503
+        body     = { errors: [I18n.t('nlp.unavailable')] }
+        log_body = { errors: [I18n.t('nlp.unavailable'), 'NLP have just crashed'] }
+      rescue Errno::ECONNREFUSED => e
+        # no more NLP is running
+        status   = 503
+        body     = { errors: [I18n.t('nlp.unavailable')] }
+        log_body = { errors: [I18n.t('nlp.unavailable'), 'No more NLP server are available', e.message] }
+      rescue => e
+        # unexpected error
+        status   = 500
+        log_body = { errors: [I18n.t('nlp.unavailable'), e.inspect] }
+        raise
+      ensure
+        save_request_in_elastic(status, log_body)
+      end
+    else
+      if errors[:agent_token].empty?
+        status = 422
+        body = { errors: errors.full_messages }
+      else
+        status = 401
+        body = { errors: [I18n.t('controllers.api.access_denied')] }
+      end
+      save_request_in_elastic(status, body)
     end
     [body, status]
   end

@@ -1,14 +1,14 @@
 <div class="c-explain" id="console-explain" <% if current_tab == 'json' %>style="display:none;"<% end %>>
-  <% if data[:status] == 200 %>
-    <% json = JSON.parse(data[:body]) %>
+  <% if status == 200 %>
+    <% json = body %>
     <% if json['interpretations'].empty? %>
       <p>
-        <span class="badge badge--success"><%= data[:status] %></span>
+        <span class="badge badge--success"><%= status %></span>
         <%= t('views.console.no_intent_found') %>
       </p>
     <% else %>
       <p>
-        <span class="badge badge--success"><%= data[:status] %></span>
+        <span class="badge badge--success"><%= status %></span>
         <% unless json['warnings'].nil? %>
           <span class="badge badge--warning">
             <%= t('views.console.warnings', count: json['warnings'].count) %>
@@ -105,21 +105,21 @@
     <% end %>
   <% else %>
     <p>
-      <span class="badge badge--danger"><%= data[:status] %></span>
+      <span class="badge badge--danger"><%= status %></span>
       <%= t('views.console.error_occurred') %>
     </p>
   <% end %>
 
   <div class="c-explain__footer">
-    <a href="<%= data[:path] %>" target="_blank">
+    <a href="<%= endpoint_path %>" target="_blank">
       <%= t('views.console.go_to_api_endpoint') %>
     </a>
-    <a href="<%= data[:package_path]%>" target="_blank">
+    <a href="<%= package_path %>" target="_blank">
       <%= t('views.console.download_package') %>
     </a>
   </div>
 </div>
 
 <div id="console-json" <% if current_tab == 'explain' %>style="display:none;"<% end %>>
-  <pre><code class='language-javascript'><%= JSON.pretty_generate(JSON.parse(data[:body])) %></code></pre>
+  <pre><code class='language-javascript'><%= JSON.pretty_generate(body) %></code></pre>
 </div>

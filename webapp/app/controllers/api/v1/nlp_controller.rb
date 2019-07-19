@@ -8,18 +8,7 @@ class Api::V1::NlpController < Api::V1::ApplicationController
 
     respond_to do |format|
       format.json {
-        if nlp.valid?
-          @body, @status = nlp.proceed
-        else
-          if nlp.errors[:agent_token].empty?
-            @status = 422
-            @body = { errors: nlp.errors.full_messages }
-          else
-            @status = 401
-            @body = { errors: [t('controllers.api.access_denied')] }
-          end
-          nlp.save_request_in_elastic(@status, @body)
-        end
+        @body, @status = nlp.proceed
         render json: @body, status: @status unless @status == 200
       }
     end
