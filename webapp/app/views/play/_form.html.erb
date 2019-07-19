@@ -1,0 +1,20 @@
+<%= form_with(url: "/play", method: :post, class: "play-form", model: interpreter) do |f| %>
+  <input type="hidden" name="play_interpreter[ownername]" value="<%= interpreter.agent.owner.username %>" id="play_input_ownername">
+  <input type="hidden" name="play_interpreter[agentname]" value="<%= interpreter.agent.agentname %>" id="play_input_agentname">
+  <div class="field">
+    <div class="field">
+      <div class="control">
+        <%= f.label :text %>
+        <span class="badge badge--small badge--outline"><%= t('required') %></span>
+        <%= f.text_area :text, id: 'play_interpreter_text' %>
+        <%= display_errors(interpreter, :text) %>
+      </div>
+    </div>
+    <button class="btn btn--primary" data-disable-with="Loading...">
+      <%= t('views.play.form.btn') %>
+      <span class="icon icon--x-small">
+        <%= icon_send %>
+      </span>
+    </button>
+  </div>
+<% end %>

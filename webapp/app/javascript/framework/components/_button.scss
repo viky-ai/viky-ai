@@ -211,3 +211,48 @@ a.btn,
   }
 }
 
+$toogle_height: 1.25em;
+
+.btn{
+  &.btn--toggle{
+    background-image: none;
+    background-color: #ccc;
+    border: none;
+    height: calc(#{$toogle_height} + 4px);
+    width: calc(#{$toogle_height} * 2.5);
+    position: relative;
+    border-radius: $toogle_height;
+    box-shadow: 0 1px 2px inset rgba(#000, .2);
+    transition: background .1s ease-in-out;
+    vertical-align: middle;
+    cursor: auto;
+    &:after{
+      content: '';
+      position: absolute;
+      width : $toogle_height;
+      height: $toogle_height;
+      top: 2px;
+      left: 2px;
+      border-radius: $toogle_height;
+      background-color: #fff;
+      box-shadow: 0 1px 2px rgba(#000, .2);
+      transition: all .1s ease-in-out;
+    }
+    &:focus{
+      box-shadow: 0 0 0 2px rgba($primary_color, 1);
+    }
+    &.btn--toggle-on{
+      background-color: $primary_color;
+      &:after{
+        left: 100%;
+        margin-left: calc(-2px - #{$toogle_height});
+      }
+    }
+    &.btn--toggle-disabled{
+      opacity: .25;
+      &:focus{
+        box-shadow: none;
+      }
+    }
+  }
+}

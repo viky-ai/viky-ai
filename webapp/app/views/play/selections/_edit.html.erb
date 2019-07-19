@@ -1,0 +1,55 @@
+<div class="modal" style="display: none;">
+  <div class="modal__overlay" data-action='close-modal'></div>
+  <div class="modal__main">
+    <h5 class="modal__main__title">
+      <%= t('views.play.chooser.title') %>
+      <button class="modal__main__title__close" data-action='close-modal'>
+        <%= icon_close %>
+      </button>
+    </h5>
+
+    <div class="modal__main__chooser">
+      <ul class="agent-compact-list">
+        <% @agents.each do |agent| %>
+          <li>
+            <div class="agent-compact agent-compact--play-chooser" data-action="play-select-agent" data-id="<%= agent.id %>">
+              <% cache [agent, current_user] do %>
+                <%= render partial: "/play/shared/agent_compact", locals: { agent: agent } %>
+              <% end %>
+              <div class="agent-compact__actions">
+                <% if @selected_agent_ids.include? agent.id %>
+                  <button class="btn btn--toggle btn--toggle-on"></button>
+                <% else %>
+                  <button class="btn btn--toggle btn--toggle-off"></button>
+                <% end %>
+              </div>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+
+    <%= form_with(url: play_selection_path, method: :patch, class: "play__modal-footer") do |form| %>
+      <div class="play__modal-footer__controls">
+        <button class="btn btn--primary" type="submit">
+          <%= t('views.play.chooser.btn_submit') %>
+        </button>
+        <button data-action='close-modal' class="btn btn--plain">
+          <%= t('views.cancel') %>
+        </button>
+        <input type="hidden" name="selection[agent_ids][]" />
+        <div id="play-chooser-selected-agents">
+          <% @selected_agent_ids.each do |id| %>
+            <input type="hidden" name="selection[agent_ids][]" value="<%= id %>" id="input__<%= id %>" />
+          <% end %>
+        </div>
+      </div>
+      <div class="play__modal-footer__state"
+           data-i18n-status-one="<%= t('views.play.chooser.status_one') %>"
+           data-i18n-status-more="<%= t('views.play.chooser.status_more') %>"
+           data-i18n-status-max='<%= t('views.play.chooser.status_more') %> <span class="icon icon--small icon--amber"><%= icon_alert %></span> <%= t('views.play.chooser.status_max') %>'>
+      </div>
+    <% end %>
+
+  </div>
+</div>

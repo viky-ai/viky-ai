@@ -1,0 +1,10 @@
+<% if interpreter.results.present? && interpreter.results[interpreter.agent.id].present? %>
+  <h2>
+    <% count = interpreter.results[interpreter.agent.id]['interpretations'].size %>
+    <%= t('views.play.result.title_html', count: count) %>
+    <a href="<%= user_agent_path(interpreter.agent.owner.username, interpreter.agent.agentname) %>"><%= interpreter.agent.name %></a>.
+  </h2>
+  <div class="card card--play-result">
+    <%= play_highlight(interpreter).gsub("\n", "<br />").html_safe %>
+  </div>
+<% end %>

@@ -127,6 +127,10 @@
     cursor: pointer;
   }
 
+  label + .badge{
+    vertical-align: text-top;
+  }
+
   input[type='radio'],
   input[type='checkbox']{
     cursor: pointer;
@@ -251,7 +255,8 @@
   .field_with_errors{
     input[type='text'],
     input[type='email'],
-    input[type='password']{
+    input[type='password'],
+    textarea{
       border: 1px solid $alert_color;
       border-top: 1px solid darken($alert_color, 5%);
       &:focus{

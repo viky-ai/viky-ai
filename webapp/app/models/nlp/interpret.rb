@@ -7,7 +7,8 @@ class Nlp::Interpret
   include ActiveModel::Validations
   include ActiveModel::Validations::Callbacks
 
-  attr_accessor :ownername, :agentname, :format, :sentence, :language, :spellchecking, :agent_token, :verbose, :now
+  attr_accessor :ownername, :agentname, :format, :sentence, :language,
+                :spellchecking, :agent_token, :verbose, :now, :context
 
   validates_presence_of :ownername, :agentname, :format, :sentence, :agent_token
   validates :sentence, byte_size: { maximum: 7000 }
@@ -21,31 +22,54 @@ class Nlp::Interpret
   before_validation :set_default
 
   def proceed
-    parameters = nlp_params
-    Rails.logger.info "  | Started POST: #{url} at #{Time.now}"
-    Rails.logger.info "  | Parameters: #{parameters}"
-    uri = URI.parse(url)
-    http = Net::HTTP.new(uri.host, uri.port)
-    out = http.post(uri.path, parameters.to_json, JSON_HEADERS)
-    Rails.logger.info "  | Completed #{out.code}"
-    {
-      status: out.code,
-      body: JSON.parse(out.body)
-    }
+    if valid?
+      begin
+        response = send_nlp_request
+        status   = response[:status].to_i
+        body     = response[:body]
+        log_body = body
+      rescue EOFError => e
+        # NLP has crashed
+        status   = 503
+        body     = { errors: [I18n.t('nlp.unavailable')] }
+        log_body = { errors: [I18n.t('nlp.unavailable'), 'NLP have just crashed'] }
+      rescue Errno::ECONNREFUSED => e
+        # no more NLP is running
+        status   = 503
+        body     = { errors: [I18n.t('nlp.unavailable')] }
+        log_body = { errors: [I18n.t('nlp.unavailable'), 'No more NLP server are available', e.message] }
+      rescue => e
+        # unexpected error
+        status   = 500
+        log_body = { errors: [I18n.t('nlp.unavailable'), e.inspect] }
+        raise
+      ensure
+        save_request_in_elastic(status, log_body)
+      end
+    else
+      if errors[:agent_token].empty?
+        status = 422
+        body = { errors: errors.full_messages }
+      else
+        status = 401
+        body = { errors: [I18n.t('controllers.api.access_denied')] }
+      end
+      save_request_in_elastic(status, body)
+    end
+    [body, status]
   end
 
-  def nlp_params
-    p = {
-      "Accept-Language"  => language,
-      'spellchecking'    => spellchecking.present? ? spellchecking : 'low',
-      "primary-package"  => agent.id,
-      "packages"         => packages,
-      "sentence"         => sentence,
-      "show-explanation" => verbose == 'true',
-      "show-private"     => verbose == 'true'
-    }
-    p["now"] = now unless now.blank?
-    p
+  def save_request_in_elastic(status, body)
+    log = InterpretRequestLog.new(
+      timestamp: Time.now.iso8601(3),
+      sentence: sentence,
+      language: language,
+      spellchecking: spellchecking,
+      now: now,
+      agent: agent,
+      context: context
+    )
+    log.with_response(status, body).save
   end
 
   def endpoint
@@ -114,4 +138,33 @@ class Nlp::Interpret
         end
       end
     end
+
+    def send_nlp_request
+      parameters = nlp_request_params
+      Rails.logger.info "  | Started POST: #{url} at #{Time.now}"
+      Rails.logger.info "  | Parameters: #{parameters}"
+      uri = URI.parse(url)
+      http = Net::HTTP.new(uri.host, uri.port)
+      out = http.post(uri.path, parameters.to_json, JSON_HEADERS)
+      Rails.logger.info "  | Completed #{out.code}"
+      {
+        status: out.code,
+        body: JSON.parse(out.body)
+      }
+    end
+
+    def nlp_request_params
+      p = {
+        "Accept-Language"  => language,
+        'spellchecking'    => spellchecking.present? ? spellchecking : 'low',
+        "primary-package"  => agent.id,
+        "packages"         => packages,
+        "sentence"         => sentence,
+        "show-explanation" => verbose == 'true',
+        "show-private"     => verbose == 'true'
+      }
+      p["now"] = now unless now.blank?
+      p
+    end
+
 end

@@ -8,7 +8,7 @@ class AgentRegressionCheck < ApplicationRecord
 
   validates :sentence, length: { maximum: 200 }, presence: true
   validates :expected, presence: true
-
+  validates :spellchecking, presence: true, inclusion: { in: spellcheckings.keys }
   validates :expected_as_str, length: { maximum: 10_000 }
 
   enum state: [:unknown, :success, :failure, :error, :running]
@@ -20,18 +20,25 @@ class AgentRegressionCheck < ApplicationRecord
     self.state = 'running'
     save
 
-    request_params = {
+    parameters = {
+      ownername: agent.owner.username,
+      agentname: agent.agentname,
+      agent_token: agent.api_token,
+      format: 'json',
       sentence: sentence,
       language: language,
+      spellchecking: spellchecking,
       verbose: false,
-      client_type: 'regression_test'
+      context: {
+        client_type: 'regression_test'
+      }
     }
-    request_params[:now] = now.iso8601 if now.present?
-    response = Nlp::PublicInterpret.request_public_api(request_params, agent)
-    status = response[:status]
+    parameters[:now] = now.iso8601 if now.present?
+
+    body, status = Nlp::Interpret.new(parameters).proceed
 
     if status == 200
-      interpretation = JSON.parse(response[:body])['interpretations'].first
+      interpretation = body['interpretations'].first
       if interpretation.nil?
         self.got = {}
       else
@@ -87,6 +94,7 @@ class AgentRegressionCheck < ApplicationRecord
   def got_slug
     typed_interpret(got['root_type']).find_by_id(got['id']).slug
   end
+
 
   private
 

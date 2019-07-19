@@ -15,6 +15,7 @@
     <file>nlpcompile.c</file>
     <file>nlpconsolidate.c</file>
     <file>nlpdump.c</file>
+    <file>nlpenablelist.c</file>
     <file>nlpentity.c</file>
     <file>nlperr.c</file>
     <file>nlpexplainhighlight.c</file>
