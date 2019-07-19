@@ -1,6 +1,6 @@
-json.warnings @response[:body]["warnings"] unless @response[:body]["warnings"].nil?
+json.warnings @body["warnings"] unless @body["warnings"].nil?
 
-json.interpretations @response[:body]["interpretations"].each do |interpretation|
+json.interpretations @body["interpretations"].each do |interpretation|
   json.id interpretation["id"]
 
   # TODO: NLP remove phantom interpretation

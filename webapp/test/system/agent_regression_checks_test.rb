@@ -10,7 +10,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
   test 'Add new test' do
     user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
-    Nlp::Interpret.any_instance.stubs('proceed').returns(
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
       status: 200,
       body: {
         'interpretations' => [
@@ -48,7 +48,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
   test 'Add a new test for entities list' do
     user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
-    Nlp::Interpret.any_instance.stubs('proceed').returns(
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
       status: 200,
       body: {
         'interpretations' => [{
@@ -85,7 +85,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
   test 'Add new test with language, now and spellchecking' do
     user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
-    Nlp::Interpret.any_instance.stubs('proceed').returns(
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
       status: 200,
       body: {
         'interpretations' => [
@@ -142,7 +142,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
   test 'Try to add a new test but sentence is too long' do
     user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
-    Nlp::Interpret.any_instance.stubs('proceed').returns(
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
       status: 200,
       body: {
         'interpretations' => [
@@ -166,7 +166,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
   test 'Can only add test for the first intent' do
     user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
-    Nlp::Interpret.any_instance.stubs('proceed').returns(
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
       status: 200,
       body: {
         'interpretations' => [{
@@ -198,7 +198,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
   test 'Detect interpretation already tested' do
     admin_login
     go_to_agent_show(agents(:weather))
-    Nlp::Interpret.any_instance.stubs('proceed').returns(
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
       status: 200,
       body: {
         'interpretations' => [{
@@ -283,7 +283,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
     within('.console') do
       assert page.has_content?('3 tests')
-      assert page.has_content?('1 running, 1 success, 1 failure') 
+      assert page.has_content?('1 running, 1 success, 1 failure')
       find('#console-footer').click
       sleep 0.2 # Wait Animation
     end
@@ -315,7 +315,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
   test 'Send test' do
     user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
-    Nlp::Interpret.any_instance.stubs('proceed').returns(
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
       status: 200,
       body: {
         'interpretations' => [{
