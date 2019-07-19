@@ -11,4 +11,5 @@ module Feature
   def self.disable_user_registration
     ENV['VIKYAPP_USER_REGISTRATION'] = 'false'
   end
+  
 end

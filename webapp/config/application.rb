@@ -54,22 +54,16 @@ module Webapp
     # Ping Pong Bot (Sinatra App)
     require "#{config.root}/lib/ping_pong_bot/app.rb"
 
-
-
-
-
-
-
     # Adding throttling
     # config.middleware.use Rack::Throttle::LimiterCustomInterval
     # Ping Pong Bot (Sinatra App)
-    require "#{config.root}/config/initializers/limiter.rb"
+    require "#{config.root}/config/initializers/rack-throttle.rb"
 
-    config.middleware.use Rack::Throttle::Rules, rules: Rack::Throttle::rules, default: 5, ip_whitelist: ["127.0.0.1"]
+    config.middleware.use Rack::Throttle::Rules, rules: Rack::Throttle::RULES, default: 5
 
-    config.middleware.use Rack::Throttle::RulesCustom, :cache => Redis.new, :key_prefix => :throttle, rules: Rack::Throttle::day_rule, time_window: :day
-    config.middleware.use Rack::Throttle::RulesCustom, :cache => Redis.new, :key_prefix => :throttle, rules: Rack::Throttle::hour_rule, time_window: :hour 
-    config.middleware.use Rack::Throttle::RulesCustom, :cache => Redis.new, :key_prefix => :throttle, rules: Rack::Throttle::minute_rule, time_window: :minute
+    config.middleware.use Rack::Throttle::RulesCustom, cache: Redis.new, key_prefix: :throttle, rules: Rack::Throttle::DAY_RULE, time_window: :day
+    config.middleware.use Rack::Throttle::RulesCustom, cache: Redis.new, key_prefix: :throttle, rules: Rack::Throttle::HOUR_RULE, time_window: :hour 
+    config.middleware.use Rack::Throttle::RulesCustom, cache: Redis.new, key_prefix: :throttle, rules: Rack::Throttle::MINUTE_RULE, time_window: :minute
 
     require "#{config.root}/app/middlewares/health_check.rb"
     config.middleware.insert_after Rails::Rack::Logger, HealthCheck
