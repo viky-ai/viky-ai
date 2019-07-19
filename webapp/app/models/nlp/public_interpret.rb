@@ -3,7 +3,8 @@ module Nlp::PublicInterpret
   def self.request_public_api(request_params, agent)
     req = Rack::Request.new(
       'rack.input' => {},
-      'REQUEST_METHOD' => 'GET'
+      'REQUEST_METHOD' => 'GET',
+      'REMOTE_ADDR' => "127.0.0.1"
     )
     req.path_info = "/api/v1/agents/#{agent.owner.username}/#{agent.agentname}/interpret.json"
 
@@ -21,8 +22,8 @@ module Nlp::PublicInterpret
     params[:verbose] = request_params[:verbose] if request_params[:verbose] == 'true'
     params.each { |k, v| req.update_param(k, v) }
     base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
+    
     path = base_url + req.path_info + '?' + params.to_query
-
     response = Rails.application.call(req.env)
     status, _, body = response
 

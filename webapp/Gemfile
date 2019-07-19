@@ -133,3 +133,5 @@ end
 gem 'sinatra', require: 'sinatra/base'
 gem 'sinatra-contrib', require: false
 gem 'rest-client'
+
+gem 'rack-throttle'
