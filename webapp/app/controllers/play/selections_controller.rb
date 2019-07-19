@@ -12,18 +12,14 @@ class Play::SelectionsController < ApplicationController
     user_state = UserUiState.new(current_user)
     user_state.play_agents_selection = selection
     user_state.save
-    if selection.empty?
-      redirect_to "/play"
-    else
-      agent = Agent.find(selection.first)
-      redirect_to "/play/#{agent.slug}"
-    end
+    redirect_to "/play"
   end
+
 
   private
 
-  def selection_params
-    params.require(:selection).permit(agent_ids: [])
-  end
+    def selection_params
+      params.require(:selection).permit(agent_ids: [])
+    end
 
 end

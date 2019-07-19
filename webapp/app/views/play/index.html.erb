@@ -1,35 +1,14 @@
-<% if @available_agents.empty? %>
-
+<% if @interpreter.agents.empty? %>
   <%= render partial: "blankslate" %>
-
 <% else %>
-
   <% content_for :left_aside do %>
     <aside class="play">
-      <h2>
-        <%= t('views.play.aside.title') %>
-        <a href="<%= edit_play_selection_path %>"
-           class="btn btn--small btn--primary"
-           data-action="open-remote-modal">
-          <%= t('views.play.aside.btn_edit') %>
-        </a>
-      </h2>
-      <ul>
-        <% @available_agents.each do |agent| %>
-          <li <% if agent.id == @agent.id %>class="current"<% end %>>
-            <% cache [agent, current_user] do %>
-              <a href="/play/<%= agent.slug %>">
-                <div class="agent-compact">
-                  <%= render partial: "/play/shared/agent_compact", locals: { agent: agent } %>
-                </div>
-              </a>
-            <% end %>
-          </li>
-        <% end %>
-      </ul>
+      <%= render partial: "aside", locals: { interpreter: @interpreter } %>
     </aside>
   <% end %>
-
-  <%= t('views.play.main.title') %> &mdash; <%= @agent.name %>
-
+  <div class="card">
+    <%= render partial: "form", locals: { interpreter: @interpreter } %>
+  </div>
+  <div class="play-result">
+  </div>
 <% end %>

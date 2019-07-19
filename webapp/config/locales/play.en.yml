@@ -14,6 +14,10 @@ en:
       aside:
         title: Playground's Agents
         btn_edit: Edit
-      main:
-        title: Play UI Form
-
+      form:
+        btn: Interpret
+      result:
+        title_html:
+          zero: "<strong>No interpretation found</strong> with agent"
+          one: "<strong>%{count} interpretation found</strong> with agent"
+          other: "<strong>%{count} interpretations found</strong> with agent"

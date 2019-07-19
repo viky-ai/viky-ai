@@ -87,6 +87,8 @@ en:
         wip_enabled_false: "No"
       chat_statement:
         content: content
+      play_interpreter:
+        text: Text
   errors:
     user:
       delete:

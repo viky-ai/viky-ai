@@ -35,7 +35,7 @@
   }
 
   &.agent-compact--without-actions{
-    display:block;
+    display: block;
     width: 100%;
   }
 
@@ -57,12 +57,15 @@
     }
     .agent-compact__id__data{
       padding: .5em 0 .5em 0;
+      min-width: 0;
       h5{
         font-weight: 300;
         font-size: 1em;
         margin: 0;
         line-height: 1.3em;
         color: #000;
+        text-overflow: ellipsis;
+        overflow: hidden;
         white-space: nowrap;
       }
       h6{
@@ -71,6 +74,9 @@
         font-size: .8em;
         line-height: 1.2em;
         color: #888;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
       }
     }
   }
@@ -91,7 +97,6 @@
 
   .agent-compact__actions{
     padding: .725em;
-    background-color: #fff;
   }
 
 }

@@ -28,47 +28,64 @@ aside.play{
   overflow: auto;
   width: 300px;
   background-color: #fff;
+  box-shadow: 2px 0 3px rgba(#000, .05);
   h2{
-    margin: 1.5em 1em;
+    padding: 1em 1em;
+    margin: 0;
     font-size: 1em;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 1px solid rgba(#000, .05);
+    background-color: #fcfcfc;
   }
   ul{
     list-style: none;
     padding: 0;
+    margin: 0;
+    background-color: #fff;
     li{
       margin: 0;
       a{
         display: block;
-        padding: .25em .75em;
+        padding: .35em .5em;
         text-decoration: none;
         border-right: 5px solid transparent;
         &:hover,
         &:focus{
           border-right: 5px solid #ddd;
-          background-color: #fbfbfb;
-          .agent-compact{
-            background-color: #fbfbfb;
-          }
         }
       }
       &.current a{
         border-right: 5px solid $primary_color;
-        background-color: #fbfbfb;
-        .agent-compact{
-          background-color: #fbfbfb;
-        }
       }
       .agent-compact{
         font-size: .85em;
         box-shadow: none;
         text-decoration: none;
         padding: .25em;
+        .agent-compact__actions{
+          padding-right: 0;
+        }
       }
     }
   }
 
 }
 
+.play-form{
+  padding: 1em;
+}
+
+.play-result{
+  h2{
+    font-size: 1em;
+    margin: 1em;
+  }
+  .card{
+    padding: 1em;
+    p{
+      margin: 0;
+    }
+  }
+}
