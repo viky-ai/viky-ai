@@ -8,7 +8,7 @@ class AgentRegressionCheck < ApplicationRecord
 
   validates :sentence, length: { maximum: 200 }, presence: true
   validates :expected, presence: true
-
+  validates :spellchecking, presence: true, inclusion: { in: spellcheckings.keys }
   validates :expected_as_str, length: { maximum: 10_000 }
 
   enum state: [:unknown, :success, :failure, :error, :running]
@@ -94,6 +94,7 @@ class AgentRegressionCheck < ApplicationRecord
   def got_slug
     typed_interpret(got['root_type']).find_by_id(got['id']).slug
   end
+
 
   private
 

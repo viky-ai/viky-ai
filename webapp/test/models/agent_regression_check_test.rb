@@ -51,7 +51,8 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     expected = {
       agent: ['must exist'],
       sentence: ["can't be blank"],
-      expected: ["can't be blank"]
+      expected: ["can't be blank"],
+      spellchecking: ["can't be blank", "is not included in the list"]
     }
     assert_equal expected, agent_regression_check.errors.messages
   end
@@ -61,6 +62,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     agent_regression_check = AgentRegressionCheck.new(
       agent: agents(:weather),
       sentence: ' Ecrire des tests tu dois ',
+      spellchecking: 'low',
       expected: '{ "citation": true, "author": "Olivier D."}'
     )
     assert agent_regression_check.save
@@ -72,6 +74,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     agent_regression_check = AgentRegressionCheck.new(
       agent: agents(:weather),
       sentence: 'a' * 201,
+      spellchecking: 'low',
       expected: '{}'
     )
     assert_not agent_regression_check.save
@@ -87,6 +90,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     agent_regression_check = AgentRegressionCheck.new(
       agent: agents(:weather),
       sentence: 'a',
+      spellchecking: 'low',
       expected: {
         interpretations: 'a' * 10_001
       }.with_indifferent_access
