@@ -36,8 +36,8 @@ module Nls
         check_interpret("aaa bbb", expected)
 
         #enable_list option to be implemented and check_interpret_list also (not check_interpret_array).
-        #expected = [{ interpretation: "abcd", solution: "aaa" },{ interpretation: "abcd", solution: "ccc" }]
-        #check_interpret_list("aaa ccc", expected)
+        expected = [{ interpretation: "abcd", solution: "aaa" },{ interpretation: "abcd", solution: "ccc" }]
+        check_interpret({sentence: "aaa ccc", enable_list: true}, expected)
 
       end
 
