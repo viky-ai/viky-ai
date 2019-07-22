@@ -55,7 +55,7 @@ module Webapp
     require "#{config.root}/lib/ping_pong_bot/app.rb"
 
     # Adding throttling
-    if Feature.quota_enabled == 'true' 
+    if Feature.quota_enabled? 
       require "#{config.root}/config/initializers/rack-throttle.rb"
 
       config.middleware.use Rack::Throttle::Rules, rules: Rack::Throttle::rules, default: 5
