@@ -12,4 +12,16 @@ module Feature
     ENV['VIKYAPP_USER_REGISTRATION'] = 'false'
   end
   
+  def self.quota_enabled?
+    ENV['VIKYAPP_QUOTA'] == 'true'
+  end
+
+  def self.enable_quota
+    ENV['VIKYAPP_QUOTA'] = 'true'
+  end
+
+  def self.disable_quota
+    ENV['VIKYAPP_QUOTA'] = 'false'
+  end
+  
 end
