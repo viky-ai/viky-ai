@@ -113,8 +113,8 @@ VIKYAPP_NLP_URL='http://localhost:9345'
 # restore env password
 RSYNC_PASSWORD='#***REMOVED***26'
 
-# Disable Quota
-VIKYAPP_QUOTA=false
+# If you want to enabled the Quota add this
+VIKYAPP_QUOTA=true
 ```
 
 ## Run in production environment
