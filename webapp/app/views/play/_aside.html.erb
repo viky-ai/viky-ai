@@ -13,19 +13,23 @@
            data-action="play-switch-agent"
            data-ownername="<%= available_agent.owner.username %>"
            data-agentname="<%= available_agent.agentname %>">
-
           <div class="agent-compact">
             <% cache [available_agent, current_user] do %>
               <%= render partial: "/play/shared/agent_compact", locals: { agent: available_agent } %>
             <% end %>
-            <% unless interpreter.results.nil? %>
-              <% if interpreter.results[available_agent.id].present? %>
-                <div class="agent-compact__actions">
+            <% if interpreter.result(available_agent).present? %>
+              <% r = interpreter.result(available_agent) %>
+              <div class="agent-compact__actions">
+                <% if r.succeed? %>
                   <span class="badge <% if available_agent.id == interpreter.agent.id %>badge--primary<% end %>">
-                    <%= interpreter.results[available_agent.id]['interpretations'].size %>
+                    <%= r.interpretations_count %>
                   </span>
-                </div>
-              <% end %>
+                <% else %>
+                  <span class="badge badge--danger" title="<%= r.error_messages %>">
+                    <%= r.status %>
+                  </span>
+                <% end %>
+              </div>
             <% end %>
           </div>
         </a>

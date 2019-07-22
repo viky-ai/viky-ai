@@ -3,7 +3,7 @@ module PlayHelper
   def play_highlight(interpreter)
     text_decorated = ""
     pos = 0
-    interpretations = interpreter.results[interpreter.agent.id]["interpretations"]
+    interpretations = interpreter.agent_result.body["interpretations"]
     interpreter.text.each_char do |c|
       start_highlight = interpretations.find { |interpretation| interpretation["start_position"] == pos }
       stop_highlight  = interpretations.find { |interpretation| interpretation["end_position"] == pos }

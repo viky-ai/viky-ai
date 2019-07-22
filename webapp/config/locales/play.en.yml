@@ -21,3 +21,6 @@ en:
           zero: "<strong>No interpretation found</strong> with agent"
           one: "<strong>%{count} interpretation found</strong> with agent"
           other: "<strong>%{count} interpretations found</strong> with agent"
+      error:
+        title: Sorry, an error occurred
+        status: "Error %{status}:"

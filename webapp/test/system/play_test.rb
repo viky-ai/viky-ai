@@ -58,6 +58,58 @@ class PlayTest < ApplicationSystemTestCase
   end
 
 
+  test "Error on NLP Call" do
+    go_to_play_ui
+    select_2_agents
+
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns({
+      status: 503,
+      body: {
+        errors: ["First error", "Second error"]
+      }
+    })
+
+    within ".play-form" do
+      fill_in 'play_interpreter_text', with: 'Hello NLP'
+      click_button "Interpret"
+    end
+
+    assert page.has_text?("Sorry, an error occurred")
+    assert page.has_text?("Error 503: First error, Second error.")
+  end
+
+
+  test "Success on NLP Call" do
+    go_to_play_ui
+    select_2_agents
+
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns({
+      status: 200,
+      body: {
+        'interpretations' => [
+          {
+            "id" => intents(:weather_forecast).id,
+            "slug" => "admin/weather/weather_forecast",
+            "name" => "weather_forecast",
+            "score" => 1.0,
+            "start_position" => 6,
+            "end_position"=> 9,
+            "solution"=> {}
+          }
+        ]
+      }
+    })
+
+    within ".play-form" do
+      fill_in 'play_interpreter_text', with: 'Hello NLP'
+      click_button "Interpret"
+    end
+
+    assert page.has_text?("1 interpretation found")
+    assert_equal "NLP", first('.card--play-result .badge').text
+  end
+
+
   def select_2_agents
     # Add 2 agents
     click_link 'Choose agents'

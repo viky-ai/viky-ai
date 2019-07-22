@@ -8,13 +8,14 @@ class Nlp::Interpret
   include ActiveModel::Validations::Callbacks
 
   attr_accessor :ownername, :agentname, :format, :sentence, :language,
-                :spellchecking, :agent_token, :verbose, :now, :context
+                :spellchecking, :agent_token, :verbose, :now, :enable_list, :context
 
   validates_presence_of :ownername, :agentname, :format, :sentence, :agent_token
   validates :sentence, byte_size: { maximum: 7000 }
   validates_inclusion_of :format, in: %w( json )
   validates_inclusion_of :verbose, in: [ "true", "false" ]
   validates_inclusion_of :spellchecking, in: %w( inactive low medium high ), allow_blank: true
+  validates_inclusion_of :enable_list, in: [ "true", "false" ], allow_blank: true
   validate :ownername_and_agentname_consistency
   validate :agent_token_consistency
   validate :now_format
@@ -72,14 +73,6 @@ class Nlp::Interpret
     log.with_response(status, body).save
   end
 
-  def endpoint
-    ENV.fetch('VIKYAPP_NLP_URL') { 'http://localhost:9345' }
-  end
-
-  def url
-    "#{endpoint}/interpret/"
-  end
-
   def owner
     User.friendly.find(ownername)
   end
@@ -90,6 +83,14 @@ class Nlp::Interpret
 
   def packages
     AgentGraph.new(agent).to_graph.vertices.collect(&:id)
+  end
+
+  def endpoint
+    ENV.fetch('VIKYAPP_NLP_URL') { 'http://localhost:9345' }
+  end
+
+  def url
+    "#{endpoint}/interpret/"
   end
 
   private
@@ -163,6 +164,7 @@ class Nlp::Interpret
         "show-explanation" => verbose == 'true',
         "show-private"     => verbose == 'true'
       }
+      p["enable-list"] = (enable_list == "true")
       p["now"] = now unless now.blank?
       p
     end
