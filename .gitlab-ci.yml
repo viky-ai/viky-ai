@@ -68,6 +68,7 @@ test_webapp:
     VIKYAPP_ACTIONCABLE_REDIS_URL: "redis://redis:6379/1"
     VIKYAPP_ACTIVEJOB_REDIS_URL: "redis://redis:6379/2"
     VIKYAPP_STATISTICS_URL: "http://elasticsearch:9200"
+    VIKYAPP_QUOTA: "false" # Disabled in tests by default
   services:
     - postgres:9.6-alpine
     - redis:3.2-alpine
