@@ -16,23 +16,31 @@ module Rack
 
     # Limitations rules
 
-    RULES = [
-      { method: "GET", path: "/assets/.*", limit: 300 },          # assets requests
-      { method: "GET", path: "/api_internal/.*", limit: 1000 },   # NLS requests
-      { method: "GET", path: "/api/v1/.*/test/interpret.json", limit: 10 }
-    ]
+    def self.rules 
+      [
+        { method: "GET", path: "/assets/.*", limit: 300 },          # assets requests
+        {method: "GET", path: "/api_internal/.*", limit: 1000 },   # NLS requests
+        { method: "GET", path: "/api/v1/.*/test/interpret.json", limit: 10 }
+      ]
+    end
 
-    DAY_RULE = [
-      { method: "GET", path: "/api/v1/.*/test/interpret.json", limit: 15000 }
-    ]
+    def self.day_rule 
+      [
+        { method: "GET", path: "/api/v1/.*/test/interpret.json", limit: 15000 }
+      ]
+    end
 
-    HOUR_RULE = [
-      { method: "GET", path: "/api/v1/.*/test/interpret.json", limit: 1000 }
-    ]
+    def self.hour_rule 
+      [
+        { method: "GET", path: "/api/v1/.*/test/interpret.json", limit: 1000 }
+      ]
+    end
 
-    MINUTE_RULE = [
-      { method: "GET", path: "/api/v1/.*/test/interpret.json", limit: 20 }
-    ]
+    def self.minute_rule 
+      [
+        { method: "GET", path: "/api/v1/.*/test/interpret.json", limit: 20 }
+      ]
+    end
 
   end
 end
