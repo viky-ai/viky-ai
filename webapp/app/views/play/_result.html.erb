@@ -23,7 +23,12 @@
         </div>
         <div>
           <h3><%= t('views.play.error.title') %></h3>
-          <p><%= t('views.play.error.status', status: r.status) %> <%= r.error_messages %>.</p>
+          <p>
+            <%= t('views.play.error.status', status: r.status) %>
+            <% unless r.error_messages.blank? %>
+              &mdash; <%= r.error_messages %>.</p>
+            <% end %>
+          </p>
         </div>
       </div>
     </div>

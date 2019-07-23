@@ -75,7 +75,7 @@ class PlayTest < ApplicationSystemTestCase
     end
 
     assert page.has_text?("Sorry, an error occurred")
-    assert page.has_text?("Error 503: First error, Second error.")
+    assert page.has_text?("Error 503 — First error, Second error.")
   end
 
 

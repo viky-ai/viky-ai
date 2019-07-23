@@ -23,4 +23,4 @@ en:
           other: "<strong>%{count} interpretations found</strong> with agent"
       error:
         title: Sorry, an error occurred
-        status: "Error %{status}:"
+        status: "Error %{status}"
