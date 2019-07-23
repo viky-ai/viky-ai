@@ -403,7 +403,7 @@ ul.color-picker{
   }
 }
 
-@each $name, $color in $picker_colors{
+@each $name, $color in $colors{
   &.background-color__#{$name}{
     background-color: $color;
   }

@@ -6,9 +6,8 @@
       <%= render partial: "aside", locals: { interpreter: @interpreter } %>
     </aside>
   <% end %>
-  <div class="card">
+  <div class="play-main">
     <%= render partial: "form", locals: { interpreter: @interpreter } %>
-  </div>
-  <div class="play-result">
+    <div class="play-main__result"></div>
   </div>
 <% end %>

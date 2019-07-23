@@ -16,7 +16,7 @@ class PlayInterpreterResult
 
   def error_messages
     if failed?
-      body[:errors].join(', ')
+      body[:errors].join(', ') unless body[:errors].nil?
     end
   end
 

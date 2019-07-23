@@ -1,4 +1,4 @@
-<%= form_with(url: "/play", method: :post, class: "play-form", model: interpreter) do |f| %>
+<%= form_with(url: "/play", method: :post, class: "play-main__form", model: interpreter) do |f| %>
   <input type="hidden" name="play_interpreter[ownername]" value="<%= interpreter.agent.owner.username %>" id="play_input_ownername">
   <input type="hidden" name="play_interpreter[agentname]" value="<%= interpreter.agent.agentname %>" id="play_input_agentname">
   <div class="field">

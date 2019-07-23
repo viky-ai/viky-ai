@@ -51,7 +51,7 @@ class PlayTest < ApplicationSystemTestCase
     go_to_play_ui
     select_2_agents
 
-    within ".play-form" do
+    within ".play-main__form" do
       click_button "Interpret"
       assert page.has_text?("Text can't be blank")
     end
@@ -69,7 +69,7 @@ class PlayTest < ApplicationSystemTestCase
       }
     })
 
-    within ".play-form" do
+    within ".play-main__form" do
       fill_in 'play_interpreter_text', with: 'Hello NLP'
       click_button "Interpret"
     end
@@ -100,13 +100,18 @@ class PlayTest < ApplicationSystemTestCase
       }
     })
 
-    within ".play-form" do
+    within ".play-main__form" do
       fill_in 'play_interpreter_text', with: 'Hello NLP'
       click_button "Interpret"
     end
 
     assert page.has_text?("1 interpretation found")
-    assert_equal "NLP", first('.card--play-result .badge').text
+    assert_equal "NLP", first('.play-main__result__wrapper .highlight').text
+
+    first('.play-main__result__wrapper .highlight').click
+
+    expected = "INTERPRETATION admin/weather/weather_forecast SOLUTION { }"
+    assert_equal expected, first('.play-main__result__wrapper .highlight-pop').text
   end
 
 
