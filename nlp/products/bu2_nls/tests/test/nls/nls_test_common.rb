@@ -118,6 +118,7 @@ module Nls
       request['now'] = opts[:now]                     unless opts[:now].nil?
       request['show-explanation'] = true              if     opts[:explain]
       request['show-private'] = true                  if     opts[:show_private]
+      request['enable-list'] = false
       request['enable-list'] = true                   if     opts[:enable_list]
 
       request
@@ -328,11 +329,11 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
 
     def check_interpret(sentence, expected)
       if sentence.kind_of? Array
-        check_interpret_array(sentence, expected)
+        return check_interpret_array(sentence, expected)
       elsif sentence.kind_of? Hash
-        check_interpret_hash(sentence, expected)
+        return check_interpret_hash(sentence, expected)
       else
-        check_interpret_sentence(sentence, false, expected)
+        return check_interpret_sentence(sentence, false, expected)
       end
     end
 
