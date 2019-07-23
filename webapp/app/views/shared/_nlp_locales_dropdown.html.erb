@@ -1,0 +1,31 @@
+<div class="dropdown" id='js-nlp-dropdown-locale'>
+  <div class="dropdown__trigger">
+    <button class="btn btn--outline btn--small" type="button">
+      <span class="btn__label"><%= t('nlp.locales.all') %></span>
+      <span class="icon icon--x-small">
+        <%= icon_arrow_down %>
+      </span>
+    </button>
+  </div>
+  <div class="dropdown__content dropdown__content--hidden">
+    <ul>
+      <% Locales::ALL.each do |l| %>
+        <li>
+          <a href="#" <% if l == "*" %>class="current"<% end %>
+            data-behavior="populate-input, replace-trigger-label, submit-form"
+            data-input-selector="<%= input_selector %>"
+            data-input-value="<%= l %>"
+            data-form-selector="<%= form_selector %>"
+            data-replace-with="<% if l == "*" %><%= t('nlp.locales.all') %><% else %><%= l %><% end %>"
+            data-replace-selector=".btn__label">
+            <% if l == "*" %>
+              <%= t('nlp.locales.all') %>
+            <% else %>
+              <%= l %>
+            <% end %>
+          </a>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>
