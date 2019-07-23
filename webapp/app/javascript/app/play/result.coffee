@@ -22,4 +22,11 @@ class PlayResult
         $('.play-main__result__wrapper .highlight-pop').hide()
         $('.play-main__result__wrapper .highlight').removeClass('highlight--open')
 
+Setup = ->
+  if $('body').data('controller-name') == "play"
+    new PlayResult()
+
+$(document).on('turbolinks:load', Setup)
+
+
 module.exports = PlayResult

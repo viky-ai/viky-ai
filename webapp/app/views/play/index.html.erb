@@ -8,6 +8,8 @@
   <% end %>
   <div class="play-main">
     <%= render partial: "form", locals: { interpreter: @interpreter } %>
-    <div class="play-main__result"></div>
+    <div class="play-main__result">
+      <%= render partial: "result", locals: { interpreter: @interpreter } %>
+    </div>
   </div>
 <% end %>

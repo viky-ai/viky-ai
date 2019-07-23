@@ -112,6 +112,18 @@ class PlayTest < ApplicationSystemTestCase
 
     expected = "INTERPRETATION admin/weather/weather_forecast SOLUTION { }"
     assert_equal expected, first('.play-main__result__wrapper .highlight-pop').text
+
+    # Validate Play UI persistence
+    within ".h-nav" do
+      click_link "Agents"
+    end
+    within("header") do
+      assert page.has_text?("Agents")
+    end
+    within ".h-nav" do
+      click_link "Play"
+    end
+    assert page.has_text?("Hello NLP")
   end
 
 
