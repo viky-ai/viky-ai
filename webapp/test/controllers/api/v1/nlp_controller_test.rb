@@ -4,6 +4,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
 
   setup do
     IndexManager.reset_indices
+    Feature.disable_rack_throttle
   end
 
   test "Interpret route" do
@@ -276,4 +277,5 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 500, found[:status]
     assert_equal ['NLS temporarily unavailable', '#<RuntimeError: Big big error>'], found[:body]['errors']
   end
+
 end

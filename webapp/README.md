@@ -105,6 +105,7 @@ VIKYAPP_CACHE_REDIS_URL='redis://localhost:6379/0'
 VIKYAPP_ACTIVEJOB_REDIS_URL='redis://localhost:6379/1'
 VIKYAPP_ACTIONCABLE_REDIS_URL='redis://localhost:6379/2'
 VIKYAPP_REDIS_PACKAGE_NOTIFIER='redis://localhost:6379/3'
+VIKYAPP_REDIS_RACK_THROTTLE='redis://localhost:6379/4'
 
 VIKYAPP_INTERNAL_API_TOKEN=Uq6ez5IUdd
 
@@ -113,8 +114,17 @@ VIKYAPP_NLP_URL='http://localhost:9345'
 # restore env password
 RSYNC_PASSWORD='#***REMOVED***26'
 
+# Rack Throttle
+
 # If you want to enabled the Quota add this
-VIKYAPP_QUOTA=true
+VIKYAPP_RACK_THROTTLE_ENABLED=true
+
+# If you want to disable the Quota of a specific Limitation
+VIKYAPP_RACK_THROTTLE_LIMIT_DAY_ENABLED=false       # Day Limitation
+VIKYAPP_RACK_THROTTLE_LIMIT_HOUR_ENABLED=false      # Hour Limitation
+VIKYAPP_RACK_THROTTLE_LIMIT_MINUTE_ENABLED=false    # Minute Limitation
+VIKYAPP_RACK_THROTTLE_LIMIT_SECOND_ENABLED=false    # Second Limitation
+
 ```
 
 ## Run in production environment
