@@ -23,6 +23,7 @@ og_status NlpEnableListFlush(og_nlp_th ctrl_nlp_th)
 
 og_status NlpEnableListReset(og_nlp_th ctrl_nlp_th)
 {
+  ctrl_nlp_th->enable_list = FALSE;
   g_hash_table_remove_all(ctrl_nlp_th->interpretation_hash);
   DONE;
 }
