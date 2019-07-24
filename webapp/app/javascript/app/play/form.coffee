@@ -8,12 +8,9 @@ class PlayForm
 
     if action == 'play-switch-agent'
       event.preventDefault()
-      disable_with = $('.play-main__form button').data('disable-with')
-      $('.play-main__form button').removeAttr('data-disable-with')
       $('#play_input_ownername').val(agent.data('ownername'));
       $('#play_input_agentname').val(agent.data('agentname'));
       Rails.fire($('.play-main__form')[0], 'submit')
-      $('.play-main__form button').attr('data-disable-with', disable_with)
 
   get_target: (event) ->
     if $(event.target).is('a')
