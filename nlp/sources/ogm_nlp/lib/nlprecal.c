@@ -77,14 +77,14 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
     IFE(NlpSortedRequestExpressionsLog(ctrl_nlp_th, "List of sorted request expressions before any validation:"));
   }
 
+  IFE(NlpEnableList(ctrl_nlp_th, sorted_request_expressions));
+
   IFE(NlpAnyValidate(ctrl_nlp_th, sorted_request_expressions));
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
     IFE(NlpSortedRequestExpressionsLog(ctrl_nlp_th, "List of sorted request expressions after any validation:"));
   }
-
-  IFE(NlpEnableList(ctrl_nlp_th, sorted_request_expressions));
 
   for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
   {
@@ -182,7 +182,6 @@ static og_status NlpAnyValidate(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_ex
         NlpLog(DOgNlpTraceMatch, "NlpAnyValidate: this request with no any is validated");
         request_expression->any_validate_status = 2;
         some_expressions_kept = TRUE;
-        break;
       }
 
     }
