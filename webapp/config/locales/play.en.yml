@@ -16,6 +16,7 @@ en:
         btn_edit: Edit
       form:
         btn: Interpret
+        btn_loading_html: Interpret <span class="icon icon--x-small icon--spin">%{icon}</span>
       result:
         title_html:
           zero: "<strong>No interpretation found</strong> with agent"

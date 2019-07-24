@@ -1,7 +1,9 @@
 <div class="dropdown" id='js-nlp-dropdown-locale'>
   <div class="dropdown__trigger">
     <button class="btn btn--outline btn--small" type="button">
-      <span class="btn__label"><%= t('nlp.locales.all') %></span>
+      <span class="btn__label">
+        <% if current_value == "*" %><%= t('nlp.locales.all') %><% else %><%= current_value %><% end %>
+      </span>
       <span class="icon icon--x-small">
         <%= icon_arrow_down %>
       </span>
@@ -11,7 +13,7 @@
     <ul>
       <% Locales::ALL.each do |l| %>
         <li>
-          <a href="#" <% if l == "*" %>class="current"<% end %>
+          <a href="#" <% if l == current_value %>class="current"<% end %>
             data-behavior="populate-input, replace-trigger-label, submit-form"
             data-input-selector="<%= input_selector %>"
             data-input-value="<%= l %>"

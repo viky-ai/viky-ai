@@ -9,6 +9,7 @@
     <div class="control">
       <span class="label"><%= t('nlp.locales.label') %></span>
       <%= render partial: "/shared/nlp_locales_dropdown", locals: {
+        current_value: "*",
         form_selector: "#js-console-form",
         input_selector: ".js-nlp-language-input"
       } %>
@@ -17,6 +18,7 @@
     <div class="control">
       <span class="label"><%= t('nlp.spellchecking.label') %></span>
       <%= render partial: "/shared/nlp_spellchecking_dropdown", locals: {
+        current_value: "low",
         form_selector: "#js-console-form",
         input_selector: ".js-nlp-spellchecking-input"
       } %>

@@ -8,6 +8,8 @@ class PlayController < ApplicationController
     unless @interpreter.agents.empty?
       user_state = UserUiState.new(current_user)
       @interpreter.text = user_state.play_search.dig('text')
+      @interpreter.language = user_state.play_search.dig('language')
+      @interpreter.spellchecking = user_state.play_search.dig('spellchecking')
 
       @interpreter.agent     = @interpreter.agents.first
       @interpreter.ownername = @interpreter.agent.owner.username
@@ -20,7 +22,9 @@ class PlayController < ApplicationController
   def interpret
     user_state = UserUiState.new(current_user)
     user_state.play_search = {
-      text: @interpreter.text
+      text: @interpreter.text,
+      language: @interpreter.language,
+      spellchecking: @interpreter.spellchecking
     }
     user_state.save
 
@@ -45,7 +49,7 @@ class PlayController < ApplicationController
   private
 
     def play_params
-      params.require(:play_interpreter).permit(:text, :agentname, :ownername)
+      params.require(:play_interpreter).permit(:agentname, :ownername, :text, :language, :spellchecking)
     end
 
     def interpreter_agents_from_user_ui_state

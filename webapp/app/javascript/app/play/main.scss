@@ -1,6 +1,5 @@
 @import '../../framework/abstracts/variables';
 
-
 .play__modal-footer{
   border-top: 1px solid #ddd;
   padding: 1em;
@@ -76,7 +75,6 @@ aside.play{
 
 .play-main{
   border-radius: 3px;
-  overflow: hidden;
   border: 1px solid rgba(#000, .1);
   background-color: #fafafa;
   margin-bottom: 2em;
@@ -90,6 +88,32 @@ aside.play{
   padding: 1.5em 2em;
   textarea{
     height: 8em;
+  }
+  .label--uppercase{
+    text-transform: uppercase;
+    font-size: .7em;
+    font-weight: 300;
+  }
+  .inputs-wrapper{
+    display: grid;
+    grid-template-columns: auto 100px;
+    grid-column-gap: 2em;
+
+    grid-template-areas:
+      "text    options"
+      "submit  submit";
+
+    align-items: start;
+
+    .field:nth-child(1){
+      grid-area: options;
+    }
+    .field:nth-child(2){
+      grid-area: text;
+    }
+    .field:nth-child(3){
+      grid-area: submit;
+    }
   }
 }
 
@@ -150,22 +174,14 @@ aside.play{
         margin: 0;
       }
     }
-  }
-
-  .highlight-pop [x-arrow] {
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    background-color: #333;
-    border-radius: 6px;
-  }
-
-  @each $name, $color in $colors{
-    .highlight-pop--#{$name} [x-arrow]{
-      background-color: darken($color, 5%);
+    [x-arrow] {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background-color: #333;
+      border-radius: 6px;
     }
   }
-
 
   .highlight-pop[x-placement="bottom"] { margin-top: 10px; }
   .highlight-pop[x-placement="left"] { margin-right: 10px; }
@@ -177,6 +193,12 @@ aside.play{
   .highlight-pop[x-placement="top"] [x-arrow] { bottom: -5px; }
   .highlight-pop[x-placement="right"] [x-arrow] { left: -5px; }
 
+  @each $name, $color in $colors{
+    .highlight-pop--#{$name} [x-arrow]{
+      background-color: darken($color, 5%);
+    }
+  }
+
   .highlight{
     z-index: 1;
     position: relative;
@@ -184,9 +206,10 @@ aside.play{
     display: inline-block;
     padding: 0 .25em;
     border-radius: 2px;
-
-    line-height: 1.5em;
-
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: top;
     &:after{
       position: absolute;
       display: block;

@@ -1,7 +1,7 @@
 <div class="dropdown" id='js-nlp-dropdown-spellchecking'>
   <div class="dropdown__trigger">
     <button class="btn btn--outline btn--small" type="button">
-      <span class="btn__label"><%= t('nlp.spellchecking.low') %></span>
+      <span class="btn__label"><%= t("nlp.spellchecking.#{current_value}") %></span>
       <span class="icon icon--x-small">
         <%= icon_arrow_down %>
       </span>
@@ -11,7 +11,7 @@
     <ul>
       <% ['inactive', 'low', 'medium', 'high'].each do |spellcheck| %>
         <li>
-          <a href="#" <% if spellcheck == 'low' %>class="current"<% end %>
+          <a href="#" <% if spellcheck == current_value %>class="current"<% end %>
              data-behavior="populate-input, replace-trigger-label, submit-form"
              data-input-selector="<%= input_selector %>"
              data-input-value="<%= spellcheck %>"

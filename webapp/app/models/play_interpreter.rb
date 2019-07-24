@@ -4,7 +4,7 @@ class PlayInterpreter
 
   before_validation :set_defaults
 
-  attr_accessor :ownername, :agentname, :text, :agent, :agents, :results
+  attr_accessor :ownername, :agentname, :text, :language, :spellchecking, :agent, :agents, :results
 
   validates_presence_of :ownername, :agentname, :text
   validates :text, byte_size: { maximum: 1024 * 8 }
@@ -17,8 +17,10 @@ class PlayInterpreter
         ownername: agent.owner.username,
         agentname: agent.agentname,
         agent_token: agent.api_token,
+        language: language,
+        spellchecking: spellchecking,
         verbose: 'false',
-        sentence: @text,
+        sentence: text,
         enable_list: 'true'
       }
       body, status = Nlp::Interpret.new(request_params).proceed
@@ -38,8 +40,10 @@ class PlayInterpreter
   private
 
   def set_defaults
-    @agents  = [] if agents.nil?
-    @results = {} if results.nil?
+    @spellchecking = 'low' if spellchecking.blank?
+    @language = "*"       if language.blank?
+    @agents  = []         if agents.nil?
+    @results = {}         if results.nil?
   end
 
 end
