@@ -23,7 +23,21 @@ class PlayInterpreter
         sentence: text,
         enable_list: 'true'
       }
-      body, status = Nlp::Interpret.new(request_params).proceed
+
+      cache_key = [
+        "PlayInterpreter",
+        request_params[:ownername],
+        request_params[:agentname],
+        request_params[:sentence],
+        request_params[:language],
+        request_params[:spellchecking],
+        agent.updated_at
+      ].join('/')
+
+      body, status = Rails.cache.fetch(cache_key, expires_in: 60.minutes) do
+        Nlp::Interpret.new(request_params).proceed
+      end
+
       self.results[agent.id] = PlayInterpreterResult.new(status, body)
     end
   end
