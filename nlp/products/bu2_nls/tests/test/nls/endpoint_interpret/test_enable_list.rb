@@ -56,30 +56,6 @@ module Nls
 
       end
 
-      def test_remanence
-        expected = { interpretation: "abcd", solution: "aaa bbb" }
-        no_list = check_interpret("aaa bbb", expected)
-        assert no_list["interpretations"][0].key?("start_position") == false, "key start_position must not exist without enable_list"
-        assert no_list["interpretations"][0].key?("end_position") == false, "key end_position must not exist without enable_list"
-
-        expected = [{ interpretation: "abcd", solution: "aaa bbb" }]
-        has_list = check_interpret({sentence: "aaa bbb", enable_list: true}, expected)
-        assert has_list["interpretations"][0].key?("start_position"), "key start_position must not exist without enable_list"
-        assert has_list["interpretations"][0].key?("end_position"), "key end_position must not exist without enable_list"
-
-        expected = { interpretation: "abcd", solution: "aaa bbb" }
-        no_list1 = check_interpret("aaa bbb", expected)
-        assert no_list1["interpretations"][0].key?("start_position") == false, "key start_position must not exist without enable_list"
-        assert no_list1["interpretations"][0].key?("end_position") == false, "key end_position must not exist without enable_list"
-
-        expected = { interpretation: "abcd", solution: "aaa bbb" }
-        no_list2 = check_interpret({sentence: "aaa bbb", enable_list: false}, expected)
-        assert no_list2["interpretations"][0].key?("start_position") == false, "key start_position must not exist without enable_list"
-        assert no_list2["interpretations"][0].key?("end_position") == false, "key end_position must not exist without enable_list"
-
-      end
-
-
     end
   end
 

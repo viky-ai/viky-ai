@@ -328,13 +328,15 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
     end
 
     def check_interpret(sentence, expected)
+      actual = {}
       if sentence.kind_of? Array
-        return check_interpret_array(sentence, expected)
+        actual = check_interpret_array(sentence, expected)
       elsif sentence.kind_of? Hash
-        return check_interpret_hash(sentence, expected)
+        actual = check_interpret_hash(sentence, expected)
       else
-        return check_interpret_sentence(sentence, false, expected)
+        actual = check_interpret_sentence(sentence, false, expected)
       end
+      actual
     end
 
     def check_interpret_array(sentence, expected)
