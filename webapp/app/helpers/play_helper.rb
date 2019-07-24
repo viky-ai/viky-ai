@@ -40,24 +40,32 @@ module PlayHelper
 
   def slug_colors(interpretations)
     data = {}
-    available_colors = colors.shuffle
+    available_colors = colors
     interpretations.collect{|i| i["slug"]}.uniq.each_with_index do |slug, i|
-      if i + 1 > available_colors.size
-        data[slug] = available_colors[0]
-      else
-        data[slug] = available_colors[i]
-      end
+      data[slug] = available_colors[ i % available_colors.size ]
     end
     data
   end
 
   def colors
     [
-      "black", "red", "pink", "purple",
-      "deep-purple", "indigo", "blue", "light-blue",
-      "cyan", "teal", "green", "light-green",
-      "lime", "amber", "orange",
-      "deep-orange", "brown"
+      "pink",
+      "indigo",
+      "cyan",
+      "light-green",
+      "amber",
+      "brown",
+      "purple",
+      "blue",
+      "teal",
+      "lime",
+      "orange",
+      "red",
+      "deep-purple",
+      "light-blue",
+      "green",
+      "deep-orange",
+      "black"
     ]
   end
 
