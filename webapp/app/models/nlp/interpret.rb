@@ -11,7 +11,7 @@ class Nlp::Interpret
                 :spellchecking, :agent_token, :verbose, :now, :enable_list, :context
 
   validates_presence_of :ownername, :agentname, :format, :sentence, :agent_token
-  validates :sentence, byte_size: { maximum: 7000 }
+  validates :sentence, byte_size: { maximum: 1024*8 }
   validates_inclusion_of :format, in: %w( json )
   validates_inclusion_of :verbose, in: [ "true", "false" ]
   validates_inclusion_of :spellchecking, in: %w( inactive low medium high ), allow_blank: true
