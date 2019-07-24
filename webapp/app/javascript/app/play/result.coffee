@@ -19,8 +19,9 @@ class PlayResult
           item.addClass('highlight--open')
           popup.show()
       else
-        $('.play-main__result__wrapper .highlight-pop').hide()
-        $('.play-main__result__wrapper .highlight').removeClass('highlight--open')
+        if item.closest('.highlight-pop').length == 0
+          $('.play-main__result__wrapper .highlight-pop').hide()
+          $('.play-main__result__wrapper .highlight').removeClass('highlight--open')
 
 Setup = ->
   if $('body').data('controller-name') == "play"
