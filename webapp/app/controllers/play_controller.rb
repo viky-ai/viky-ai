@@ -45,6 +45,17 @@ class PlayController < ApplicationController
     end
   end
 
+  def reset
+    user_state = UserUiState.new(current_user)
+    user_state.play_search = {
+      text: "",
+      language: "*",
+      spellchecking: "low"
+    }
+    user_state.save
+    redirect_to action: :index
+  end
+
 
   private
 

@@ -48,6 +48,9 @@
           <%= icon_send %>
         </span>
       </button>
+      <% unless interpreter.query_default_state? %>
+        <%= link_to t('views.play.form.reset'), play_reset_path, class: "btn btn--plain" %>
+      <% end %>
     </div>
 
   </div>

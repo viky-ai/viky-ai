@@ -43,6 +43,10 @@ class PlayInterpreter
     end
   end
 
+  def query_default_state?
+    text.blank? && language == "*" && spellchecking == "low"
+  end
+
   def result(search_agent)
     results.nil? ? nil : results[search_agent.id]
   end

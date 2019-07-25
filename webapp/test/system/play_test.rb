@@ -163,6 +163,9 @@ class PlayTest < ApplicationSystemTestCase
       click_link "Play"
     end
     assert page.has_text?("Hello NLP")
+
+    click_link "Reset"
+    assert page.has_no_text?("Hello NLP")
   end
 
 

@@ -28,6 +28,7 @@ en:
       form:
         btn: Interpret
         btn_loading_html: Interpret <span class="icon icon--x-small icon--spin">%{icon}</span>
+        reset: Reset
       result:
         title_html:
           zero: "<strong>No interpretation found</strong> with agent"
