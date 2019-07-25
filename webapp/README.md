@@ -68,6 +68,7 @@ If you need more information, see sections below.
     ```bash
     $ docker run -p 9200:9200 -v $(pwd)/tmp:/backup_data -e "path.repo=/backup_data" -e "discovery.type=single-node" -e "node.name=viky-stats01-dev"  --rm --mount 'type=volume,src=vikyapp_stats01_dev,dst=/usr/share/elasticsearch/data'  --name viky-stats01-dev  docker.elastic.co/elasticsearch/elasticsearch:6.6.1
     $ docker run -p 9222:9200                                                        -e "discovery.type=single-node" -e "node.name=viky-stats01-test" --rm --mount 'type=volume,src=vikyapp_stats01_test,dst=/usr/share/elasticsearch/data' --name viky-stats01-test docker.elastic.co/elasticsearch/elasticsearch:6.6.1
+    $ docker run -p 5601:5601 --link viky-stats01-dev  -e "SERVER_BASEPATH=/kibana" -e "SERVER_REWRITEBASEPATH=true" -e "ELASTICSEARCH_URL=http://viky-stats01-dev:9200" --rm --name viky-kibana docker.elastic.co/kibana/kibana:6.6.1
     ```
 15. Setup statistics : `$ ./bin/rails statistics:setup`
 16. Stop both statistics containers : `$ docker stop viky-stats01-dev viky-stats01-test`
