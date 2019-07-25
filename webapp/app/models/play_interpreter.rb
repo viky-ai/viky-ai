@@ -37,6 +37,7 @@ class PlayInterpreter
       body, status = Rails.cache.fetch(cache_key, expires_in: 60.minutes) do
         Nlp::Interpret.new(request_params).proceed
       end
+      Rails.cache.delete(cache_key) unless status == 200
 
       self.results[agent.id] = PlayInterpreterResult.new(status, body)
     end
