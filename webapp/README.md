@@ -71,7 +71,7 @@ If you need more information, see sections below.
     $ docker run -p 5601:5601 --link viky-stats01-dev  -e "SERVER_BASEPATH=/kibana" -e "SERVER_REWRITEBASEPATH=true" -e "ELASTICSEARCH_URL=http://viky-stats01-dev:9200" --rm --name viky-kibana docker.elastic.co/kibana/kibana:6.6.1
     ```
 15. Setup statistics : `$ ./bin/rails statistics:setup`
-16. Stop both statistics containers : `$ docker stop viky-stats01-dev viky-stats01-test`
+16. Stop both statistics containers and the kibana container : `$ docker stop viky-stats01-dev viky-stats01-test viky-kibana`
 17. Start Foreman : `$ foreman start`
 18. Invite you as admin : `$ ./bin/rails users:invite_admin[<your@email.com>]`
 19. System tests require chromedriver.
