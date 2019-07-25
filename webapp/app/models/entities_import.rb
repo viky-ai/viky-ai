@@ -6,6 +6,7 @@ class EntitiesImport < ApplicationRecord
   validates_presence_of :file, message: I18n.t('errors.entities_import.no_file'), on: :create
   validate :absence_of_concurrent_import, on: :create
   validates :mode, presence: true
+  validate :check_owner_quota, on: :create
 
   enum mode: [:append, :replace]
   enum status: [ :running, :success, :failure ]
@@ -197,4 +198,20 @@ class EntitiesImport < ApplicationRecord
       entities_list.touch
     end
 
+    def check_owner_quota
+      entities_quota = ENV.fetch('VIKYAPP_ENTITIES_QUOTA') { nil }
+      unless entities_quota == nil
+        entities_quota = Integer(entities_quota)
+        total = EntitiesList.joins(:agent).where("agents.owner_id = ?", entities_list.agent.owner_id).sum(:entities_count)
+        if mode == 'replace'
+          if csv_count_lines > entities_quota
+            errors.add(:base, I18n.t('errors.entities_import.quota_replace', maximum: entities_quota, to_import: csv_count_lines))
+          end
+        else 
+          if total + csv_count_lines > entities_quota
+            errors.add(:base, I18n.t('errors.entities_import.quota', maximum: entities_quota, actual: total, to_import: csv_count_lines))
+          end
+        end
+      end
+    end
 end

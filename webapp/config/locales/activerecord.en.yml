@@ -129,6 +129,8 @@ en:
       unexpected_autosolution: "Auto solution must be true or false"
       missing_column: "Missing column"
       missing_header: "Missing header"
+      quota: "Quota exceeded (maximum is %{maximum} entities), actual: %{actual} and you are trying to import %{to_import} more entities"
+      quota_replace: "Quota exceeded (maximum is %{maximum} entities), you are trying to import %{to_import} entities"
     interpretation_alias:
       end_position_lower_than_start: "must be greater than position start"
       overlap: overlap

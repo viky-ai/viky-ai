@@ -9,7 +9,7 @@ class Entity < ApplicationRecord
   validates :solution, length: { maximum: 2000 }
   validates :solution, presence: true, if: -> { self.auto_solution_enabled }
   validates :terms, length: { maximum: 5000 }, presence: true
-  validate :check_owner_quota
+  validate :check_owner_quota, on: :create
   validate :validate_locales_exists
   validate :validate_terms_present
   validate :validate_terms_length_in_bytes
