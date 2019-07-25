@@ -55,7 +55,7 @@ If you need more information, see sections below.
     ```
 11. Install every dependencies :
     ```bash
-    $ cd platform
+    $ cd platform/webapp
     $ bundler install # Ruby dependencies
     $ yarn install # JavaScript/CoffeScript dependencies
     ```
