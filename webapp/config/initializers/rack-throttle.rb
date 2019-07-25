@@ -39,12 +39,9 @@ module Rack
           allowed = true
         end
 
-        Rails.logger.info "Final allowed is #{allowed}"
-
         if !allowed
           agent = Agent.find_by api_token: request.params["agent_token"]
           if agent then 
-            Rails.logger.ap agent
             log = InterpretRequestLog.new(
               timestamp: Time.now.iso8601(3),
               agent: agent
