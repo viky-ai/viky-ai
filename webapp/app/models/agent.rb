@@ -101,6 +101,13 @@ class Agent < ApplicationRecord
       conditions
     end
 
+    case q[:selected]
+    when 'true'
+      conditions = conditions.where(id: q[:selected_ids])
+    when 'false'
+      conditions = conditions.where.not(id: q[:selected_ids])
+    end
+
     conditions.distinct
   end
 

@@ -3,8 +3,22 @@ class Play::SelectionsController < ApplicationController
   def edit
     user_state = UserUiState.new(current_user)
     @selected_agent_ids = user_state.play_agents_selection
-    @agents = Agent.search(user_id: current_user.id).order(name: :asc) #.page(params[:page]) #.per(10)
+    @search = PlayAgentsSearch.new(current_user)
+    @agents = Agent.search(@search.options).order(name: :asc)
     render partial: 'edit'
+  end
+
+  def search
+    respond_to do |format|
+      format.js {
+        search = PlayAgentsSearch.new(current_user, search_params)
+        agents = Agent.search(search.options).order(name: :asc)
+        @list = render_to_string(partial: 'list', locals: {
+          agents: agents,
+          selected_agent_ids: search.selected_ids
+        })
+      }
+    end
   end
 
   def update
@@ -20,6 +34,10 @@ class Play::SelectionsController < ApplicationController
 
     def selection_params
       params.require(:selection).permit(agent_ids: [])
+    end
+
+    def search_params
+      params.require(:search).permit(:query, :filter_owner, :selected, selected_ids: [])
     end
 
 end

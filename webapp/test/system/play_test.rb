@@ -47,6 +47,45 @@ class PlayTest < ApplicationSystemTestCase
   end
 
 
+  test "Agent selection search" do
+    go_to_play_ui
+
+    click_link 'Choose agents'
+    within ".modal" do
+      assert page.has_text?("Choose playground's agents")
+      assert page.has_text?("0 selected agent")
+
+      expected = ["admin/weather", "admin/terminator"]
+      assert_equal expected, all('ul.agent-compact-list li h6').collect(&:text)
+
+      all('ul.agent-compact-list li')[0].click
+      assert page.has_text?("1 selected agent")
+
+      click_button "Selected"
+      sleep 0.25
+      assert_equal ["admin/weather"], all('ul.agent-compact-list li h6').collect(&:text)
+
+      click_button "Unselected"
+      sleep 0.25
+      assert_equal ["admin/terminator"], all('ul.agent-compact-list li h6').collect(&:text)
+
+      first('.btn-group button').click
+      sleep 0.25
+      assert_equal expected, all('ul.agent-compact-list li h6').collect(&:text)
+
+      fill_in 'search[query]', with: 'terminator'
+      first("#search-button").click
+      sleep 0.25
+      assert_equal ["admin/terminator"], all('ul.agent-compact-list li h6').collect(&:text)
+
+      fill_in 'search[query]', with: 'Missing agent'
+      first("#search-button").click
+      sleep 0.25
+      assert_equal "No agent found.", first('.modal__main__chooser__no-search-result').text
+    end
+  end
+
+
   test "Form validations" do
     go_to_play_ui
     select_2_agents

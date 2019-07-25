@@ -12,6 +12,21 @@
   }
 }
 
+.modal--play{
+  .play-modal-search-form{
+    margin: 0;
+    padding: .75em 1em 0 1em;
+    border-bottom: 1px solid #ddd;
+    .field{
+      margin-bottom: .75em;
+    }
+  }
+  .modal__main__chooser{
+    max-height: calc(100vh - 290px);
+  }
+}
+
+
 .agent-compact{
   &.agent-compact--play-chooser:hover{
     box-shadow: 0 0 0 2px rgba($primary_color, .75), 0 3px 3px rgba(black, .1);
@@ -87,12 +102,12 @@ aside.play{
 .play-main__form{
   padding: 1.5em 2em;
   textarea{
-    height: 8em;
+    height: 6.7em;
   }
   .label--uppercase{
     text-transform: uppercase;
     font-size: .7em;
-    font-weight: 300;
+    font-weight: 400;
   }
   .inputs-wrapper{
     display: grid;

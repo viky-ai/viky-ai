@@ -11,6 +11,17 @@ en:
         status_one: selected agent
         status_more: selected agents
         status_max: Maximum reached
+        search:
+          placeholder: Search agents
+          selected:
+            all: All
+            true: Selected
+            false: Unselected
+          filter_owner:
+            all: All
+            owned: Yours
+            favorites: Favorites
+          not_found: No agent found.
       aside:
         title: Playground's Agents
         btn_edit: Edit

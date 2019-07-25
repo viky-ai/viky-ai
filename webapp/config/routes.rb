@@ -34,7 +34,11 @@ Rails.application.routes.draw do
   end
 
   namespace :play do
-    resource :selection, only: [:edit, :update]
+    resource :selection, only: [:edit, :update] do
+      collection do
+        get :search
+      end
+    end
   end
   get  '/play', to: 'play#index'
   post '/play', to: 'play#interpret'

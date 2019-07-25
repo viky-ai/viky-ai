@@ -19,11 +19,14 @@ class PlayChooser
       if btn.hasClass('btn--toggle-on')
         btn.removeClass('btn--toggle-on').addClass('btn--toggle-off')
         $("#input__#{id}").remove()
+        $("#search__input__#{id}").remove()
       else
         if not @disable
           btn.removeClass('btn--toggle-off').addClass('btn--toggle-on')
           input = "<input type='hidden' name='selection[agent_ids][]' value='#{id}' id='input__#{id}'/>"
           $("#play-chooser-selected-agents").append(input)
+          input_search = "<input type='hidden' name='search[selected_ids][]' value='#{id}' id='search__input__#{id}'/>"
+          $("#play-chooser-search-selected-agents").append(input_search)
 
       @update_state()
 
