@@ -120,10 +120,10 @@ RSYNC_PASSWORD='#***REMOVED***26'
 VIKYAPP_RACK_THROTTLE_ENABLED=true
 
 # If you want to disable the Quota of a specific Limitation
-VIKYAPP_RACK_THROTTLE_LIMIT_DAY_ENABLED=false       # Day Limitation
-VIKYAPP_RACK_THROTTLE_LIMIT_HOUR_ENABLED=false      # Hour Limitation
-VIKYAPP_RACK_THROTTLE_LIMIT_MINUTE_ENABLED=false    # Minute Limitation
-VIKYAPP_RACK_THROTTLE_LIMIT_SECOND_ENABLED=false    # Second Limitation
+VIKYAPP_RACK_THROTTLE_LIMIT_DAY_DISABLED=true        # Day Limitation
+VIKYAPP_RACK_THROTTLE_LIMIT_HOUR_DISABLED=true       # Hour Limitation
+VIKYAPP_RACK_THROTTLE_LIMIT_MINUTE_DISABLED=true     # Minute Limitation
+VIKYAPP_RACK_THROTTLE_LIMIT_SECOND_DISABLED=true     # Second Limitation
 
 ```
 

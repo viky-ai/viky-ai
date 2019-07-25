@@ -15,15 +15,14 @@ module Rack
 
       def allowed?(request)
         
-
         if Feature.rack_throttle_enabled?
-          if !Feature.rack_throttle_limit_day_enabled? && @options[:time_window] == :day
+          if Feature.rack_throttle_limit_day_disabled? && @options[:time_window] == :day
             allowed = true
-          elsif !Feature.rack_throttle_limit_hour_enabled? && @options[:time_window] == :hour
+          elsif Feature.rack_throttle_limit_hour_disabled? && @options[:time_window] == :hour
             allowed = true
-          elsif !Feature.rack_throttle_limit_minute_enabled? && @options[:time_window] == :minute
+          elsif Feature.rack_throttle_limit_minute_disabled? && @options[:time_window] == :minute
             allowed = true
-          elsif !Feature.rack_throttle_limit_second_enabled? && @options[:time_window] == :second
+          elsif Feature.rack_throttle_limit_second_disabled? && @options[:time_window] == :second
             allowed = true
           else
             return true if whitelisted?(request)
@@ -39,6 +38,21 @@ module Rack
         else 
           allowed = true
         end
+
+        Rails.logger.info "Final allowed is #{allowed}"
+
+        if !allowed
+          agent = Agent.find_by api_token: request.params["agent_token"]
+          if agent then 
+            Rails.logger.ap agent
+            log = InterpretRequestLog.new(
+              timestamp: Time.now.iso8601(3),
+              agent: agent
+            )
+            log.with_response(503, { }).save
+          end
+        end
+
         allowed
       end
     end

@@ -27,55 +27,55 @@ module Feature
   end
   
   # Second
-  def self.rack_throttle_limit_second_enabled?
-    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_SECOND_ENABLED'] == 'true'
+  def self.rack_throttle_limit_second_disabled?
+    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_SECOND_DISABLED'] == 'true'
   end
 
   def self.enable_rack_throttle_limit_second
-    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_SECOND_ENABLED'] = 'true'
+    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_SECOND_DISABLED'] = 'false'
   end
 
   def self.disable_rack_throttle_limit_second
-    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_SECOND_ENABLED'] = 'false'
+    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_SECOND_DISABLED'] = 'true'
   end
   
   # Minute
-  def self.rack_throttle_limit_minute_enabled?
-    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_MINUTE_ENABLED'] == 'true'
+  def self.rack_throttle_limit_minute_disabled?
+    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_MINUTE_DISABLED'] == 'true'
   end
 
   def self.enable_rack_throttle_limit_minute
-    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_MINUTE_ENABLED'] = 'true'
+    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_MINUTE_DISABLED'] = 'false'
   end
 
   def self.disable_rack_throttle_limit_minute
-    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_MINUTE_ENABLED'] = 'false'
+    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_MINUTE_DISABLED'] = 'true'
   end
   
   # Hour
-  def self.rack_throttle_limit_hour_enabled?
-    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_HOUR_ENABLED'] == 'true'
+  def self.rack_throttle_limit_hour_disabled?
+    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_HOUR_DISABLED'] == 'true'
   end
 
   def self.enable_rack_throttle_limit_hour
-    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_HOUR_ENABLED'] = 'true'
+    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_HOUR_DISABLED'] = 'false'
   end
 
   def self.disable_rack_throttle_limit_hour
-    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_HOUR_ENABLED'] = 'false'
+    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_HOUR_DISABLED'] = 'true'
   end
   
   # Day
-  def self.rack_throttle_limit_day_enabled?
-    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_DAY_ENABLED'] == 'true'
+  def self.rack_throttle_limit_day_disabled?
+    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_DAY_DISABLED'] == 'true'
   end
 
   def self.enable_rack_throttle_limit_day
-    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_DAY_ENABLED'] = 'true'
+    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_DAY_DISABLED'] = 'false'
   end
 
   def self.disable_rack_throttle_limit_day
-    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_DAY_ENABLED'] = 'false'
+    ENV['VIKYAPP_RACK_THROTTLE_LIMIT_DAY_DISABLED'] = 'true'
   end
   
 end
