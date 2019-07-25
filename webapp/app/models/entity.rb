@@ -9,6 +9,7 @@ class Entity < ApplicationRecord
   validates :solution, length: { maximum: 2000 }
   validates :solution, presence: true, if: -> { self.auto_solution_enabled }
   validates :terms, length: { maximum: 5000 }, presence: true
+  validate :check_owner_quota
   validate :validate_locales_exists
   validate :validate_terms_present
   validate :validate_terms_length_in_bytes
@@ -150,5 +151,15 @@ class Entity < ApplicationRecord
       # belongs_to :entities_list, touch: true, counter_cache: true
       # Touch option fails on entity creation and deletion.
       entities_list.touch
+    end
+
+    def check_owner_quota
+      entities_quota = ENV.fetch('VIKYAPP_ENTITIES_QUOTA') { nil }
+      unless entities_quota == nil
+        total = EntitiesList.joins(:agent).where("agents.owner_id = ?", entities_list.agent.owner_id).sum(:entities_count)
+        if total >= Integer(entities_quota)
+          errors.add(:quota, I18n.t('errors.entity.quota', maximum: entities_quota, actual: total))
+        end
+      end
     end
 end

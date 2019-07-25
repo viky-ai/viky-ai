@@ -119,6 +119,7 @@ en:
       unknown_locale: "uses an unauthorized locale '%{current_locale}' for this agent"
       term_abscent: "can't contains only locale information"
       term_nlp_length: "is too long (maximum is %{count} elements), found: %{actual_count}"
+      quota: "exceeded (maximum is %{maximum} entities), actual: %{actual}"
     entities_import:
       concurrent_import: "An import is already running, please wait."
       no_file: "must be present"

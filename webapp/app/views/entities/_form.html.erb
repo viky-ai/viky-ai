@@ -10,6 +10,7 @@
       <%= text_area_tag('entity[terms]', entity.terms_to_s, id: "terms__new_entity", maxlength: '5000', spellcheck: 'false', autofocus: true, placeholder: t('views.entities.new.placeholder')) %>
     </div>
     <%= display_errors(entity, :terms) %>
+    <%= display_errors(entity, :quota) %>
   </div>
 
   <div class="field entity-form__solution">
