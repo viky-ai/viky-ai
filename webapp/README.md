@@ -2,18 +2,18 @@
 
 ## Dependencies
 
-* Ruby (2.4.2)         ( https://github.com/rbenv/rbenv#installation )
-* bundler (1.15.4)     ( `gem install bundler` )
-* NodeJS (8.4.0)       ( https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions )
-* Yarn (1.0.1)         ( https://yarnpkg.com/lang/en/docs/install/ )
-* PostgreSQL (9.6.5)   ( `sudo apt-get install -y postgresql postgresql-contrib libpq-dev` )
-* Redis (3.2)          ( `sudo apt-get install redis-server` or `sudo apt-get install redis` )
-* ElasticSearch (6.6)  ( use docker : `docker pull docker.elastic.co/elasticsearch/elasticsearch:6.6.1`)
-* Cerebro              ( use docker : `docker pull yannart/cerebro` )
-* Kibana               ( use docker : `docker pull docker.elastic.co/kibana/kibana:6.6.1` )
-* ImageMagick          ( `sudo apt-get install -y graphicsmagick-imagemagick-compat` )
-* Graphviz             ( `sudo apt-get install -y graphviz` )
-* Docker 17.09.0-ce    ( [see below](#docker) )
+- Ruby (2.4.2) ( https://github.com/rbenv/rbenv#installation )
+- bundler (1.15.4) ( `gem install bundler` )
+- NodeJS (8.4.0) ( https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions )
+- Yarn (1.0.1) ( https://yarnpkg.com/lang/en/docs/install/ )
+- PostgreSQL (9.6.5) ( `sudo apt-get install -y postgresql postgresql-contrib libpq-dev` )
+- Redis (3.2) ( `sudo apt-get install redis-server` or `sudo apt-get install redis` )
+- ElasticSearch (6.6) ( use docker : `docker pull docker.elastic.co/elasticsearch/elasticsearch:6.6.1`)
+- Cerebro ( use docker : `docker pull yannart/cerebro` )
+- Kibana ( use docker : `docker pull docker.elastic.co/kibana/kibana:6.6.1` )
+- ImageMagick ( `sudo apt-get install -y graphicsmagick-imagemagick-compat` )
+- Graphviz ( `sudo apt-get install -y graphviz` )
+- Docker 17.09.0-ce ( [see below](#docker) )
 
 ## Install a dev environment
 
@@ -24,25 +24,25 @@ If you need more information, see sections below.
 1. Install Ruby : `sudo apt install ruby ruby-dev`
 2. Install Docker : `sudo apt install docker.io`
 3. Configure Docker to use the Pertimm registry :
-    ```bash
-    $ echo "{
-        "registry-mirrors": [
-          "http://docker-mirror.pertimm.corp:50000"
-        ]
-    }" > /etc/docker/daemon.json
-    ```
+   ```bash
+   $ echo "{
+       "registry-mirrors": [
+         "http://docker-mirror.pertimm.corp:50000"
+       ]
+   }" > /etc/docker/daemon.json
+   ```
 4. Install PostgresSQL : `sudo apt install postgresql postgresql-contrib libpq-dev`
 5. Add a viky user to PostgresSQL :
-    ```bash
-    $ sudo -i -u postgres
-    $ createuser --interactive
-    Enter name of role to add : viky
-    Shall the new role be a superuser? (y/n) y
-    $ psql
-    postgres=# ALTER USER "viky" WITH PASSWORD 'viky';
-    postgres=# \q
-    $ exit
-    ```
+   ```bash
+   $ sudo -i -u postgres
+   $ createuser --interactive
+   Enter name of role to add : viky
+   Shall the new role be a superuser? (y/n) y
+   $ psql
+   postgres=# ALTER USER "viky" WITH PASSWORD 'viky';
+   postgres=# \q
+   $ exit
+   ```
 6. Install Redis : `sudo apt install redis-server`
 7. Install NodeJS : `sudo apt install nodejs`
 8. Install Yarn : follow instructions [here](https://yarnpkg.com/lang/en/docs/install/)
@@ -65,13 +65,15 @@ If you need more information, see sections below.
     ```
 13. Create databases : `$ ./bin/rails db:setup`
 14. Start statistics containers (dev + tests) :
+
     ```bash
     $ docker run -p 9200:9200 -v $(pwd)/tmp:/backup_data -e "path.repo=/backup_data" -e "discovery.type=single-node" -e "node.name=viky-stats01-dev"  --rm --mount 'type=volume,src=vikyapp_stats01_dev,dst=/usr/share/elasticsearch/data'  --name viky-stats01-dev  docker.elastic.co/elasticsearch/elasticsearch:6.6.1
-    
+
     $ docker run -p 9222:9200 -e "discovery.type=single-node" -e "node.name=viky-stats01-test" --rm --mount 'type=volume,src=vikyapp_stats01_test,dst=/usr/share/elasticsearch/data' --name viky-stats01-test docker.elastic.co/elasticsearch/elasticsearch:6.6.1
-    
+
     $ docker run -p 5601:5601 --link viky-stats01-dev  -e "SERVER_BASEPATH=/kibana" -e "SERVER_REWRITEBASEPATH=true" -e "ELASTICSEARCH_URL=http://viky-stats01-dev:9200" --rm --name viky-kibana docker.elastic.co/kibana/kibana:6.6.1
     ```
+
 15. Setup statistics : `$ ./bin/rails statistics:setup`
 16. Stop both statistics containers : `$ docker stop viky-stats01-dev viky-stats01-test`
 17. Start Foreman : `$ foreman start`
@@ -125,6 +127,12 @@ VIKYAPP_RACK_THROTTLE_LIMIT_HOUR_DISABLED=true       # Hour Limitation
 VIKYAPP_RACK_THROTTLE_LIMIT_MINUTE_DISABLED=true     # Minute Limitation
 VIKYAPP_RACK_THROTTLE_LIMIT_SECOND_DISABLED=true     # Second Limitation
 
+# If you want to change the Requests Limit
+VIKYAPP_RACK_THROTTLE_LIMIT_DAY=8            # 8 Requests per Day limit
+VIKYAPP_RACK_THROTTLE_LIMIT_HOUR=6           # 6 Requests per Hour limit
+VIKYAPP_RACK_THROTTLE_LIMIT_MINUTE=4         # 4 Requests per Minute limit
+VIKYAPP_RACK_THROTTLE_LIMIT_SECOND=2         # 2 Requests per Second limit
+
 ```
 
 ## Run in production environment
@@ -149,21 +157,20 @@ Mail delivery is performed through a high priority queue named `webapp_mailers` 
 
 If you want to disable Postmark, use `SMTP_ENABLED=true` and the following environment variables.
 
-* `SMTP_ADDRESS`: Allows you to use a remote mail server. Just change it from its default "localhost" setting.
-* `SMTP_PORT`: On the off chance that your mail server doesn't run on port 25, you can change it.
-* `SMTP_USER_NAME`: If your mail server requires authentication, set the username in this setting.
-* `SMTP_PASSWORD`: If your mail server requires authentication, set the password in this setting.
-* `SMTP_AUTHENTICATION`: If your mail server requires authentication, you need to specify the authentication type here. `plain` (will send the password in the clear), `login` (will send password Base64 encoded) or `cram_md5` (combines a Challenge/Response mechanism to exchange information and a cryptographic Message Digest 5 algorithm to hash important information)
-* `SMTP_ENABLE_STARTTLS_AUTO`: Detects if STARTTLS is enabled in your SMTP server and starts to use it. Defaults to `true`.
+- `SMTP_ADDRESS`: Allows you to use a remote mail server. Just change it from its default "localhost" setting.
+- `SMTP_PORT`: On the off chance that your mail server doesn't run on port 25, you can change it.
+- `SMTP_USER_NAME`: If your mail server requires authentication, set the username in this setting.
+- `SMTP_PASSWORD`: If your mail server requires authentication, set the password in this setting.
+- `SMTP_AUTHENTICATION`: If your mail server requires authentication, you need to specify the authentication type here. `plain` (will send the password in the clear), `login` (will send password Base64 encoded) or `cram_md5` (combines a Challenge/Response mechanism to exchange information and a cryptographic Message Digest 5 algorithm to hash important information)
+- `SMTP_ENABLE_STARTTLS_AUTO`: Detects if STARTTLS is enabled in your SMTP server and starts to use it. Defaults to `true`.
 
 ## Admin user
 
 Admin users can access to `/backend/users` UI. In order to create admin user, you can use the Rails tasks:
 
-* `./bin/rails users:invite_admin[email]`
-* `./bin/rails users:set_admin[email]`
-* `./bin/rails users:unset_admin[email]`
-
+- `./bin/rails users:invite_admin[email]`
+- `./bin/rails users:set_admin[email]`
+- `./bin/rails users:unset_admin[email]`
 
 ## Background jobs
 
@@ -173,12 +180,12 @@ The configuration file for queue definition and options is `config/sidekiq.yml`,
 
 Default concurrency for background job management is set to 5, you can change it via environment variable `VIKYAPP_SIDEKIQ_CONCURRENCY`.
 
-
 ## Bootstrap development databases
 
 The first time you start the application you need to manually create two databases `vikylapp_development` and `vikylapp_test` :
 
 ### Create postgres user
+
 ```
 $ sudo -i -u postgres
 ## Become postgres user
@@ -192,6 +199,7 @@ $ exit
 ```
 
 ### Create database
+
 ```
 $ ./bin/rails db:setup
 > Created database 'vikylapp_development'
@@ -200,18 +208,22 @@ $ ./bin/rails db:setup
 ```
 
 ## Bootstrap statistics
+
 We use ElasticSearch to store statistics data. It is highly configured for a _time-series_ load.
 
 Every indexes (_active_ and _inactives_) are searchable (ie: they all belongs to alias `search-stats-interpret_request_log`).
 Only the _active_ index can receive new documents (ie: it is the only one belonging to alias `index-stats-interpret_request_log`).
 This has two consequences :
-  - the _active_ index is optimized for writing
-  - _inactives_ indexes are optimized for reading
+
+- the _active_ index is optimized for writing
+- _inactives_ indexes are optimized for reading
 
 ### Create templates, index and Kibana configuration
+
 - It will create _templates_ only if it does not already exists.
 - It will create _index_ only if it does not already exists.
 - It always configure Kibana.
+
 ```
 $ ./bin/rails statistics:setup
 > Environment test.
@@ -223,18 +235,21 @@ $ ./bin/rails statistics:setup
 ```
 
 ### Reindex a specific index
+
 ```bash
 $ ./bin/rails statistics:reindex[<index_name>]
 > ...
 ```
 
 ### Reindex every index
+
 ```bash
 $ ./bin/rails statistics:reindex:all
 > ...
 ```
 
 ### Rollover the active index
+
 _Do something only if there is more than 100 000 documents in the index or it is older than 7 days._
 
 Basically it will move the active index in the inactive pool, and put a new empty active index.
@@ -249,8 +264,10 @@ $ ./bin/rails statistics:rollover
 If you haven't Docker installed in your system yet, you can follow this [guide](https://docs.docker.com/engine/installation/).
 Then check to have the image registry mirrors well configured.
 In Ubuntu you should:
+
 1. stop the Docker daemon `service docker stop`
 2. check to have the configuration file `/etc/docker/daemon.json` containing:
+
 ```
 {
     "registry-mirrors": [
@@ -258,6 +275,7 @@ In Ubuntu you should:
     ]
 }
 ```
+
 3. add your current user into the `docker` system group: `sudo usermod -a -G groupName userName`
 4. you will need to logout and log back in for this change to take effect
 5. be sure the Docker daemon is started: `service docker start`
