@@ -52,6 +52,7 @@
     background-color: #fff;
     position: relative;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 
     &.modal__main--loading{
       padding: 3em;
@@ -129,7 +130,7 @@
 
   &.modal--fixed-on-top{
     align-items: flex-start;
-    padding-top: 30px;
+    padding-top: 10px;
   }
 
   .modal__main__chooser{
