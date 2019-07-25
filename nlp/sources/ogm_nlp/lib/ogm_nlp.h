@@ -566,6 +566,7 @@ struct request_expression
   og_bool recursive_without_any_chosen;
 
   og_bool keep_as_result;
+  og_bool overlapped;
   int nb_anys;
   int nb_anys_attached;
   /** 0: invalidated, 1: unknown, 2: validated **/
