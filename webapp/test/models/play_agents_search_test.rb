@@ -27,20 +27,20 @@ class PlayAgentsSearchTest < ActiveSupport::TestCase
     user = users(:admin)
 
     s = PlayAgentsSearch.new(user, selected_ids: [agents(:terminator).id])
-    expected = ['terminator', 'weather']
-    assert_equal expected, Agent.search(s.options).collect(&:agentname)
+    expected = ['weather', 'terminator']
+    assert_equal expected, Agent.search(s.options).order(name: :asc).collect(&:agentname)
 
     s = PlayAgentsSearch.new(user, selected_ids: [agents(:terminator).id], selected: 'not true not false')
-    expected = ['terminator', 'weather']
-    assert_equal expected, Agent.search(s.options).collect(&:agentname)
+    expected = ['weather', 'terminator']
+    assert_equal expected, Agent.search(s.options).order(name: :asc).collect(&:agentname)
 
     s = PlayAgentsSearch.new(user, selected_ids: [agents(:terminator).id], selected: 'true')
     expected = ['terminator']
-    assert_equal expected, Agent.search(s.options).collect(&:agentname)
+    assert_equal expected, Agent.search(s.options).order(name: :asc).collect(&:agentname)
 
     s = PlayAgentsSearch.new(user, selected_ids: [agents(:terminator).id], selected: 'false')
     expected = ['weather']
-    assert_equal expected, Agent.search(s.options).collect(&:agentname)
+    assert_equal expected, Agent.search(s.options).order(name: :asc).collect(&:agentname)
   end
 
 
@@ -48,11 +48,11 @@ class PlayAgentsSearchTest < ActiveSupport::TestCase
     user = users(:admin)
 
     s = PlayAgentsSearch.new(user, filter_owner: 'owned')
-    expected = ['terminator', 'weather']
-    assert_equal expected, Agent.search(s.options).collect(&:agentname)
+    expected = ['weather', 'terminator']
+    assert_equal expected, Agent.search(s.options).order(name: :asc).collect(&:agentname)
 
     s = PlayAgentsSearch.new(user, filter_owner: 'favorites')
-    assert_equal [], Agent.search(s.options).collect(&:agentname)
+    assert_equal [], Agent.search(s.options).order(name: :asc).collect(&:agentname)
   end
 
 end
