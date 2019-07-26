@@ -75,7 +75,8 @@ module Nls
         now: nil,
         primary_package: nil,
         show_private: nil,
-        spellchecking: nil
+        spellchecking: nil,
+        enable_list: false
       }
       opts = default_opt.merge(opts)
 
@@ -117,6 +118,8 @@ module Nls
       request['now'] = opts[:now]                     unless opts[:now].nil?
       request['show-explanation'] = true              if     opts[:explain]
       request['show-private'] = true                  if     opts[:show_private]
+      request['enable-list'] = false
+      request['enable-list'] = true                   if     opts[:enable_list]
 
       request
     end
@@ -325,11 +328,15 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
     end
 
     def check_interpret(sentence, expected)
-      if !sentence.kind_of? Array
-        check_interpret_sentence(sentence, expected)
+      actual = {}
+      if sentence.kind_of? Array
+        actual = check_interpret_array(sentence, expected)
+      elsif sentence.kind_of? Hash
+        actual = check_interpret_hash(sentence, expected)
       else
-        check_interpret_array(sentence, expected)
+        actual = check_interpret_sentence(sentence, false, expected)
       end
+      actual
     end
 
     def check_interpret_array(sentence, expected)
@@ -349,6 +356,20 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
       request = []
 
       0.upto(sentence.length-1) do |i|
+
+        enable_list = false
+        sentence_str = nil
+        if sentence[i].kind_of? Hash
+          sentence_str = nil
+          sentence_str = sentence[i][:sentence] if sentence[i].has_key?(:sentence)
+          if sentence_str.nil?
+            assert false, "no sentence in the sentence hash"
+          end
+          enable_list = sentence[i][:enable_list] if sentence[i].has_key?(:enable_list)
+        else
+          sentence_str = sentence[i]
+        end
+
         debug[i] = expected[i][:debug]
         globaldebug = globaldebug || debug[i]
 
@@ -373,7 +394,8 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
           now: now[i],
           primary_package: primary_package[i],
           show_private: show_private[i],
-          spellchecking: spellchecking
+          spellchecking: spellchecking,
+          enable_list: enable_list
         }
 
         request << json_interpret_body(packages[i], sentence[i], opts)
@@ -475,7 +497,22 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
 
     end
 
-    def check_interpret_sentence(sentence, expected)
+    def check_interpret_hash(sentence, expected)
+      enable_list = false
+      enable_list = sentence[:enable_list] if sentence.has_key?(:enable_list)
+      sentence_str = nil
+      sentence_str = sentence[:sentence] if sentence.has_key?(:sentence)
+      if sentence_str.nil?
+        assert false, "no sentence in the sentence hash"
+      end
+      if enable_list
+        return check_interpret_sentence_list(sentence_str, enable_list, expected)
+      else
+        return check_interpret_sentence(sentence_str, enable_list, expected)
+      end
+    end
+
+    def check_interpret_sentence(sentence, enable_list, expected)
 
       raise "expected must be an Hash"   if !expected.kind_of? Hash
       raise "expected must not be empty" if expected.empty?
@@ -506,7 +543,8 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
         now: now,
         primary_package: primary_package,
         show_private: show_private,
-        spellchecking: spellchecking
+        spellchecking: spellchecking,
+        enable_list: enable_list
       }
 
       ap expected if debug
@@ -623,6 +661,132 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
 
       return actual
 
+    end
+
+    def check_interpret_sentence_list(sentence, enable_list, expected)
+
+      raise "expected must be an Array"   if !expected.kind_of? Array
+      raise "expected must not be empty" if expected.empty?
+
+      #TODO
+      # pas d'options pour le moment, refactoring à faire
+
+      debug = false
+      # debug = expected[:debug] if expected.has_key?(:debug)
+
+      now = nil
+      # now = expected[:now] if expected.has_key?(:now)
+
+      locale = Interpretation.default_locale
+      # locale = expected[:locale] if expected.has_key?(:locale)
+
+      packages = "*"
+      # packages = expected[:packages] if expected.has_key?(:packages)
+
+      primary_package = nil
+      # primary_package = expected[:primary_package]
+
+      show_private = false
+      # show_private = expected[:show_private] if expected.has_key?(:show_private)
+
+      explain = false
+      # explain = expected[:explain] if expected.has_key?(:explain)
+
+      spellchecking = nil
+      # spellchecking = expected[:spellchecking] if expected.has_key?(:spellchecking)
+
+      opts = {
+        locale: locale,
+        explain: explain,
+        now: now,
+        primary_package: primary_package,
+        show_private: show_private,
+        spellchecking: spellchecking,
+        enable_list: enable_list
+      }
+
+      ap expected if debug
+      # creation et exécution de la requete
+      request = json_interpret_body(packages, sentence, opts)
+      ap request if debug
+      actual = Nls.interpret(request)
+      ap actual if debug
+
+      assert_kind_of Hash, actual, "Actual answer is not an Hash : #{actual.inspect}"
+      assert_kind_of Array, actual['interpretations'], "Actual answer['interpretations'] is not an Array : #{actual['interpretations']}"
+
+      raise "expected must be an Array as sentence is a list"   if !expected.kind_of? Array
+
+      assert !actual['interpretations'].empty?, "Actual answer did not match on any interpretation"
+
+      global_match = true
+
+      expected.each do |expected_element|
+        actual['interpretations'].each do |interpretation|
+          match_interpretation = true
+          match_solution = true
+          match_score = true
+          if expected_element.has_key?(:interpretations)
+            match_interpretation = false
+            expected_interpretation = expected_element[:interpretations]
+            match_interpretation = true if expected_interpretation == interpretation['slug']
+
+            if expected_element.has_key?(:solution)
+              match_solution = solution_match(expected_element, interpretation['solution'])
+
+              if expected_element.has_key?(:score)
+                match_score = false
+                expected_score = expected_element[:solution]
+                match_score = true if expected_score == interpretation['score']
+              end
+            end
+          end
+          if expected_element.has_key?(:solution)
+            match_solution = solution_match(expected_element, interpretation['solution'])
+
+            if expected_element.has_key?(:score)
+              match_score = false
+              expected_score = expected_element[:solution]
+              match_score = true if expected_score == interpretation['score']
+            end
+          end
+          if expected_element.has_key?(:score)
+            match_score = false
+            expected_score = expected_element[:solution]
+            match_score = true if expected_score == interpretation['score']
+          end
+
+          global_match = match_interpretation && match_solution && match_score
+          break if global_match
+        end
+        assert global_match , "no match found in returned interpretations for expected result #{expected_element}"
+      end
+
+      return actual
+
+    end
+
+    def solution_match(expected, actual)
+      is_match = false
+      if expected.has_key?(:solution)
+        expected_solution = expected[:solution]
+        if expected_solution.kind_of?(Hash)
+          expected_solution.deep_stringify_keys!
+        elsif expected_solution.kind_of?(Array)
+          expected_solution.each do |h|
+            if h.kind_of?(Hash)
+              h.deep_stringify_keys!
+            end
+          end
+        end
+
+        if expected_solution.nil?
+          assert_nil actual, "Matched on unexpected solution (nil)"
+        else
+          is_match = true if expected_solution == actual
+        end
+      end
+      is_match
     end
 
     def check_highlight(expected_highlight, actual_highlight)

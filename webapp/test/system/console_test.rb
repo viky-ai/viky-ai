@@ -10,7 +10,7 @@ class ConsoleTest < ApplicationSystemTestCase
       fill_in 'interpret[sentence]', with: "hello"
       click_button 'console-send-sentence'
 
-      Nlp::Interpret.any_instance.stubs('proceed').returns(
+      Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
         {
           status: 200,
           body: { 'interpretations' => [] }
@@ -32,7 +32,7 @@ class ConsoleTest < ApplicationSystemTestCase
       fill_in 'interpret[sentence]', with: "Hello world viki.ai"
       click_button 'console-send-sentence'
 
-      Nlp::Interpret.any_instance.stubs('proceed').returns(
+      Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
         {
           status: 200,
           body: {
@@ -49,7 +49,7 @@ class ConsoleTest < ApplicationSystemTestCase
       )
       assert page.has_content?('1 interpretation found.')
 
-      Nlp::Interpret.any_instance.stubs('proceed').returns(
+      Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
         {
           status: 200,
           body: {
@@ -134,7 +134,7 @@ class ConsoleTest < ApplicationSystemTestCase
     within('.console') do
       fill_in 'interpret[sentence]', with: "hello"
       click_button 'console-send-sentence'
-      Nlp::Interpret.any_instance.stubs('proceed').returns(
+      Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
         {
           status: 200,
           body: { 'interpretations' => [] }
@@ -189,7 +189,7 @@ class ConsoleTest < ApplicationSystemTestCase
       fill_in 'interpret[sentence]', with: "weather"
       click_button 'ON'
 
-      Nlp::Interpret.any_instance.stubs('proceed').returns(
+      Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
         {
           status: 200,
           body: {
@@ -266,7 +266,7 @@ class ConsoleTest < ApplicationSystemTestCase
       fill_in 'interpret[sentence]', with: "weather terminator"
       click_button 'ON'
 
-      Nlp::Interpret.any_instance.stubs('proceed').returns(
+      Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
         {
           status: 200,
           body: {

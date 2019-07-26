@@ -96,4 +96,9 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     assert_equal -1, result
   end
 
+  def assert_modal_is_close
+    assert page.has_no_css?('.modal')
+  end
+
+
 end

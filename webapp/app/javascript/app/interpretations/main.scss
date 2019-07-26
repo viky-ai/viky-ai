@@ -298,7 +298,7 @@
 
 
 trix-editor{
-  @each $name, $color in $picker_colors{
+  @each $name, $color in $colors{
     a[href*='intent-#{$name}'],
     a[href*='entities_list-#{$name}']{
       color: $color;
@@ -312,7 +312,7 @@ trix-editor{
 }
 
 .aliases{
-  @each $name, $color in $picker_colors{
+  @each $name, $color in $colors{
     .intent-#{$name},
     .entities_list-#{$name}{
       color: $color;
@@ -347,7 +347,7 @@ trix-editor{
 }
 
 .interpretation-resume{
-  @each $name, $color in $picker_colors{
+  @each $name, $color in $colors{
     .interpretation-resume__alias-#{$name}{
       color: $color;
       border-bottom: 2px solid $color;

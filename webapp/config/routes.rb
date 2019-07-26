@@ -33,6 +33,17 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :play do
+    resource :selection, only: [:edit, :update] do
+      collection do
+        get :search
+      end
+    end
+  end
+  get  '/play', to: 'play#index'
+  get  '/play/reset', to: 'play#reset'
+  post '/play', to: 'play#interpret'
+
   scope '/agents' do
     resources :favorites, only: [:create, :destroy]
     resources :users, path: '', only: [] do

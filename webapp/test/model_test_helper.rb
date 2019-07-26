@@ -22,6 +22,7 @@ def create_agent_regression_check_fixtures
   @regression_weather_forecast = AgentRegressionCheck.new({
     sentence: "Quel temps fera-t-il demain ?",
     language: "*",
+    spellchecking: 'low',
     agent: agents(:weather),
     state: 4,
     position: 0,
@@ -54,6 +55,7 @@ def create_agent_regression_check_fixtures
   @regression_weather_condition = AgentRegressionCheck.new({
     sentence: "Sun today",
     language: "en",
+    spellchecking: 'low',
     now: "2019-01-20 14:00:15.000000",
     agent: agents(:weather),
     state: 1,
