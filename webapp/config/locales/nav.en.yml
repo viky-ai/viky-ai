@@ -2,6 +2,7 @@ en:
   views:
     nav:
       agents: Agents
+      play: Play
       chatbots: Chatbots
       backend:
         title: Backend

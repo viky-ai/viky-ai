@@ -51,7 +51,8 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     expected = {
       agent: ['must exist'],
       sentence: ["can't be blank"],
-      expected: ["can't be blank"]
+      expected: ["can't be blank"],
+      spellchecking: ["can't be blank", "is not included in the list"]
     }
     assert_equal expected, agent_regression_check.errors.messages
   end
@@ -61,6 +62,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     agent_regression_check = AgentRegressionCheck.new(
       agent: agents(:weather),
       sentence: ' Ecrire des tests tu dois ',
+      spellchecking: 'low',
       expected: '{ "citation": true, "author": "Olivier D."}'
     )
     assert agent_regression_check.save
@@ -72,6 +74,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     agent_regression_check = AgentRegressionCheck.new(
       agent: agents(:weather),
       sentence: 'a' * 201,
+      spellchecking: 'low',
       expected: '{}'
     )
     assert_not agent_regression_check.save
@@ -87,6 +90,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     agent_regression_check = AgentRegressionCheck.new(
       agent: agents(:weather),
       sentence: 'a',
+      spellchecking: 'low',
       expected: {
         interpretations: 'a' * 10_001
       }.with_indifferent_access
@@ -121,7 +125,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
 
 
   test 'Run a successful agent test' do
-    Nlp::Interpret.any_instance.stubs('proceed').returns(
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
       status: 200,
       body: {
         'interpretations' => [{
@@ -159,7 +163,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
 
 
   test 'Run a failed agent test' do
-    Nlp::Interpret.any_instance.stubs('proceed').returns(
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
       status: 200,
       body: {
         'interpretations' => [{
@@ -183,7 +187,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
 
 
   test 'Run a succes agent test but empty nothing match' do
-    Nlp::Interpret.any_instance.stubs('proceed').returns(
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
       status: 200,
       body: {
         'interpretations' => []
@@ -202,7 +206,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
 
 
   test 'Run an agent test but NLP is unreachable' do
-    Nlp::Interpret.any_instance.stubs('proceed').returns(
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
       status: 404,
       body: {}
     )
@@ -218,7 +222,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
 
 
   test 'Run an erroneous agent test' do
-    Nlp::Interpret.any_instance.stubs('proceed').returns(
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
       status: 422,
       body: {}
     )
@@ -233,28 +237,29 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     assert_empty agent_regression_check.got
   end
 
-test 'Run a successful agent test for entities list' do
-      Nlp::Interpret.any_instance.stubs('proceed').returns(
-        status: 200,
-        body: {
-          'interpretations' => [{
-            'id' => entities_lists(:weather_conditions).id,
-            'slug' => entities_lists(:weather_conditions).slug,
-            'package' => entities_lists(:weather_conditions).agent.id,
-            'score' => '1.0',
-            'solution' => entities(:weather_sunny).solution
-          }]
-        }
-      )
 
-      agent_regression_check = @regression_weather_condition
-      assert agent_regression_check.run
+  test 'Run a successful agent test for entities list' do
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
+      status: 200,
+      body: {
+        'interpretations' => [{
+          'id' => entities_lists(:weather_conditions).id,
+          'slug' => entities_lists(:weather_conditions).slug,
+          'package' => entities_lists(:weather_conditions).agent.id,
+          'score' => '1.0',
+          'solution' => entities(:weather_sunny).solution
+        }]
+      }
+    )
 
-      assert agent_regression_check.success?
-      assert_not agent_regression_check.failure?
-      assert_not agent_regression_check.unknown?
-      assert_not agent_regression_check.running?
-      assert_equal agent_regression_check.got, agent_regression_check.expected
-    end
+    agent_regression_check = @regression_weather_condition
+    assert agent_regression_check.run
+
+    assert agent_regression_check.success?
+    assert_not agent_regression_check.failure?
+    assert_not agent_regression_check.unknown?
+    assert_not agent_regression_check.running?
+    assert_equal agent_regression_check.got, agent_regression_check.expected
+  end
 
 end

@@ -39,7 +39,8 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
   test "Agent token can be specified in the request header and in the request parameters" do
     intent = intents(:weather_forecast)
     agent = agents(:weather)
-    Nlp::Interpret.any_instance.stubs('proceed').returns(
+
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
       status: '200',
       body: {
         "interpretations" => [
@@ -79,7 +80,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
   test "Agent token in the request parameters overloads agent token in the request header" do
     intent = intents(:weather_forecast)
     agent = agents(:weather)
-    Nlp::Interpret.any_instance.stubs('proceed').returns(
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
       status: '200',
       body: {
         "interpretations" => [
@@ -118,7 +119,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     sentence = "test context #{SecureRandom.uuid}"
     intent = intents(:weather_forecast)
     agent = agents(:weather)
-    Nlp::Interpret.any_instance.stubs('proceed').returns(
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
       status: '200',
       body: {
         'interpretations' => [
@@ -170,7 +171,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
   test 'Set spellchecking' do
     intent = intents(:weather_forecast)
     agent = intent.agent
-    Nlp::Interpret.any_instance.stubs('proceed').returns(
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
       status: '200',
       body: {
         'interpretations' => [
@@ -205,7 +206,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
   test 'Log request even when no more NLP server are available' do
     sentence = "test NLP crash #{SecureRandom.uuid}"
     agent = agents(:weather)
-    Nlp::Interpret.any_instance.stubs('proceed').raises(Errno::ECONNREFUSED, 'Failed to open TCP connection')
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').raises(Errno::ECONNREFUSED, 'Failed to open TCP connection')
 
     get '/api/v1/agents/admin/weather/interpret.json',
         params: {
@@ -226,10 +227,11 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
                  found[:body]['errors']
   end
 
+
   test 'Log request even when NLP has just crashed' do
     sentence = "test NLP crash #{SecureRandom.uuid}"
     agent = agents(:weather)
-    Nlp::Interpret.any_instance.stubs('proceed').raises(EOFError, 'end of file reached')
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').raises(EOFError, 'end of file reached')
 
     get '/api/v1/agents/admin/weather/interpret.json',
         params: {
@@ -249,10 +251,11 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     assert_equal ['NLS temporarily unavailable', 'NLP have just crashed'], found[:body]['errors']
   end
 
+
   test 'Log request even when unexpected error' do
     sentence = "test NLP Big big error #{SecureRandom.uuid}"
     agent = agents(:weather)
-    Nlp::Interpret.any_instance.stubs('proceed').raises(RuntimeError, 'Big big error')
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').raises(RuntimeError, 'Big big error')
 
     assert_raise RuntimeError do
       get '/api/v1/agents/admin/weather/interpret.json',

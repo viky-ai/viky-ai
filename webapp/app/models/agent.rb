@@ -55,7 +55,7 @@ class Agent < ApplicationRecord
   after_destroy do
     Nlp::Package.new(self).destroy
   end
-  
+
   scope :owned_by, ->(user) { where(owner_id: user.id) }
 
   def self.search(q = {})
@@ -68,7 +68,10 @@ class Agent < ApplicationRecord
     when 'favorites'
       conditions = conditions.joins(:favorite_agents).where(favorite_agents: { user: q[:user_id] })
     else
-      conditions = conditions.where('user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
+      conditions = conditions.where(
+        'user_id = ? OR visibility = ?',
+        q[:user_id], Agent.visibilities[:is_public]
+      )
     end
 
     case q[:filter_visibility]
@@ -96,6 +99,13 @@ class Agent < ApplicationRecord
       conditions = conditions.order(updated_at: :desc)
     else
       conditions
+    end
+
+    case q[:selected]
+    when 'true'
+      conditions = conditions.where(id: q[:selected_ids])
+    when 'false'
+      conditions = conditions.where.not(id: q[:selected_ids])
     end
 
     conditions.distinct

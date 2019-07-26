@@ -1,0 +1,15 @@
+<% if @interpreter.agents.empty? %>
+  <%= render partial: "blankslate" %>
+<% else %>
+  <% content_for :left_aside do %>
+    <aside>
+      <%= render partial: "aside", locals: { interpreter: @interpreter } %>
+    </aside>
+  <% end %>
+  <div class="play-main">
+    <%= render partial: "form", locals: { interpreter: @interpreter } %>
+    <div class="play-main__result">
+      <%= render partial: "result", locals: { interpreter: @interpreter } %>
+    </div>
+  </div>
+<% end %>
