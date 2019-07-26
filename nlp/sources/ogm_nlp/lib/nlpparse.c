@@ -436,7 +436,7 @@ static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
   }
   if (request_word->is_number)
   {
-    request_word->number_value = atoi(normalized_string_word);
+    request_word->number_value = atol(normalized_string_word);
   }
   request_word->is_auto_complete_word = FALSE;
 
