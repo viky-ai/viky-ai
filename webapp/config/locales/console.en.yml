@@ -25,15 +25,6 @@ en:
         addon: "Now (ISO 8601)"
       go_to_api_endpoint: Go to API endpoint
       download_package: Download package
-      locales:
-        label: "Language"
-        all: "Auto"
-      spellchecking:
-        label: "Spellchecking"
-        inactive: "Inactive"
-        low: "Low"
-        medium: "Medium"
-        high: "High"
       fullscreen_enter: Enter in fullscreen mode
       fullscreen_leave: Leave fullscreen mode
       expression_text: Expression

@@ -1,0 +1,5 @@
+<% if user_signed_in? %>
+  <%= link_to "Manage Agents &rarr;".html_safe, agents_path %>
+<% else %>
+  <%= link_to "Login &rarr;".html_safe, new_user_session_path %>
+<% end %>

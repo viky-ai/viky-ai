@@ -1,0 +1,56 @@
+body,
+html{
+  height: 100%;
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  line-height: 1.5em;
+  position: relative;
+  background-color: hsl(192, 15, 97);
+}
+
+.container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.message{
+  margin-bottom: 10em;
+  max-width: 40em;
+  .message__logo{
+    text-align: center;
+    svg{
+      width: 8em;
+    }
+  }
+  .message__box{
+    background-color: #fff;
+    border-radius: 3px;
+    box-shadow: 0 2px 3px rgba(#000, .15);
+    padding-bottom: 1rem;
+  }
+  h1{
+    font-weight: 300;
+    font-size: 2em;
+    margin: 0;
+    padding: 2rem 2rem .5rem 2rem;
+  }
+  h2{
+    font-weight: 300;
+    font-size: 1.5em;
+    padding: 1rem 2rem;
+    margin: 0;
+  }
+  p{
+    margin: 0;
+    padding: 1rem 2rem;
+  }
+  a{
+    color: #3bb8d7;
+    &:hover,
+    &:focus{
+      color: darken(#3bb8d7, 10%);
+    }
+  }
+}

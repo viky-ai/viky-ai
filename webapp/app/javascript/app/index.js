@@ -17,6 +17,9 @@ import 'moment'
 // Autosize (https://github.com/jackmoore/autosize)
 import 'autosize'
 
+// Popper.js
+import Popper from "popper.js"
+
 // LocalTime (updated_at & cache)
 import LocalTime from "local-time"
 LocalTime.start()
@@ -29,6 +32,11 @@ import './authentication/main.scss';
 
 import './chatbots/main.scss';
 window.App.Statement = require('./chatbots/statements');
+
+import './play/main.scss';
+import './play/chooser.coffee';
+import './play/form.coffee';
+window.App.PlayResult  = require('./play/result.coffee');
 
 import './agents/agent_form.coffee';
 import './agents/main.scss';

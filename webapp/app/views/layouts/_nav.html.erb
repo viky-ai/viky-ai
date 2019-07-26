@@ -14,14 +14,13 @@
         </a>
       </li>
       <li>
-        <a href="<%= chatbots_path %>" <% if ['chatbots'].include? controller_path %>class="current"<% end %>>
-          <%= t('views.nav.chatbots') %>
+        <a href="/play" <% if ['play'].include? controller_path %>class="current"<% end %>>
+          <%= t('views.nav.play') %>
         </a>
       </li>
       <li>
-        <a href="<%= doc_url %>" data-turbolinks="false" target="_blank">
-          <%= t('views.nav.doc') %>
-          <span class="icon icon--x-small"><%= icon_open_in_new %></span>
+        <a href="<%= chatbots_path %>" <% if ['chatbots'].include? controller_path %>class="current"<% end %>>
+          <%= t('views.nav.chatbots') %>
         </a>
       </li>
 

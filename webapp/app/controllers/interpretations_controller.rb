@@ -117,11 +117,7 @@ class InterpretationsController < ApplicationController
   end
 
   def update_locale
-    previous_locale = @interpretation.locale
-    @interpretation.locale = params[:locale]
-    max_position = @intent.interpretations.where(locale: params[:locale]).maximum(:position)
-    @interpretation.position = max_position.nil? ? 0 : max_position + 1
-    @interpretation.save
+    previous_locale = @interpretation.update_locale params[:locale]
     redirect_to user_agent_intent_path(@owner, @agent, @intent, { locale: previous_locale })
   end
 

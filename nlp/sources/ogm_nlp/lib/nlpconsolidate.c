@@ -752,7 +752,8 @@ static og_status NlpConsolidateGetCurrentAliasNb(og_nlp_th ctrl_nlp_th, package_
   {
     struct input_part *input_part = OgHeapGetCell(package->hinput_part, expression->input_part_start + i);
     IFN(input_part) DPcErr;
-    if (input_part->type == nlp_input_part_type_Interpretation || input_part->type == nlp_input_part_type_Number)
+    if (input_part->type == nlp_input_part_type_Interpretation || input_part->type == nlp_input_part_type_Number
+        || input_part->type == nlp_input_part_type_Regex)
     {
       (*palias_nb)++;
     }

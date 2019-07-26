@@ -16,7 +16,7 @@ class BackendUsersTest < ApplicationSystemTestCase
 
     visit backend_users_path
     assert page.has_content?('You do not have permission to access this interface.')
-    assert_equal '/', current_path
+    assert_equal "/agents", current_path
   end
 
 
@@ -160,13 +160,16 @@ class BackendUsersTest < ApplicationSystemTestCase
 
     login_as 'confirmed@viky.ai', 'BimBamBoom'
 
-    assert_equal '/', current_path
+    assert_equal '/agents', current_path
+    assert page.has_content?("Signed in successfully.")
+
+    visit new_user_invitation_path
     assert page.has_content? "You do not have permission to access this interface."
 
     logout
     login_as 'admin@viky.ai', 'AdminBoom'
 
-    assert_equal '/', current_path
+    assert_equal '/agents', current_path
     assert page.has_content?("Signed in successfully.")
 
     visit new_user_invitation_path

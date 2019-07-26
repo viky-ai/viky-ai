@@ -33,6 +33,17 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :play do
+    resource :selection, only: [:edit, :update] do
+      collection do
+        get :search
+      end
+    end
+  end
+  get  '/play', to: 'play#index'
+  get  '/play/reset', to: 'play#reset'
+  post '/play', to: 'play#interpret'
+
   scope '/agents' do
     resources :favorites, only: [:create, :destroy]
     resources :users, path: '', only: [] do
@@ -178,13 +189,18 @@ Rails.application.routes.draw do
 
   get 'brain', to: 'brain#index'
 
-  unauthenticated :user do
-    root to: "marketing#index", as: :unauthenticated_root
+  unless File.exist? File.join(Rails.root, 'public', 'index.html')
+    devise_scope :user do
+      unauthenticated :user do
+        root 'devise/sessions#new', as: :unauthenticated_root
+      end
+      authenticate :user do
+        root to: 'agents#index', as: :authenticated_root
+      end
+    end
   end
 
-  authenticate :user do
-    root to: 'agents#index', as: :authenticated_root
-  end
+  get "connexion_state" => "application#connexion_state"
 
   match "/404", to: "errors#not_found", via: :all
   match "/500", to: "errors#internal_error", via: :all

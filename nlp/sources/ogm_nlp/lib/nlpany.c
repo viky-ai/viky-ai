@@ -328,7 +328,6 @@ static og_status NlpRequestAnyDistance(og_nlp_th ctrl_nlp_th, struct request_any
   if (request_expression->expression->keep_order)
   {
     struct expression *expression = request_expression->expression;
-    int alias_any_input_part_position = expression->alias_any_input_part_position;
     int any_input_part_position = expression->any_input_part_position;
 
     int position1 = 0;
@@ -387,8 +386,8 @@ static og_status NlpRequestAnyDistance(og_nlp_th ctrl_nlp_th, struct request_any
     if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
     {
       NlpLog(DOgNlpTraceMatch,
-          "NlpRequestAnyDistance: expression is keep order, p1=%d p2=%d alias_any_input_part_position=%d, any_input_part_position=%d:",
-          position1, position2, alias_any_input_part_position, any_input_part_position);
+          "NlpRequestAnyDistance: expression is keep order, p1=%d p2=%d any_input_part_position=%d:",
+          position1, position2, any_input_part_position);
       IFE(NlpRequestExpressionLog(ctrl_nlp_th, request_expression, 2));
     }
 
@@ -692,7 +691,7 @@ og_status NlpSetNbAnys(og_nlp_th ctrl_nlp_th, struct request_expression *request
     }
   }
 
-  if (request_expression->expression->alias_any_input_part_position >= 0)
+  if (request_expression->expression->any_input_part_position >= 0)
   {
     request_expression->nb_anys++;
   }

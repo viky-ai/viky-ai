@@ -45,6 +45,15 @@ class Interpretation < ApplicationRecord
     @proximity ||= ExpressionProximity.new(read_attribute(:proximity))
   end
 
+  def update_locale(new_locale)
+    previous_locale = locale
+    self.locale = new_locale
+    max_position = intent.interpretations.where(locale: new_locale).maximum(:position)
+    self.position = max_position.nil? ? 0 : max_position + 1
+    save
+    previous_locale
+  end
+
   private
 
     def check_aliases_any_and_list_options

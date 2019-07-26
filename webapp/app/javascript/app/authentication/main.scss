@@ -1,130 +1,44 @@
 .login-wrapper{
-  background-color: lighten(#0E131A, 8%);
-
-  background-image:
-    url(images/sky.svg),
-    url(images/sky.svg),
-    url(images/sky.svg),
-    linear-gradient(to bottom, rgba(black, .3), rgba(black, 0));
-  background-size:
-    150px 75px,
-    200px 100px,
-    300px 150px,
-    100% 100%;
-
+  background-color: hsl(192, 15, 97);
   min-height: 100%;
-  position: relative;
-  overflow: hidden;
-
-  $left-transparency: .065;
-  $right-transparency: .065;
-
-  .bg-left-line-1, .bg-left-line-2, .bg-left-line-3, .bg-left-line-4{
-    position: absolute;
-    height: 200px;
-    width: 100%;
-    left: 0px;
-    transform: skewY(55deg);
-
-    background-color: rgba(adjust-hue(#49D8FB, -10deg), $left-transparency);
-    bottom: -25px;
-  }
-  .bg-left-line-2{
-    background-color: rgba(adjust-hue(#49D8FB, -5deg), $left-transparency);
-    bottom: -75px;
-  }
-  .bg-left-line-3{
-    background-color: rgba(adjust-hue(#49D8FB, 0deg), $left-transparency);
-    bottom: -125px;
-  }
-  .bg-left-line-4{
-    background-color: rgba(adjust-hue(#49D8FB, 5deg), $left-transparency);
-    bottom: -175px;
-  }
-
-  .bg-right-line-1, .bg-right-line-2, .bg-right-line-3, .bg-right-line-4{
-    position: absolute;
-    height: 200px;
-    width: 100%;
-
-    background-color: rgba(adjust-hue(#49b6fb, 15deg), $right-transparency);
-    bottom: -25px;
-    transform: skewY(-55deg);
-  }
-  .bg-right-line-2{
-    background-color: rgba(adjust-hue(#49b6fb, 10deg), $right-transparency);
-    bottom: -75px;
-  }
-  .bg-right-line-3{
-    background-color: rgba(adjust-hue(#49b6fb, 5deg), $right-transparency);
-    bottom: -125px;
-  }
-  .bg-right-line-4{
-    background-color: rgba(adjust-hue(#49b6fb, 0deg), $right-transparency);
-    bottom: -175px;
-  }
-}
-
-@-webkit-keyframes lifeAnimation {
-    0% { opacity: 1;    }
-   50% { opacity: 0.65; }
-  100% { opacity: 1;    }
-}
-@-moz-keyframes lifeAnimation {
-    0% { opacity: 1;    }
-   50% { opacity: 0.65; }
-  100% { opacity: 1;    }
-}
-@keyframes lifeAnimation {
-    0% { opacity: 1;    }
-   50% { opacity: 0.65; }
-  100% { opacity: 1;    }
 }
 
 .login-ui-wrapper{
-
   max-width: 90%;
+  margin: 0 auto;
+  min-height: 100%;
   @media (min-width: 26em){
     max-width: 26em;
   }
-  margin: 0 auto;
-  min-height: 100%;
-
-  background-image: url(images/robot-idle-white.png);
-  background-size: 40px;
-  background-repeat: no-repeat;
-  background-position: calc(100% - 10px) 88px;
-
-  &.robot-trouble{
-    background-image: url(images/robot-trouble-white.png);
-  }
-  &.robot-happy{
-    background-image: url(images/robot-happy-white.png);
-  }
-  &.robot-close-eyes{
-    background-image: url(images/robot-close-eyes-white.png);
-  }
-
-  position: relative;
 
   h1.logo-container{
     text-align: center;
-    padding: 3em 0;
+    padding: 4em 0;
     font-size: 1em;
     a{
-      transition: transform .2s;
-      display:inline-block;
-    }
-    a:hover{
-      transform: scale(1.1);
-    }
-    svg{
-      .icon{
-        -webkit-animation: 5s ease-in-out infinite lifeAnimation;
-           -moz-animation: 5s ease-in-out infinite lifeAnimation;
-                animation: 5s ease-in-out infinite lifeAnimation;
+      display: inline-block;
+      &:hover,
+      &:focus{
+        svg path:last-child{
+          fill: #3bb8d7;
+        }
       }
     }
+  }
+
+  background-image: url(images/robot-idle.png);
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: calc(100% - 10px) 128px;
+
+  &.robot-trouble{
+    background-image: url(images/robot-trouble.png);
+  }
+  &.robot-happy{
+    background-image: url(images/robot-happy.png);
+  }
+  &.robot-close-eyes{
+    background-image: url(images/robot-close-eyes.png);
   }
 
 }

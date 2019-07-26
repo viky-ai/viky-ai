@@ -19,24 +19,26 @@
 !/tmp/.keep
 !/tmp/pids/.keep
 
-/node_modules
-/yarn-error.log
+# Ignore static doc files
+/public/index.html
+/public/site_assets
+/public/doc
+/public/blog
 
-.byebug_history
+# Ignore node & yarn files
+/node_modules
+yarn-error.log
+yarn-debug.log*
+.yarn-integrity
+
 /public/packs
 /public/packs-test
-/node_modules
 /public/assets
 /public/uploads
-/public/doc
 /coverage/
 /import/*
 
 .env
 *.rdb
 .idea/
-/public/packs
-/public/packs-test
-/node_modules
-yarn-debug.log*
-.yarn-integrity
+.byebug_history

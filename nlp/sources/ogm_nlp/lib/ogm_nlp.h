@@ -571,6 +571,7 @@ struct request_expression
   og_bool recursive_without_any_chosen;
 
   og_bool keep_as_result;
+  og_bool overlapped;
   int nb_anys;
   int nb_anys_attached;
   /** 0: invalidated, 1: unknown, 2: validated **/
@@ -591,6 +592,12 @@ struct request_expression
   json_t *json_solution;
 
   enum nlp_super_list_status super_list_status;
+
+  int start_position_byte;
+  int start_position_char;
+  int end_position_byte;
+  int end_position_char;
+
 };
 
 #define DOgMatchZoneInputPartSize 0x25
@@ -803,6 +810,7 @@ struct og_ctrl_nlp_threaded
   og_heap hrequest_word;
   og_heap hba;
   enum nlp_spellchecking_level spellchecking_level;
+  og_bool enable_list;
 
   /** Heap of struct request_input_part */
   og_heap hrequest_input_part;
@@ -835,6 +843,9 @@ struct og_ctrl_nlp_threaded
 
   /** HashTable key: int (word position) , value: int (word position) */
   GHashTable *glue_hash;
+
+  /** HashTable key: ptr (interpretation) , value: int (NULL) */
+  GHashTable *interpretation_hash;
 
   /* struct used by match_group_numbers */
   struct nlp_match_group_numbers group_numbers_settings[1];
@@ -1102,6 +1113,7 @@ og_status NlpInterpretTreeJson(og_nlp_th ctrl_nlp_th, struct request_expression 
 
 /* nlpsol.c */
 og_status NlpSolutionCalculate(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_status NlpSolutionCalculatePositions(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_status NlpSolutionMergeObjects(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_status NlpRequestSolutionString(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, int size,
     char *string);
@@ -1248,4 +1260,11 @@ og_status NlpMatchEntities(og_nlp_th ctrl_nlp_th);
 og_status NlpMatchCurrentEntity(struct nlp_match_entities_ctrl *me_ctrl);
 og_status NlpMatchEntitiesChangeToAlternativeString(struct nlp_match_entities_ctrl *me_ctrl,
     int length_normalized_string_word, unsigned char *normalized_string_word);
+
+/* nlpenablelist*/
+/* nlpglue.c */
+og_status NlpEnableListInit(og_nlp_th ctrl_nlp_th);
+og_status NlpEnableListFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpEnableListReset(og_nlp_th ctrl_nlp_th);
+og_status NlpEnableList(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions);
 

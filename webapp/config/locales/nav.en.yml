@@ -1,8 +1,8 @@
 en:
   views:
     nav:
-      doc: Doc
       agents: Agents
+      play: Play
       chatbots: Chatbots
       backend:
         title: Backend

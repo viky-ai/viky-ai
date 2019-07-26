@@ -1,0 +1,11 @@
+en:
+  nlp:
+    locales:
+      label: "Language"
+      all: "Auto"
+    spellchecking:
+      label: "Spellchecking"
+      inactive: "Inactive"
+      low: "Low"
+      medium: "Medium"
+      high: "High"

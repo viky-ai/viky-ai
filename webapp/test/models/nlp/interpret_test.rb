@@ -122,10 +122,10 @@ class InterpretTest < ActiveSupport::TestCase
       ownername: weather.owner.username,
       agentname: weather.agentname,
       agent_token: weather.api_token,
-      sentence: 'hello' * 2000,
+      sentence: 'a' * 1024 * 8 + 'oops',
       format: 'json'
     )
     assert interpret.invalid?
-    assert_equal ['Sentence (9.766 KB) is too long (maximum is 6.836 KB)'], interpret.errors.full_messages
+    assert_equal ["Sentence (8.004 KB) is too long (maximum is 8 KB)"], interpret.errors.full_messages
   end
 end
