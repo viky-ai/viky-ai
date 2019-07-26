@@ -2,13 +2,13 @@ class PlayInterpreter
   include ActiveModel::Model
   include ActiveModel::Validations::Callbacks
 
-  before_validation :set_defaults
-
   attr_accessor :agent_id, :text, :language, :spellchecking, :agent, :agents, :results
 
   validates_presence_of :text, :language, :spellchecking
   validates :text, byte_size: { maximum: 1024 * 8 }
-  before_validation :clean_text
+
+  before_validation :set_defaults
+  before_validation :strip_text
 
   def proceed
     self.results = {}
@@ -59,7 +59,7 @@ class PlayInterpreter
 
   private
 
-    def clean_text
+    def strip_text
       self.text = text.strip unless text.nil?
     end
 

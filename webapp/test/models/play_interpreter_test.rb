@@ -20,8 +20,6 @@ class PlayInterpreterTest < ActiveSupport::TestCase
 
   test 'Text size validation' do
     pi = PlayInterpreter.new(
-      ownername: agents(:weather).owner.username,
-      agentname: agents(:weather).agentname,
       text: "A"*1024*8 + "B"
     )
     assert_not pi.valid?
