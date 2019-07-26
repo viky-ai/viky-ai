@@ -1,4 +1,4 @@
-<div class="modal modal--play modal--fixed-on-top" style="display: none;">
+<div class="modal modal--fixed-on-top" style="display: none;">
   <div class="modal__overlay" data-action='close-modal'></div>
   <div class="modal__main">
     <h5 class="modal__main__title">
@@ -12,7 +12,7 @@
         url: search_play_selection_path,
         method: :get,
         scope: 'search',
-        class: "js-play-modal-search-form play-modal-search-form"
+        class: "js-play-modal-search-form"
       ) do |f| %>
 
       <div class="field">
@@ -33,7 +33,7 @@
 
       <div class="field field--inline">
 
-        <div class="control">
+        <div class="control control--selected">
           <div class="btn-group">
             <button class="btn btn--small btn--primary" type="button"
                     data-behavior="populate-input,submit-form"
@@ -59,7 +59,7 @@
           </div>
         </div>
 
-        <div class="control">
+        <div class="control control--filter-owner">
           <div class="btn-group">
             <button class="btn btn--small btn--primary" type="button"
                     data-behavior="populate-input,submit-form"

@@ -1,38 +1,37 @@
-  <h2>
-    <%= t('views.play.aside.title') %>
-    <a href="<%= edit_play_selection_path %>"
-       class="btn btn--small btn--primary"
-       data-action="open-remote-modal">
-      <%= t('views.play.aside.btn_edit') %>
-    </a>
-  </h2>
-  <ul>
-    <% interpreter.agents.each do |available_agent| %>
-      <li <% if available_agent.id == interpreter.agent.id %>class="current"<% end %>>
-        <a href="/play/" data-turbolinks="false"
-           data-action="play-switch-agent"
-           data-ownername="<%= available_agent.owner.username %>"
-           data-agentname="<%= available_agent.agentname %>">
-          <div class="agent-compact">
-            <% cache [available_agent, current_user] do %>
-              <%= render partial: "/play/shared/agent_compact", locals: { agent: available_agent } %>
-            <% end %>
-            <% if interpreter.result(available_agent).present? %>
-              <% r = interpreter.result(available_agent) %>
-              <div class="agent-compact__actions">
-                <% if r.succeed? %>
-                  <span class="badge <% if available_agent.id == interpreter.agent.id %>badge--primary<% end %>">
-                    <%= r.interpretations_count %>
-                  </span>
-                <% else %>
-                  <span class="badge badge--danger" title="<%= r.error_messages %>">
-                    <%= r.status %>
-                  </span>
-                <% end %>
-              </div>
-            <% end %>
-          </div>
-        </a>
-      </li>
-    <% end %>
-  </ul>
+<h2>
+  <%= t('views.play.aside.title') %>
+  <a href="<%= edit_play_selection_path %>"
+     class="btn btn--small btn--primary"
+     data-action="open-remote-modal">
+    <%= t('views.play.aside.btn_edit') %>
+  </a>
+</h2>
+<ul>
+  <% interpreter.agents.each do |available_agent| %>
+    <li <% if available_agent.id == interpreter.agent.id %>class="current"<% end %>>
+      <a href="/play/" data-turbolinks="false"
+         data-action="play-switch-agent"
+         data-agent-id="<%= available_agent.id %>">
+        <div class="agent-compact">
+          <% cache [available_agent, current_user] do %>
+            <%= render partial: "/play/shared/agent_compact", locals: { agent: available_agent } %>
+          <% end %>
+          <% if interpreter.result(available_agent).present? %>
+            <% r = interpreter.result(available_agent) %>
+            <div class="agent-compact__actions">
+              <% if r.succeed? %>
+                <span class="badge <% if available_agent.id == interpreter.agent.id %>badge--primary<% end %>">
+                  <%= r.interpretations_count %>
+                </span>
+              <% else %>
+                <span class="badge badge--danger" title="<%= r.error_messages %>">
+                  <%= r.status %>
+                </span>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </a>
+    </li>
+  <% end %>
+</ul>

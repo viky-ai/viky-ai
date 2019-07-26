@@ -10,11 +10,7 @@ class PlayController < ApplicationController
       @interpreter.text = user_state.play_search.dig('text')
       @interpreter.language = user_state.play_search.dig('language')
       @interpreter.spellchecking = user_state.play_search.dig('spellchecking')
-
-      @interpreter.agent     = @interpreter.agents.first
-      @interpreter.ownername = @interpreter.agent.owner.username
-      @interpreter.agentname = @interpreter.agent.agentname
-
+      @interpreter.agent = @interpreter.agents.first
       @interpreter.valid? ? @interpreter.proceed : @interpreter.errors.clear
     end
   end
@@ -60,7 +56,7 @@ class PlayController < ApplicationController
   private
 
     def play_params
-      params.require(:play_interpreter).permit(:agentname, :ownername, :text, :language, :spellchecking)
+      params.require(:play_interpreter).permit(:agent_id, :text, :language, :spellchecking)
     end
 
     def interpreter_agents_from_user_ui_state
@@ -72,7 +68,7 @@ class PlayController < ApplicationController
       @interpreter = PlayInterpreter.new(play_params)
       @interpreter.agents = interpreter_agents_from_user_ui_state
       begin
-        @interpreter.agent = Agent.owned_by(User.friendly.find(@interpreter.ownername)).friendly.find(@interpreter.agentname)
+        @interpreter.agent = Agent.find(@interpreter.agent_id)
         access_denied and return unless current_user.can? :show, @interpreter.agent
       rescue ActiveRecord::RecordNotFound
         redirect_to '/404' and return

@@ -1,99 +1,128 @@
 @import '../../framework/abstracts/variables';
 
-.play__modal-footer{
-  border-top: 1px solid #ddd;
-  padding: 1em;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  .play__modal-footer__state{
-    font-size: .9em;
-    color: #888;
-  }
-}
+$play_breakpoint: 1000px;
 
-.modal--play{
-  .play-modal-search-form{
+body[data-controller-name="play"] .modal{
+
+  form{
     margin: 0;
     padding: .75em 1em 0 1em;
     border-bottom: 1px solid #ddd;
     .field{
       margin-bottom: .75em;
     }
+    .control--filter-owner{
+      display: none;
+
+      @media (min-width: 430px){
+        display: block;
+      }
+    }
   }
+
   .modal__main__chooser{
-    max-height: calc(100vh - 290px);
+    max-height: calc(100vh - 300px);
   }
-}
 
-
-.agent-compact{
-  &.agent-compact--play-chooser:hover{
-    box-shadow: 0 0 0 2px rgba($primary_color, .75), 0 3px 3px rgba(black, .1);
-    cursor: auto;
+  .agent-compact{
+    &.agent-compact--play-chooser:hover{
+      box-shadow: 0 0 0 2px rgba($primary_color, .75), 0 3px 3px rgba(black, .1);
+      cursor: auto;
+    }
+    &.agent-compact--play-chooser.agent-compact--play-chooser--disabled:hover{
+      box-shadow: 0 3px 3px rgba(black, .1);
+    }
   }
-  &.agent-compact--play-chooser.agent-compact--play-chooser--disabled:hover{
-    box-shadow: 0 3px 3px rgba(black, .1);
-  }
-}
 
-
-aside.play{
-  overflow: auto;
-  width: 300px;
-  background-color: #fff;
-  box-shadow: 2px 0 3px rgba(#000, .05);
-  h2{
-    padding: 1em 1em;
-    margin: 0;
-    font-size: 1em;
+  .play__modal-footer{
+    border-top: 1px solid #ddd;
+    padding: 1em;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(#000, .05);
-    background-color: #fcfcfc;
+    .play__modal-footer__state{
+      font-size: .9em;
+      color: #888;
+    }
   }
-  ul{
-    list-style: none;
-    padding: 0;
-    margin: 0;
+}
+
+
+body[data-controller-name="play"]{
+  aside{
+    display: none;
+    @media (min-width: $play_breakpoint){
+      display: block;
+    }
+    overflow: auto;
+    width: 300px;
     background-color: #fff;
-    li{
+    box-shadow: 2px 0 3px rgba(#000, .05);
+    h2{
+      padding: 1em 1em;
       margin: 0;
-      a{
-        display: block;
-        padding: .35em .5em;
-        text-decoration: none;
-        border-right: 5px solid transparent;
-        &:hover,
-        &:focus{
-          border-right: 5px solid #ddd;
+      font-size: 1em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(#000, .05);
+      background-color: #fcfcfc;
+    }
+    ul{
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      background-color: #fff;
+      li{
+        margin: 0;
+        a{
+          display: block;
+          padding: .35em .5em;
+          text-decoration: none;
+          border-right: 5px solid transparent;
+          &:hover,
+          &:focus{
+            border-right: 5px solid #ddd;
+          }
         }
-      }
-      &.current a{
-        border-right: 5px solid $primary_color;
-      }
-      .agent-compact{
-        font-size: .85em;
-        box-shadow: none;
-        text-decoration: none;
-        padding: .25em;
-        .agent-compact__actions{
-          padding-right: 0;
+        &.current a{
+          border-right: 5px solid $primary_color;
+        }
+        .agent-compact{
+          font-size: .85em;
+          box-shadow: none;
+          text-decoration: none;
+          padding: .25em;
+          .agent-compact__actions{
+            padding-right: 0;
+          }
         }
       }
     }
   }
 
+  main{
+    padding: 0;
+    background-color: #fff;
+    @media (min-width: $play_breakpoint){
+      padding: 2em;
+      background-color: transparent;
+    }
+  }
 }
 
 
 .play-main{
-  border-radius: 3px;
-  border: 1px solid rgba(#000, .1);
   background-color: #fafafa;
-  margin-bottom: 2em;
-  box-shadow: 0 3px 3px rgba(#000, .05);
+  border-bottom: 1px solid rgba(#000, .1);
+
+  @media (min-width: $play_breakpoint){
+    border-radius: 3px;
+    border: 1px solid rgba(#000, .1);
+    margin-bottom: 2em;
+    box-shadow: 0 3px 3px rgba(#000, .05);
+    max-width: 66em;
+  }
   .banner{
     margin: 0 2em 2em 2em;
   }
@@ -102,7 +131,8 @@ aside.play{
 .play-main__form{
   padding: 1.5em 2em;
   textarea{
-    height: 6.7em;
+    height: 6.6em;
+    resize: none;
   }
   .label--uppercase{
     text-transform: uppercase;
@@ -111,23 +141,49 @@ aside.play{
   }
   .inputs-wrapper{
     display: grid;
-    grid-template-columns: auto 100px;
-    grid-column-gap: 2em;
+    grid-template-columns: min-content min-content auto;
+    grid-column-gap: 1em;
 
     grid-template-areas:
-      "text    options"
-      "submit  submit";
+      "agent    agent         agent"
+      "language spellchecking spellchecking"
+      "text     text          text"
+      "submit   submit        submit";
 
-    align-items: start;
-
-    .field:nth-child(1){
-      grid-area: options;
+    .field--agent{
+      grid-area: agent;
     }
-    .field:nth-child(2){
+    .field--language{
+      grid-area: language;
+    }
+    .field--spellchecking{
+      grid-area: spellchecking;
+    }
+    .field--text{
       grid-area: text;
     }
-    .field:nth-child(3){
+    .field--submit{
       grid-area: submit;
+    }
+    @media (min-width: 500px){
+      grid-template-areas:
+        "language spellchecking agent"
+        "text     text     text"
+        "submit   submit   submit";
+    }
+    @media (min-width: 600px){
+      grid-column-gap: 2em;
+    }
+
+    @media (min-width: $play_breakpoint){
+      .field--agent{
+        display: none;
+      }
+      grid-template-columns: auto min-content;
+      grid-template-areas:
+        "text   language"
+        "text   spellchecking"
+        "submit submit";
     }
   }
 }
@@ -135,26 +191,19 @@ aside.play{
 .play-main__result{
   .play-main__result__wrapper{
     background-color: #fff;
-    padding: 1em 2em 2em 2em;
-    border-top: 1px solid rgba(#000, .075);
+    padding: 2em;
+    border-top: 1px solid rgba(#000, .1);
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
     h2{
       font-size: .9em;
-      margin: -1.75em 0 0 0;
-      text-align: center;
-      padding: 0 0 2em 0;
-      span{
-        background-color: #fbfbfb;
-        padding: .5em 1.25em;
-        border: 1px solid rgba(#000, .075);
-        border-radius: 1.5em;
-        white-space: nowrap;
-      }
+      margin: -2rem -2rem 1.5rem -2rem;
+      padding: 1rem 2rem;
+      background-color: #fcfcfc;
+      border-bottom: 1px solid rgba(#000, .075);
     }
     & > div{
       line-height: 1.75em;
-      p{
-        margin: 0;
-      }
     }
   }
 
@@ -165,7 +214,10 @@ aside.play{
     z-index: 2;
     padding: 1em;
     border-radius: 3px;
-    max-width: calc(100vw - 350px);
+
+    @media (min-width: $play_breakpoint){
+      max-width: calc(100vw - 350px);
+    }
 
     @each $name, $color in $colors{
       &.highlight-pop--#{$name}{

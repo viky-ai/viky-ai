@@ -4,10 +4,11 @@ class PlayInterpreter
 
   before_validation :set_defaults
 
-  attr_accessor :ownername, :agentname, :text, :language, :spellchecking, :agent, :agents, :results
+  attr_accessor :agent_id, :text, :language, :spellchecking, :agent, :agents, :results
 
-  validates_presence_of :ownername, :agentname, :text
+  validates_presence_of :text, :language, :spellchecking
   validates :text, byte_size: { maximum: 1024 * 8 }
+  before_validation :clean_text
 
   def proceed
     self.results = {}
@@ -34,7 +35,7 @@ class PlayInterpreter
         agent.updated_at
       ].join('/')
 
-      body, status = Rails.cache.fetch(cache_key, expires_in: 60.minutes) do
+      body, status = Rails.cache.fetch(cache_key, expires_in: 15.minutes) do
         Nlp::Interpret.new(request_params).proceed
       end
       Rails.cache.delete(cache_key) unless status == 200
@@ -58,12 +59,16 @@ class PlayInterpreter
 
   private
 
-  def set_defaults
-    @spellchecking = 'low' if spellchecking.blank?
-    @language = "*"       if language.blank?
-    @agents  = []         if agents.nil?
-    @results = {}         if results.nil?
-  end
+    def clean_text
+      self.text = text.strip unless text.nil?
+    end
+
+    def set_defaults
+      @spellchecking = 'low' if spellchecking.blank?
+      @language = "*"       if language.blank?
+      @agents  = []         if agents.nil?
+      @results = {}         if results.nil?
+    end
 
 end
 

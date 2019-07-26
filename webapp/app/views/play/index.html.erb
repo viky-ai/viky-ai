@@ -2,7 +2,7 @@
   <%= render partial: "blankslate" %>
 <% else %>
   <% content_for :left_aside do %>
-    <aside class="play">
+    <aside>
       <%= render partial: "aside", locals: { interpreter: @interpreter } %>
     </aside>
   <% end %>

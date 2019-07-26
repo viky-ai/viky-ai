@@ -14,7 +14,7 @@ class PlayResult
           popup.hide()
         else
           $('.play-main__result__wrapper .highlight').removeClass('highlight--open')
-          new Popper(item, popup)
+          new Popper(item, popup, { placement: 'auto' })
           $('.play-main__result__wrapper .highlight-pop').hide()
           item.addClass('highlight--open')
           popup.show()
@@ -28,6 +28,5 @@ Setup = ->
     new PlayResult()
 
 $(document).on('turbolinks:load', Setup)
-
 
 module.exports = PlayResult

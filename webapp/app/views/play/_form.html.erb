@@ -1,28 +1,43 @@
 <%= form_with(url: "/play", method: :post, class: "play-main__form", model: interpreter) do |f| %>
-  <input type="hidden" name="play_interpreter[ownername]"
-         value="<%= interpreter.agent.owner.username %>" id="play_input_ownername">
-  <input type="hidden" name="play_interpreter[agentname]"
-         value="<%= interpreter.agent.agentname %>" id="play_input_agentname">
+
+  <input type="hidden" name="play_interpreter[agent_id]"
+         value="<%= interpreter.agent.id %>" id="play_input_agent_id">
   <input type="hidden" name="play_interpreter[language]"
          value="<%= interpreter.language %>" class="js-nlp-language-input">
   <input type="hidden" name="play_interpreter[spellchecking]"
          value="<%= interpreter.spellchecking %>" class="js-nlp-spellchecking-input">
 
-
   <div class="inputs-wrapper">
 
-    <div class="field field--options">
+    <div class="field field--agent">
+      <div class="control">
+        <label class="label label--uppercase">Agent</label>
+        <br />
+        <%= render partial: "agents_dropdown", locals: { interpreter: interpreter } %>
+        <a href="<%= edit_play_selection_path %>"
+           class="btn btn--small btn--primary"
+           data-action="open-remote-modal">
+          <%= t('views.play.aside.btn_edit') %>
+        </a>
+      </div>
+    </div>
+
+    <div class="field field--language">
       <div class="control">
         <span class="label label--uppercase"><%= t('nlp.locales.label') %></span>
+        <br />
         <%= render partial: "/shared/nlp_locales_dropdown", locals: {
             current_value: interpreter.language,
             form_selector: ".play-main__form",
             input_selector: ".js-nlp-language-input"
         } %>
       </div>
-      <br />
+    </div>
+
+    <div class="field field--spellchecking">
       <div class="control">
         <span class="label label--uppercase"><%= t('nlp.spellchecking.label') %></span>
+        <br />
         <%= render partial: "/shared/nlp_spellchecking_dropdown", locals: {
             current_value: interpreter.spellchecking,
             form_selector: ".play-main__form",
@@ -31,17 +46,17 @@
       </div>
     </div>
 
-    <div class="field">
+    <div class="field field--text">
       <div class="control">
         <%= f.label :text, class: 'label--uppercase' %>
         <span class="badge badge--small badge--outline"><%= t('required') %></span>
-
+        <br />
         <%= f.text_area :text, id: 'play_interpreter_text' %>
         <%= display_errors(interpreter, :text) %>
       </div>
     </div>
 
-    <div class="field">
+    <div class="field field--submit">
       <button class="btn btn--primary" data-disable-with='<%= t('views.play.form.btn_loading_html', icon: icon_loading) %>'>
         <%= t('views.play.form.btn') %>
         <span class="icon icon--x-small">
@@ -54,6 +69,5 @@
     </div>
 
   </div>
-
 
 <% end %>

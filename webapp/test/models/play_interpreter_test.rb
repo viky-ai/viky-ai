@@ -6,8 +6,6 @@ class PlayInterpreterTest < ActiveSupport::TestCase
     pi = PlayInterpreter.new
     assert_not pi.valid?
     expected = [
-      "Ownername can't be blank",
-      "Agentname can't be blank",
       "Text can't be blank"
     ]
     assert_equal expected, pi.errors.full_messages

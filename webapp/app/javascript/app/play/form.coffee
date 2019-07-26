@@ -8,8 +8,7 @@ class PlayForm
 
     if action == 'play-switch-agent'
       event.preventDefault()
-      $('#play_input_ownername').val(agent.data('ownername'));
-      $('#play_input_agentname').val(agent.data('agentname'));
+      $('#play_input_agent_id').val(agent.data('agent-id'));
       Rails.fire($('.play-main__form')[0], 'submit')
 
   get_target: (event) ->

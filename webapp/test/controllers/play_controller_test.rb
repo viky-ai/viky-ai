@@ -6,8 +6,7 @@ class PlayControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:edit_on_agent_weather)
     post "/play", params: {
       play_interpreter: {
-        ownername: users(:admin).username,
-        agentname: agents(:weather).agentname,
+        agent_id: agents(:weather).id,
         text: "hello"
       }, format: :js
     }
@@ -19,8 +18,7 @@ class PlayControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:show_on_agent_weather)
     post "/play", params: {
       play_interpreter: {
-        ownername: users(:admin).username,
-        agentname: agents(:weather).agentname,
+        agent_id: agents(:weather).id,
         text: "hello"
       }, format: :js
     }
@@ -32,8 +30,7 @@ class PlayControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:confirmed)
     post "/play", params: {
       play_interpreter: {
-        ownername: users(:admin).username,
-        agentname: agents(:weather).agentname,
+        agent_id: agents(:weather).id,
         text: "hello"
       }, format: :js
     }
@@ -46,8 +43,15 @@ class PlayControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:edit_on_agent_weather)
     post "/play", params: {
       play_interpreter: {
-        ownername: "missing",
-        agentname: "missing",
+        agent_id: "123",
+        text: "hello"
+      }, format: :js
+    }
+    assert_equal "302", response.code
+    assert response.body.include? "404"
+
+    post "/play", params: {
+      play_interpreter: {
         text: "hello"
       }, format: :js
     }
