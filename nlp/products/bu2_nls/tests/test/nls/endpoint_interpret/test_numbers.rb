@@ -480,6 +480,21 @@ module Nls
 
       end
 
+      def test_huge_number
+        Nls.remove_all_packages
+
+        package = Package.new("test_huge_number")
+        numbers = package.new_interpretation("numbers")
+        numbers << Expression.new("@{number}", aliases: { number: Alias.number })
+
+        Nls.package_update(package)
+
+        check_interpret("11111111111", solution: 11111111111)
+        check_interpret("1111111111111111", solution: 1111111111111111)
+
+
+      end
+
 
     end
   end
