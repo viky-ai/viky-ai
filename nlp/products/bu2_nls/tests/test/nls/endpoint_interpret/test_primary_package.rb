@@ -41,8 +41,13 @@ module Nls
       def test_primary_package_deepness
         check_interpret("pour skier",
           packages: [ @package_1, @package_2 ],
-          show_private: true,
           primary_package: @package_2,
+          interpretation: nil
+        )
+
+        check_interpret("pour skier",
+          packages: [ @package_1, @package_2 ],
+          primary_package: @package_1,
           interpretation: "i_pub",
           solution: { activity: "ski" }
         )
