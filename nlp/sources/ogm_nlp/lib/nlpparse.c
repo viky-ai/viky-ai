@@ -436,7 +436,22 @@ static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
   }
   if (request_word->is_number)
   {
-    request_word->number_value = atol(normalized_string_word);
+    char * endPtr;
+    request_word->number_value = strtod( normalized_string_word, &endPtr );
+
+    if( endPtr == normalized_string_word)
+    {
+      if(errno == ERANGE)
+      {
+        NlpWarningAdd(ctrl_nlp_th,
+                  "String number %s is too long, interpretation may be wrong", normalized_string_word);
+      }
+      else
+      {
+        NlpWarningAdd(ctrl_nlp_th,
+                  "String number %s is wrongly formatted, interpretation may be wrong", normalized_string_word);
+      }
+    }
   }
   request_word->is_auto_complete_word = FALSE;
 
