@@ -328,6 +328,33 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal expected, entities_import.errors[:file]
   end
 
+  
+  test 'Import entities limit' do
+    
+    ENV['VIKYAPP_ENTITIES_QUOTA'] = '1';
+
+    elist = entities_lists(:weather_conditions)
+    assert_equal ["*", "en", "fr", "es"], elist.agent.locales
+
+    io = StringIO.new
+    io << "Terms,Auto solution,Solution\n"
+    io << "snow,false,\"{'w': 'snow'}\"\n"
+
+    entities_import = get_entities_import(elist, io)
+
+    assert_equal 2, elist.entities.count
+    assert_not entities_import.save
+    assert_equal 0, entities_import.proceed
+    assert_equal 2, elist.entities.count
+
+    expected = [
+      "Bad entity format: Quota exceeded (maximum is 1 entities), actual: 4 in line 1."
+    ]
+    assert_equal expected, entities_import.errors[:file]
+    
+    ENV['VIKYAPP_ENTITIES_QUOTA'] = nil;
+  end
+
 
   private
 

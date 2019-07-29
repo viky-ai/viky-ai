@@ -285,4 +285,34 @@ class EntityTest < ActiveSupport::TestCase
     entity.terms = (['a'] * 36 + ['؀' * 2]).join(' ')
     assert entity.save
   end
+
+  
+  test 'Entities limit' do
+    
+    ENV['VIKYAPP_ENTITIES_QUOTA'] = '1';
+
+    entity = Entity.new(
+      terms: [
+        { term: 'Éric', locale: 'fr' }
+      ],
+      entities_list: entities_lists(:weather_conditions)
+    )
+
+    entity_2 = Entity.new(
+      terms: [
+        { term: 'Éric', locale: 'fr' }
+      ],
+      entities_list: entities_lists(:weather_conditions)
+    )
+
+    entity.save
+    assert_not entity_2.save
+
+    expected = {
+      quota: ['exceeded (maximum is 1 entities), actual: 4']
+    }
+    assert_equal expected, entity.errors.messages
+    
+    ENV['VIKYAPP_ENTITIES_QUOTA'] = nil;
+  end
 end
