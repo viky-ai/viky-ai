@@ -54,15 +54,7 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
     {
       if (ctrl_nlp_th->primary_package != NULL && interpretation->package != ctrl_nlp_th->primary_package)
       {
-        // this is a secondary agent public interpretation
-        if (ctrl_nlp_th->show_private)
-        {
-          // secondary agent public interpretation kept only when show_private
-        }
-        else
-        {
-          continue;
-        }
+        continue;
       }
     }
 
