@@ -75,7 +75,10 @@ og_status NlpExplainHighlight(og_nlp_th ctrl_nlp_th, struct request_expression *
     IFE(NlpExplainHighlightAddBasicWord(ctrl_nlp_th, i));
   }
   IFE(NlpExplainHighlightSort(ctrl_nlp_th));
-  IFE(NlpExplainHighlightLog(ctrl_nlp_th));
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    IFE(NlpExplainHighlightLog(ctrl_nlp_th));
+  }
 
   IFE(NlpExplainHighlightJson(ctrl_nlp_th, request_expression, json_explanation));
   DONE;
