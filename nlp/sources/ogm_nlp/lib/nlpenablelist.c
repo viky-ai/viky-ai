@@ -46,6 +46,15 @@ og_status NlpEnableList(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expression
       interpretation = request_expression->expression->interpretation;
       g_hash_table_insert(ctrl_nlp_th->interpretation_hash, GINT_TO_POINTER(interpretation), GINT_TO_POINTER(1));
     }
+    else if (interpretation->scope == nlp_interpretation_scope_type_public)
+    {
+      if (interpretation->package == ctrl_nlp_th->primary_package)
+      {
+        interpretation = request_expression->expression->interpretation;
+        g_hash_table_insert(ctrl_nlp_th->interpretation_hash, GINT_TO_POINTER(interpretation), GINT_TO_POINTER(1));
+      }
+    }
+
     IFE(NlpSolutionCalculatePositions(ctrl_nlp_th, request_expression));
   }
 
