@@ -34,16 +34,18 @@ class EntitiesList < ApplicationRecord
     io.write CSV.generate_line([
       I18n.t('activerecord.attributes.entity.terms'),
       I18n.t('activerecord.attributes.entity.auto_solution_enabled'),
-      I18n.t('activerecord.attributes.entity.solution')
+      I18n.t('activerecord.attributes.entity.solution'),
+      I18n.t('activerecord.attributes.entity.case_sensitive'),
+      I18n.t('activerecord.attributes.entity.accent_sensitive')
     ])
     io.write(
       CSV.generate do |csv|
         entities_in_ordered_batchs.each do |batch, _, _|
-          batch.select(:terms, :auto_solution_enabled, :solution, :position).each do |entity|
+          batch.select(:terms, :auto_solution_enabled, :solution, :case_sensitive, :accent_sensitive, :position).each do |entity|
             terms = entity.terms.collect { |t|
               t['locale'] == Locales::ANY ? t['term'] : "#{t['term']}:#{t['locale']}"
             }.join('|')
-            csv << [terms, entity.auto_solution_enabled, entity.solution]
+            csv << [terms, entity.auto_solution_enabled, entity.solution, entity.case_sensitive, entity.accent_sensitive]
           end
         end
       end
