@@ -453,7 +453,22 @@ static og_bool NlpMatchGroupNumbersParsingEnsureFree(og_nlp_th ctrl_nlp_th, og_s
   {
     snprintf(value_buffer + strlen(value_buffer), DPcPathSize, ".%.*s", decimalPartLength, sentence + decimalPartStart);
   }
-  double tmp_value = atof(value_buffer);
+  char * endPtr;
+  double tmp_value = strtod( value_buffer, &endPtr );
+
+  if(strcmp(endPtr, value_buffer) == 0)
+  {
+    if(errno == ERANGE)
+    {
+      NlpWarningAdd(ctrl_nlp_th,
+                "String number %s is too long, interpretation may be wrong", value_buffer);
+    }
+    else
+    {
+      NlpWarningAdd(ctrl_nlp_th,
+                "String number %s is wrongly formatted, interpretation may be wrong", value_buffer);
+    }
+  }
 
   if (p_value) *p_value = tmp_value;
 
