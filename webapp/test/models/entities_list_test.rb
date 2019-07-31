@@ -152,9 +152,9 @@ class EntitiesListTest < ActiveSupport::TestCase
     string_io = StringIO.new
     entities_list.to_csv_in_io(string_io)
     csv = string_io.string
-    expected = ["Terms,Auto solution,Solution",
-                "aujourd'hui:fr|tout à l'heure:fr|today:en,false,\"{\"\"date\"\": \"\"today\"\"}\"",
-                "tomorrow,false,\"{\"\"date\"\": \"\"tomorrow\"\"}\"",
+    expected = ["Terms,Auto solution,Solution,Case sensitive,Accent sensitive",
+                "aujourd'hui:fr|tout à l'heure:fr|today:en,false,\"{\"\"date\"\": \"\"today\"\"}\",false,false",
+                "tomorrow,false,\"{\"\"date\"\": \"\"tomorrow\"\"}\",false,false",
                 ""].join("\n")
     assert_equal expected, csv
   end
@@ -170,9 +170,9 @@ class EntitiesListTest < ActiveSupport::TestCase
     string_io = StringIO.new
     entities_list.to_csv_in_io(string_io)
     csv = string_io.string
-    expected = ["Terms,Auto solution,Solution",
-                "sun,true,sun",
-                "pluie:fr|rain:en,true,pluie",
+    expected = ["Terms,Auto solution,Solution,Case sensitive,Accent sensitive",
+                "sun,true,sun,false,false",
+                "pluie:fr|rain:en,true,pluie,false,false",
                 ''].join("\n")
     assert_equal expected, csv
   end

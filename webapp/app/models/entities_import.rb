@@ -145,10 +145,15 @@ class EntitiesImport < ApplicationRecord
     end
 
     def validate_csv_header!(header_row)
-      if header_row['Terms'].downcase != 'terms' ||
+      if header_row['Terms'].nil? ||
+         header_row['Terms'].downcase != 'terms' ||
+         header_row['Auto solution'].nil? ||
          header_row['Auto solution'].downcase != 'auto solution' ||
+         header_row['Solution'].nil? ||
          header_row['Solution'].downcase != 'solution' ||
+         header_row['Case sensitive'].nil? ||
          header_row['Case sensitive'].downcase != 'case sensitive' ||
+         header_row['Accent sensitive'].nil? ||
          header_row['Accent sensitive'].downcase != 'accent sensitive'
         msg = I18n.t('errors.entities_import.missing_header')
         raise CSV::MalformedCSVError.new(msg, 0)
