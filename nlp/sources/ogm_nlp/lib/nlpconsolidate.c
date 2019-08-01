@@ -152,8 +152,8 @@ static og_status NlpConsolidatePrepareExpression(og_nlp_th ctrl_nlp_th, package_
     expression->glue_strength = expression_compile->glue_strength;
     expression->glue_distance = expression_compile->glue_distance;
 
-    expression->case_sensitive = expression_compile->respect_case;
-    expression->accent_sensitive = expression_compile->respect_accent;
+    expression->case_sensitive = expression_compile->case_sensitive;
+    expression->accent_sensitive = expression_compile->accent_sensitive;
 
     expression->locale = expression_compile->locale;
     expression->aliases_nb = expression_compile->aliases_nb;

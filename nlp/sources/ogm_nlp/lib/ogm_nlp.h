@@ -218,8 +218,8 @@ struct expression_compile
   og_bool keep_order;
   enum nlp_glue_strength glue_strength;
   int glue_distance;
-  og_bool respect_case;
-  og_bool respect_accent;
+  og_bool case_sensitive;
+  og_bool accent_sensitive;
   int alias_start, aliases_nb;
   int locale;
   int input_part_start, input_parts_nb;

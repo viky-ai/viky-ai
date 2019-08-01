@@ -671,18 +671,18 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     DPcErr;
   }
 
-  expression->respect_case = FALSE;
+  expression->case_sensitive = FALSE;
   if (json_case_sensitive == NULL)
   {
-    expression->respect_case = FALSE;
+    expression->case_sensitive = FALSE;
   }
   else if (json_is_boolean(json_case_sensitive))
   {
-    expression->respect_case = json_boolean_value(json_case_sensitive);
+    expression->case_sensitive = json_boolean_value(json_case_sensitive);
   }
   else if (json_is_null(json_case_sensitive))
   {
-    expression->respect_case = FALSE;
+    expression->case_sensitive = FALSE;
   }
   else
   {
@@ -690,18 +690,18 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     DPcErr;
   }
 
-  expression->respect_accent = FALSE;
+  expression->accent_sensitive = FALSE;
   if (json_accent_sensitive == NULL)
   {
-    expression->respect_accent = FALSE;
+    expression->accent_sensitive = FALSE;
   }
   else if (json_is_boolean(json_accent_sensitive))
   {
-    expression->respect_accent = json_boolean_value(json_accent_sensitive);
+    expression->accent_sensitive = json_boolean_value(json_accent_sensitive);
   }
   else if (json_is_null(json_accent_sensitive))
   {
-    expression->respect_accent = FALSE;
+    expression->accent_sensitive = FALSE;
   }
   else
   {

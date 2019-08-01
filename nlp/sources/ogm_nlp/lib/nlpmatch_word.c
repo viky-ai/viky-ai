@@ -179,19 +179,18 @@ og_status NlpMatchWordChainUpdateWordCount(og_nlp_th ctrl_nlp_th)
 
 og_bool NlpMatchCaseAccent(og_nlp_th ctrl_nlp_th, struct request_word *request_word, struct input_part *input_part)
 {
+  struct expression *expression = input_part->expression;
+  if (!expression->case_sensitive && !expression->accent_sensitive) return TRUE;
+
   og_string request_raw_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->raw_start);
   IFN(request_raw_word) DPcErr;
-
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpMatchCaseAccent: request raw word '%s'", request_raw_word);
 
   package_t package = input_part->expression->interpretation->package;
   og_string raw_word = OgHeapGetCell(package->hinput_part_ba, input_part->word->raw_word_start);
   IFN(raw_word) DPcErr;
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpMatchCaseAccent: input_part raw word '%s'", raw_word);
 
   int request_raw_word_length = strlen(request_raw_word);
   int raw_word_length = strlen(raw_word);
-  struct expression *expression = input_part->expression;
 
   if (expression->case_sensitive || expression->accent_sensitive)
   {
