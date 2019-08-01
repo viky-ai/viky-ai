@@ -54,15 +54,7 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
     {
       if (ctrl_nlp_th->primary_package != NULL && interpretation->package != ctrl_nlp_th->primary_package)
       {
-        // this is a secondary agent public interpretation
-        if (ctrl_nlp_th->show_private)
-        {
-          // secondary agent public interpretation kept only when show_private
-        }
-        else
-        {
-          continue;
-        }
+        continue;
       }
     }
 
@@ -173,7 +165,7 @@ static og_status NlpAnyValidate(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_ex
           IFE(NlpRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression,TRUE));
           request_expression->any_validate_status = 2;
           some_expressions_kept = TRUE;
-          break;
+          if (!ctrl_nlp_th->enable_list) break;
         }
       }
       else

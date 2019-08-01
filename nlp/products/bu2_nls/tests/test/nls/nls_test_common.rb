@@ -505,11 +505,13 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
       if sentence_str.nil?
         assert false, "no sentence in the sentence hash"
       end
+      actual = nil
       if enable_list
-        return check_interpret_sentence_list(sentence_str, enable_list, expected)
+        actual = check_interpret_sentence_list(sentence_str, enable_list, expected)
       else
-        return check_interpret_sentence(sentence_str, enable_list, expected)
+        actual = check_interpret_sentence(sentence_str, enable_list, expected)
       end
+      return actual
     end
 
     def check_interpret_sentence(sentence, enable_list, expected)
@@ -669,31 +671,26 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
       raise "expected must not be empty" if expected.empty?
 
       #TODO
-      # pas d'options pour le moment, refactoring à faire
+      # refactoring à faire
 
       debug = false
-      # debug = expected[:debug] if expected.has_key?(:debug)
-
       now = nil
-      # now = expected[:now] if expected.has_key?(:now)
-
       locale = Interpretation.default_locale
-      # locale = expected[:locale] if expected.has_key?(:locale)
-
       packages = "*"
-      # packages = expected[:packages] if expected.has_key?(:packages)
-
       primary_package = nil
-      # primary_package = expected[:primary_package]
-
       show_private = false
-      # show_private = expected[:show_private] if expected.has_key?(:show_private)
-
       explain = false
-      # explain = expected[:explain] if expected.has_key?(:explain)
-
       spellchecking = nil
-      # spellchecking = expected[:spellchecking] if expected.has_key?(:spellchecking)
+
+      expected.each do |expected_element|
+        debug = expected_element[:debug] if expected_element.has_key?(:debug)
+        now = expected_element[:now] if expected_element.has_key?(:now)
+        locale = expected_element[:locale] if expected_element.has_key?(:locale)
+        packages = expected_element[:packages] if expected_element.has_key?(:packages)
+        primary_package = expected_element[:primary_package] if expected_element.has_key?(:primary_package)
+        show_private = expected_element[:show_private] if expected_element.has_key?(:show_private)
+        spellchecking = expected_element[:spellchecking] if expected_element.has_key?(:spellchecking)
+      end
 
       opts = {
         locale: locale,
