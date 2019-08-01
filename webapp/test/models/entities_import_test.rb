@@ -135,7 +135,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal true, cloudy.case_sensitive
     assert_equal false, cloudy.accent_sensitive
     assert_equal 2, cloudy.position
-    assert_equal 6, Entity.all.count
+    assert_equal 10, Entity.all.count
     assert_equal ["*", "en", "fr", "es", "ar"], elist.agent.locales
   end
 
@@ -306,7 +306,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal snow_terms, snow.terms
     assert_equal false, snow.auto_solution_enabled
     assert_equal "{'w': 'snow'}", snow.solution
-    assert_equal 3, Entity.all.count
+    assert_equal 7, Entity.all.count
   end
 
 
