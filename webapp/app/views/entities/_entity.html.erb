@@ -16,8 +16,12 @@
     <span class="card-list__item__name">
       <%= truncate(entity.terms_to_s.gsub("\n", ", "), length: 60) %>
     </span>
+    <span class="card-list__item__sensitivity">
+      <%= t('views.entities.show.case_sensitive') if entity.case_sensitive %>
+      <%= t('views.entities.show.accent_sensitive') if entity.accent_sensitive %>
+    </span>
     <span class="card-list__item__stats">
-      <%= t('views.entities.show.terms', count: entity.terms.count)%>
+      <%= t('views.entities.show.terms', count: entity.terms.count) %>
     </span>
   </a>
 </li>
