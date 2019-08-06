@@ -500,6 +500,23 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('Valid Regex')
   end
 
+  test 'List every languages available' do
+    admin_go_to_intent_show(agents(:terminator), intents(:terminator_find))
+    click_link '+'
+
+    within '.modal__main__chooser' do
+      assert page.has_text? 'No language'
+      assert page.has_text? 'fr (French)'
+      assert page.has_text? 'es (Spanish)'
+      assert page.has_text? 'pt (Portuguese)'
+      assert page.has_text? 'zh (Chinese)'
+      assert page.has_text? 'ar (Arabic)'
+      assert page.has_text? 'tr (Turkish)'
+
+      assert page.has_no_text? 'en (English)'
+    end
+  end
+
   private
 
     def admin_go_to_intent_show(agent, intent)
