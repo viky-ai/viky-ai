@@ -69,7 +69,6 @@ module Nls
         package.to_file(importDir)
 
         Nls.restart
-        Nls.package_update package
 
         # Run parallel queries
         Parallel.map(interpretations, in_threads: 20) do |interpretation|

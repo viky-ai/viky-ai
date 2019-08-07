@@ -81,6 +81,8 @@ en:
         auto_solution_enabled: Auto solution
         solution: Solution
         terms: Terms
+        case_sensitive: Case sensitive
+        accent_sensitive: Accent sensitive
       bot:
         wip_enabled: Work in progress?
         wip_enabled_true: "Yes"

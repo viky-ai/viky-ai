@@ -31,3 +31,11 @@ weather_confirmed_dates:
   position: 0
   color: red
   visibility: 1
+
+cities:
+  listname: cities
+  agent: cities
+  description: A short cities list
+  position: 0
+  color: red
+  visibility: 1

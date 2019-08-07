@@ -9,6 +9,8 @@ module Nls
     attr_reader :keep_order
     attr_reader :glue_strength
     attr_reader :glue_distance
+    attr_reader :case_sensitive
+    attr_reader :accent_sensitive
     attr_accessor :pos
     attr_accessor :solution
     attr_accessor :interpretation
@@ -30,6 +32,12 @@ module Nls
 
       @glue_distance = 20
       @glue_distance = opts[:glue_distance] if opts.has_key?(:glue_distance)
+
+      @case_sensitive = false
+      @case_sensitive = opts[:case_sensitive] if opts.has_key?(:case_sensitive)
+
+      @accent_sensitive = false
+      @accent_sensitive = opts[:accent_sensitive] if opts.has_key?(:accent_sensitive)
 
         @solution = nil
       @solution = opts[:solution] if opts.has_key?(:solution)
@@ -92,6 +100,8 @@ module Nls
       hash['keep-order'] = true if @keep_order
       hash['glue-strength'] = @glue_strength if @glue_strength != "total"
       hash['glue-distance'] = @glue_distance if @glue_distance != 20
+      hash['case-sensitive'] = true if @case_sensitive
+      hash['accent-sensitive'] = true if @accent_sensitive
       hash['aliases'] = @aliases.map{|a| a.to_h} if !@aliases.empty?
       hash['locale'] = @locale if !@locale.nil?
       if !@solution.nil?

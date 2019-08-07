@@ -23,8 +23,8 @@ class ImportEntitiesJobTest < ActiveJob::TestCase
 
     Tempfile.open(['temp', '.csv']) do |file|
       CSV.open(file.path, "wb") do |csv|
-        csv << ["terms", "auto solution", "solution"]
-        csv << ["cloudy", "blabla", "\"{'weather': 'cloudy'}\"\n"]
+        csv << ["terms", "auto solution", "solution", "case sensitive", "accent sensitive"]
+        csv << ["cloudy", "blabla", "\"{'weather': 'cloudy'}\",false,false\n"]
       end
       @weather_conditions_import.file = file
       assert @weather_conditions_import.save
@@ -42,8 +42,8 @@ class ImportEntitiesJobTest < ActiveJob::TestCase
   def create_entities_import_fixtures
     file = Tempfile.new(['weather_condition_import', '.csv'])
     CSV.open(file.path, "wb") do |csv|
-      csv << ["terms", "auto solution", "solution"]
-      csv << ["cloudy", "True", "\"{'weather': 'cloudy'}\"\n"]
+      csv << ["terms", "auto solution", "solution", "case sensitive", "accent sensitive"]
+      csv << ["cloudy", "True", "\"{'weather': 'cloudy'}\"", "false", "false"]
     end
     @weather_conditions_import = EntitiesImport.new({
       file: file,

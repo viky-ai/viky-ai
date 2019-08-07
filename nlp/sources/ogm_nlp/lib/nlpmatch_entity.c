@@ -356,6 +356,24 @@ static og_bool NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int ib
     return FALSE;
   }
 
+  if (expression->case_sensitive || expression->accent_sensitive)
+  {
+    for (int i = 0; i < expression->input_parts_nb; i++)
+    {
+      struct request_word *request_word = me_ctrl->request_word_list[i];
+      IFX(me_ctrl->alternative_request_word_list[i])
+      {
+        request_word = me_ctrl->alternative_request_word_list[i];
+      }
+      og_bool matched_case_accent = NlpMatchCaseAccent(ctrl_nlp_th, request_word, expression->input_parts + i);
+      IFE(matched_case_accent);
+      if (!matched_case_accent)
+      {
+        return FALSE;
+      }
+    }
+  }
+
   for (int i = 0; i < expression->input_parts_nb; i++)
   {
     struct request_word *request_word = me_ctrl->request_word_list[i];
