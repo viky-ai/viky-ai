@@ -7,6 +7,12 @@
   <div class="field entity-form__terms">
     <div class="control">
       <%= f.label :terms, for: 'terms__new_entity' %>
+      <span class="label--with-option">
+        <%= f.check_box :case_sensitive, id: "case_sensitive__#{entity.id}" %>
+        <%= f.label :case_sensitive, for: "case_sensitive_label__#{entity.id}" %>
+        <%= f.check_box :accent_sensitive, id: "accent_sensitive__#{entity.id}" %>
+        <%= f.label :accent_sensitive, for: "accent_sensitive_label__#{entity.id}" %>
+      </span>
       <%= text_area_tag('entity[terms]', entity.terms_to_s, id: "terms__new_entity", maxlength: '5000', spellcheck: 'false', autofocus: true, placeholder: t('views.entities.new.placeholder')) %>
     </div>
     <%= display_errors(entity, :terms) %>
