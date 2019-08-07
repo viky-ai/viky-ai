@@ -9,7 +9,12 @@ class ApiInternalTest < ActionDispatch::IntegrationTest
 
     assert_equal '200', response.code
 
-    expected = ["930025d1-cfd0-5f27-8cb1-a0aecd1309fc", "30d3b81b-52f4-5fb3-a6f7-b2f025dece97", "fba88ff8-8238-5007-b3d8-b88fd504f94c", "794f5279-8ed5-5563-9229-3d2573f23051"]
+    expected = [
+      "930025d1-cfd0-5f27-8cb1-a0aecd1309fc",
+      "fba88ff8-8238-5007-b3d8-b88fd504f94c",
+      "30d3b81b-52f4-5fb3-a6f7-b2f025dece97",
+      "794f5279-8ed5-5563-9229-3d2573f23051"
+    ]
     assert_equal expected, JSON.parse(response.body)
   end
 
