@@ -108,12 +108,15 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
       int Iinput_part;
       unsigned char *p = out;
       IFE(DOgPnin4(ctrl_nlp_th->herr, &p, &Iinput_part));
+      struct input_part *input_part = OgHeapGetCell(package->hinput_part, Iinput_part);
+      IFN(input_part) DPcErr;
+      og_bool matched_case_accent = NlpMatchCaseAccent(ctrl_nlp_th, request_word, input_part);
+      IFE(matched_case_accent);
+      if (!matched_case_accent) continue;
       NlpLog(DOgNlpTraceMatch, "    found input part %d in request package %d", Iinput_part,
           interpret_package->self_index)
       if (request_word->lang_id != DOgLangNil)
       {
-        struct input_part *input_part = OgHeapGetCell(package->hinput_part, Iinput_part);
-        IFN(input_part) DPcErr;
         // Lemmatisation is accepted only on expressions with same locale
         if (input_part->expression->locale != request_word->lang_id) continue;
       }
@@ -172,5 +175,55 @@ og_status NlpMatchWordChainUpdateWordCount(og_nlp_th ctrl_nlp_th)
   }
 
   DONE;
+}
+
+og_bool NlpMatchCaseAccent(og_nlp_th ctrl_nlp_th, struct request_word *request_word, struct input_part *input_part)
+{
+  struct expression *expression = input_part->expression;
+  if (!expression->case_sensitive && !expression->accent_sensitive) return TRUE;
+
+  og_string request_raw_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->raw_start);
+  IFN(request_raw_word) DPcErr;
+
+  package_t package = input_part->expression->interpretation->package;
+  og_string raw_word = OgHeapGetCell(package->hinput_part_ba, input_part->word->raw_word_start);
+  IFN(raw_word) DPcErr;
+
+  int request_raw_word_length = strlen(request_raw_word);
+  int raw_word_length = strlen(raw_word);
+
+  if (expression->case_sensitive || expression->accent_sensitive)
+  {
+    if (expression->case_sensitive && expression->accent_sensitive)
+    {
+      if (request_raw_word_length != raw_word_length) return FALSE;
+      if (strcmp(request_raw_word, raw_word)) return FALSE;
+    }
+    else if (expression->case_sensitive)
+    {
+      int iw1, iw2;
+      unsigned char w1[DPcPathSize], w2[DPcPathSize];
+      IFE(OgCpToUni(request_raw_word_length, request_raw_word, DPcPathSize, &iw1, w1, DOgCodePageUTF8, 0, 0));
+      IFE(OgCpToUni(raw_word_length, raw_word, DPcPathSize, &iw2, w2, DOgCodePageUTF8, 0, 0));
+      if (iw1 != iw2) return FALSE;
+      OgUniStruna(iw1, w1, w1);
+      OgUniStruna(iw2, w2, w2);
+      if (memcmp(w1,w2,iw1)) return FALSE;
+    }
+    else   // expression->accent_sensitive == TRUE
+    {
+      int iw1, iw2;
+      unsigned char w1[DPcPathSize], w2[DPcPathSize];
+      IFE(OgCpToUni(request_raw_word_length, request_raw_word, DPcPathSize, &iw1, w1, DOgCodePageUTF8, 0, 0));
+      IFE(OgCpToUni(raw_word_length, raw_word, DPcPathSize, &iw2, w2, DOgCodePageUTF8, 0, 0));
+      if (iw1 != iw2) return FALSE;
+      OgUniStrlwr(iw1, w1, w1);
+      OgUniStrlwr(iw2, w2, w2);
+      if (memcmp(w1,w2,iw1)) return FALSE;
+    }
+
+  }
+
+  return TRUE;
 }
 

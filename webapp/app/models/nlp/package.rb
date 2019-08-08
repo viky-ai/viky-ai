@@ -7,7 +7,7 @@ class Nlp::Package
   class_attribute :sync_active
   self.sync_active = true
 
-  VERSION = 3 # Used to invalidate cache
+  VERSION = 4 # Used to invalidate cache
 
   JSON_HEADERS = {"Content-Type" => "application/json", "Accept" => "application/json"}
 
@@ -225,7 +225,7 @@ class Nlp::Package
             else
               elist_proximity_distance = elist.proximity.get_distance
               elist_proximity_is_glued = elist.proximity_glued?
-              batch.select('terms, position, auto_solution_enabled, solution').each do |entity|
+              batch.select('terms, position, auto_solution_enabled, solution, case_sensitive, accent_sensitive').each do |entity|
                 entity.terms.each do |term|
                   expression = {}
                   expression[:expression] = term['term']
@@ -235,6 +235,8 @@ class Nlp::Package
                   expression['keep-order'] = true
                   expression['glue-distance'] = elist_proximity_distance
                   expression['glue-strength'] = 'punctuation'.freeze if elist_proximity_is_glued
+                  expression['case-sensitive'] = entity.case_sensitive if entity.case_sensitive
+                  expression['accent-sensitive'] = entity.accent_sensitive if entity.accent_sensitive
                   encoder.write_object(expression, cache_key)
                 end
               end

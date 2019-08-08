@@ -21,11 +21,17 @@ module Nls
       def create_package
         package = Package.new("enable_list")
 
+        @package_1 = package
+
         abcd = package.new_interpretation("abcd", { scope: "public" })
         abcd << Expression.new("aaa", solution: "aaa")
         abcd << Expression.new("bbb", solution: "bbb")
         abcd << Expression.new("ccc", solution: "ccc")
         abcd << Expression.new("aaa bbb", solution: "aaa bbb", keep_order: true)
+
+        ef = package.new_interpretation("ef", { scope: "public" })
+        ef << Expression.new("eee", solution: "eee")
+        ef << Expression.new("fff", solution: "fff")
 
         package
       end
@@ -53,6 +59,9 @@ module Nls
 
         expected = [{ interpretation: "abcd", solution: "bbb" },{ interpretation: "abcd", solution: "aaa" },{ interpretation: "abcd", solution: "ccc" }]
         check_interpret({sentence: "bbb aaa ccc", enable_list: true}, expected)
+
+        expected = [{ interpretation: "abcd", solution: "aaa bbb", primary_package: @package_1},{ interpretation: "ef", solution: "eee"}]
+        check_interpret({sentence: "aaa bbb eee", enable_list: true}, expected)
 
       end
 

@@ -85,9 +85,9 @@
 
       display: grid;
       grid-template-areas:
-        "name  stats"
-        "desc  stats";
-      grid-template-columns: auto minmax(0, 140px);
+        "name  opts  stats"
+        "desc  .     stats";
+      grid-template-columns: auto minmax(0, 220px) minmax(0, 140px);
 
       .card-list__item__name{
         grid-area: name;
@@ -102,6 +102,14 @@
       }
       .card-list__item__stats{
         grid-area: stats;
+        font-size: .8em;
+        line-height: 1.8rem;
+        padding: 0 1rem;
+        color: #aaa;
+        text-align: right;
+      }
+      .card-list__item__sensitivity{
+        grid-area: opts;
         font-size: .8em;
         line-height: 1.8rem;
         padding: 0 1rem;

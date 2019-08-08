@@ -449,11 +449,24 @@ static og_bool NlpMatchGroupNumbersParsingEnsureFree(og_nlp_th ctrl_nlp_th, og_s
   str_remove_inplace(value_buffer, thousand_sep);
 
   // append decimal part
-  if (decimalPartMatch && decimalPartLength >= 0)
+  if (decimalPartMatch && decimalPartLength > 0)
   {
     snprintf(value_buffer + strlen(value_buffer), DPcPathSize, ".%.*s", decimalPartLength, sentence + decimalPartStart);
   }
-  double tmp_value = atof(value_buffer);
+
+  errno = 0;
+  double tmp_value = strtod(value_buffer, NULL);
+  if (errno > 0)
+  {
+    // tmp_value will be HUGE_VALF processed as null by jansson
+
+    // integer part is already warn in nlpparse.c
+    if (decimalPartLength > 0)
+    {
+      NlpWarningAdd(ctrl_nlp_th, "NlpMatchGroupNumbersParsing: number \"%s\" (at %d:%d) cannot be parsed as a decimal number (%s),"
+          " interpretation's solution may be wrong.", value_buffer, integerPartStart, decimalPartLength, strerror(errno));
+    }
+  }
 
   if (p_value) *p_value = tmp_value;
 

@@ -400,4 +400,16 @@ class InterpretationTest < ActiveSupport::TestCase
     )
     assert_equal 0, english_interpretation.position
   end
+
+  test 'Save interpretation with very locales' do
+    intent = intents(:weather_forecast)
+    Locales::ALL.each do |locale|
+      interpretation = Interpretation.new(
+        expression: "interpretation_#{locale}",
+        locale: locale,
+        intent: intent
+      )
+      assert interpretation.save
+    end
+  end
 end

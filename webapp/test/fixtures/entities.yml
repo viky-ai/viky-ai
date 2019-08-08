@@ -29,3 +29,43 @@ weather_dates_tomorrow:
   searchable_terms: tomorrow
   entities_list: weather_dates
   position: 0
+
+city_paris:
+  solution: '{"city": "Paris"}'
+  auto_solution_enabled: false
+  terms: [{term: "Paris", locale: "*"}]
+  searchable_terms: Paris
+  case_sensitive: true
+  accent_sensitive: false
+  entities_list: cities
+  position: 0
+
+city_marseille:
+  solution: '{"city": "Marseille"}'
+  auto_solution_enabled: false
+  terms: [{term: "Marseille", locale: "*"}]
+  searchable_terms: Marseille
+  case_sensitive: false
+  accent_sensitive: false
+  entities_list: cities
+  position: 1
+
+city_orleans:
+  solution: '{"city": "Orléans"}'
+  auto_solution_enabled: false
+  terms: [{term: "Orléans", locale: "*"}]
+  searchable_terms: Orléans
+  case_sensitive: true
+  accent_sensitive: true
+  entities_list: cities
+  position: 2
+
+city_macon:
+  solution: '{"city": "Mâcon"}'
+  auto_solution_enabled: false
+  terms: [{term: "Mâcon", locale: "*"}]
+  searchable_terms: Mâcon
+  case_sensitive: false
+  accent_sensitive: true
+  entities_list: cities
+  position: 3
