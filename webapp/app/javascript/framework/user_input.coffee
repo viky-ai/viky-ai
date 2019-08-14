@@ -9,7 +9,6 @@ class UserInput
     input = $('#input-user')
     max_items = if input.data('max-items') then input.data('max-items') else null
     initial_values = if input.data('initial-values') then input.data('initial-values') else []
-    console.log initial_values.map((value) -> value.username)
     input.selectize({
       maxItems: max_items
       delimiter: ';'

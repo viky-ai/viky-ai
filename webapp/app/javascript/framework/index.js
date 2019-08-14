@@ -29,7 +29,7 @@ window.App.Modal = require('./modal')
 import './form_delete_validation.coffee'
 import './color_picker.coffee'
 window.App.Message = require('./message')
-import './user_search.coffee'
+import './user_input.coffee'
 import './console.coffee'
 window.App.FocusInput = require('./focus')
 import './button_group.coffee'
