@@ -190,4 +190,40 @@ class AgentsShowTest < ApplicationSystemTestCase
       assert page.has_link?('admin/weather-copy/interpretations/weather_question')
     end
   end
+
+  test 'Visibility of owner and collaborator emails' do
+    login_as users(:edit_on_agent_weather).email, 'BimBamBoom'
+    go_to_agent_show(agents(:weather))
+    within('.user-list') do
+      assert page.has_text?('edit_on_agent_weather@viky.ai')
+      assert page.has_text?('admin@viky.ai')
+      assert page.has_text?('show_on_agent_weather@viky.ai')
+    end
+    logout
+
+    login_as users(:show_on_agent_weather).email, 'BimBamBoom'
+    go_to_agent_show(agents(:weather))
+    within('.user-list') do
+      assert page.has_text?('edit_on_agent_weather@viky.ai')
+      assert page.has_text?('admin@viky.ai')
+      assert page.has_text?('show_on_agent_weather@viky.ai')
+    end
+    logout
+
+    admin_login
+    go_to_agent_show(agents(:weather))
+    within('.user-list') do
+      assert page.has_text?('edit_on_agent_weather@viky.ai')
+      assert page.has_text?('admin@viky.ai')
+      assert page.has_text?('show_on_agent_weather@viky.ai')
+    end
+    logout
+
+    login_as users(:confirmed).email, 'BimBamBoom'
+    go_to_agent_show(agents(:terminator))
+    within('.user-list') do
+      assert page.has_text?('admin Owner')
+      assert_not page.has_text?('admin@viky.ai')
+    end
+  end
 end
