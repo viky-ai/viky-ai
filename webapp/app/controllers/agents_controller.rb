@@ -83,18 +83,18 @@ class AgentsController < ApplicationController
   end
 
   def transfer_ownership
-    result = @agent.transfer_ownership_to(params[:users][:new_owner_id])
+    result = @agent.transfer_ownership_to(params[:users][:new_owner])
 
     respond_to do |format|
       if result[:success]
-        format.json {
+        format.json do
           new_owner = User.find(@agent.owner_id)
           redirect_to agents_path,
             notice: t(
               'views.agents.index.ownership_transferred',
               name: @agent.name, username: new_owner.username
             )
-        }
+        end
       else
         format.json {
           render json: {

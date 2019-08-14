@@ -59,9 +59,9 @@ en:
       confirm_transfer_ownership:
         title: Transfer ownership
         content_html: "You're about to transfer ownership of agent: <strong>%{name}</strong> to another user."
-        label: "Select the new owner :"
-        placeholder: Search by email or username (at least 3 characters).
-        note: The new owner will be notify by email.
+        label: "Enter the new owner :"
+        placeholder: Enter email or username.
+        note: The new owner will be notified by email.
         btn: Transfer ownership now
       destroy:
         success_message: "Agent with the name: %{name} has successfully been deleted."

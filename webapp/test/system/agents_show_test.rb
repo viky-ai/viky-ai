@@ -69,7 +69,7 @@ class AgentsShowTest < ApplicationSystemTestCase
     click_link 'T-800'
     click_link 'Transfer ownership'
     within(".modal") do
-      page.execute_script "document.getElementById('input-user-search').value = '#{users('confirmed').id}'"
+      fill_in 'users[new_owner]', with: users('confirmed').email
       click_button 'Transfer'
     end
     assert page.has_text?('Agent T-800 transferred to user confirmed')
@@ -84,12 +84,23 @@ class AgentsShowTest < ApplicationSystemTestCase
     click_link 'My awesome weather bot'
     click_link 'Transfer ownership'
     within(".modal") do
-      page.execute_script "document.getElementById('input-user-search').value = '#{users('confirmed').id}'"
+      fill_in 'users[new_owner]', with: users('confirmed').email
       click_button 'Transfer'
       assert page.has_content?('This user already have an agent with this ID')
     end
   end
 
+  test 'Tranfer agent ownership to non existant user' do
+    admin_go_to_agents_index
+    assert page.has_content?('admin/weather')
+    click_link 'My awesome weather bot'
+    click_link 'Transfer ownership'
+    within('.modal') do
+      fill_in 'users[new_owner]', with: 'not_user'
+      click_button 'Transfer'
+      assert page.has_content?('User with the username or email does not exist.')
+    end
+  end
 
   test 'Share from agent show if owner' do
     admin_go_to_agents_index
