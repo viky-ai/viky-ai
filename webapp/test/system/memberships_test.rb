@@ -114,7 +114,7 @@ class MembershipsTest < ApplicationSystemTestCase
     within(".modal") do
       click_link 'Invite collaborators'
       assert page.has_content?('Share with')
-      page.execute_script "document.getElementById('input-user-search').value = '#{users('confirmed').id};#{users('show_on_agent_weather').id}'"
+      page.execute_script "document.getElementById('input-user').value = '#{users('confirmed').username};#{users('show_on_agent_weather').email}'"
       click_button 'Invite'
     end
     assert page.has_text?('Agent terminator shared with : confirmed, show_on_agent_weather.')
@@ -129,11 +129,12 @@ class MembershipsTest < ApplicationSystemTestCase
     within(".modal") do
       click_link 'Invite collaborators'
       assert page.has_content?('Share with')
-      page.execute_script "document.getElementById('input-user-search').value = '#{users('confirmed').id};#{users('show_on_agent_weather').id}'"
+      page.execute_script "document.getElementById('input-user').value = '#{users('confirmed').email};#{users('show_on_agent_weather').email}'"
       click_button 'Invite'
       assert page.has_text?('confirmed@viky.ai')
       assert page.has_text?('show_on_agent_weather@viky.ai')
     end
-    assert page.has_text?('Impossible to create share for : show_on_agent_weather')
+    assert page.has_text?('confirmed@viky.ai')
+    assert page.has_text?('Agent is already shared with user: show_on_agent_weather@viky.ai')
   end
 end

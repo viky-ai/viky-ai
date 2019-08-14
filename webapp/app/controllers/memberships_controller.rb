@@ -12,7 +12,7 @@ class MembershipsController < ApplicationController
   end
 
   def create
-    memberships_creator = MembershipsCreator.new(@agent, memberships_params[:user_ids].split(';'), memberships_params[:rights])
+    memberships_creator = MembershipsCreator.new(@agent, memberships_params[:users].split(';'), memberships_params[:rights])
     respond_to do |format|
       if memberships_creator.create
         users = memberships_creator.new_collaborators.collect { |user| user.username }.join(', ')
@@ -26,13 +26,11 @@ class MembershipsController < ApplicationController
           render partial: 'create_succeed'
         }
       else
-        search_initial_values = memberships_creator.new_collaborators.collect do |user|
+        search_initial_values = memberships_creator.new_collaborators.collect do |collaborator|
           {
-            user_id: user.id,
-            name: user.name,
-            username: user.username,
-            email: user.email,
-            images: user.image
+            username: [collaborator.email, collaborator.username]
+              .select { |username| memberships_params[:users].include? username }
+              .first
           }
         end
         format.js {
@@ -112,7 +110,7 @@ class MembershipsController < ApplicationController
     end
 
     def memberships_params
-      params.require(:memberships).permit(:user_ids, :rights)
+      params.require(:memberships).permit(:users, :rights)
     end
 
     def set_agent

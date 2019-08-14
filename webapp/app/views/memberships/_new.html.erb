@@ -29,13 +29,12 @@
       </div>
 
       <br />
-      <%= form_with url: user_agent_memberships_path, scope: :memberships, class: 'js-user-search' do |f| %>
+      <%= form_with url: user_agent_memberships_path, scope: :memberships, class: 'js-user-input' do |f| %>
         <div class="field">
-          <%= f.label :user_id, "Share with" %>
+          <%= f.label :user, "Share with" %>
           <div class="control control--merged">
             <div class="merged-control-container">
-                <input type="text" name="memberships[user_ids]" id="input-user-search"
-                data-remote-url="<%= user_agent_search_users_to_share_agent_path(@agent.owner, @agent) %>"
+                <input type="text" name="memberships[users]" id="input-user"
                 data-placeholder="<%= t('views.memberships.new.placeholder') %>"
                 data-initial-values="<%= search_initial_values.to_json %>" />
             </div>
