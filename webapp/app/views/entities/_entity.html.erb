@@ -13,12 +13,14 @@
                ) %>
   <% end %>
   <a href="<%= link %>" data-remote="true" >
-    <span class="card-list__item__name">
-      <%= truncate(entity.terms_to_s.gsub("\n", ", "), length: 60) %>
-    </span>
-    <span class="card-list__item__sensitivity">
-      <%= t('views.entities.show.case_sensitive') if entity.case_sensitive %>
-      <%= t('views.entities.show.accent_sensitive') if entity.accent_sensitive %>
+    <span class="card-list__item__name card-list__item__name--with-badges">
+      <em><%= truncate(entity.terms_to_s.gsub("\n", ", "), length: 60) %></em>
+      <% if entity.case_sensitive %>
+        <span class="badge"><%= t('views.entities.show.case_sensitive') %></span>
+      <% end %>
+      <% if entity.accent_sensitive %>
+        <span class="badge"><%= t('views.entities.show.accent_sensitive') %></span>
+      <% end %>
     </span>
     <span class="card-list__item__stats">
       <%= t('views.entities.show.terms', count: entity.terms.count) %>

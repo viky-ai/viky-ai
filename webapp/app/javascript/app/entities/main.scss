@@ -14,6 +14,12 @@
 
   .label--with-option {
     float: right;
+    label{
+      letter-spacing: -0.02em;
+      @media (min-width: 1200px){
+        letter-spacing: 0;
+      }
+    }
   }
 
   .terms, textarea{
@@ -51,7 +57,7 @@
     "solution solution"
     "submit delete";
 
-  @media (min-width: 650px){
+  @media (min-width: 750px){
     grid-template:
       "terms solution" auto
       "submit delete" auto / 1fr 1fr;
