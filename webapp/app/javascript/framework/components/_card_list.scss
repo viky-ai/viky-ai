@@ -85,13 +85,18 @@
 
       display: grid;
       grid-template-areas:
-        "name  opts  stats"
-        "desc  .     stats";
-      grid-template-columns: auto minmax(0, 220px) minmax(0, 140px);
+        "name  stats"
+        "desc  stats";
+      grid-template-columns: auto min-content;
 
       .card-list__item__name{
         grid-area: name;
         display: block;
+        &.card-list__item__name--with-badges{
+          em{
+            font-style: normal;
+          }
+        }
       }
       .card-list__item__desc{
         grid-area: desc;
@@ -107,14 +112,7 @@
         padding: 0 1rem;
         color: #aaa;
         text-align: right;
-      }
-      .card-list__item__sensitivity{
-        grid-area: opts;
-        font-size: .8em;
-        line-height: 1.8rem;
-        padding: 0 1rem;
-        color: #aaa;
-        text-align: right;
+        white-space: nowrap;
       }
     }
 
@@ -122,6 +120,12 @@
     & > a:hover{
       .card-list__item__name{
         text-decoration: underline;
+        &.card-list__item__name--with-badges{
+          text-decoration: none;
+          em{
+            text-decoration: underline;
+          }
+        }
       }
     }
 
