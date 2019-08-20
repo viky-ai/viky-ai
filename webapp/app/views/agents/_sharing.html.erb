@@ -58,9 +58,8 @@
                   <% end %>
                 </span>
               </span>
-              <br />
               <% if current_user.owner?(agent) || agent.collaborator?(current_user) %>
-                <small><%= collaborator.email %></small>
+                <br /><small><%= collaborator.email %></small>
               <% end %>
             </div>
           </div>
