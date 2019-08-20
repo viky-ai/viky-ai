@@ -112,7 +112,7 @@ class AgentsShowTest < ApplicationSystemTestCase
     click_link 'Invite collaborators'
     assert page.has_content?('Share with')
     within(".modal") do
-      page.execute_script "document.getElementById('input-user').value = '#{users('confirmed').username}'"
+      fill_in 'users-input', with: users('confirmed').username
       click_button 'Invite'
     end
     assert page.has_text?('Agent terminator shared with : confirmed.')

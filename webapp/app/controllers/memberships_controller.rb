@@ -7,12 +7,11 @@ class MembershipsController < ApplicationController
   end
 
   def new
-    @membership = Membership.new
-    render partial: 'new', locals: { search_initial_values: [], errors: [] }
+    render partial: 'new', locals: { errors: [], users: "" }
   end
 
   def create
-    memberships_creator = MembershipsCreator.new(@agent, memberships_params[:users].split(';'), memberships_params[:rights])
+    memberships_creator = MembershipsCreator.new(@agent, memberships_params[:users], memberships_params[:rights])
     respond_to do |format|
       if memberships_creator.create
         users = memberships_creator.new_collaborators.collect { |user| user.username }.join(', ')
@@ -26,17 +25,12 @@ class MembershipsController < ApplicationController
           render partial: 'create_succeed'
         }
       else
-        search_initial_values = memberships_creator.new_collaborators.collect do |collaborator|
-          {
-            username: [collaborator.email, collaborator.username]
-              .select { |username| memberships_params[:users].include? username }
-              .first
-          }
-        end
         format.js {
           @html = render_to_string(
-            partial: 'new',
-            locals: { search_initial_values: search_initial_values, errors: memberships_creator.errors }
+            partial: 'new', locals: {
+              users: memberships_params[:users],
+              errors: memberships_creator.errors
+            }
           )
           render partial: 'create_failed'
         }
@@ -100,7 +94,6 @@ class MembershipsController < ApplicationController
     end
 
     def build_agent_content(agent)
-
       if params[:origin] == 'show'
         render_to_string(
           partial: '/agents/sharing',
@@ -112,7 +105,6 @@ class MembershipsController < ApplicationController
           locals: { agent: agent, editable: true }
         )
       end
-
     end
 
 end

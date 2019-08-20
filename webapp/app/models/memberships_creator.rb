@@ -3,7 +3,7 @@ class MembershipsCreator
 
   def initialize(agent, user_identities, rights)
     @agent = agent
-    @user_identities = user_identities
+    @user_identities = user_identities.split(/[;,\,]/).map(&:strip).reject(&:empty?)
     @rights = rights
 
     @errors = []
