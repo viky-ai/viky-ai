@@ -13,6 +13,7 @@ static og_status NlpInterpretRequestBuildSentence(og_nlp_th ctrl_nlp_th, json_t 
 static og_status NlpInterpretRequestBuildPackages(og_nlp_th ctrl_nlp_th, json_t *json_packages);
 static og_status NlpInterpretRequestBuildPackage(og_nlp_th ctrl_nlp_th, const char *package_id);
 static og_status NlpInterpretRequestBuildPrimaryPackage(og_nlp_th ctrl_nlp_th, json_t *json_primary_package);
+static og_status NlpInterpretRequestBuildPrimaryPackages(og_nlp_th ctrl_nlp_th, json_t *json_primary_packages);
 static og_status NlpInterpretRequestBuildContexts(og_nlp_th ctrl_nlp_th, json_t *json_contexts);
 static og_status NlpInterpretRequestBuildContext(og_nlp_th ctrl_nlp_th, const char *flag);
 
@@ -385,6 +386,7 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
 static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_request)
 {
   json_t *json_primary_package = NULL;
+  json_t *json_primary_packages = NULL;
   json_t *json_packages = NULL;
   json_t *json_contexts = NULL;
   json_t *json_sentence = NULL;
@@ -407,6 +409,10 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
     if (Ogstricmp(key, "primary-package") == 0)
     {
       json_primary_package = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "primary-packages") == 0)
+    {
+      json_primary_packages = json_object_iter_value(iter);
     }
     else if (Ogstricmp(key, "packages") == 0)
     {
@@ -641,6 +647,7 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
   IFE(NlpInterpretRequestBuildSentence(ctrl_nlp_th, json_sentence));
   IFE(NlpInterpretRequestBuildPackages(ctrl_nlp_th, json_packages));
   IFE(NlpInterpretRequestBuildPrimaryPackage(ctrl_nlp_th, json_primary_package));
+  IFE(NlpInterpretRequestBuildPrimaryPackages(ctrl_nlp_th, json_primary_packages));
   IFE(NlpInterpretRequestBuildAcceptLanguage(ctrl_nlp_th, json_accept_language));
   IFE(NlpWhyNotMatchingBuild(ctrl_nlp_th, json_why_not_matching));
 
@@ -800,6 +807,29 @@ static og_status NlpInterpretRequestBuildPrimaryPackage(og_nlp_th ctrl_nlp_th, j
 
   IFE(NlpAddPrimaryPackage(ctrl_nlp_th, primary_package));
   ctrl_nlp_th->nb_primary_packages = g_hash_table_size(ctrl_nlp_th->primary_package_hash);
+  DONE;
+}
+
+static og_status NlpInterpretRequestBuildPrimaryPackages(og_nlp_th ctrl_nlp_th, json_t *json_primary_packages)
+{
+  if (json_primary_packages == NULL) CONT;
+
+  if (json_typeof(json_primary_packages) == JSON_NULL) CONT;
+
+  if (json_is_array(json_primary_packages))
+  {
+    int array_size = json_array_size(json_primary_packages);
+    for (int i = 0; i < array_size; i++)
+    {
+      json_t *json_primary_package = json_array_get(json_primary_packages, i);
+      IFE(NlpInterpretRequestBuildPrimaryPackage(ctrl_nlp_th, json_primary_package));
+    }
+  }
+  else
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildPackages: 'primary-packages' is not a array");
+    DPcErr;
+  }
   DONE;
 }
 

@@ -74,6 +74,7 @@ module Nls
         explain: false,
         now: nil,
         primary_package: nil,
+        primary_packages: nil,
         show_private: nil,
         spellchecking: nil,
         enable_list: false
@@ -105,6 +106,18 @@ module Nls
         primary_package_id = primary_package.id.to_s if primary_package.kind_of? Package
       end
 
+      primary_packages = opts[:primary_packages]
+      primary_package_ids = []
+      unless primary_packages.nil?
+        primary_packages.each do | p |
+          if p.kind_of? Package
+            primary_package_ids << p.id.to_s
+          else
+            primary_package_ids << p
+          end
+        end
+      end
+
       spellchecking = opts[:spellchecking]
       spellchecking_valid_values = [nil, :inactive, :low, :medium, :high]
       unless  spellchecking_valid_values.include?(spellchecking)
@@ -113,6 +126,7 @@ module Nls
 
       request['sentence'] = sentence
       request['primary-package'] = primary_package_id unless primary_package_id.nil?
+      request['primary-packages'] = primary_package_ids unless primary_package_ids.empty?
       request['spellchecking'] = spellchecking        unless spellchecking.nil?
       request['Accept-Language'] = opts[:locale]      unless opts[:locale].nil?
       request['now'] = opts[:now]                     unless opts[:now].nil?
@@ -527,6 +541,7 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
       packages = "*"
       packages = expected[:packages] if expected.has_key?(:packages)
       primary_package = expected[:primary_package]
+      primary_packages = expected[:primary_packages]
 
       show_private = false
       show_private = expected[:show_private] if expected.has_key?(:show_private)
@@ -542,6 +557,7 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
         explain: explain,
         now: now,
         primary_package: primary_package,
+        primary_packages: primary_packages,
         show_private: show_private,
         spellchecking: spellchecking,
         enable_list: enable_list
