@@ -110,23 +110,6 @@ class AgentsController < ApplicationController
     end
   end
 
-  def search_users_for_transfer_ownership
-    respond_to do |format|
-      format.json {
-        query = params[:q].strip
-        @users = []
-        unless query.nil?
-          if query.size > 2
-            @users = User.confirmed
-              .where.not(id: @agent.owner_id)
-              .where("email LIKE ? OR username LIKE ?", "%#{query}%", "%#{query}%")
-              .limit(10)
-          end
-        end
-      }
-    end
-  end
-
   def generate_token
     @agent.ensure_api_token
     render json: { api_token: @agent.api_token }
@@ -165,7 +148,7 @@ class AgentsController < ApplicationController
         access_denied unless current_user.can? :show, @agent
       when "edit", "update", "generate_token"
         access_denied unless current_user.can? :edit, @agent
-      when "confirm_transfer_ownership", "transfer_ownership", "confirm_destroy", "destroy", "search_users_for_transfer_ownership"
+      when "confirm_transfer_ownership", "transfer_ownership", "confirm_destroy", "destroy"
         access_denied unless current_user.owner?(@agent)
       else
         access_denied
