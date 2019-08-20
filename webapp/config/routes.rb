@@ -58,7 +58,6 @@ Rails.application.routes.draw do
           get :full_export, to: 'agents_exports#full_export'
           get :agents_selection, to: 'agents_selection#index'
         end
-        get :search_users_to_share_agent, controller: 'memberships'
 
         resources :memberships, only: [:index, :new, :create, :update, :destroy] do
           get :confirm_destroy

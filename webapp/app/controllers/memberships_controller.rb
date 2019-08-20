@@ -44,25 +44,6 @@ class MembershipsController < ApplicationController
     end
   end
 
-  def search_users_to_share_agent
-    respond_to do |format|
-      format.json {
-        query = params[:q].strip
-        @users = []
-        unless query.nil?
-          if query.size > 2
-            collaborators_ids = @agent.collaborators.collect { |c| c.id }
-            @users = User.confirmed
-              .where.not(id: @agent.owner_id)
-              .where("email LIKE ? OR username LIKE ?", "%#{query}%", "%#{query}%")
-              .where.not(id: collaborators_ids)
-              .limit(10)
-          end
-        end
-      }
-    end
-  end
-
   def update
     @membership = Membership.find(params[:id])
     respond_to do |format|
