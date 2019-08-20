@@ -30,6 +30,8 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
   {
     struct request_expression *request_expression = request_expressions + i;
     struct interpretation *interpretation = request_expression->expression->interpretation;
+    og_bool is_primary_package = NlpIsPrimaryPackage(ctrl_nlp_th, interpretation->package);
+    IFE(is_primary_package);
 
     if (interpretation->scope == nlp_interpretation_scope_type_hidden)
     {
@@ -37,11 +39,11 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
     }
     else if (interpretation->scope == nlp_interpretation_scope_type_private)
     {
-      if (ctrl_nlp_th->primary_package == NULL)
+      if (ctrl_nlp_th->nb_primary_packages == 0)
       {
         continue;
       }
-      else if (ctrl_nlp_th->show_private && interpretation->package == ctrl_nlp_th->primary_package)
+      else if (ctrl_nlp_th->show_private && is_primary_package)
       {
         // keep that interpretation
       }
@@ -52,7 +54,7 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
     }
     else if (interpretation->scope == nlp_interpretation_scope_type_public)
     {
-      if (ctrl_nlp_th->primary_package != NULL && interpretation->package != ctrl_nlp_th->primary_package)
+      if (ctrl_nlp_th->nb_primary_packages > 0 && !is_primary_package)
       {
         // this is a secondary agent public interpretation
         if (ctrl_nlp_th->show_private)

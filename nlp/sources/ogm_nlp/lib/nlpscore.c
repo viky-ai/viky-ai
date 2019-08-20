@@ -182,9 +182,12 @@ static og_status NlpCalculateTotalScore(og_nlp_th ctrl_nlp_th, struct request_ex
 
 static og_status NlpCalculateScoreMatchScope(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
-  if (ctrl_nlp_th->primary_package != NULL)
+  if (ctrl_nlp_th->nb_primary_packages > 0)
   {
-    if (ctrl_nlp_th->primary_package == request_expression->expression->interpretation->package)
+    og_bool is_primary_package = NlpIsPrimaryPackage(ctrl_nlp_th, request_expression->expression->interpretation->package);
+    IFE(is_primary_package);
+
+    if (is_primary_package)
     {
       request_expression->score->scope = 1;
     }

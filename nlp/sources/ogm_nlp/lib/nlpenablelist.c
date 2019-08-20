@@ -31,7 +31,7 @@ og_status NlpEnableListReset(og_nlp_th ctrl_nlp_th)
 
 og_status NlpEnableList(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions)
 {
-  if (!ctrl_nlp_th->enable_list) DONE;
+  //if (!ctrl_nlp_th->enable_list) DONE;
 
   // TODO: make a hashtable of selected interpretations
   // then for each of those interpretations get the one that do not overlap
