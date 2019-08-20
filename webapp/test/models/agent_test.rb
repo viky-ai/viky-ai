@@ -375,7 +375,7 @@ class AgentTest < ActiveSupport::TestCase
 
     result = weather_agent.transfer_ownership_to(new_owner.id)
     assert !result[:success]
-    expected = ["User with the username or email does not exist"]
+    expected = ["Please enter a valid username or email of a viky.ai user"]
     assert_equal expected, result[:errors]
   end
 

@@ -31,9 +31,9 @@
             <%= agent.owner.name_or_username %>
             <span class="badge badge--primary">
               <%= t('views.agents.show.owner') %>
-            </span><br />
+            </span>
             <% if current_user.owner?(agent) || agent.collaborator?(current_user) %>
-              <small><%= agent.owner.email %></small>
+              <br /><small><%= agent.owner.email %></small>
             <% end %>
           </div>
         </div>

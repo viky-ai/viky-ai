@@ -17,6 +17,7 @@ class AgentsShowTest < ApplicationSystemTestCase
     assert page.has_text?("Unauthorized operation.")
   end
 
+
   test "Navigation to agent show where user is a collaborator; The user owns another agent with same name" do
     user = users(:show_on_agent_weather)
 
@@ -37,7 +38,7 @@ class AgentsShowTest < ApplicationSystemTestCase
 
     assert page.has_text?('My awesome weather bot admin/weather')
     assert page.has_text?('Weather agent 2 show_on_agent_weather/weather')
-    
+
     click_link 'Weather agent 2 show_on_agent_weather/weather'
     assert_equal '/agents/show_on_agent_weather/weather', current_path
     assert page.has_text?('Weather agent 2 show_on_agent_weather/weather')
@@ -69,7 +70,7 @@ class AgentsShowTest < ApplicationSystemTestCase
     click_link 'T-800'
     click_link 'Transfer ownership'
     within(".modal") do
-      page.execute_script "document.getElementById('input-user').value = '#{users('confirmed').email}'"
+      fill_in 'js-new-owner', with: users('confirmed').email
       click_button 'Transfer'
     end
     assert page.has_text?('Agent T-800 transferred to user confirmed')
@@ -84,11 +85,12 @@ class AgentsShowTest < ApplicationSystemTestCase
     click_link 'My awesome weather bot'
     click_link 'Transfer ownership'
     within(".modal") do
-      page.execute_script "document.getElementById('input-user').value = '#{users('confirmed').email}'"
+      fill_in 'js-new-owner', with: users('confirmed').email
       click_button 'Transfer'
       assert page.has_content?('This user already have an agent with this ID')
     end
   end
+
 
   test 'Tranfer agent ownership to non existant user' do
     admin_go_to_agents_index
@@ -96,11 +98,12 @@ class AgentsShowTest < ApplicationSystemTestCase
     click_link 'My awesome weather bot'
     click_link 'Transfer ownership'
     within('.modal') do
-      page.execute_script "document.getElementById('input-user').value = 'not_user'"
+      fill_in 'js-new-owner', with: "missing username"
       click_button 'Transfer'
-      assert page.has_content?('User with the username or email does not exist.')
+      assert page.has_content?('Please enter a valid username or email of a viky.ai user.')
     end
   end
+
 
   test 'Share from agent show if owner' do
     admin_go_to_agents_index

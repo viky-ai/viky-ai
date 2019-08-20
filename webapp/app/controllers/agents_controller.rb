@@ -79,14 +79,15 @@ class AgentsController < ApplicationController
   end
 
   def confirm_transfer_ownership
-    render partial: 'confirm_transfer_ownership', locals: { agent: @agent, errors: [] }
+    render partial: 'confirm_transfer_ownership', locals: { new_owner: '', agent: @agent, errors: [] }
   end
 
   def transfer_ownership
-    result = @agent.transfer_ownership_to(params[:users][:new_owner])
+    new_owner_input = params[:users][:new_owner]
+    transfer = @agent.transfer_ownership_to(new_owner_input)
 
     respond_to do |format|
-      if result[:success]
+      if transfer[:success]
         format.json do
           new_owner = User.find(@agent.owner_id)
           redirect_to agents_path,
@@ -101,7 +102,7 @@ class AgentsController < ApplicationController
             replace_modal_content_with: render_to_string(
               partial: 'confirm_transfer_ownership',
               formats: :html,
-              locals: { agent: @agent, errors: result[:errors] }
+              locals: { new_owner: new_owner_input, agent: @agent, errors: transfer[:errors] }
             )
           }, status: 422
         }

@@ -59,7 +59,7 @@ en:
       confirm_transfer_ownership:
         title: Transfer ownership
         content_html: "You're about to transfer ownership of agent: <strong>%{name}</strong> to another user."
-        label: "Enter the new owner :"
+        label: "Enter the new owner:"
         placeholder: Enter email or username.
         note: The new owner will be notified by email.
         btn: Transfer ownership now
