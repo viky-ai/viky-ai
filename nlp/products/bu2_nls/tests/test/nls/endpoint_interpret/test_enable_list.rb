@@ -21,38 +21,29 @@ module Nls
       def create_package
         package = Package.new("enable_list")
 
-        abcd = package.new_interpretation("abcd", { scope: "public" })
-        abcd << Expression.new("aaa", solution: "aaa")
-        abcd << Expression.new("bbb", solution: "bbb")
-        abcd << Expression.new("ccc", solution: "ccc")
-        abcd << Expression.new("aaa bbb", solution: "aaa bbb", keep_order: true)
+        a = package.new_interpretation("a", { scope: "public" })
+        a << Expression.new("aaa")
+
+        b = package.new_interpretation("b", { scope: "public" })
+        b << Expression.new("bbb")
+
+        c = package.new_interpretation("c", { scope: "public" })
+        c << Expression.new("ccc")
+
+        ab = package.new_interpretation("ab", { scope: "public" })
+        ab << Expression.new("aaa bbb", keep_order: true)
 
         package
       end
 
       def test_enable_list
 
-        expected = { interpretation: "abcd", solution: "aaa bbb" }
-        check_interpret("aaa bbb", expected)
-
-        #enable_list option to be implemented and check_interpret_list also (not check_interpret_array).
-        expected = [{ interpretation: "abcd", solution: "aaa" }]
-        check_interpret({sentence: "aaa", enable_list: true}, expected)
-
-        expected = [{ interpretation: "abcd", solution: "aaa bbb" }]
-        check_interpret({sentence: "aaa bbb", enable_list: true}, expected)
-
-        expected = [{ interpretation: "abcd", solution: "aaa" },{ interpretation: "abcd", solution: "bbb" }]
-        check_interpret({sentence: "bbb aaa", enable_list: true}, expected)
-
-        expected = [{ interpretation: "abcd", solution: "aaa" },{ interpretation: "abcd", solution: "ccc" }]
-        check_interpret({sentence: "aaa ccc", enable_list: true}, expected)
-
-        expected = [{ interpretation: "abcd", solution: "aaa bbb" },{ interpretation: "abcd", solution: "ccc" }]
-        check_interpret({sentence: "aaa bbb ccc", enable_list: true}, expected)
-
-        expected = [{ interpretation: "abcd", solution: "bbb" },{ interpretation: "abcd", solution: "aaa" },{ interpretation: "abcd", solution: "ccc" }]
-        check_interpret({sentence: "bbb aaa ccc", enable_list: true}, expected)
+        check_interpret("aaa", interpretations: ["a" ])
+        check_interpret("aaa bbb", interpretations: ["ab" ])
+        check_interpret("bbb aaa", interpretations: ["a", "b" ])
+        check_interpret("aaa ccc", interpretations: ["a", "c" ])
+        check_interpret("bbb aaa ccc", interpretations: ["a", "b", "c" ])
+        check_interpret("aaa bbb ccc", interpretations: ["ab", "c" ])
 
       end
 

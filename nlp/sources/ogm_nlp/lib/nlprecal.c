@@ -39,11 +39,7 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
     }
     else if (interpretation->scope == nlp_interpretation_scope_type_private)
     {
-      if (ctrl_nlp_th->nb_primary_packages == 0)
-      {
-        continue;
-      }
-      else if (ctrl_nlp_th->show_private && is_primary_package)
+      if (ctrl_nlp_th->show_private && is_primary_package)
       {
         // keep that interpretation
       }
@@ -54,7 +50,7 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
     }
     else if (interpretation->scope == nlp_interpretation_scope_type_public)
     {
-      if (ctrl_nlp_th->nb_primary_packages > 0 && !is_primary_package)
+      if (!is_primary_package)
       {
         // this is a secondary agent public interpretation
         if (ctrl_nlp_th->show_private)

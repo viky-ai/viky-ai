@@ -49,7 +49,7 @@ module Nls
         )
 
         check_interpret("hello scope",
-          interpretations: ["scope_public_1", "scope_public_2"],
+          interpretations: ["scope_public_1", "scope_public_2", "scope_private_1", "scope_private_2"],
           packages: [ @package_1, @package_2 ],
           show_private: true
         )

@@ -24,27 +24,35 @@ og_status NlpEnableListFlush(og_nlp_th ctrl_nlp_th)
 
 og_status NlpEnableListReset(og_nlp_th ctrl_nlp_th)
 {
-  ctrl_nlp_th->enable_list = FALSE;
   g_hash_table_remove_all(ctrl_nlp_th->interpretation_hash);
   DONE;
 }
 
+/*
+ * We choose to keep all interpretation that are public and that are in primary packages
+ * We also keep the interpretation that was choosen as the best (which is normally
+ * a public interpretation that is in the primary package.
+ */
 og_status NlpEnableList(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions)
 {
-  //if (!ctrl_nlp_th->enable_list) DONE;
-
-  // TODO: make a hashtable of selected interpretations
-  // then for each of those interpretations get the one that do not overlap
-  // with already selected ones
-  // Getting expression that will be sent
-  struct interpretation *interpretation = NULL;
   for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
   {
+    struct interpretation *interpretation = NULL;
     struct request_expression *request_expression = iter->data;
     if (request_expression->keep_as_result)
     {
       interpretation = request_expression->expression->interpretation;
       g_hash_table_insert(ctrl_nlp_th->interpretation_hash, GINT_TO_POINTER(interpretation), GINT_TO_POINTER(1));
+    }
+    else
+    {
+      interpretation = request_expression->expression->interpretation;
+      og_bool is_primary_package = NlpIsPrimaryPackage(ctrl_nlp_th, interpretation->package);
+      IFE(is_primary_package);
+      if (is_primary_package && interpretation->scope == nlp_interpretation_scope_type_public)
+      {
+        g_hash_table_insert(ctrl_nlp_th->interpretation_hash, GINT_TO_POINTER(interpretation), GINT_TO_POINTER(1));
+      }
     }
     IFE(NlpSolutionCalculatePositions(ctrl_nlp_th, request_expression));
   }

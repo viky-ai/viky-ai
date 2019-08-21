@@ -398,7 +398,6 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
   json_t *json_trace = NULL;
   json_t *json_date_now = NULL;
   json_t *json_spellchecking = NULL;
-  json_t *json_enable_list = NULL;
 
   for (void *iter = json_object_iter(json_request); iter; iter = json_object_iter_next(json_request, iter))
   {
@@ -460,7 +459,7 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
     }
     else if (Ogstricmp(key, "enable-list") == 0)
     {
-      json_enable_list = json_object_iter_value(iter);
+      // TODO supprimer l'option quand c'est deployé sur master
     }
     else
     {
@@ -614,24 +613,6 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
     else
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestParse: spellchecking is not a string");
-      DPcErr;
-    }
-  }
-
-  IFX(json_enable_list)
-  {
-    if (json_is_boolean(json_enable_list))
-    {
-      ctrl_nlp_th->enable_list = json_boolean_value(json_enable_list);
-      if (ctrl_nlp_th->enable_list)
-      {
-
-        NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestParse: enable-list request")
-      }
-    }
-    else
-    {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestParse: json_enable_list is not a boolean");
       DPcErr;
     }
   }

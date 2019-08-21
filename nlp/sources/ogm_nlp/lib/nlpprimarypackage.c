@@ -22,7 +22,6 @@ og_status NlpPrimaryPackageFlush(og_nlp_th ctrl_nlp_th)
 
 og_status NlpPrimaryPackageReset(og_nlp_th ctrl_nlp_th)
 {
-  ctrl_nlp_th->enable_list = FALSE;
   g_hash_table_remove_all(ctrl_nlp_th->primary_package_hash);
   ctrl_nlp_th->nb_primary_packages = 0;
   DONE;
@@ -36,6 +35,9 @@ og_status NlpAddPrimaryPackage(og_nlp_th ctrl_nlp_th, package_t primary_package)
 
 og_bool NlpIsPrimaryPackage(og_nlp_th ctrl_nlp_th, package_t primary_package)
 {
+  // When there is no primary packzges (for tests purposes) we consider
+  // that all packages are primaries
+  if (ctrl_nlp_th->nb_primary_packages == 0) return TRUE;
   gpointer exists = g_hash_table_lookup(ctrl_nlp_th->primary_package_hash, primary_package);
   IFN(exists) return FALSE;
   return TRUE;
