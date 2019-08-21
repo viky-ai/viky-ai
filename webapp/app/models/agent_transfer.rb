@@ -2,12 +2,12 @@ class AgentTransfer
 
   attr_accessor :errors, :agent, :previous_owner, :new_owner
 
-  def initialize(agent, new_owner_id)
+  def initialize(agent, new_owner_username)
     @errors = []
     @agent = agent
 
     @previous_owner = @agent.owner
-    @new_owner = User.find_by(id: new_owner_id)
+    @new_owner = User.find_by('email = ? OR username = ?', new_owner_username, new_owner_username)
   end
 
   def valid?

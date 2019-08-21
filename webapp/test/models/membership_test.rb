@@ -10,7 +10,6 @@ class MembershipTest < ActiveSupport::TestCase
 
 
   test "Check integrity constraints of membership" do
-
     unknown_user = User.new(id: '1afbac59-0df7-44ba-bcfc-40540475ff97', name: 'Unknown user')
     exception_user = assert_raises do
       Membership.new(user: unknown_user, agent: agents(:weather)).save
@@ -26,7 +25,6 @@ class MembershipTest < ActiveSupport::TestCase
       Membership.new(user: users(:confirmed), agent: unknown_agent).save
     end
     assert exception_agent.message.include? "PG::ForeignKeyViolation"
-
   end
 
 
@@ -35,7 +33,7 @@ class MembershipTest < ActiveSupport::TestCase
     agent_weather = agents(:weather)
     rights = 'edit'
 
-    memberships_creator = MembershipsCreator.new(agent_weather, [user.id], rights)
+    memberships_creator = MembershipsCreator.new(agent_weather, " #{user.username} , ; ", rights)
     assert memberships_creator.create
     assert_equal 1, memberships_creator.new_collaborators.size
     assert_equal user.id, memberships_creator.new_collaborators.first.id
@@ -51,21 +49,21 @@ class MembershipTest < ActiveSupport::TestCase
     agent_weather = agents(:weather)
     rights = 'edit'
 
-    memberships_creator = MembershipsCreator.new(agent_weather, [], rights)
-    assert !memberships_creator.create
-    assert_equal "Please select a valid user.", memberships_creator.errors.first
+    memberships_creator = MembershipsCreator.new(agent_weather, "", rights)
+    assert_not memberships_creator.create
+    assert_equal "Please enter atleast one username or email.", memberships_creator.errors.first
     assert memberships_creator.new_collaborators.empty?
   end
 
 
   test "Error on share agent because of unknown user" do
-    unknown_user = User.new(id: '1afbac59-0df7-44ba-bcfc-40540475ff97', name: 'Unknown user')
+    unknown_user = User.new(id: '1afbac59-0df7-44ba-bcfc-40540475ff97', email: 'unknown@user.com')
     agent_weather = agents(:weather)
     rights = 'edit'
 
-    memberships_creator = MembershipsCreator.new(agent_weather, [unknown_user.id], rights)
-    assert !memberships_creator.create
-    assert_equal "User must exist", memberships_creator.errors.first
+    memberships_creator = MembershipsCreator.new(agent_weather, unknown_user.email, rights)
+    assert_not memberships_creator.create
+    assert_equal "Unknown user 'unknown@user.com' given", memberships_creator.errors.first
     assert memberships_creator.new_collaborators.empty?
   end
 
@@ -79,10 +77,9 @@ class MembershipTest < ActiveSupport::TestCase
     )
     rights = 'edit'
 
-    memberships_creator = MembershipsCreator.new(unknown_agent, [user.id], rights)
-    assert !memberships_creator.create
+    memberships_creator = MembershipsCreator.new(unknown_agent, user.username, rights)
+    assert_not memberships_creator.create
     assert_equal "Agent must exist", memberships_creator.errors.first
-    assert memberships_creator.new_collaborators.one?
 
     new_membership = Membership.where(user_id: user.id, agent_id: unknown_agent.id).first
     assert new_membership.nil?
@@ -94,10 +91,9 @@ class MembershipTest < ActiveSupport::TestCase
     agent_weather = agents(:weather)
     unknown_rights = 'unknown_rights'
 
-    memberships_creator = MembershipsCreator.new(agent_weather, [user.id], unknown_rights)
+    memberships_creator = MembershipsCreator.new(agent_weather, user.username, unknown_rights)
     assert !memberships_creator.create
     assert_equal "Rights is not included in the list", memberships_creator.errors.first
-    assert memberships_creator.new_collaborators.one?
 
     new_membership = Membership.where(user_id: user.id, agent_id: agent_weather.id).first
     assert new_membership.nil?

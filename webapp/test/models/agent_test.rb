@@ -344,7 +344,7 @@ class AgentTest < ActiveSupport::TestCase
     assert terminator_agent.users.one? { |user| user.id == user_admin.id }
     assert terminator_agent.users.none? { |user| user.id == user_confirmed.id }
 
-    result = terminator_agent.transfer_ownership_to(user_confirmed.id)
+    result = terminator_agent.transfer_ownership_to(user_confirmed.email)
     assert result[:success]
 
     assert_equal user_confirmed.id, terminator_agent.owner_id
@@ -358,7 +358,7 @@ class AgentTest < ActiveSupport::TestCase
     weather_agent = agents(:weather)
     assert_equal 0, (user_confirmed.agents.count { |agent| agent.name == "My awesome weather bot" })
 
-    result = weather_agent.transfer_ownership_to(user_confirmed.id)
+    result = weather_agent.transfer_ownership_to(user_confirmed.email)
     assert !result[:success]
     expected = ["This user already have an agent with this ID"]
     assert_equal expected, result[:errors]
@@ -375,7 +375,7 @@ class AgentTest < ActiveSupport::TestCase
 
     result = weather_agent.transfer_ownership_to(new_owner.id)
     assert !result[:success]
-    expected = ["Please select a valid new owner"]
+    expected = ["Please enter a valid username or email of a viky.ai user"]
     assert_equal expected, result[:errors]
   end
 
@@ -384,7 +384,7 @@ class AgentTest < ActiveSupport::TestCase
     new_owner = users(:show_on_agent_weather)
     weather_agent = agents(:weather)
 
-    result = weather_agent.transfer_ownership_to(new_owner.id)
+    result = weather_agent.transfer_ownership_to(new_owner.username)
     assert result[:success]
   end
 
