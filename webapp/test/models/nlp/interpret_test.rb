@@ -116,6 +116,7 @@ class InterpretTest < ActiveSupport::TestCase
     assert_equal [weather.id, terminator.id], interpret.packages
   end
 
+
   test 'Test a long interpretation sentence' do
     weather = agents(:weather)
     interpret = Nlp::Interpret.new(
@@ -128,4 +129,31 @@ class InterpretTest < ActiveSupport::TestCase
     assert interpret.invalid?
     assert_equal ["Sentence (8.004 KB) is too long (maximum is 8 KB)"], interpret.errors.full_messages
   end
+
+
+  test 'with multiple agents' do
+    weather = agents(:weather)
+    terminator = agents(:terminator)
+    assert AgentArc.create(source: weather, target: terminator)
+
+    interpret = Nlp::Interpret.new(
+      ownername: weather.owner.username,
+      agentname: weather.agentname,
+      agent_ids: [agents(:weather_confirmed).id],
+      agent_token: weather.api_token,
+      sentence: 'Hello',
+      format: 'json'
+    )
+    assert interpret.valid?
+
+    assert_equal 2, interpret.agents.size
+    assert interpret.agents.collect(&:id).include? weather.id
+    assert interpret.agents.collect(&:id).include? agents(:weather_confirmed).id
+
+    assert interpret.packages.include? weather.id
+    assert interpret.packages.include? terminator.id
+    assert interpret.packages.include? agents(:weather_confirmed).id
+    assert_equal 3, interpret.packages.size
+  end
+
 end

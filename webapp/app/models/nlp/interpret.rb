@@ -7,15 +7,14 @@ class Nlp::Interpret
   include ActiveModel::Validations
   include ActiveModel::Validations::Callbacks
 
-  attr_accessor :ownername, :agentname, :format, :sentence, :language,
-                :spellchecking, :agent_token, :verbose, :now, :enable_list, :context
+  attr_accessor :ownername, :agentname, :agent_ids, :format, :sentence, :language,
+                :spellchecking, :agent_token, :verbose, :now, :context
 
   validates_presence_of :ownername, :agentname, :format, :sentence, :agent_token
   validates :sentence, byte_size: { maximum: 1024*8 }
   validates_inclusion_of :format, in: %w( json )
   validates_inclusion_of :verbose, in: [ "true", "false" ]
   validates_inclusion_of :spellchecking, in: %w( inactive low medium high ), allow_blank: true
-  validates_inclusion_of :enable_list, in: [ "true", "false" ], allow_blank: true
   validate :ownername_and_agentname_consistency
   validate :agent_token_consistency
   validate :now_format
@@ -81,8 +80,18 @@ class Nlp::Interpret
     Agent.owned_by(owner).friendly.find(agentname)
   end
 
+  def agents
+    if agent_ids.respond_to? :each
+      Agent.where(id: agent_ids.push(agent.id).uniq)
+    else
+      [agent]
+    end
+  end
+
   def packages
-    AgentGraph.new(agent).to_graph.vertices.collect(&:id)
+    agents.collect { |agent|
+      AgentGraph.new(agent).to_graph.vertices.collect(&:id)
+    }.flatten.uniq
   end
 
   def endpoint
@@ -157,14 +166,13 @@ class Nlp::Interpret
     def nlp_request_params
       p = {
         "Accept-Language"  => language,
-        'spellchecking'    => spellchecking.present? ? spellchecking : 'low',
-        "primary-package"  => agent.id,
+        "spellchecking"    => spellchecking.present? ? spellchecking : 'low',
+        "primary-packages" => agents.collect(&:id),
         "packages"         => packages,
         "sentence"         => sentence,
         "show-explanation" => verbose == 'true',
         "show-private"     => verbose == 'true'
       }
-      p["enable-list"] = (enable_list == "true")
       p["now"] = now unless now.blank?
       p
     end
