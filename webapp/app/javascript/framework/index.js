@@ -1,10 +1,6 @@
 // CSS reset
 import 'normalize.css'
 
-// Selectize
-import 'selectize'
-import 'selectize/dist/css/selectize.css'
-
 // PrismJs & Auto highlight
 import 'prismjs/themes/prism.css';
 require('prismjs');
