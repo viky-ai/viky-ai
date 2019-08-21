@@ -7,12 +7,11 @@ class MembershipsController < ApplicationController
   end
 
   def new
-    @membership = Membership.new
-    render partial: 'new', locals: { search_initial_values: [], errors: [] }
+    render partial: 'new', locals: { errors: [], users: "" }
   end
 
   def create
-    memberships_creator = MembershipsCreator.new(@agent, memberships_params[:user_ids].split(';'), memberships_params[:rights])
+    memberships_creator = MembershipsCreator.new(@agent, memberships_params[:users], memberships_params[:rights])
     respond_to do |format|
       if memberships_creator.create
         users = memberships_creator.new_collaborators.collect { |user| user.username }.join(', ')
@@ -26,42 +25,16 @@ class MembershipsController < ApplicationController
           render partial: 'create_succeed'
         }
       else
-        search_initial_values = memberships_creator.new_collaborators.collect do |user|
-          {
-            user_id: user.id,
-            name: user.name,
-            username: user.username,
-            email: user.email,
-            images: user.image
-          }
-        end
         format.js {
           @html = render_to_string(
-            partial: 'new',
-            locals: { search_initial_values: search_initial_values, errors: memberships_creator.errors }
+            partial: 'new', locals: {
+              users: memberships_params[:users],
+              errors: memberships_creator.errors
+            }
           )
           render partial: 'create_failed'
         }
       end
-    end
-  end
-
-  def search_users_to_share_agent
-    respond_to do |format|
-      format.json {
-        query = params[:q].strip
-        @users = []
-        unless query.nil?
-          if query.size > 2
-            collaborators_ids = @agent.collaborators.collect { |c| c.id }
-            @users = User.confirmed
-              .where.not(id: @agent.owner_id)
-              .where("email LIKE ? OR username LIKE ?", "%#{query}%", "%#{query}%")
-              .where.not(id: collaborators_ids)
-              .limit(10)
-          end
-        end
-      }
     end
   end
 
@@ -112,7 +85,7 @@ class MembershipsController < ApplicationController
     end
 
     def memberships_params
-      params.require(:memberships).permit(:user_ids, :rights)
+      params.require(:memberships).permit(:users, :rights)
     end
 
     def set_agent
@@ -121,7 +94,6 @@ class MembershipsController < ApplicationController
     end
 
     def build_agent_content(agent)
-
       if params[:origin] == 'show'
         render_to_string(
           partial: '/agents/sharing',
@@ -133,7 +105,6 @@ class MembershipsController < ApplicationController
           locals: { agent: agent, editable: true }
         )
       end
-
     end
 
 end

@@ -1,10 +1,6 @@
 // CSS reset
 import 'normalize.css'
 
-// Selectize
-import 'selectize'
-import 'selectize/dist/css/selectize.css'
-
 // PrismJs & Auto highlight
 import 'prismjs/themes/prism.css';
 require('prismjs');
@@ -29,7 +25,6 @@ window.App.Modal = require('./modal')
 import './form_delete_validation.coffee'
 import './color_picker.coffee'
 window.App.Message = require('./message')
-import './user_search.coffee'
 import './console.coffee'
 window.App.FocusInput = require('./focus')
 import './button_group.coffee'
