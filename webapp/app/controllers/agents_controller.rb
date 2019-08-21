@@ -88,16 +88,15 @@ class AgentsController < ApplicationController
 
     respond_to do |format|
       if transfer[:success]
-        format.json do
+        format.json{
           new_owner = User.find(@agent.owner_id)
-          redirect_to agents_path,
-            notice: t(
-              'views.agents.index.ownership_transferred',
-              name: @agent.name, username: new_owner.username
-            )
-        end
+          redirect_to agents_path, notice: t(
+            'views.agents.index.ownership_transferred',
+            name: @agent.name, username: new_owner.username
+          )
+        }
       else
-        format.json {
+        format.json{
           render json: {
             replace_modal_content_with: render_to_string(
               partial: 'confirm_transfer_ownership',
