@@ -164,6 +164,7 @@ Default concurrency for background job management is set to 5, you can change it
 The first time you start the application you need to manually create two databases `vikylapp_development` and `vikylapp_test` :
 
 ### Create postgres user
+
 ```
 $ sudo -i -u postgres
 ## Become postgres user
@@ -177,6 +178,7 @@ $ exit
 ```
 
 ### Create database
+
 ```
 $ ./bin/rails db:setup
 > Created database 'vikylapp_development'
@@ -185,6 +187,7 @@ $ ./bin/rails db:setup
 ```
 
 ## Bootstrap statistics
+
 We use ElasticSearch to store statistics data. It is highly configured for a _time-series_ load.
 
 Every indexes (_active_ and _inactives_) are searchable (ie: they all belongs to alias `search-stats-interpret_request_log`).
@@ -194,6 +197,7 @@ This has two consequences :
   - _inactives_ indexes are optimized for reading
 
 ### Create templates, index and Kibana configuration
+
 - It will create _templates_ only if it does not already exists.
 - It will create _index_ only if it does not already exists.
 - It always configure Kibana.
@@ -208,18 +212,21 @@ $ ./bin/rails statistics:setup
 ```
 
 ### Reindex a specific index
+
 ```bash
 $ ./bin/rails statistics:reindex[<index_name>]
 > ...
 ```
 
 ### Reindex every index
+
 ```bash
 $ ./bin/rails statistics:reindex:all
 > ...
 ```
 
 ### Rollover the active index
+
 _Do something only if there is more than 100 000 documents in the index or it is older than 7 days._
 
 Basically it will move the active index in the inactive pool, and put a new empty active index.

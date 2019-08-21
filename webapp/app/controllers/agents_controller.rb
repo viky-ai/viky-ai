@@ -79,50 +79,33 @@ class AgentsController < ApplicationController
   end
 
   def confirm_transfer_ownership
-    render partial: 'confirm_transfer_ownership', locals: { agent: @agent, errors: [] }
+    render partial: 'confirm_transfer_ownership', locals: { new_owner: '', agent: @agent, errors: [] }
   end
 
   def transfer_ownership
-    result = @agent.transfer_ownership_to(params[:users][:new_owner_id])
+    new_owner_input = params[:users][:new_owner]
+    transfer = @agent.transfer_ownership_to(new_owner_input)
 
     respond_to do |format|
-      if result[:success]
-        format.json {
+      if transfer[:success]
+        format.json{
           new_owner = User.find(@agent.owner_id)
-          redirect_to agents_path,
-            notice: t(
-              'views.agents.index.ownership_transferred',
-              name: @agent.name, username: new_owner.username
-            )
+          redirect_to agents_path, notice: t(
+            'views.agents.index.ownership_transferred',
+            name: @agent.name, username: new_owner.username
+          )
         }
       else
-        format.json {
+        format.json{
           render json: {
             replace_modal_content_with: render_to_string(
               partial: 'confirm_transfer_ownership',
               formats: :html,
-              locals: { agent: @agent, errors: result[:errors] }
+              locals: { new_owner: new_owner_input, agent: @agent, errors: transfer[:errors] }
             )
           }, status: 422
         }
       end
-    end
-  end
-
-  def search_users_for_transfer_ownership
-    respond_to do |format|
-      format.json {
-        query = params[:q].strip
-        @users = []
-        unless query.nil?
-          if query.size > 2
-            @users = User.confirmed
-              .where.not(id: @agent.owner_id)
-              .where("email LIKE ? OR username LIKE ?", "%#{query}%", "%#{query}%")
-              .limit(10)
-          end
-        end
-      }
     end
   end
 
@@ -164,7 +147,7 @@ class AgentsController < ApplicationController
         access_denied unless current_user.can? :show, @agent
       when "edit", "update", "generate_token"
         access_denied unless current_user.can? :edit, @agent
-      when "confirm_transfer_ownership", "transfer_ownership", "confirm_destroy", "destroy", "search_users_for_transfer_ownership"
+      when "confirm_transfer_ownership", "transfer_ownership", "confirm_destroy", "destroy"
         access_denied unless current_user.owner?(@agent)
       else
         access_denied

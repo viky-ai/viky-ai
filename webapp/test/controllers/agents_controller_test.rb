@@ -400,10 +400,10 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:admin)
 
     post transfer_ownership_user_agent_path(users(:admin), agents(:weather).agentname),
-      params: {
-        users: { new_owner_id: users('locked').id },
-        format: :json
-      }
+         params: {
+           users: { new_owner: users('locked').username },
+           format: :json
+         }
     assert_redirected_to agents_url
     assert_nil flash[:alert]
     assert_equal "Agent My awesome weather bot transferred to user locked", flash[:notice]
@@ -429,7 +429,7 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
 
     post transfer_ownership_user_agent_path(users(:confirmed), agent_public.agentname),
          params: {
-           users: { new_owner_id: users('locked').id },
+           users: { new_owner: users('locked').username },
            format: :json
          }
     assert_response :forbidden
@@ -441,7 +441,7 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
 
     post transfer_ownership_user_agent_path(users(:admin), agents(:weather)),
       params: {
-        users: { new_owner_id: users('locked').id },
+           users: { new_owner: users('locked').email },
         format: :json
       }
     assert_response :forbidden
@@ -453,7 +453,7 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
 
     post transfer_ownership_user_agent_path(users(:admin), agents(:weather)),
       params: {
-        users: { new_owner_id: users('locked').id },
+           users: { new_owner: users('locked').email },
         format: :json
       }
     assert_response :forbidden

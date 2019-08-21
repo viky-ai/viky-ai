@@ -167,6 +167,12 @@ class ProfileTest < ApplicationSystemTestCase
     end
     assert agent.destroy
 
+    agent = agents(:cities)
+    agent.memberships.where.not(rights: 'all').each do |m|
+      assert m.destroy
+    end
+    assert agent.destroy
+
     go_to_profile
     click_link "Edit your profile"
 

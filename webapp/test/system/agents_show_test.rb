@@ -17,6 +17,7 @@ class AgentsShowTest < ApplicationSystemTestCase
     assert page.has_text?("Unauthorized operation.")
   end
 
+
   test "Navigation to agent show where user is a collaborator; The user owns another agent with same name" do
     user = users(:show_on_agent_weather)
 
@@ -37,7 +38,7 @@ class AgentsShowTest < ApplicationSystemTestCase
 
     assert page.has_text?('My awesome weather bot admin/weather')
     assert page.has_text?('Weather agent 2 show_on_agent_weather/weather')
-    
+
     click_link 'Weather agent 2 show_on_agent_weather/weather'
     assert_equal '/agents/show_on_agent_weather/weather', current_path
     assert page.has_text?('Weather agent 2 show_on_agent_weather/weather')
@@ -69,7 +70,7 @@ class AgentsShowTest < ApplicationSystemTestCase
     click_link 'T-800'
     click_link 'Transfer ownership'
     within(".modal") do
-      page.execute_script "document.getElementById('input-user-search').value = '#{users('confirmed').id}'"
+      fill_in 'js-new-owner', with: users('confirmed').email
       click_button 'Transfer'
     end
     assert page.has_text?('Agent T-800 transferred to user confirmed')
@@ -84,9 +85,22 @@ class AgentsShowTest < ApplicationSystemTestCase
     click_link 'My awesome weather bot'
     click_link 'Transfer ownership'
     within(".modal") do
-      page.execute_script "document.getElementById('input-user-search').value = '#{users('confirmed').id}'"
+      fill_in 'js-new-owner', with: users('confirmed').email
       click_button 'Transfer'
       assert page.has_content?('This user already have an agent with this ID')
+    end
+  end
+
+
+  test 'Tranfer agent ownership to non existant user' do
+    admin_go_to_agents_index
+    assert page.has_content?('admin/weather')
+    click_link 'My awesome weather bot'
+    click_link 'Transfer ownership'
+    within('.modal') do
+      fill_in 'js-new-owner', with: "missing username"
+      click_button 'Transfer'
+      assert page.has_content?('Please enter a valid username or email of a viky.ai user.')
     end
   end
 
@@ -98,7 +112,7 @@ class AgentsShowTest < ApplicationSystemTestCase
     click_link 'Invite collaborators'
     assert page.has_content?('Share with')
     within(".modal") do
-      page.execute_script "document.getElementById('input-user-search').value = '#{users('confirmed').id}'"
+      fill_in 'users-input', with: users('confirmed').username
       click_button 'Invite'
     end
     assert page.has_text?('Agent terminator shared with : confirmed.')
@@ -188,6 +202,42 @@ class AgentsShowTest < ApplicationSystemTestCase
       click_link 'What the weather like tomorrow ?'
       assert page.has_text?('admin/weather-copy/interpretations/weather_question')
       assert page.has_link?('admin/weather-copy/interpretations/weather_question')
+    end
+  end
+
+  test 'Visibility of owner and collaborator emails' do
+    login_as users(:edit_on_agent_weather).email, 'BimBamBoom'
+    go_to_agent_show(agents(:weather))
+    within('.user-list') do
+      assert page.has_text?('edit_on_agent_weather@viky.ai')
+      assert page.has_text?('admin@viky.ai')
+      assert page.has_text?('show_on_agent_weather@viky.ai')
+    end
+    logout
+
+    login_as users(:show_on_agent_weather).email, 'BimBamBoom'
+    go_to_agent_show(agents(:weather))
+    within('.user-list') do
+      assert page.has_text?('edit_on_agent_weather@viky.ai')
+      assert page.has_text?('admin@viky.ai')
+      assert page.has_text?('show_on_agent_weather@viky.ai')
+    end
+    logout
+
+    admin_login
+    go_to_agent_show(agents(:weather))
+    within('.user-list') do
+      assert page.has_text?('edit_on_agent_weather@viky.ai')
+      assert page.has_text?('admin@viky.ai')
+      assert page.has_text?('show_on_agent_weather@viky.ai')
+    end
+    logout
+
+    login_as users(:confirmed).email, 'BimBamBoom'
+    go_to_agent_show(agents(:terminator))
+    within('.user-list') do
+      assert page.has_text?('admin Owner')
+      assert_not page.has_text?('admin@viky.ai')
     end
   end
 end

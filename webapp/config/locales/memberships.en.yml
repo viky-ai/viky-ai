@@ -10,10 +10,11 @@ en:
         title_html: "<strong>%{agent}</strong> agent sharing options"
       new:
         title_html: "<strong>%{agent}</strong> agent sharing options"
-        placeholder: Search by email or username (at least 3 characters).
+        placeholder: Enter email or username.
         success_message: "Agent %{agent} shared with : %{users}."
-        empty_dest_message: Please select a valid user.
-        unknown_user: "Impossible to create share : unknown user given"
+        empty_dest_message: Please enter atleast one username or email.
+        unknown_user: "Unknown user '%{user}' given"
+        duplicate_user: "Agent is already shared with user: %{user}"
         fail_message: "Impossible to create share for : %{user}"
       note_html: >
         <p>

@@ -156,7 +156,7 @@ class EntitiesController < ApplicationController
     end
 
     def entity_params
-      params.require(:entity).permit(:auto_solution_enabled, :terms, :solution)
+      params.require(:entity).permit(:auto_solution_enabled, :terms, :solution, :case_sensitive, :accent_sensitive)
     end
 
     def import_params
