@@ -8,30 +8,19 @@
 </h2>
 <ul>
   <% interpreter.agents.each do |available_agent| %>
-    <li <% if available_agent.id == interpreter.agent.id %>class="current"<% end %>>
-      <a href="/play/" data-turbolinks="false"
-         data-action="play-switch-agent"
-         data-agent-id="<%= available_agent.id %>">
-        <div class="agent-compact">
-          <% cache [available_agent, current_user] do %>
-            <%= render partial: "/play/shared/agent_compact", locals: { agent: available_agent } %>
-          <% end %>
-          <% if interpreter.result(available_agent).present? %>
-            <% r = interpreter.result(available_agent) %>
-            <div class="agent-compact__actions">
-              <% if r.succeed? %>
-                <span class="badge <% if available_agent.id == interpreter.agent.id %>badge--primary<% end %>">
-                  <%= r.interpretations_count %>
-                </span>
-              <% else %>
-                <span class="badge badge--danger" title="<%= r.error_messages %>">
-                  <%= r.status %>
-                </span>
-              <% end %>
-            </div>
-          <% end %>
-        </div>
-      </a>
+    <li>
+      <div class="agent-compact">
+        <% cache [available_agent, current_user] do %>
+          <%= render partial: "/play/shared/agent_compact", locals: { agent: available_agent } %>
+        <% end %>
+<!--         <div class="agent-compact__actions">
+          <input form="play-form"
+           type="checkbox"
+           name="play_interpreter[agend_ids]"
+           value="<%= available_agent.id %>"
+           checked />
+        </div> -->
+      </div>
     </li>
   <% end %>
 </ul>

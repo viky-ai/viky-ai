@@ -75,19 +75,7 @@ body[data-controller-name="play"]{
       background-color: #fff;
       li{
         margin: 0;
-        a{
-          display: block;
-          padding: .35em .5em;
-          text-decoration: none;
-          border-right: 5px solid transparent;
-          &:hover,
-          &:focus{
-            border-right: 5px solid #ddd;
-          }
-        }
-        &.current a{
-          border-right: 5px solid $primary_color;
-        }
+        padding: .35em .5em;
         .agent-compact{
           font-size: .85em;
           box-shadow: none;

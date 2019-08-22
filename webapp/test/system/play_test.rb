@@ -194,7 +194,6 @@ class PlayTest < ApplicationSystemTestCase
       ]
       assert_equal expected, all('ul li').collect(&:text)
       expected = ["My awesome weather bot admin/weather"]
-      assert_equal expected, all('ul li.current').collect(&:text)
     end
   end
 

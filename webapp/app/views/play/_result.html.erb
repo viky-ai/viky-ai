@@ -1,11 +1,15 @@
-<% r = interpreter.agent_result %>
+<% r = interpreter.result %>
 <% if r.present? %>
   <% if r.succeed? %>
     <div class="play-main__result__wrapper">
       <h2>
         <span>
           <%= t('views.play.result.title_html', count: r.interpretations_count) %>
-          <strong><a href="<%= user_agent_path(interpreter.agent.owner.username, interpreter.agent.agentname) %>"><%=   interpreter.agent.name %></a></strong>
+          <% interpreter.agents.each do |agent| %>
+            <strong>
+              <a href="<%= user_agent_path(agent.owner.username, agent.agentname) %>"><%=   agent.name %></a>
+            </strong>
+          <% end %>
         </span>
       </h2>
       <div>

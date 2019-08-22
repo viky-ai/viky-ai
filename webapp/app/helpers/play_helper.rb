@@ -5,7 +5,7 @@ module PlayHelper
     pos = 0
     opened_tag = 0
     closed_tag = 0
-    interpretations = interpreter.agent_result.body["interpretations"]
+    interpretations = interpreter.result.body["interpretations"]
 
     colors = slug_colors(interpretations)
     interpreter.text.each_char do |c|

@@ -12,7 +12,7 @@ class PlayInterpreterTest < ActiveSupport::TestCase
 
     # Validation set_defaults
     assert_equal [], pi.agents
-    assert_equal Hash.new, pi.results
+    assert_nil pi.result
     assert_equal 'low', pi.spellchecking
     assert_equal '*', pi.language
   end

@@ -1,7 +1,5 @@
-<%= form_with(url: "/play", method: :post, class: "play-main__form", model: interpreter) do |f| %>
+<%= form_with(url: "/play", method: :post, class: "play-main__form", id: "play-form", model: interpreter) do |f| %>
 
-  <input type="hidden" name="play_interpreter[agent_id]"
-         value="<%= interpreter.agent.id %>" id="play_input_agent_id">
   <input type="hidden" name="play_interpreter[language]"
          value="<%= interpreter.language %>" class="js-nlp-language-input">
   <input type="hidden" name="play_interpreter[spellchecking]"
@@ -11,9 +9,8 @@
 
     <div class="field field--agent">
       <div class="control">
-        <label class="label label--uppercase">Agent</label>
+        <label class="label label--uppercase">Agents</label>
         <br />
-        <%= render partial: "agents_dropdown", locals: { interpreter: interpreter } %>
         <a href="<%= edit_play_selection_path %>"
            class="btn btn--small btn--primary"
            data-action="open-remote-modal">
