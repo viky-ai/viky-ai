@@ -50,6 +50,23 @@ class Console
         $("#console-reset-btn").show()
         $('#console-output').scrollTop(0)
 
+    $("body").on 'ajax:error', (event, one, two, tree) ->
+      if $(event.target).attr('id') == "js-console-form"
+        $(".console__output").addClass('console__output__loading')
+        @timeout = setTimeout ->
+          $(".console__output").removeClass('console__output__loading')
+        , 500
+        [data, status, xhr] = event.detail
+        html = []
+        html.push "<div class='c-explain' id='console-explain'>"
+        html.push "  <p>"
+        html.push "    <span class='badge badge--danger'>#{xhr.status}</span>"
+        html.push "    Oops, something went wrong: \"#{status}\"."
+        html.push "  </p>"
+        html.push "</div>"
+        $('#console-output').html(html.join("\n"))
+        $('#console-tabs').html("")
+
     $("body").on 'console-submit-form', (event, data) =>
       @send_interpret_request(data)
 
