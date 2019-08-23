@@ -1,9 +1,10 @@
 @import '../../framework/abstracts/variables';
 
+$play_small_breakpoint: 500px;
 $play_breakpoint: 1000px;
+$play_form_color: #fafafa;
 
 body[data-controller-name="play"] .modal{
-
   form{
     margin: 0;
     padding: .75em 1em 0 1em;
@@ -48,43 +49,106 @@ body[data-controller-name="play"] .modal{
 }
 
 
+
+
 body[data-controller-name="play"]{
-  aside{
-    display: none;
-    @media (min-width: $play_breakpoint){
-      display: block;
-    }
+  .app-wrapper{
+    display: block;
     overflow: auto;
-    width: 300px;
-    background-color: #fff;
-    box-shadow: 2px 0 3px rgba(#000, .05);
+    -webkit-overflow-scrolling: touch;
+    @media (min-width: $play_breakpoint){
+      display: flex;
+    }
+  }
+
+  main{
+    overflow: unset;
+    height: auto;
+    @media (min-width: $play_breakpoint){
+      overflow: auto;
+      height: 100%;
+    }
+  }
+
+  aside{
+    width: 100%;
+    @media (min-width: $play_breakpoint){
+      width: 300px;
+      overflow: auto;
+      background-color: #fff;
+      box-shadow: 2px 0 3px rgba(#000, .05);
+    }
+
     h2{
-      padding: 1em 1em;
+      padding: .5em 1.5em;
       margin: 0;
       font-size: 1em;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(#000, .05);
-      background-color: #fcfcfc;
+      background-color: $play_form_color;
+      span{
+        text-transform: uppercase;
+        font-size: .7em;
+        font-weight: 400;
+      }
+      .btn{
+        font-size: .7em;
+      }
+      @media (min-width: $play_breakpoint){
+        background-color: #fcfcfc;
+        padding: 1em;
+        border-bottom: 1px solid rgba(#000, .05);
+        span{
+          text-transform: none;
+          font-size: 1em;
+          font-weight: 300;
+        }
+        .btn{
+          font-size: .8em;
+        }
+      }
     }
     ul{
       list-style: none;
       padding: 0;
       margin: 0;
       background-color: #fff;
+
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
+
+      max-height: 100px;
+      overflow: auto;
+
+      border-bottom: 1px solid rgba(#000, .075);
+      border-top: 1px solid rgba(#000, .075);
+      @media (min-width: $play_breakpoint){
+        max-height: none;
+        overflow: unset;
+        border: none;
+      }
+
       li{
         margin: 0;
-        padding: .35em .5em;
+        padding: .35em 1.5em;
         .agent-compact{
           font-size: .85em;
           box-shadow: none;
           text-decoration: none;
-          padding: .25em;
+          .agent-compact__id__visual{
+          }
           .agent-compact__actions{
             padding-right: 0;
           }
         }
+        @media (min-width: $play_breakpoint){
+          padding: .35em .5em;
+          .agent-compact{
+            padding: .25em;
+          }
+        }
+
       }
     }
   }
@@ -101,7 +165,7 @@ body[data-controller-name="play"]{
 
 
 .play-main{
-  background-color: #fafafa;
+  background-color: $play_form_color;
   border-bottom: 1px solid rgba(#000, .1);
 
   @media (min-width: $play_breakpoint){
@@ -112,12 +176,19 @@ body[data-controller-name="play"]{
     max-width: 66em;
   }
   .banner{
-    margin: 0 2em 2em 2em;
+    margin: 0 1.5em 1.5em 1.5em;
+    @media (min-width: $play_breakpoint){
+      margin: 0 2em 2em 2em;
+    }
   }
 }
 
 .play-main__form{
-  padding: 1.5em 2em;
+  padding: 1em 1.5em;
+  @media (min-width: $play_breakpoint){
+    padding: 1.5em 2em;
+  }
+
   textarea{
     height: 6.6em;
     resize: none;
@@ -129,18 +200,14 @@ body[data-controller-name="play"]{
   }
   .inputs-wrapper{
     display: grid;
-    grid-template-columns: min-content min-content auto;
+    grid-template-columns: min-content auto;
     grid-column-gap: 1em;
 
     grid-template-areas:
-      "agent    agent         agent"
-      "language spellchecking spellchecking"
-      "text     text          text"
-      "submit   submit        submit";
+      "language spellchecking"
+      "text     text         "
+      "submit   submit       ";
 
-    .field--agent{
-      grid-area: agent;
-    }
     .field--language{
       grid-area: language;
     }
@@ -155,9 +222,9 @@ body[data-controller-name="play"]{
     }
     @media (min-width: 500px){
       grid-template-areas:
-        "language spellchecking agent"
-        "text     text     text"
-        "submit   submit   submit";
+        "language spellchecking"
+        "text     text         "
+        "submit   submit       ";
     }
     @media (min-width: 600px){
       grid-column-gap: 2em;
@@ -179,19 +246,22 @@ body[data-controller-name="play"]{
 .play-main__result{
   .play-main__result__wrapper{
     background-color: #fff;
-    padding: 2em;
+    padding: 1.5em;
     border-top: 1px solid rgba(#000, .1);
     border-bottom-left-radius: 3px;
     border-bottom-right-radius: 3px;
     h2{
       font-size: .9em;
-      margin: -2rem -2rem 1.5rem -2rem;
-      padding: 1rem 2rem;
+      margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+      padding: 1rem 1.5rem;
       background-color: #fcfcfc;
       border-bottom: 1px solid rgba(#000, .075);
     }
     & > div{
       line-height: 1.75em;
+    }
+    @media (min-width: $play_breakpoint){
+      padding: 1.5em 2em;
     }
   }
 

@@ -25,6 +25,7 @@ class Play::SelectionsController < ApplicationController
     selection = selection_params['agent_ids'].reject { |id| id.blank? }[0,10]
     user_state = UserUiState.new(current_user)
     user_state.play_agents_selection = selection
+    user_state.play_search = user_state.play_search.merge({ agent_ids: selection })
     user_state.save
     redirect_to "/play"
   end

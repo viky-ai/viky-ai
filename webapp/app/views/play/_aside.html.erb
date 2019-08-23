@@ -1,5 +1,5 @@
 <h2>
-  <%= t('views.play.aside.title') %>
+  <span><%= t('views.play.aside.title') %></span>
   <a href="<%= edit_play_selection_path %>"
      class="btn btn--small btn--primary"
      data-action="open-remote-modal">
@@ -7,20 +7,20 @@
   </a>
 </h2>
 <ul>
-  <% interpreter.agents.each do |available_agent| %>
+  <% interpreter.available_agents.each do |agent| %>
     <li>
-      <div class="agent-compact">
-        <% cache [available_agent, current_user] do %>
-          <%= render partial: "/play/shared/agent_compact", locals: { agent: available_agent } %>
+      <label class="agent-compact">
+        <% cache [agent, current_user] do %>
+          <%= render partial: "/play/shared/agent_compact", locals: { agent: agent } %>
         <% end %>
-<!--         <div class="agent-compact__actions">
+        <div class="agent-compact__actions">
           <input form="play-form"
            type="checkbox"
-           name="play_interpreter[agend_ids]"
-           value="<%= available_agent.id %>"
-           checked />
-        </div> -->
-      </div>
+           name="play_interpreter[agent_ids][]"
+           value="<%= agent.id %>"
+           <% if interpreter.agents.collect(&:id).include? agent.id %>checked<% end %> />
+        </div>
+      </label>
     </li>
   <% end %>
 </ul>
