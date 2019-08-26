@@ -109,6 +109,14 @@ body[data-controller-name="play"]{
         }
       }
     }
+    .play-selection-options{
+      display: none;
+      text-align: center;
+      padding: .5em 0 0 0;
+      @media (min-width: $play_breakpoint){
+        display: block;
+      }
+    }
     ul{
       list-style: none;
       padding: 0;
@@ -116,7 +124,7 @@ body[data-controller-name="play"]{
       background-color: #fff;
 
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 
       max-height: 100px;
       overflow: auto;

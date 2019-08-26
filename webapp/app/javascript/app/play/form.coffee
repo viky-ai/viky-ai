@@ -1,12 +1,40 @@
 class PlayForm
   constructor: ->
-    $("body").on 'change', (event) => @dispatch(event)
+    $("body").on 'click', (event) => @dispatch(event)
 
   dispatch: (event) ->
-    if $(event.target).is('input[name="play_interpreter[agent_ids][]"]')
-      Rails.fire($('.play-main__form')[0], 'submit')
-      $('aside input').prop('disabled', true)
+    agent = @get_target(event)
+    action = agent.data('action')
 
+    if action == 'play-toggle-agent'
+      checkbox = agent.find('input')
+      btn = agent.find('.btn.btn--toggle')
+      if checkbox.prop('checked')
+        btn.removeClass('btn--toggle-on').addClass('btn--toggle-off')
+        checkbox.prop('checked', false)
+      else
+        btn.removeClass('btn--toggle-off').addClass('btn--toggle-on')
+        checkbox.prop('checked', true)
+      Rails.fire($('.play-main__form')[0], 'submit')
+
+    if action == 'play-select-all'
+      $('aside .btn.btn--toggle').removeClass('btn--toggle-off').addClass('btn--toggle-on')
+      $('aside input[type="checkbox"').prop('checked', true)
+      Rails.fire($('.play-main__form')[0], 'submit')
+
+    if action == 'play-select-none'
+      $('aside .btn.btn--toggle').removeClass('btn--toggle-on').addClass('btn--toggle-off')
+      $('aside input[type="checkbox"').prop('checked', false)
+      Rails.fire($('.play-main__form')[0], 'submit')
+
+  get_target: (event) ->
+    if $(event.target).is('.agent-compact')
+      return $(event.target)
+    else
+      if $(event.target).closest('.agent-compact').length == 1
+        $(event.target).closest('.agent-compact')
+      else
+        return $(event.target)
 
 Setup = ->
   if $('body').data('controller-name') == "play"

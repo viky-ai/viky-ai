@@ -50,7 +50,7 @@ class Console
         $("#console-reset-btn").show()
         $('#console-output').scrollTop(0)
 
-    $("body").on 'ajax:error', (event, one, two, tree) ->
+    $("body").on 'ajax:error', (event) ->
       if $(event.target).attr('id') == "js-console-form"
         $(".console__output").addClass('console__output__loading')
         @timeout = setTimeout ->

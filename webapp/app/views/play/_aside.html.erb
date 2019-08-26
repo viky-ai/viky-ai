@@ -6,21 +6,31 @@
     <%= t('views.play.aside.btn_edit') %>
   </a>
 </h2>
+<div class="play-selection-options">
+  <button class="btn btn--plain btn--small" data-action="play-select-all">
+    <%= t('views.play.aside.select_all') %>
+  </button>
+  <button class="btn btn--plain btn--small" data-action="play-select-none">
+    <%= t('views.play.aside.select_none') %>
+  </button>
+</div>
 <ul>
   <% interpreter.available_agents.each do |agent| %>
     <li>
-      <label class="agent-compact">
+      <div class="agent-compact" data-action="play-toggle-agent">
         <% cache [agent, current_user] do %>
           <%= render partial: "/play/shared/agent_compact", locals: { agent: agent } %>
         <% end %>
         <div class="agent-compact__actions">
+          <button class="btn btn--toggle <% if interpreter.agents.collect(&:id).include? agent.id %>btn--toggle-on<% end %>"></button>
           <input form="play-form"
-           type="checkbox"
-           name="play_interpreter[agent_ids][]"
-           value="<%= agent.id %>"
-           <% if interpreter.agents.collect(&:id).include? agent.id %>checked<% end %> />
+            style="display: none;"
+            type="checkbox"
+            name="play_interpreter[agent_ids][]"
+            value="<%= agent.id %>"
+            <% if interpreter.agents.collect(&:id).include? agent.id %>checked<% end %> />
         </div>
-      </label>
+      </div>
     </li>
   <% end %>
 </ul>

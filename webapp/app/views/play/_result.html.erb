@@ -4,12 +4,15 @@
     <div class="play-main__result__wrapper">
       <h2>
         <span>
-          <%= t('views.play.result.title_html', count: r.interpretations_count) %>
-          <% interpreter.agents.each do |agent| %>
-            <strong>
-              <a href="<%= user_agent_path(agent.owner.username, agent.agentname) %>"><%=   agent.name %></a>
-            </strong>
+          <% if interpreter.agents.size > 1 %>
+            <%= t('views.play.result.title_multiple_agents_html', count: r.interpretations_count) %>
+          <% else %>
+            <%= t('views.play.result.title_one_agent_html', count: r.interpretations_count) %>
           <% end %>
+          <% html = interpreter.agents.collect { |agent|
+              "<strong><a href='#{user_agent_path(agent.owner.username, agent.agentname)}'>#{agent.name}</a></strong>"
+            } %>
+          <%= html.join(', ').html_safe %>.
         </span>
       </h2>
       <div>
