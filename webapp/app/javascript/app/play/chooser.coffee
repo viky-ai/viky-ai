@@ -31,7 +31,7 @@ class PlayChooser
       @update_state()
 
   update_state: ->
-    max_size = 10
+    max_size = 20
     size = $("#play-chooser-selected-agents input").length
     if size < 2
       $('.play__modal-footer__state').html("#{size} #{@i18n_status_one}")
