@@ -6,14 +6,18 @@
     <%= t('views.play.aside.btn_edit') %>
   </a>
 </h2>
-<div class="play-selection-options">
-  <button class="btn btn--plain btn--small" data-action="play-select-all">
-    <%= t('views.play.aside.select_all') %>
-  </button>
-  <button class="btn btn--plain btn--small" data-action="play-select-none">
-    <%= t('views.play.aside.select_none') %>
-  </button>
-</div>
+
+<% if interpreter.available_agents.size > 2 %>
+  <div class="play-selection-options">
+    <button class="btn btn--plain btn--small" data-action="play-select-all">
+      <%= t('views.play.aside.select_all') %>
+    </button>
+    <button class="btn btn--plain btn--small" data-action="play-select-none">
+      <%= t('views.play.aside.select_none') %>
+    </button>
+  </div>
+<% end %>
+
 <ul>
   <% interpreter.available_agents.each do |agent| %>
     <li>

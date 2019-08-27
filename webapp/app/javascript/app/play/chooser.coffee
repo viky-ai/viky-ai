@@ -15,14 +15,14 @@ class PlayChooser
 
     if action == 'play-select-agent'
       id = agent.data('id')
-      btn = agent.find('.btn.btn--toggle')
-      if btn.hasClass('btn--toggle-on')
-        btn.removeClass('btn--toggle-on').addClass('btn--toggle-off')
+      btn = agent.find('.btn.btn--checkbox')
+      if btn.hasClass('btn--checkbox-on')
+        btn.removeClass('btn--checkbox-on').addClass('btn--checkbox-off')
         $("#input__#{id}").remove()
         $("#search__input__#{id}").remove()
       else
         if not @disable
-          btn.removeClass('btn--toggle-off').addClass('btn--toggle-on')
+          btn.removeClass('btn--checkbox-off').addClass('btn--checkbox-on')
           input = "<input type='hidden' name='selection[agent_ids][]' value='#{id}' id='input__#{id}'/>"
           $("#play-chooser-selected-agents").append(input)
           input_search = "<input type='hidden' name='search[selected_ids][]' value='#{id}' id='search__input__#{id}'/>"
@@ -42,14 +42,14 @@ class PlayChooser
 
     if size == max_size
       @disable = true
-      $('.btn--toggle.btn--toggle-off').addClass('btn--toggle-disabled')
-      for toggle in $('.btn--toggle.btn--toggle-off')
+      $('.btn--checkbox.btn--checkbox-off').addClass('btn--checkbox-disabled')
+      for toggle in $('.btn--checkbox.btn--checkbox-off')
         $(toggle).closest('.agent-compact--play-chooser')
           .addClass('agent-compact--play-chooser--disabled')
     else
       @disable = false
-      $('.btn--toggle.btn--toggle-off').removeClass('btn--toggle-disabled')
-      for toggle in $('.btn--toggle')
+      $('.btn--checkbox.btn--checkbox-off').removeClass('btn--checkbox-disabled')
+      for toggle in $('.btn--checkbox')
         $(toggle).closest('.agent-compact--play-chooser')
           .removeClass('agent-compact--play-chooser--disabled')
 

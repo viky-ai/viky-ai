@@ -24,4 +24,8 @@ class PlayInterpreterResult
     body['interpretations'].size
   end
 
+  def interpretations_count_for_agent(agent_id)
+    body['interpretations'].select{|interpretation| interpretation["package"] == agent_id }.size
+  end
+
 end

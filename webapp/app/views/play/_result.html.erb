@@ -10,7 +10,7 @@
             <%= t('views.play.result.title_one_agent_html', count: r.interpretations_count) %>
           <% end %>
           <% html = interpreter.agents.collect { |agent|
-              "<strong><a href='#{user_agent_path(agent.owner.username, agent.agentname)}'>#{agent.name}</a></strong>"
+              "<a href='#{user_agent_path(agent.owner.username, agent.agentname)}'>#{agent.name} <small>(#{r.interpretations_count_for_agent(agent.id)})</small></a>"
             } %>
           <%= html.join(', ').html_safe %>.
         </span>
