@@ -33,6 +33,17 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :play do
+    resource :selection, only: [:edit, :update] do
+      collection do
+        get :search
+      end
+    end
+  end
+  get  '/play', to: 'play#index'
+  get  '/play/reset', to: 'play#reset'
+  post '/play', to: 'play#interpret'
+
   scope '/agents' do
     resources :favorites, only: [:create, :destroy]
     resources :users, path: '', only: [] do
@@ -42,13 +53,11 @@ Rails.application.routes.draw do
           get :confirm_transfer_ownership
           post :transfer_ownership
           post :duplicate
-          get :search_users_for_transfer_ownership
           get :generate_token
           get :interpret, to: 'console#interpret'
           get :full_export, to: 'agents_exports#full_export'
           get :agents_selection, to: 'agents_selection#index'
         end
-        get :search_users_to_share_agent, controller: 'memberships'
 
         resources :memberships, only: [:index, :new, :create, :update, :destroy] do
           get :confirm_destroy

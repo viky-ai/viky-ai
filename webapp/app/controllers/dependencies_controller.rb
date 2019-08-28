@@ -5,7 +5,7 @@ class DependenciesController < ApplicationController
   before_action :check_user_rights
 
   def create
-    arc = AgentArc.new(source: @agent, target_id: params[:id])
+    arc = AgentArc.new(agent: @agent, depends_on: Agent.find(params[:id]))
     if arc.save
       redirect_to user_agent_path(@agent.owner, @agent.agentname)
     else
@@ -38,7 +38,7 @@ class DependenciesController < ApplicationController
 
   def destroy
     @successor = Agent.find(params[:id])
-    arc = AgentArc.where(source: @agent.id, target: @successor).first
+    arc = AgentArc.where(agent: @agent.id, depends_on: @successor).first
     if arc.destroy
       redirect_to user_agent_path(@agent.owner, @agent.agentname)
     else

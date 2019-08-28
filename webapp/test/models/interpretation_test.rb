@@ -19,7 +19,7 @@ class InterpretationTest < ActiveSupport::TestCase
     interpretation_alias.interpretation_aliasable = intents(:weather_question)
     assert interpretation_alias.save
 
-    assert_equal 2, interpretation.position
+    assert_equal 1, interpretation.position
     assert_equal 'Good morning John', interpretation.expression
     assert_equal intents(:weather_forecast).id, interpretation.intent.id
     assert_equal false, interpretation.keep_order
@@ -344,5 +344,72 @@ class InterpretationTest < ActiveSupport::TestCase
     ).save
     force_reset_model_cache interpretation
     assert interpretation.save
+  end
+
+  test 'Change interpretation locale' do
+    forecast = interpretations(:weather_forecast_tomorrow)
+    previous_locale = ''
+    assert_difference "Interpretation.where(locale: '*').count" do
+      previous_locale = forecast.update_locale '*'
+    end
+    assert_equal 'en', previous_locale
+  end
+
+  test 'Position interpretation in new locale' do
+    intent = intents(:weather_forecast)
+    assert intent.interpretations.destroy_all
+
+    Interpretation.create(
+      expression: 'interpretation_0',
+      locale: '*',
+      position: 0,
+      intent: intent
+    )
+    interpretation_1 = Interpretation.create(
+      expression: 'interpretation_1',
+      locale: '*',
+      position: 1,
+      intent: intent
+    )
+
+    previous_locale = ''
+    assert_difference "Interpretation.where(locale: 'en').count" do
+      previous_locale = interpretation_1.update_locale 'en'
+    end
+    assert_equal '*', previous_locale
+  end
+
+  test 'Interpretation creation scope position to language' do
+    intent = intents(:weather_forecast)
+    assert intent.interpretations.destroy_all
+
+    Interpretation.create(
+      expression: 'interpretation_0',
+      locale: '*',
+      intent: intent
+    )
+    Interpretation.create(
+      expression: 'interpretation_1',
+      locale: '*',
+      intent: intent
+    )
+    english_interpretation = Interpretation.create(
+      expression: 'interpretation_3',
+      locale: 'en',
+      intent: intent
+    )
+    assert_equal 0, english_interpretation.position
+  end
+
+  test 'Save interpretation with very locales' do
+    intent = intents(:weather_forecast)
+    Locales::ALL.each do |locale|
+      interpretation = Interpretation.new(
+        expression: "interpretation_#{locale}",
+        locale: locale,
+        intent: intent
+      )
+      assert interpretation.save
+    end
   end
 end

@@ -1,0 +1,39 @@
+en:
+  views:
+    play:
+      blankslate:
+        title: Welcome to playground!
+        content: This UI allows you to test multiple agents on long texts. Start by choosing some agents to play with.
+        btn: Choose agents
+      chooser:
+        title: Choose playground's agents
+        btn_submit: Let's go
+        status_one: selected agent
+        status_more: selected agents
+        status_max: Maximum reached
+        search:
+          placeholder: Search agents
+          selected:
+            all: All
+            true: Selected
+            false: Unselected
+          filter_owner:
+            all: All
+            owned: Yours
+            favorites: Favorites
+          not_found: No agent found.
+      aside:
+        title: Playground's Agents
+        btn_edit: Edit
+      form:
+        btn: Interpret
+        btn_loading_html: Interpret <span class="icon icon--x-small icon--spin">%{icon}</span>
+        reset: Reset
+      result:
+        title_html:
+          zero: "<strong>No interpretation found</strong> with agent"
+          one: "<strong>%{count} interpretation found</strong> with agent"
+          other: "<strong>%{count} interpretations found</strong> with agent"
+      error:
+        title: Sorry, an error occurred
+        status: "Error %{status}"

@@ -274,6 +274,10 @@ static og_status NlpRegexAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
         && sentence_word->start_position + sentence_word->length <= request_word->start_position + request_word->length) wordCount++;
   }
   request_word->nb_matched_words = wordCount;
+  if (request_word->nb_matched_words == 0)
+  {
+    request_word->nb_matched_words = 1;
+  }
 
   DONE;
 }

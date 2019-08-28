@@ -1160,4 +1160,64 @@ class PackageTest < ActiveSupport::TestCase
     p.generate_json(other_io) # Use the cache
     assert_equal expected, JSON.parse(other_io.string)
   end
+
+  test 'Package generation with case_sensitive and accent_sensitive' do
+    cities = agents(:cities)
+    p = Nlp::Package.new(cities)
+
+    expected = {
+      "id"=>"30d3b81b-52f4-5fb3-a6f7-b2f025dece97",
+      "slug"=>"admin/cities",
+      "interpretations"=> [
+        {
+          "id"=>"30d3b81b-52f4-5fb3-a6f7-b2f025dece97",
+          "slug"=>"admin/cities/entities_lists/cities",
+          "scope"=>"private",
+          "expressions"=> [
+            {
+              "expression"=>"Mâcon",
+              "pos"=>3,
+              "solution"=>"`{\"city\": \"Mâcon\"}`",
+              "keep-order"=>true,
+              "glue-distance"=>0,
+              "glue-strength"=>"punctuation",
+              "accent-sensitive"=>true},
+
+            {
+              "expression"=>"Orléans",
+              "pos"=>2,
+              "solution"=>"`{\"city\": \"Orléans\"}`",
+              "keep-order"=>true,
+              "glue-distance"=>0,
+              "glue-strength"=>"punctuation",
+              "case-sensitive"=>true,
+              "accent-sensitive"=>true
+            },
+            {
+              "expression"=>"Marseille",
+              "pos"=>1,
+              "solution"=>"`{\"city\": \"Marseille\"}`",
+              "keep-order"=>true,
+              "glue-distance"=>0,
+              "glue-strength"=>"punctuation"
+            },
+            {
+              "expression"=>"Paris",
+              "pos"=>0,
+              "solution"=>"`{\"city\": \"Paris\"}`",
+              "keep-order"=>true,
+              "glue-distance"=>0,
+              "glue-strength"=>"punctuation",
+              "case-sensitive"=>true
+            }
+          ]
+        }
+      ]
+    }
+
+
+    io = StringIO.new
+    p.generate_json(io)
+    assert_equal expected, JSON.parse(io.string)
+  end
 end

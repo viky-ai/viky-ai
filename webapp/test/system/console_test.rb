@@ -8,14 +8,14 @@ class ConsoleTest < ApplicationSystemTestCase
 
     within('.console') do
       fill_in 'interpret[sentence]', with: "hello"
-      click_button 'console-send-sentence'
 
-      Nlp::Interpret.any_instance.stubs('proceed').returns(
+      Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
         {
           status: 200,
           body: { 'interpretations' => [] }
         }
       )
+      click_button 'console-send-sentence'
 
       assert page.has_content?('No interpretation found.')
       click_link "JSON"
@@ -30,9 +30,8 @@ class ConsoleTest < ApplicationSystemTestCase
 
     within('.console') do
       fill_in 'interpret[sentence]', with: "Hello world viki.ai"
-      click_button 'console-send-sentence'
 
-      Nlp::Interpret.any_instance.stubs('proceed').returns(
+      Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
         {
           status: 200,
           body: {
@@ -47,9 +46,10 @@ class ConsoleTest < ApplicationSystemTestCase
           }
         }
       )
+      click_button 'console-send-sentence'
       assert page.has_content?('1 interpretation found.')
 
-      Nlp::Interpret.any_instance.stubs('proceed').returns(
+      Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
         {
           status: 200,
           body: {
@@ -131,15 +131,16 @@ class ConsoleTest < ApplicationSystemTestCase
     admin_go_to_agents_index
     click_link "My awesome weather bot admin/weather"
 
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
+      {
+        status: 200,
+        body: { 'interpretations' => [] }
+      }
+    )
+
     within('.console') do
       fill_in 'interpret[sentence]', with: "hello"
       click_button 'console-send-sentence'
-      Nlp::Interpret.any_instance.stubs('proceed').returns(
-        {
-          status: 200,
-          body: { 'interpretations' => [] }
-        }
-      )
       assert page.has_content?('No interpretation found.')
     end
 
@@ -187,9 +188,8 @@ class ConsoleTest < ApplicationSystemTestCase
 
     within('.console') do
       fill_in 'interpret[sentence]', with: "weather"
-      click_button 'ON'
 
-      Nlp::Interpret.any_instance.stubs('proceed').returns(
+      Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
         {
           status: 200,
           body: {
@@ -231,6 +231,7 @@ class ConsoleTest < ApplicationSystemTestCase
           }
         }
       )
+      click_button 'ON'
       assert first('button[data-input-value="true"]').matches_css?(".btn--primary")
       assert page.has_content?('1 interpretation found.')
       assert page.has_content?('weather')
@@ -264,9 +265,8 @@ class ConsoleTest < ApplicationSystemTestCase
 
     within('.console') do
       fill_in 'interpret[sentence]', with: "weather terminator"
-      click_button 'ON'
 
-      Nlp::Interpret.any_instance.stubs('proceed').returns(
+      Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
         {
           status: 200,
           body: {
@@ -341,6 +341,7 @@ class ConsoleTest < ApplicationSystemTestCase
           }
         }
       )
+      click_button 'ON'
       assert first('button[data-input-value="true"]').matches_css?(".btn--primary")
       assert page.has_content?('2 interpretations found.')
       assert page.has_content?('My awesome weather')

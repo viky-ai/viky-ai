@@ -124,15 +124,15 @@ class Console
   send_interpret_request: (data) ->
     now = if data.now? then 'Manual' else 'Auto'
     nowUpdater = { selector: '#console-btn-group-now-type', on: now }
-    languageUpdater = { selector: '#console-dropdown-locale', on: data.language }
-    spellcheckingUpdater = { selector: '#console-dropdown-spellchecking', on: data.spellchecking }
+    languageUpdater = { selector: '#js-nlp-dropdown-locale', on: data.language }
+    spellcheckingUpdater = { selector: '#js-nlp-dropdown-spellchecking', on: data.spellchecking }
     $('body').trigger('btn-group:click', nowUpdater)
     $('body').trigger('dropdown:click', languageUpdater)
     $('body').trigger('dropdown:click', spellcheckingUpdater)
 
     $('#js-console-input-sentence').val(data.sentence)
-    $('.js-language-input').val(data.language)
-    $('.js-spellchecking-input').val(data.spellchecking)
+    $('#js-nlp-language-input').val(data.language)
+    $('#js-nlp-spellchecking-input').val(data.spellchecking)
     $('#js-console-now-input-container input').val(data.now) if data.now?
 
     @toogle_form_is_needed()

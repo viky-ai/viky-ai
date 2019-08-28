@@ -67,7 +67,7 @@
     animation: icon_appear .5s;
   }
 
-  @each $name, $color in $picker_colors{
+  @each $name, $color in $colors{
     &.icon--#{$name} svg{
       fill: $color;
     }

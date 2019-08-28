@@ -81,12 +81,16 @@ en:
         auto_solution_enabled: Auto solution
         solution: Solution
         terms: Terms
+        case_sensitive: Case sensitive
+        accent_sensitive: Accent sensitive
       bot:
         wip_enabled: Work in progress?
         wip_enabled_true: "Yes"
         wip_enabled_false: "No"
       chat_statement:
         content: content
+      play_interpreter:
+        text: Text
   errors:
     user:
       delete:
@@ -96,7 +100,7 @@ en:
       unknown_locale: "unknown '%{current_locale}'"
       transfer_ownership:
         duplicate_agentname: This user already have an agent with this ID
-        invalid_username: Please select a valid new owner
+        invalid_username: Please enter a valid username or email of a viky.ai user
       delete:
         collaborators_presence: You must remove all collaborators before delete an agent
     agent_arc:

@@ -5,22 +5,9 @@ SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
+SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
-
---
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-
-
---
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
 
 --
 -- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
@@ -181,7 +168,9 @@ CREATE TABLE public.entities (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     "position" integer DEFAULT '-1'::integer,
-    searchable_terms text
+    searchable_terms text,
+    case_sensitive boolean DEFAULT false,
+    accent_sensitive boolean DEFAULT false
 );
 
 
@@ -546,11 +535,11 @@ ALTER TABLE ONLY public.entities
 
 
 --
--- Name: interpretations index_interpretations_on_intent_id_and_position; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: interpretations index_interpretations_on_intent_id_locale_and_position; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.interpretations
-    ADD CONSTRAINT index_interpretations_on_intent_id_and_position UNIQUE (intent_id, "position") DEFERRABLE;
+    ADD CONSTRAINT index_interpretations_on_intent_id_locale_and_position UNIQUE (intent_id, locale, "position") DEFERRABLE;
 
 
 --
@@ -1095,6 +1084,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190412074505'),
 ('20190424102329'),
 ('20190503151110'),
-('20190517140227');
+('20190517140227'),
+('20190619122021'),
+('20190729072037');
 
 

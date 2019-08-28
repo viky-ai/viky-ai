@@ -152,6 +152,9 @@ static og_status NlpConsolidatePrepareExpression(og_nlp_th ctrl_nlp_th, package_
     expression->glue_strength = expression_compile->glue_strength;
     expression->glue_distance = expression_compile->glue_distance;
 
+    expression->case_sensitive = expression_compile->case_sensitive;
+    expression->accent_sensitive = expression_compile->accent_sensitive;
+
     expression->locale = expression_compile->locale;
     expression->aliases_nb = expression_compile->aliases_nb;
     if (expression->aliases_nb > 0)
@@ -749,7 +752,8 @@ static og_status NlpConsolidateGetCurrentAliasNb(og_nlp_th ctrl_nlp_th, package_
   {
     struct input_part *input_part = OgHeapGetCell(package->hinput_part, expression->input_part_start + i);
     IFN(input_part) DPcErr;
-    if (input_part->type == nlp_input_part_type_Interpretation || input_part->type == nlp_input_part_type_Number)
+    if (input_part->type == nlp_input_part_type_Interpretation || input_part->type == nlp_input_part_type_Number
+        || input_part->type == nlp_input_part_type_Regex)
     {
       (*palias_nb)++;
     }

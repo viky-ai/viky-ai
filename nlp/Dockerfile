@@ -48,6 +48,11 @@ RUN factory.pl -s bu2_nls   build
 # ============================================================================
 FROM ruby:2.4-slim-stretch AS run_image
 
+# TODO Mouadh HSOUMI
+# Demander à brice pourquoi on a mis --deployment dans le bundle install
+# https://github.com/docker-library/ruby/issues/288
+ENV BUNDLE_PATH__SYSTEM=false
+
 # Add libxml2 needed for XSD validation
 # Add curl needed for healthcheck
 RUN set -ex; \

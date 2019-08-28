@@ -4,8 +4,6 @@ class Interpretation < ApplicationRecord
   include Positionable
   positionable_ancestor :intent
 
-  LOCALES = %w[* en fr es pt zh ar].freeze
-
   belongs_to :intent, touch: true
   has_many :interpretation_aliases, dependent: :destroy
 
@@ -14,7 +12,7 @@ class Interpretation < ApplicationRecord
   enum proximity: ExpressionProximity::INTERPRETATION_PROXIMITIES, _prefix: :proximity
   validates :expression, presence: true, byte_size: { maximum: 2048 }
   validates :solution, byte_size: { maximum: 8192 }
-  validates :locale, inclusion: { in: self::LOCALES }, presence: true
+  validates :locale, inclusion: { in: Locales::ALL }, presence: true
   validate :check_aliases_any_and_list_options
   validate :check_expression_nlp_length
 
@@ -43,6 +41,15 @@ class Interpretation < ApplicationRecord
 
   def proximity
     @proximity ||= ExpressionProximity.new(read_attribute(:proximity))
+  end
+
+  def update_locale(new_locale)
+    previous_locale = locale
+    self.locale = new_locale
+    max_position = intent.interpretations.where(locale: new_locale).maximum(:position)
+    self.position = max_position.nil? ? 0 : max_position + 1
+    save
+    previous_locale
   end
 
   private

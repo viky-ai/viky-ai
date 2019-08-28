@@ -38,19 +38,9 @@
     .addon,
     .btn,
     .dropdown,
-    .field_with_errors,
-    .merged-control-container{
+    .field_with_errors{
       border-radius: 0;
       margin-left: -1px;
-    }
-    .merged-control-container{
-      margin-left: -1px;
-    }
-    .merged-control-container .selectize-input{
-      border-radius: 0;
-    }
-    .merged-control-container{
-      width:100%;
     }
 
     textarea:first-child,
@@ -64,13 +54,6 @@
       border-bottom-left-radius: 3px;
       margin-left: 0;
     }
-    .merged-control-container:first-child{
-      margin-left: 0;
-    }
-    .merged-control-container:first-child .selectize-input{
-      border-top-left-radius: 3px;
-      border-bottom-left-radius: 3px;
-    }
 
     textarea:last-child,
     input[type='text']:last-child,
@@ -78,12 +61,7 @@
     input[type='password']:last-child,
     .addon:last-child,
     .btn:last-child,
-    .dropdown:last-child,
-    .merged-control-container:last-child{
-      border-top-right-radius: 3px;
-      border-bottom-right-radius: 3px;
-    }
-    .merged-control-container:last-child .selectize-input{
+    .dropdown:last-child{
       border-top-right-radius: 3px;
       border-bottom-right-radius: 3px;
     }
@@ -127,6 +105,10 @@
     cursor: pointer;
   }
 
+  label + .badge{
+    vertical-align: text-top;
+  }
+
   input[type='radio'],
   input[type='checkbox']{
     cursor: pointer;
@@ -138,7 +120,6 @@
     font-weight: 300;
   }
 
-  .selectize-input,
   input[type='text'],
   input[type='email'],
   input[type='password'],
@@ -251,7 +232,8 @@
   .field_with_errors{
     input[type='text'],
     input[type='email'],
-    input[type='password']{
+    input[type='password'],
+    textarea{
       border: 1px solid $alert_color;
       border-top: 1px solid darken($alert_color, 5%);
       &:focus{
@@ -398,7 +380,7 @@ ul.color-picker{
   }
 }
 
-@each $name, $color in $picker_colors{
+@each $name, $color in $colors{
   &.background-color__#{$name}{
     background-color: $color;
   }
@@ -426,65 +408,3 @@ ul.color-picker{
     outline:none;
   }
 }
-
-
-//
-// Selectize
-//
-.field{
-  .selectize-input{
-    font-size: 16px;
-    input{
-      font-size: 16px;
-    }
-    .item{
-      background-color: rgba(#000, .05);
-      color: #000;
-      padding: 0 6px;
-      border-radius: 2px;
-      text-shadow: 0 1px 0 #fff;
-    }
-  }
-}
-.selectize-control.multi .selectize-input.has-items {
-  padding: calc(.375em - 3px) .5em;
-}
-.selectize-control.multi .selectize-input > div{
-  padding: 0 6px;
-  margin: 1px 5px 1px 0;
-  border: 1px solid #fff;
-  background-color: rgba(#000, .05);
-  color: #000;
-  text-shadow: 0 1px 0 #fff;
-}
-.selectize-control.single .selectize-input::after {
-  display: none;
-}
-
-.selectize-dropdown{
-  font-size: 16px;
-  z-index: 600;
-  [data-selectable]{
-    padding: 8px;
-    display:flex;
-    align-items: center;
-    .highlight{
-      background-color: transparent;
-      color: darken($primary_color, 10%);
-      text-shadow: none;
-      border-radius: 2px;
-    }
-  }
-  .active{
-    background-color: rgba($primary_color, .15);
-    text-shadow: 0 1px 0 #fff;
-    color: #000;
-  }
-  img{
-    width: 26px;
-    height: 26px;
-    margin-right: 1em;
-    border-radius: 13px;
-  }
-}
-

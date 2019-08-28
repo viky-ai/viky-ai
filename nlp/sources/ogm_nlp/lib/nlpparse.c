@@ -150,7 +150,8 @@ static og_status NlpParseAddPunctWord(og_nlp ctrl_nlp, og_string utf8_word, og_b
         DOgNlpParsePunctCharMaxNb);
         DPcErr;
       }
-      parse_conf->punct_char_word_expression[parse_conf->punct_char_word_expression_used++] = g_utf8_get_char(utf8_word);
+      gunichar punct = g_utf8_get_char(utf8_word);
+      parse_conf->punct_char_word_expression[parse_conf->punct_char_word_expression_used++] = punct;
     }
     else
     {
@@ -162,7 +163,6 @@ static og_status NlpParseAddPunctWord(og_nlp ctrl_nlp, og_string utf8_word, og_b
       }
       parse_conf->punct_char_word[parse_conf->punct_char_word_used++] = g_utf8_get_char(utf8_word);
     }
-
 
   }
   else
@@ -434,9 +434,18 @@ static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
       break;
     }
   }
+
   if (request_word->is_number)
   {
-    request_word->number_value = atoi(normalized_string_word);
+    errno = 0;
+    request_word->number_value = strtod(normalized_string_word, NULL);
+    if (errno > 0)
+    {
+      // request_word->number_value will be HUGE_VALF processed as null by jansson
+
+      NlpWarningAdd(ctrl_nlp_th, "NlpParseAddWord: number \"%s\" (at %d:%d) cannot be parsed as a integer number (%s),"
+          " interpretation's solution may be wrong.", normalized_string_word, word_start, word_length, strerror(errno));
+    }
   }
   request_word->is_auto_complete_word = FALSE;
 
@@ -448,7 +457,8 @@ static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
   og_bool punct_length = 0;
   og_bool is_skipped = FALSE;
   og_bool is_expression = FALSE;
-  og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, word_length, s + word_start, &is_skipped, &is_expression, &punct_length);
+  og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, word_length, s + word_start, &is_skipped, &is_expression,
+      &punct_length);
   IFE(is_punct);
   if (is_punct)
   {

@@ -27,6 +27,10 @@ module Nls
         car << Expression.new('chemin du petit', opts, solution: 'chemin du petit')
         car << Expression.new('chemin du petit bois', opts, solution: 'chemin du petit bois')
         car << Expression.new('rivière de la belle etoile', opts, solution: 'rivière de la belle etoile')
+        car << Expression.new("Bourg-la-Reine", solution: "Bourg-la-Reine", keep_order: true, glue_distance: 0, glue_strength: "punctuation")
+        car << Expression.new("Placé", solution: "Placé", keep_order: true, glue_distance: 0, case_sensitive: true, accent_sensitive: true)
+        car << Expression.new("Nouméa", solution: "Nouméa", keep_order: true, glue_distance: 0, case_sensitive: true, accent_sensitive: false)
+        car << Expression.new("Béziers", solution: "Béziers", keep_order: true, glue_distance: 0, case_sensitive: false, accent_sensitive: true)
 
         dummy_entity1 = 'aaa'
         dummy_entity2 = 'bbb'
@@ -95,6 +99,48 @@ module Nls
         expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.83 }
         check_interpret('before maison de campane after', expected)
       end
-    end
+
+      def test_entities_accent_case
+        expected = { interpretation: 'entities', solution: 'Bourg-la-Reine', score: 1.00 }
+        check_interpret('bourg  la reine', expected)
+
+        expected = { interpretation: 'entities', solution: 'Placé', score: 1.00 }
+        check_interpret('Placé', expected)
+
+        exception = assert_raises Minitest::Assertion do
+          check_interpret("place", expected)
+        end
+        assert exception.message.include?("Actual answer did not match on any interpretation")
+
+        exception = assert_raises Minitest::Assertion do
+          check_interpret("Place", expected)
+        end
+        assert exception.message.include?("Actual answer did not match on any interpretation")
+
+        expected = { interpretation: "entities", solution: "Nouméa", score: 1.00 }
+        check_interpret("Nouméa", expected)
+
+        expected = { interpretation: "entities", solution: "Nouméa", score: 1.00 }
+        check_interpret("Noumea", expected)
+
+        exception = assert_raises Minitest::Assertion do
+          check_interpret("nouméa", expected)
+        end
+        assert exception.message.include?("Actual answer did not match on any interpretation")
+
+        expected = { interpretation: "entities", solution: "Béziers", score: 1.00 }
+        check_interpret("Béziers", expected)
+
+        expected = { interpretation: "entities", solution: "Béziers", score: 1.00 }
+        check_interpret("béziers", expected)
+
+        exception = assert_raises Minitest::Assertion do
+          check_interpret("Beziers", expected)
+        end
+        assert exception.message.include?("Actual answer did not match on any interpretation")
+
+
+      end
+end
   end
 end
