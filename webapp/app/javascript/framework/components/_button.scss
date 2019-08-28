@@ -213,7 +213,7 @@ a.btn,
 
 
 
-$toogle_height: 1.25rem;
+$toggle_height: 1.25rem;
 
 .btn{
   &.btn--toggle{
@@ -221,18 +221,19 @@ $toogle_height: 1.25rem;
     background-image: none;
     background-color: #ccc;
     border: none;
-    height: calc(#{$toogle_height} + 4px);
-    width: calc(#{$toogle_height} * 2.5);
+    height: calc(#{$toggle_height} + 4px);
+    width: calc(#{$toggle_height} * 2.6);
     position: relative;
-    border-radius: $toogle_height;
+    border-radius: $toggle_height;
     box-shadow: 0 1px 2px inset rgba(#000, .2);
     transition: background .1s ease-in-out;
     vertical-align: middle;
     span{
       display: none;
-      font-size: .65em;
+      font-size: .75em;
+      font-weight: 400;
       line-height: 1em;
-      margin-left: -.5em;
+      margin-left: -.55em;
       padding-right: 1.25rem;
       text-align: right;
       color: #fff;
@@ -240,11 +241,11 @@ $toogle_height: 1.25rem;
     &:after{
       content: '';
       position: absolute;
-      width : $toogle_height;
-      height: $toogle_height;
+      width : $toggle_height;
+      height: $toggle_height;
       top: 2px;
       left: 2px;
-      border-radius: $toogle_height;
+      border-radius: $toggle_height;
       background-color: #fff;
       box-shadow: 0 1px 2px rgba(#000, .2);
       transition: all .1s ease-in-out;
@@ -264,7 +265,7 @@ $toogle_height: 1.25rem;
       }
       &:after{
         left: 100%;
-        margin-left: calc(-2px - #{$toogle_height});
+        margin-left: calc(-2px - #{$toggle_height});
       }
     }
     &.btn--toggle-disabled{
