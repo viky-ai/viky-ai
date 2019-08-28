@@ -39,9 +39,8 @@ class PlayForm
         return $(event.target)
 
   submit: ->
-    $(".agent-compact .btn--toggle span").html("")
+    $(".agent-compact .btn--toggle span").html("...")
     Rails.fire($('.play-main__form')[0], 'submit')
-
 
 Setup = ->
   if $('body').data('controller-name') == "play"
