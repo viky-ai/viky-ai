@@ -16,12 +16,10 @@ class PlayController < ApplicationController
         format.js {
           if @interpreter.valid?
             @interpreter.proceed
-            @aside = render_to_string(partial: 'aside', locals: { interpreter: @interpreter })
             @form = render_to_string(partial: 'form', locals: { interpreter: @interpreter })
             @result = render_to_string(partial: "result", locals: { interpreter: @interpreter })
             render partial: 'interpret_succeed'
           else
-            @aside = render_to_string(partial: 'aside', locals: { interpreter: @interpreter })
             @form = render_to_string(partial: 'form', locals: { interpreter: @interpreter })
             render partial: 'interpret_failed'
           end

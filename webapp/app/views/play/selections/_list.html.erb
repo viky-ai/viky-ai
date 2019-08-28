@@ -9,9 +9,11 @@
   <ul class="agent-compact-list">
     <% agents.each do |agent| %>
       <li>
-        <div class="agent-compact agent-compact--play-chooser" data-action="play-select-agent" data-id="<%= agent.id %>">
-          <% cache [agent, current_user] do %>
-            <%= render partial: "/play/shared/agent_compact", locals: { agent: agent } %>
+        <div class="agent-compact agent-compact--play-chooser"
+             data-action="play-select-agent"
+             data-id="<%= agent.id %>">
+          <% cache [agent, current_user, false] do %>
+            <%= render partial: "/play/shared/agent_compact", locals: { agent: agent, display_agent_link: false } %>
           <% end %>
           <div class="agent-compact__actions">
             <% if selected_agent_ids.include? agent.id %>

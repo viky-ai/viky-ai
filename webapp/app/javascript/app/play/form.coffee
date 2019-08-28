@@ -15,26 +15,33 @@ class PlayForm
       else
         btn.removeClass('btn--toggle-off').addClass('btn--toggle-on')
         checkbox.prop('checked', true)
-      Rails.fire($('.play-main__form')[0], 'submit')
+      @submit()
 
     if action == 'play-select-all'
       $('aside .btn.btn--toggle').removeClass('btn--toggle-off').addClass('btn--toggle-on')
       $('aside input[type="checkbox"').prop('checked', true)
-      Rails.fire($('.play-main__form')[0], 'submit')
+      @submit()
 
     if action == 'play-select-none'
       $('aside .btn.btn--toggle').removeClass('btn--toggle-on').addClass('btn--toggle-off')
       $('aside input[type="checkbox"').prop('checked', false)
-      Rails.fire($('.play-main__form')[0], 'submit')
+      @submit()
 
   get_target: (event) ->
-    if $(event.target).is('.agent-compact')
+    if $(event.target).is('a')
+      return $(event.target)
+    else if $(event.target).is('.agent-compact')
       return $(event.target)
     else
       if $(event.target).closest('.agent-compact').length == 1
         $(event.target).closest('.agent-compact')
       else
         return $(event.target)
+
+  submit: ->
+    $(".agent-compact .btn--toggle span").html("")
+    Rails.fire($('.play-main__form')[0], 'submit')
+
 
 Setup = ->
   if $('body').data('controller-name') == "play"

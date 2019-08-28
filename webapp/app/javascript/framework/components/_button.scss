@@ -213,10 +213,11 @@ a.btn,
 
 
 
-$toogle_height: 1.25em;
+$toogle_height: 1.25rem;
 
 .btn{
   &.btn--toggle{
+    font-size: 1em;
     background-image: none;
     background-color: #ccc;
     border: none;
@@ -227,6 +228,15 @@ $toogle_height: 1.25em;
     box-shadow: 0 1px 2px inset rgba(#000, .2);
     transition: background .1s ease-in-out;
     vertical-align: middle;
+    span{
+      display: none;
+      font-size: .65em;
+      line-height: 1em;
+      margin-left: -.5em;
+      padding-right: 1.25rem;
+      text-align: right;
+      color: #fff;
+    }
     &:after{
       content: '';
       position: absolute;
@@ -245,6 +255,9 @@ $toogle_height: 1.25em;
     }
     &.btn--toggle-on{
       background-color: $primary_color;
+      span{
+        display: block;
+      }
       &:focus,
       &.btn--toggle-focus{
         box-shadow: 0 0 0 2px rgba($primary_color, .5);

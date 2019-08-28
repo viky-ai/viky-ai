@@ -4,15 +4,7 @@
     <div class="play-main__result__wrapper">
       <h2>
         <span>
-          <% if interpreter.agents.size > 1 %>
-            <%= t('views.play.result.title_multiple_agents_html', count: r.interpretations_count) %>
-          <% else %>
-            <%= t('views.play.result.title_one_agent_html', count: r.interpretations_count) %>
-          <% end %>
-          <% html = interpreter.agents.collect { |agent|
-              "<a href='#{user_agent_path(agent.owner.username, agent.agentname)}'>#{agent.name} <small>(#{r.interpretations_count_for_agent(agent.id)})</small></a>"
-            } %>
-          <%= html.join(', ').html_safe %>.
+          <strong><%= t('views.play.result.title', count: r.interpretations_count) %></strong>
         </span>
       </h2>
       <div>

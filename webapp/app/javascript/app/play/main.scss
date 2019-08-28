@@ -150,14 +150,17 @@ body[data-controller-name="play"]{
           font-size: .85em;
           box-shadow: none;
           text-decoration: none;
-          cursor: pointer;
-          .agent-compact__id__visual{
+          position: relative;
+          .agent-compact__id a.agent-compact__id__visual{
+            transition: all .2s;
+            &:hover,
+            &:focus{
+              transform: scale(1.05);
+              border-radius: 2px;
+            }
           }
           .agent-compact__actions{
             padding-right: 0;
-          }
-          &:hover{
-            box-shadow: 0 0 0 2px $primary_color;
           }
         }
       }
@@ -269,8 +272,8 @@ body[data-controller-name="play"]{
       border-bottom: 1px solid rgba(#000, .075);
       line-height: 1.4em;
       @media (min-width: $play_breakpoint){
-        margin: -1.5rem -2rem 1.5rem -2rem;
-        padding: 1.5em 2em;
+        margin: -1.75rem -2rem 1.5rem -2rem;
+        padding: 1rem 2rem;
       }
       a{
         font-weight: 400;
@@ -311,15 +314,21 @@ body[data-controller-name="play"]{
       text-transform: uppercase;
       color: rgba(#fff, .8);
     }
-    pre{
+    a, pre{
+      display: block;
       margin: 0 0 1em 0;
       font-size: .75em;
       line-height: 1.3em;
       font-family: $family-monospace;
       overflow: auto;
+      color: rgba(#fff, .8);
+      text-decoration: none;
       &:last-child{
         margin: 0;
       }
+    }
+    a:hover, a:focus{
+      text-decoration: underline;
     }
     [x-arrow] {
       position: absolute;
@@ -384,6 +393,18 @@ body[data-controller-name="play"]{
        -ms-user-select: none;
            user-select: none;
       &.highlight--open{ cursor: zoom-out; }
+    }
+  }
+}
+
+body[data-controller-name="play"] aside ul li .agent-compact{
+  @each $name, $color in $colors{
+    &.agent-compact--highlight-#{$name}{
+      box-shadow: 0 0 0 2px rgba($color, .75), 0 0 0 4px rgba($color, .25);
+      background-color: rgba($color, .05);
+      h5, h6{
+        color: darken($color, 10%);
+      }
     }
   }
 }

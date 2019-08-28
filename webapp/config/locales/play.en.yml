@@ -32,14 +32,10 @@ en:
         btn_loading_html: Interpret <span class="icon icon--x-small icon--spin">%{icon}</span>
         reset: Reset
       result:
-        title_one_agent_html:
-          zero: "<strong>No interpretation found</strong> with agent"
-          one: "<strong>%{count} interpretation found</strong> with agent"
-          other: "<strong>%{count} interpretations found</strong> with agent"
-        title_multiple_agents_html:
-          zero: "<strong>No interpretation found</strong> with agents"
-          one: "<strong>%{count} interpretation found</strong> with agents"
-          other: "<strong>%{count} interpretations found</strong> with agents"
+        title:
+          zero: "No interpretation found"
+          one: "%{count} interpretation found"
+          other: "%{count} interpretations found"
       error:
         title: Sorry, an error occurred
         status: "Error %{status}"
