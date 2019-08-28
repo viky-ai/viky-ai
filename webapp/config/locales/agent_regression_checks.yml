@@ -25,16 +25,16 @@ en:
       now: Now
       result:
         slug:
-          expected_got_ok_html: Slug <small>(Expected & Got)</small> <span class='icon icon--x-small icon--success'>%{icon}</span>
-          expected_got_ko_html: Slug <small>(Expected & Got)</small> <span class='icon icon--x-small icon--alert'>%{icon}</span>
-          expected_ko_html: Slug <small>(Expected)</small> <span class='icon icon--x-small icon--alert'>%{icon}</span>
-          expected: Slug <small>(Expected)</small>
-          missing: Expected interpretation has been removed form viky.ai.
+          expected_got_ok_html: First slug <small>(Expected & Got)</small> <span class='icon icon--x-small icon--success'>%{icon}</span>
+          expected_got_ko_html: First slug <small>(Expected & Got)</small> <span class='icon icon--x-small icon--alert'>%{icon}</span>
+          expected_ko_html: First slug <small>(Expected)</small> <span class='icon icon--x-small icon--alert'>%{icon}</span>
+          expected: First slug <small>(Expected)</small>
+          missing: Expected first has been removed form viky.ai.
         solution:
-          expected_got_ok_html: Solution <small>(Expected & Got)</small> <span class='icon icon--x-small icon--success'>%{icon}</span>
-          expected_got_ko_html: Solution <small>(Expected & Got)</small> <span class='icon icon--x-small icon--alert'>%{icon}</span>
-          expected_ko_html: Solution <small>(Expected)</small> <span class='icon icon--x-small icon--alert'>%{icon}</span>
-          expected: Solution <small>(Expected)</small>
+          expected_got_ok_html: First solution <small>(Expected & Got)</small> <span class='icon icon--x-small icon--success'>%{icon}</span>
+          expected_got_ko_html: First solution <small>(Expected & Got)</small> <span class='icon icon--x-small icon--alert'>%{icon}</span>
+          expected_ko_html: First solution <small>(Expected)</small> <span class='icon icon--x-small icon--alert'>%{icon}</span>
+          expected: First solution <small>(Expected)</small>
         error_error_html:
           <span class='icon icon--x-small icon--alert'>%{icon}</span>
           Error while requesting NLP.
