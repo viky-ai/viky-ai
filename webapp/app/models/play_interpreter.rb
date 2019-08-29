@@ -4,12 +4,12 @@ class PlayInterpreter
 
   attr_accessor :available_agents, :agent_ids, :text, :language, :spellchecking, :result, :current_user
 
+  before_validation :set_defaults
+  before_validation :strip_text
+
   validates_presence_of :text, :language, :spellchecking
   validates :text, byte_size: { maximum: 1024 * 8 }
   validate :available_agents_and_agent_ids_consistency
-
-  before_validation :set_defaults
-  before_validation :strip_text
 
   def proceed
     return if agents.blank?
@@ -45,7 +45,7 @@ class PlayInterpreter
   private
 
     def strip_text
-      self.text = text.strip unless text.nil?
+      self.text = text.strip if text.present?
     end
 
     def set_defaults
@@ -56,7 +56,7 @@ class PlayInterpreter
     end
 
     def available_agents_and_agent_ids_consistency
-      ids = agent_ids.select { |agent| available_agents.collect(&:id).include? agent }
+      ids = agent_ids & available_agents.collect(&:id)
       @agent_ids = Agent.where(id: ids).pluck(:id)
     end
 end

@@ -41,7 +41,7 @@ Rails.application.routes.draw do
     end
   end
   get  '/play', to: 'play#index'
-  post '/play', to: 'play#index'
+  post '/play', to: 'play#interpret'
   get  '/play/reset', to: 'play#reset'
 
   scope '/agents' do
