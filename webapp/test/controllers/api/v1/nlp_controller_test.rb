@@ -164,7 +164,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 'abc', found[:context]['session_id']
     assert_equal '1.1-a58b', found[:context]['bot_version']
-    assert_equal agent.updated_at, found[:context]['agent_version']
+    assert_equal [agent.updated_at], found[:context]['agent_version']
   end
 
 

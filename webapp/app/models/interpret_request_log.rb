@@ -6,7 +6,7 @@ class InterpretRequestLog
   SEARCH_ALIAS_NAME = ['search', INDEX_NAME].join('-').freeze
   INDEX_TYPE = 'log'.freeze
 
-  attr_accessor :id, :agent, :timestamp, :sentence, :language, :spellchecking, :now, :status, :body, :context
+  attr_accessor :id, :agents, :timestamp, :sentence, :language, :spellchecking, :now, :status, :body, :context
 
   validates :context_to_s, length: {
     maximum: 1000
@@ -29,15 +29,15 @@ class InterpretRequestLog
   end
 
   def initialize(attributes = {})
-    if attributes[:agent].blank?
-      attributes[:agent] = Agent.find(attributes[:agent_id])
+    if attributes[:agents].blank?
+      attributes[:agents] = Agent.where(id: attributes[:agent_id])
       attributes.delete(:agent_id)
     end
     super
-    @agent ||= Agent.find(attributes[:agent_id])
+    @agents ||= Agent.where(id: attributes[:agent_id])
     @sentence ||= ''
     @context ||= {}
-    @context['agent_version'] = @agent.updated_at
+    @context['agent_version'] = @agents.map(&:updated_at)
   end
 
   def with_response(status, body)
@@ -48,6 +48,7 @@ class InterpretRequestLog
 
   def save
     return false unless valid?
+
     refresh = Rails.env == 'test'
     client = IndexManager.client
     result = client.index index: INDEX_ALIAS_NAME, type: INDEX_TYPE, body: to_json, id: @id, refresh: refresh
@@ -67,9 +68,9 @@ class InterpretRequestLog
         sentence: @sentence,
         language: @language,
         spellchecking: @spellchecking,
-        agent_id: @agent.id,
-        agent_slug: @agent.slug,
-        owner_id: @agent.owner.id,
+        agent_id: @agents.map(&:id),
+        agent_slug: @agents.map(&:slug),
+        owner_id: @agents.map { |agent| agent.owner.id },
         status: @status,
         body: @body,
         context: @context

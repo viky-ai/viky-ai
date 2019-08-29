@@ -2,7 +2,7 @@ class PlayInterpreter
   include ActiveModel::Model
   include ActiveModel::Validations::Callbacks
 
-  attr_accessor :available_agents, :agent_ids, :text, :language, :spellchecking, :result
+  attr_accessor :available_agents, :agent_ids, :text, :language, :spellchecking, :result, :current_user
 
   validates_presence_of :text, :language, :spellchecking
   validates :text, byte_size: { maximum: 1024 * 8 }
@@ -12,21 +12,25 @@ class PlayInterpreter
   before_validation :strip_text
 
   def proceed
-    if agents.size > 0
-      request_params = {
-        format: "json",
-        ownername: agents.first.owner.username,
-        agentname: agents.first.agentname,
-        agent_token: agents.first.api_token,
-        agent_ids: agents.collect(&:id),
-        language: language,
-        spellchecking: spellchecking,
-        verbose: 'false',
-        sentence: text
+    return if agents.blank?
+
+    request_params = {
+      format: 'json',
+      ownername: agents.first.owner.username,
+      agentname: agents.first.agentname,
+      agent_token: agents.first.api_token,
+      agent_ids: agents.collect(&:id),
+      language: language,
+      spellchecking: spellchecking,
+      verbose: 'false',
+      sentence: text,
+      context: {
+        user_id: current_user.id,
+        client_type: 'play_ui'
       }
-      body, status = Nlp::Interpret.new(request_params).proceed
-      @result = PlayInterpreterResult.new(status, body)
-    end
+    }
+    body, status = Nlp::Interpret.new(request_params).proceed
+    @result = PlayInterpreterResult.new(status, body)
   end
 
   def query_default_state?
@@ -55,6 +59,4 @@ class PlayInterpreter
       ids = agent_ids.select { |agent| available_agents.collect(&:id).include? agent }
       @agent_ids = Agent.where(id: ids).pluck(:id)
     end
-
 end
-

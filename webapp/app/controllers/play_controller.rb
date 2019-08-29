@@ -4,11 +4,11 @@ class PlayController < ApplicationController
     available_agents = Agent.where(id: user_state.play_agents_selection).order(name: :asc)
 
     if params[:play_interpreter].nil?
-      @interpreter = PlayInterpreter.new(user_state.play_search)
+      @interpreter = PlayInterpreter.new(user_state.play_search.merge(current_user: current_user))
       @interpreter.available_agents = available_agents
       @interpreter.valid? ? @interpreter.proceed : @interpreter.errors.clear
     else
-      @interpreter = PlayInterpreter.new(play_params)
+      @interpreter = PlayInterpreter.new(play_params.merge(current_user: current_user))
       @interpreter.available_agents = available_agents
       save_state(@interpreter, user_state)
 

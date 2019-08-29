@@ -66,7 +66,7 @@ class Nlp::Interpret
       language: language,
       spellchecking: spellchecking,
       now: now,
-      agent: agent,
+      agents: agents,
       context: context
     )
     log.with_response(status, body).save
