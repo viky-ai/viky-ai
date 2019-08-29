@@ -205,7 +205,7 @@ body[data-controller-name="play"]{
 
   textarea{
     height: 6.6em;
-    resize: none;
+    resize: vertical;
   }
   .label--uppercase{
     text-transform: uppercase;
