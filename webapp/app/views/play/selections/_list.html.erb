@@ -15,7 +15,6 @@
           <% cache [agent, current_user, false] do %>
             <%= render partial: "/play/shared/agent_compact", locals: { agent: agent, display_agent_link: false } %>
           <% end %>
-          <div class="agent-compact__actions">
             <% if selected_agent_ids.include? agent.id %>
               <button class="btn btn--checkbox btn--checkbox-on"></button>
             <% else %>

@@ -27,7 +27,6 @@
         <% cache [agent, current_user, true] do %>
           <%= render partial: "/play/shared/agent_compact", locals: { agent: agent, display_agent_link: true } %>
         <% end %>
-        <div class="agent-compact__actions">
           <button class="btn btn--toggle <% if interpreter.agents.collect(&:id).include? agent.id %>btn--toggle-on<% end %>">
             <span>
               <% if interpreter.agents.collect(&:id).include?(agent.id) && r.present? && r.succeed? %>

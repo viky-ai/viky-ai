@@ -20,10 +20,18 @@ module PlayHelper
       else
         text_decorated << "<div class='highlight-pop highlight-pop--#{colors[start_highlight["slug"]]}' data-package='#{start_highlight['package']}' data-color='#{colors[start_highlight["slug"]]}'>"
         text_decorated << "  <div x-arrow></div>"
-        text_decorated << "  <h4>Interpretation</h4>"
-        text_decorated << "  <a href='/agents/#{start_highlight["slug"]}'>#{start_highlight["slug"]}</a>"
-        text_decorated << "  <h4>Solution</h4>"
-        text_decorated << "  <pre>#{JSON.pretty_generate(start_highlight["solution"])}</pre>"
+        text_decorated << "  <div class='highlight-pop__content'>"
+        if intent_has_unsuitable_list_pattern?(Intent.find(start_highlight["id"]))
+          text_decorated << "  <p class='warning'>"
+          text_decorated << "    <span class='icon icon--small icon--white'>#{icon_alert}</span>"
+          text_decorated << "    #{t('views.play.warning.bad_list_pattern')}"
+          text_decorated << "  </p>"
+        end
+        text_decorated << "    <h4>Interpretation</h4>"
+        text_decorated << "    <a href='/agents/#{start_highlight["slug"]}'>#{start_highlight["slug"]}</a>"
+        text_decorated << "    <h4>Solution</h4>"
+        text_decorated << "    <pre>#{JSON.pretty_generate(start_highlight["solution"])}</pre>"
+        text_decorated << "  </div>"
         text_decorated << "</div>"
         text_decorated << "<div class='highlight highlight--#{colors[start_highlight["slug"]]}'>"
         text_decorated << "#{c}"
@@ -33,6 +41,25 @@ module PlayHelper
     end
     text_decorated << "</span>" if opened_tag - closed_tag == 1
     text_decorated.html_safe
+  end
+
+  def intent_has_unsuitable_list_pattern?(intent)
+    warning = false
+    intent =
+    if intent.interpretations.count == 1
+      first_interpretation = intent.interpretations.first
+      if first_interpretation.interpretation_aliases.count == 1
+        warning = first_interpretation.interpretation_aliases.first.is_list?
+      end
+    end
+    warning
+  end
+
+  def agent_has_unsuitable_list_pattern?(agent)
+    if agent.intents.is_public.count == 1
+      intent = agent.intents.is_public.first
+      warning = intent_has_unsuitable_list_pattern?(intent)
+    end
   end
 
 end

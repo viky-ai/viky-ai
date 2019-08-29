@@ -38,3 +38,9 @@
     <h6><%= agent.slug %></h6>
   </div>
 </div>
+<div class="agent-compact__actions">
+  <% if agent_has_unsuitable_list_pattern?(agent) %>
+    <span class='icon icon--small icon--red' title="<%= t('views.play.warning.bad_list_pattern') %>">
+      <%= icon_alert %>
+    </span>
+  <% end %>

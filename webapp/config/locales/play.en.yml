@@ -39,3 +39,5 @@ en:
       error:
         title: Sorry, an error occurred
         status: "Error %{status}"
+      warning:
+        bad_list_pattern: This agent use a list pattern that is not well suitable for Play UI.
