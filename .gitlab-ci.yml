@@ -200,12 +200,12 @@ deploy_dev:
     - echo "Create namespace"
     - kubectl create namespace "${NAMESPACE}" || true
     - echo "Create old secrets"
-    - kubectl delete secret es-keystore-secret --namespace "viky-${CI_ENVIRONMENT_SLUG}" || true
-    - kubectl delete secret pertimm-registry --namespace "viky-${CI_ENVIRONMENT_SLUG}" || true
+    - kubectl delete secret es-keystore-secret --namespace "${NAMESPACE}" || true
+    - kubectl delete secret pertimm-registry --namespace "${NAMESPACE}" || true
     - echo "Create Pertimm Registry Secret"
     - kubectl create secret docker-registry pertimm-registry --namespace "${NAMESPACE}" --docker-server="${PERTIMM_REGISTRY_URL}" --docker-username="${PERTIMM_REGISTRY_USERNAME}" --docker-password="${PERTIMM_REGISTRY_PASSWORD}" --docker-email="${PERTIMM_REGISTRY_EMAIL}" || true
     - echo "Create ES Keystore secret"
-    - kubectl create secret generic es-keystore-secret --namespace="${NAMESPACE}" --from-file "elasticsearch.keystore"  || true
+    - kubectl create secret generic es-keystore-secret --namespace "${NAMESPACE}" --from-file "elasticsearch.keystore"  || true
     - echo "Generate Override values"
     - deployment/kubernetes/bin/generateOverrideValuesFile.sh
     - echo "Deploy Viky Infrastructure"
@@ -391,6 +391,7 @@ backup_restore_dev:
     - PODNAME=$(kubectl get pods --namespace=$NAMESPACE -l app=webapp-backup --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
     - kubectl exec --namespace=$NAMESPACE $PODNAME  bash /backup/backup.sh "${NAMESPACE}"
     - kubectl exec --namespace=$NAMESPACE $PODNAME  bash /backup/restore.sh "${NAMESPACE}"
+    - helm upgrade --force --wait --values custom-values.yml,deployment/kubernetes/viky-platform/custom-values/production.yaml --install "${NAMESPACE}-platform" --namespace "${NAMESPACE}" deployment/kubernetes/viky-platform/
   when: manual
   allow_failure: true
 
