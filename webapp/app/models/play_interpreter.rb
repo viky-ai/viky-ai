@@ -16,10 +16,7 @@ class PlayInterpreter
 
     request_params = {
       format: 'json',
-      ownername: agents.first.owner.username,
-      agentname: agents.first.agentname,
-      agent_token: agents.first.api_token,
-      agent_ids: agents.collect(&:id),
+      agents: agents,
       language: language,
       spellchecking: spellchecking,
       verbose: 'false',

@@ -1,10 +1,8 @@
 class ConsoleController < ApplicationController
+  before_action :set_owner_and_agent
 
   def interpret
-    owner = User.friendly.find(params[:user_id])
-    agent = Agent.owned_by(owner).friendly.find(params[:id])
-
-    access_denied unless current_user.can? :show, agent
+    access_denied unless current_user.can? :show, @agent
 
     sentence      = interpret_params[:sentence]
     verbose       = interpret_params[:verbose]
@@ -13,25 +11,23 @@ class ConsoleController < ApplicationController
     current_tab   = interpret_params[:current_tab]
     now           = interpret_params[:now]
 
-    @regression_check = agent.find_regression_check_with(sentence, language, spellchecking, now)
+    @regression_check = @agent.find_regression_check_with(sentence, language, spellchecking, now)
     if @regression_check.nil?
       @regression_check = AgentRegressionCheck.new(
         sentence: sentence,
         language: language,
         spellchecking: spellchecking,
         now: now,
-        agent: agent
+        agent: @agent
       )
     end
 
     nlp = Nlp::Interpret.new(
-      ownername: owner.username,
-      agentname: agent.agentname,
+      agents: [@agent],
       format: 'json',
       sentence: sentence,
       language: language,
       spellchecking: spellchecking,
-      agent_token: agent.api_token,
       verbose: verbose,
       now: now,
       context: {
@@ -52,10 +48,10 @@ class ConsoleController < ApplicationController
           locals: {
             status: status,
             body: body,
-            agent: agent,
+            agent: @agent,
             current_tab: current_tab,
             endpoint_path: endpoint_path(nlp),
-            package_path: full_export_user_agent_url(agent.owner, agent, format: 'json')
+            package_path: full_export_user_agent_url(@agent.owner, @agent, format: 'json')
           }
         )
       }
@@ -65,6 +61,11 @@ class ConsoleController < ApplicationController
 
   private
 
+    def set_owner_and_agent
+      @owner = User.friendly.find(params[:user_id])
+      @agent = Agent.owned_by(@owner).friendly.find(params[:id])
+    end
+
     def interpret_params
       params.require(:interpret).permit(
         :sentence, :verbose, :language, :spellchecking, :current_tab, :now
@@ -72,10 +73,10 @@ class ConsoleController < ApplicationController
     end
 
     def endpoint_path(nlp)
-      interpret_path = "/api/v1/agents/#{nlp.ownername}/#{nlp.agentname}/interpret.json"
+      interpret_path = "/api/v1/agents/#{@owner.username}/#{@agent.agentname}/interpret.json"
       base_url       = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
       parameters = {
-        agent_token: nlp.agent_token,
+        agent_token: @agent.api_token,
         sentence: nlp.sentence,
         language: nlp.language,
         spellchecking: nlp.spellchecking,

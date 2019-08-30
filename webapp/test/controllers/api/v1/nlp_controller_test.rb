@@ -20,6 +20,17 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     })
   end
 
+  test 'validation on ownername and agentname' do
+    assert_raise ActiveRecord::RecordNotFound do
+      get '/api/v1/agents/missing_user/missing_agent/interpret.json',
+        params: { sentence: 'test' }
+    end
+
+    assert_raise ActiveRecord::RecordNotFound do
+      get '/api/v1/agents/admin/missing_agent/interpret.json',
+        params: { sentence: 'test' }
+    end
+  end
 
   test "Agent access not permitted if token not good" do
     get "/api/v1/agents/admin/weather/interpret.json",

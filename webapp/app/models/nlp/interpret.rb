@@ -7,16 +7,13 @@ class Nlp::Interpret
   include ActiveModel::Validations
   include ActiveModel::Validations::Callbacks
 
-  attr_accessor :ownername, :agentname, :agent_ids, :format, :sentence, :language,
-                :spellchecking, :agent_token, :verbose, :now, :context
+  attr_accessor :agents, :format, :sentence, :language, :spellchecking, :verbose, :now, :context
 
-  validates_presence_of :ownername, :agentname, :format, :sentence, :agent_token
+  validates_presence_of :agents, :format, :sentence
   validates :sentence, byte_size: { maximum: 1024*8 }
   validates_inclusion_of :format, in: %w( json )
   validates_inclusion_of :verbose, in: [ "true", "false" ]
   validates_inclusion_of :spellchecking, in: %w( inactive low medium high ), allow_blank: true
-  validate :ownername_and_agentname_consistency
-  validate :agent_token_consistency
   validate :now_format
 
   before_validation :set_default
@@ -47,13 +44,8 @@ class Nlp::Interpret
         save_request_in_elastic(status, log_body)
       end
     else
-      if errors[:agent_token].empty?
-        status = 422
-        body = { errors: errors.full_messages }
-      else
-        status = 401
-        body = { errors: [I18n.t('controllers.api.access_denied')] }
-      end
+      status = 422
+      body = { errors: errors.full_messages }
       save_request_in_elastic(status, body)
     end
     [body, status]
@@ -70,22 +62,6 @@ class Nlp::Interpret
       context: context
     )
     log.with_response(status, body).save
-  end
-
-  def owner
-    User.friendly.find(ownername)
-  end
-
-  def agent
-    Agent.owned_by(owner).friendly.find(agentname)
-  end
-
-  def agents
-    if agent_ids.respond_to? :each
-      Agent.where(id: agent_ids.push(agent.id).uniq)
-    else
-      [agent]
-    end
   end
 
   def packages
@@ -107,36 +83,6 @@ class Nlp::Interpret
     def set_default
       self.language = "*"     if language.blank?
       self.verbose  = "false" if verbose.blank?
-    end
-
-    def ownername_and_agentname_consistency
-      unless ownername.blank? || agentname.blank?
-        begin
-          owner
-        rescue ActiveRecord::RecordNotFound
-          errors.add(:ownername, I18n.t(
-            'nlp.interpret.invalid_ownername',
-            ownername: ownername
-          ))
-        end
-        begin
-          agent
-        rescue ActiveRecord::RecordNotFound
-          errors.add(:agentname, I18n.t(
-            'nlp.interpret.invalid_agentname',
-            agentname: agentname,
-            ownername: ownername
-          ))
-        end
-      end
-    end
-
-    def agent_token_consistency
-      if errors.full_messages_for(:ownername).empty? && errors.full_messages_for(:agentname).empty?
-        if agent.api_token != agent_token
-          errors.add :agent_token, I18n.t('nlp.interpret.invalid_agent_token')
-        end
-      end
     end
 
     def now_format

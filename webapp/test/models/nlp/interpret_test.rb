@@ -1,64 +1,12 @@
 require 'test_helper'
+require 'model_test_helper'
 
 class InterpretTest < ActiveSupport::TestCase
-
-  test "validation on ownername & agentname" do
-    interpret = Nlp::Interpret.new(
-      ownername: 'missing user',
-      agentname: 'missing agent'
-    )
-    assert interpret.invalid?
-    assert interpret.errors.full_messages.include? "Ownername is incorrect, 'missing user' user doesn't exist"
-    assert interpret.errors.full_messages.include? "Agentname is incorrect, 'missing user' user doesn't own 'missing agent' agent"
-
-
-    interpret = Nlp::Interpret.new(
-      ownername: 'admin',
-      agentname: 'missing agent'
-    )
-    assert interpret.invalid?
-    assert interpret.errors.full_messages.include? "Agentname is incorrect, 'admin' user doesn't own 'missing agent' agent"
-
-
-    interpret = Nlp::Interpret.new(
-      ownername: 'admin',
-      agentname: 'weather'
-    )
-    assert interpret.invalid?
-    assert_equal 5, interpret.errors.full_messages.count
-  end
-
-
-  test "validation on agent token" do
-    interpret = Nlp::Interpret.new(
-      ownername: 'admin',
-      agentname: 'weather',
-      agent_token: 'bad token',
-      sentence: 'hello',
-      format: 'json',
-      now: '2017-12-05T10:17:25+01:00'
-    )
-    assert interpret.invalid?
-    assert_equal ["Agent token is not valid"], interpret.errors.full_messages
-
-    interpret = Nlp::Interpret.new(
-      ownername: 'admin',
-      agentname: 'weather',
-      agent_token: '52f6cb86b23d8d2a0df9c6808d73ce05',
-      sentence: 'hello',
-      format: 'json',
-      now: '2017-12-05T10:17:25+01:00'
-    )
-    assert interpret.valid?
-  end
-
 
   test "validation on now" do
     weather = agents(:weather)
     interpret = Nlp::Interpret.new(
-      ownername: weather.owner.username,
-      agentname: weather.agentname,
-      agent_token: weather.api_token,
+      agents: [weather],
       sentence: 'hello',
       format: 'json'
     )
@@ -77,9 +25,7 @@ class InterpretTest < ActiveSupport::TestCase
   test 'Validate endpoint' do
     weather = agents(:weather)
     interpret = Nlp::Interpret.new(
-      ownername: weather.owner.username,
-      agentname: weather.agentname,
-      agent_token: weather.api_token,
+      agents: [weather],
       sentence: 'hello',
       format: 'json'
     )
@@ -91,25 +37,20 @@ class InterpretTest < ActiveSupport::TestCase
   test 'Validate interpret URL' do
     weather = agents(:weather)
     interpret = Nlp::Interpret.new(
-      ownername: weather.owner.username,
-      agentname: weather.agentname,
-      agent_token: weather.api_token,
+      agents: [weather],
       sentence: 'hello',
       format: 'json'
     )
     assert_equal "#{interpret.endpoint}/interpret/", interpret.url
   end
 
-
   test 'Request on agent id and all its dependencies' do
     weather = agents(:weather)
     terminator = agents(:terminator)
     assert AgentArc.create(source: weather, target: terminator)
-
+    force_reset_model_cache(weather)
     interpret = Nlp::Interpret.new(
-      ownername: weather.owner.username,
-      agentname: weather.agentname,
-      agent_token: weather.api_token,
+      agents: [weather],
       sentence: 'hello',
       format: 'json'
     )
@@ -120,9 +61,7 @@ class InterpretTest < ActiveSupport::TestCase
   test 'Test a long interpretation sentence' do
     weather = agents(:weather)
     interpret = Nlp::Interpret.new(
-      ownername: weather.owner.username,
-      agentname: weather.agentname,
-      agent_token: weather.api_token,
+      agents: [weather],
       sentence: 'a' * 1024 * 8 + 'oops',
       format: 'json'
     )
@@ -136,11 +75,9 @@ class InterpretTest < ActiveSupport::TestCase
     terminator = agents(:terminator)
     assert AgentArc.create(source: weather, target: terminator)
 
+    force_reset_model_cache(weather)
     interpret = Nlp::Interpret.new(
-      ownername: weather.owner.username,
-      agentname: weather.agentname,
-      agent_ids: [agents(:weather_confirmed).id],
-      agent_token: weather.api_token,
+      agents: [weather, agents(:weather_confirmed)],
       sentence: 'Hello',
       format: 'json'
     )
@@ -155,5 +92,4 @@ class InterpretTest < ActiveSupport::TestCase
     assert interpret.packages.include? agents(:weather_confirmed).id
     assert_equal 3, interpret.packages.size
   end
-
 end
