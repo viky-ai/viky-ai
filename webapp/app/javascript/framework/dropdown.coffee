@@ -54,6 +54,12 @@ class Dropdown
     if exceeds_at_the_bottom && do_not_exceeds_at_the_top
       dropdown.find('.dropdown__content').addClass('dropdown__content--on-top')
 
+    dropdown.off 'keydown'
+    dropdown.on 'keydown', (event) =>
+      if event.which == 27
+        @close(dropdown)
+        dropdown.find('.dropdown__trigger .btn')[0].focus()
+
   close: (dropdown) ->
     dropdown.find('.dropdown__content').addClass('dropdown__content--hidden')
     dropdown.find('.dropdown__overlay').hide()
