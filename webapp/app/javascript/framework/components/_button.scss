@@ -25,8 +25,9 @@ a.btn,
   }
   &:focus{
     color: #000;
-    box-shadow: 0 0 0 2px rgba(#000, .05);
+    box-shadow: 0 0 0 3px rgba($primary_color, .3);
     border-color: #bbb;
+    border-color: $primary_color;
     outline:0;
   }
   &.btn--disabled{
@@ -69,7 +70,7 @@ a.btn,
       border-color: darken($primary_color, 8%);
     }
     &:focus{
-      box-shadow: 0 0 0 2px rgba($primary_color, .3);
+      box-shadow: 0 0 0 3px rgba($primary_color, .3);
       border-color: darken($primary_color, 13%);
       outline:0;
     }
@@ -118,7 +119,7 @@ a.btn,
       border-color: darken($destructive_color, 10%);
     }
     &:focus{
-      box-shadow: 0 0 0 2px rgba($destructive_color, .3);
+      box-shadow: 0 0 0 3px rgba($destructive_color, .3);
       border-color: darken($destructive_color, 15%);
       outline:0;
     }
@@ -160,7 +161,7 @@ a.btn,
       color: darken($primary_color, 15%);
     }
     &:focus{
-      box-shadow: 0 0 0 2px #f5f5f5;
+      box-shadow: 0 0 0 3px rgba($primary_color, .5);
       outline: 0;
     }
     &.btn--disabled{
@@ -192,6 +193,9 @@ a.btn,
     border-radius: 0;
     border-left-width: 1px;
     border-right-width: 0;
+    &:focus{
+      z-index: 1;
+    }
   }
   .btn:first-child{
     margin-left: 0;
@@ -252,7 +256,7 @@ $toggle_height: 1.25rem;
     }
     &:focus,
     &.btn--toggle-focus{
-      box-shadow: 0 0 0 2px rgba(#000, .3);
+      box-shadow: 0 0 0 3px rgba(#000, .3);
     }
     &.btn--toggle-on{
       background-color: $primary_color;
@@ -261,7 +265,7 @@ $toggle_height: 1.25rem;
       }
       &:focus,
       &.btn--toggle-focus{
-        box-shadow: 0 0 0 2px rgba($primary_color, .5);
+        box-shadow: 0 0 0 3px rgba($primary_color, .3);
       }
       &:after{
         left: 100%;
@@ -315,11 +319,11 @@ $checkbox_size: 1.25em;
 
     &:focus,
     &.btn--checkbox-focus{
-      box-shadow: 0 0 0 2px #aaa, 0 0 0 4px rgba(#aaa, .5);
+      box-shadow: 0 0 0 2px #aaa, 0 0 0 5px rgba(#aaa, .5);
     }
     &.btn--checkbox-on:focus,
     &.btn--checkbox-on.btn--checkbox-focus{
-      box-shadow: 0 0 0 2px $primary_color, 0 0 0 4px rgba($primary_color, .5);
+      box-shadow: 0 0 0 2px $primary_color, 0 0 0 5px rgba($primary_color, .3);
     }
 
     &.btn--checkbox:hover,
