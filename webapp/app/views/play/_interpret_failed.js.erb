@@ -1,3 +1,4 @@
 $(".play-main__form").replaceWith("<%= escape_javascript(@form) %>");
+$("body").trigger('play:form-updated');
 $(".play-main__result").html("");
 new App.PlayAside.failed();

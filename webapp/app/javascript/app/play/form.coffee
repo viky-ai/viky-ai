@@ -1,5 +1,11 @@
 class PlayForm
   constructor: ->
+    $("body").on "ajax:before", (event) =>
+      @textarea_height = $('#play_interpreter_text').height()
+
+    $("body").on 'play:form-updated', (event) =>
+      $('#play_interpreter_text').height(@textarea_height)
+
     $("body").on 'click', (event) => @dispatch(event)
 
   dispatch: (event) ->

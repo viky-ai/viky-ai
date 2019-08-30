@@ -1,4 +1,5 @@
 $(".play-main__form").replaceWith("<%= escape_javascript(@form) %>");
+$("body").trigger('play:form-updated');
 $(".play-main__result").html("<%= escape_javascript(@result) %>");
 new App.PlayResult();
 <% if @interpreter.result.present? %>

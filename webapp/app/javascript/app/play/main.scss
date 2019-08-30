@@ -155,7 +155,7 @@ body[data-controller-name="play"]{
             transition: all .2s;
             &:hover,
             &:focus{
-              transform: scale(1.05);
+              transform: scale(1.075);
               border-radius: 2px;
             }
           }
@@ -204,7 +204,7 @@ body[data-controller-name="play"]{
   }
 
   textarea{
-    height: 6.6em;
+    min-height: 6.6em;
     resize: vertical;
   }
   .label--uppercase{
@@ -249,6 +249,7 @@ body[data-controller-name="play"]{
         display: none;
       }
       grid-template-columns: auto min-content;
+      grid-template-rows: 75px auto auto;
       grid-template-areas:
         "text   language"
         "text   spellchecking"
@@ -270,16 +271,9 @@ body[data-controller-name="play"]{
       padding: 1rem 1.5rem;
       background-color: #fcfcfc;
       border-bottom: 1px solid rgba(#000, .075);
-      line-height: 1.4em;
       @media (min-width: $play_breakpoint){
         margin: -1.75rem -2rem 1.5rem -2rem;
         padding: 1rem 2rem;
-      }
-      a{
-        font-weight: 400;
-        small{
-          font-weight: 300;
-        }
       }
     }
     & > div{
