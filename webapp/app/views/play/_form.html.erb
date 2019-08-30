@@ -7,6 +7,16 @@
 
   <div class="inputs-wrapper">
 
+    <div class="field field--text">
+      <div class="control">
+        <%= f.label :text, class: 'label--uppercase' %>
+        <span class="badge badge--small badge--outline"><%= t('required') %></span>
+        <br />
+        <%= f.text_area :text, id: 'play_interpreter_text' %>
+        <%= display_errors(interpreter, :text) %>
+      </div>
+    </div>
+
     <div class="field field--language">
       <div class="control">
         <span class="label label--uppercase"><%= t('nlp.locales.label') %></span>
@@ -28,16 +38,6 @@
             form_selector: ".play-main__form",
             input_selector: ".js-nlp-spellchecking-input"
         } %>
-      </div>
-    </div>
-
-    <div class="field field--text">
-      <div class="control">
-        <%= f.label :text, class: 'label--uppercase' %>
-        <span class="badge badge--small badge--outline"><%= t('required') %></span>
-        <br />
-        <%= f.text_area :text, id: 'play_interpreter_text' %>
-        <%= display_errors(interpreter, :text) %>
       </div>
     </div>
 
