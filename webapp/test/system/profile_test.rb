@@ -80,6 +80,8 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
 
+    assert page.has_content?("General informations")
+
     within("main") do
       assert find(".avatar img")['src'].include? 'default'
     end
@@ -97,7 +99,7 @@ class ProfileTest < ApplicationSystemTestCase
       assert find(".avatar img")['src'].include? 'default'
     end
 
-    assert page.has_content?("Image isn't of allowed type")
+    assert page.has_content?("Avatar type must be one of: image/jpeg, image/png, image/gif")
   end
 
 
