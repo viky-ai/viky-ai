@@ -7,16 +7,16 @@ class ProfileTest < ApplicationSystemTestCase
     within(".h-nav") do
       click_link "admin"
     end
-    assert page.has_text?("Your profile")
+    assert has_text?("Your profile")
   end
 
 
   test "Display user's agents" do
     go_to_profile
     within(".agents-box-grid") do
-      assert page.has_content?("My awesome weather bot")
-      assert page.has_content?("T-800")
-      assert page.has_no_content?("Weather bot")
+      assert has_content?("My awesome weather bot")
+      assert has_content?("T-800")
+      assert has_no_content?("Weather bot")
     end
   end
 
@@ -25,7 +25,7 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
 
-    assert page.has_content?("Authentication parameters")
+    assert has_content?("Authentication parameters")
   end
 
 
@@ -33,15 +33,15 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
 
-    fill_in 'Name', with: 'Batman and Robin'
-    fill_in 'Username', with: 'batman'
-    fill_in 'Bio', with: "blah blah blah"
+    fill_in "Name", with: "Batman and Robin"
+    fill_in "Username", with: "batman"
+    fill_in "Bio", with: "blah blah blah"
 
-    click_button 'Update profile'
+    click_button "Update profile"
 
-    assert page.has_field?('Name', with: 'Batman and Robin')
-    assert page.has_field?('Username', with: 'batman')
-    assert page.has_field?('Bio', with: 'blah blah blah')
+    assert has_field?("Name", with: "Batman and Robin")
+    assert has_field?("Username", with: "batman")
+    assert has_field?("Bio", with: "blah blah blah")
   end
 
 
@@ -49,29 +49,31 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
 
+    assert has_content?("General informations")
+
     within("main") do
-      assert find(".avatar img")['src'].include? 'default'
+      assert find(".avatar img")["src"].include? "default"
     end
 
-    file = File.join(Rails.root, 'test', 'fixtures', 'files', 'avatar_upload.png')
+    file = File.join(Rails.root, "test", "fixtures", "files", "avatar_upload.png")
 
     # Display import file imput in order to allow capybara attach_file
-    page.execute_script("$('#upload_image').css('opacity','1')");
+    execute_script("$('#upload_image').css('opacity','1')");
 
-    attach_file('upload_image', file)
+    attach_file("upload_image", file)
 
-    click_button 'Update profile'
+    click_button "Update profile"
 
     within("main") do
-      assert find(".avatar img")['src'].include? 'square'
+      assert find(".avatar img")["src"].include? "square"
     end
 
-    assert page.has_field?('profile[remove_image]')
+    assert has_field?("profile[remove_image]")
 
-    check('Remove avatar')
-    click_button 'Update profile'
+    check("Remove avatar")
+    click_button "Update profile"
     within("main") do
-      assert find(".avatar img")['src'].include? 'default'
+      assert find(".avatar img")["src"].include? "default"
     end
   end
 
@@ -80,26 +82,26 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
 
-    assert page.has_content?("General informations")
+    assert has_content?("General informations")
 
     within("main") do
-      assert find(".avatar img")['src'].include? 'default'
+      assert find(".avatar img")["src"].include? "default"
     end
 
-    file = File.join(Rails.root, 'test', 'fixtures', 'files', 'avatar_upload.txt')
+    file = File.join(Rails.root, "test", "fixtures", "files", "avatar_upload.txt")
 
     # Display import file imput in order to allow capybara attach_file
-    page.execute_script("$('#upload_image').css('opacity','1')");
+    execute_script("$('#upload_image').css('opacity','1')");
 
-    attach_file('upload_image', file)
+    attach_file("upload_image", file)
 
-    click_button 'Update profile'
+    click_button "Update profile"
 
     within("main") do
-      assert find(".avatar img")['src'].include? 'default'
+      assert find(".avatar img")["src"].include? "default"
     end
 
-    assert page.has_content?("Avatar type must be one of: image/jpeg, image/png, image/gif")
+    assert has_content?("Avatar type must be one of: image/jpeg, image/png, image/gif")
   end
 
 
@@ -107,10 +109,10 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
 
-    fill_in 'Password', with: ''
-    click_button 'Update profile'
-    assert page.has_content?("Authentication parameters")
-    assert !page.has_content?("Password is too short (minimum is 6 characters)")
+    fill_in "Password", with: ""
+    click_button "Update profile"
+    assert has_content?("Authentication parameters")
+    assert !has_content?("Password is too short (minimum is 6 characters)")
   end
 
 
@@ -118,22 +120,22 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
 
-    fill_in 'Password', with: 'short'
-    click_button 'Update profile'
-    assert page.has_content?("Authentication parameters")
-    assert page.has_content?("Password is too short (minimum is 6 characters)")
+    fill_in "Password", with: "short"
+    click_button "Update profile"
+    assert has_content?("Authentication parameters")
+    assert has_content?("Password is too short (minimum is 6 characters)")
 
-    fill_in 'Password', with: 'shortshort'
-    click_button 'Update profile'
-    assert page.has_content?("Authentication parameters")
-    assert !page.has_content?("Password is too short (minimum is 6 characters)")
+    fill_in "Password", with: "shortshort"
+    click_button "Update profile"
+    assert has_content?("Authentication parameters")
+    assert !has_content?("Password is too short (minimum is 6 characters)")
 
     logout
-    fill_in 'Email', with: 'admin@viky.ai'
-    fill_in 'Password', with: 'shortshort'
-    click_button 'Log in'
+    fill_in "Email", with: "admin@viky.ai"
+    fill_in "Password", with: "shortshort"
+    click_button "Log in"
 
-    assert page.has_content?("Signed in successfully.")
+    assert has_content?("Signed in successfully.")
   end
 
 
@@ -141,36 +143,36 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
 
-    fill_in 'Email', with: 'admin_new@viky.ai'
-    click_button 'Update profile'
+    fill_in "Email", with: "admin_new@viky.ai"
+    click_button "Update profile"
 
-    assert page.has_content?("Currently waiting confirmation for: admin_new@viky.ai")
+    assert has_content?("Currently waiting confirmation for: admin_new@viky.ai")
   end
 
 
   test "Delete my account not available" do
     go_to_profile
     click_link "Edit your profile"
-    assert page.has_content?("You must delete all agents you own in order to delete your account.")
+    assert has_content?("You must delete all agents you own in order to delete your account.")
   end
 
 
   test "Delete my account" do
     # Make user deletable
     agent = agents(:weather)
-    agent.memberships.where.not(rights: 'all').each do |m|
+    agent.memberships.where.not(rights: "all").each do |m|
       assert m.destroy
     end
     assert agent.destroy
 
     agent = agents(:terminator)
-    agent.memberships.where.not(rights: 'all').each do |m|
+    agent.memberships.where.not(rights: "all").each do |m|
       assert m.destroy
     end
     assert agent.destroy
 
     agent = agents(:cities)
-    agent.memberships.where.not(rights: 'all').each do |m|
+    agent.memberships.where.not(rights: "all").each do |m|
       assert m.destroy
     end
     assert agent.destroy
@@ -178,19 +180,19 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
 
-    click_link 'I want to delete my account'
+    click_link "I want to delete my account"
 
-    assert page.has_content?("Are you sure?")
+    assert has_content?("Are you sure?")
 
-    fill_in 'validation', with: 'DEL'
-    click_button('Delete my account')
-    assert page.has_content?('Please enter the text exactly as it is displayed to confirm.')
+    fill_in "validation", with: "DEL"
+    click_button("Delete my account")
+    assert has_content?("Please enter the text exactly as it is displayed to confirm.")
 
 
-    fill_in 'validation', with: 'DELETE'
-    click_button('Delete my account')
+    fill_in "validation", with: "DELETE"
+    click_button("Delete my account")
 
-    assert page.has_content?('Your account has been successfully deleted. Bye bye.')
+    assert has_content?("Your account has been successfully deleted. Bye bye.")
   end
 
 end
