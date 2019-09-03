@@ -93,11 +93,15 @@ static og_status NlpEnableListInterpretation(og_nlp_th ctrl_nlp_th, GQueue *sort
           og_bool local_overlapped = TRUE;
           // Check if request_expression2 is overlapped with request_expression1
           if (request_expression1->start_position_char <= request_expression2->start_position_char
-              && request_expression1->end_position_char <= request_expression2->start_position_char) local_overlapped =
-          FALSE;
+              && request_expression1->end_position_char <= request_expression2->start_position_char)
+          {
+            local_overlapped = FALSE;
+          }
           else if (request_expression2->start_position_char <= request_expression1->start_position_char
-              && request_expression2->end_position_char <= request_expression1->start_position_char) local_overlapped =
-          FALSE;
+              && request_expression2->end_position_char <= request_expression1->start_position_char)
+          {
+            local_overlapped = FALSE;
+          }
           if (local_overlapped)
           {
             request_expression2->keep_as_result = FALSE;
@@ -146,11 +150,16 @@ og_status NlpEnableListCheckOverlapAfterAnyCalculation(og_nlp_th ctrl_nlp_th, GQ
           og_bool local_overlapped = TRUE;
           // Check if request_expression2 is overlapped with request_expression1
           if (request_expression1->start_position_char <= request_expression2->start_position_char
-              && request_expression1->end_position_char <= request_expression2->start_position_char) local_overlapped =
-          FALSE;
+              && request_expression1->end_position_char <= request_expression2->start_position_char)
+          {
+            local_overlapped = FALSE;
+          }
           else if (request_expression2->start_position_char <= request_expression1->start_position_char
-              && request_expression2->end_position_char <= request_expression1->start_position_char) local_overlapped =
-          FALSE;
+              && request_expression2->end_position_char <= request_expression1->start_position_char)
+          {
+            local_overlapped = FALSE;
+          }
+
           if (local_overlapped)
           {
             request_expression2->keep_as_result = FALSE;
