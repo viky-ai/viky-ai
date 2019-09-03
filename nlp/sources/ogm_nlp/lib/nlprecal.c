@@ -84,6 +84,8 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
     IFE(NlpCalculateScore(ctrl_nlp_th, request_expression));
   }
 
+  IFE(NlpEnableListCheckOverlapAfterAnyCalculation(ctrl_nlp_th, sorted_request_expressions));
+
   // sort again to take into account scores
   g_queue_sort(sorted_request_expressions, NlpRequestExpressionCmp, NULL);
 
