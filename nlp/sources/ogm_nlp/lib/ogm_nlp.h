@@ -798,6 +798,7 @@ struct og_ctrl_nlp_threaded
   /** Number of primary packages can be zero for backward compatibilities */
   int nb_primary_packages;
   og_bool show_private;
+  og_bool no_overlap;
 
   og_heap hinterpret_package;
   og_string request_sentence;

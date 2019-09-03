@@ -374,6 +374,7 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
   ctrl_nlp_th->spellchecking_level = nlp_spellchecking_level_low;
   ctrl_nlp_th->show_explanation = FALSE;
   ctrl_nlp_th->show_private = FALSE;
+  ctrl_nlp_th->no_overlap = FALSE;
 
   ctrl_nlp_th->basic_request_word_used = -1;
   ctrl_nlp_th->basic_group_request_word_nb = -1;
@@ -393,6 +394,7 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
   json_t *json_accept_language = NULL;
   json_t *json_show_explanation = NULL;
   json_t *json_show_private = NULL;
+  json_t *json_no_overlap = NULL;
   json_t *json_why_not_matching = NULL;
   json_t *json_auto_complete = NULL;
   json_t *json_trace = NULL;
@@ -436,6 +438,10 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
     else if (Ogstricmp(key, "show-private") == 0)
     {
       json_show_private = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "no-overlap") == 0)
+    {
+      json_no_overlap = json_object_iter_value(iter);
     }
     else if (Ogstricmp(key, "why-not-matching") == 0)
     {
@@ -521,6 +527,23 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
     else
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestParse: show-private is not a boolean");
+      DPcErr;
+    }
+  }
+
+  IFX(json_no_overlap)
+  {
+    if (json_is_boolean(json_no_overlap))
+    {
+      ctrl_nlp_th->no_overlap = json_boolean_value(json_no_overlap);
+      if (ctrl_nlp_th->no_overlap)
+      {
+        NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestParse: no overlap in answer")
+      }
+    }
+    else
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestParse: no-overlap is not a boolean");
       DPcErr;
     }
   }
