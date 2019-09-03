@@ -20,6 +20,17 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     })
   end
 
+  test 'validation on ownername and agentname' do
+    assert_raise ActiveRecord::RecordNotFound do
+      get '/api/v1/agents/missing_user/missing_agent/interpret.json',
+        params: { sentence: 'test' }
+    end
+
+    assert_raise ActiveRecord::RecordNotFound do
+      get '/api/v1/agents/admin/missing_agent/interpret.json',
+        params: { sentence: 'test' }
+    end
+  end
 
   test "Agent access not permitted if token not good" do
     get "/api/v1/agents/admin/weather/interpret.json",
@@ -164,7 +175,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 'abc', found[:context]['session_id']
     assert_equal '1.1-a58b', found[:context]['bot_version']
-    assert_equal agent.updated_at, found[:context]['agent_version']
+    assert_equal [agent.updated_at], found[:context]['agent_version']
   end
 
 

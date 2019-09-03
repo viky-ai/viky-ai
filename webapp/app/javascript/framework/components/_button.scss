@@ -25,8 +25,9 @@ a.btn,
   }
   &:focus{
     color: #000;
-    box-shadow: 0 0 0 2px rgba(#000, .05);
+    box-shadow: 0 0 0 3px rgba($primary_color, .3);
     border-color: #bbb;
+    border-color: $primary_color;
     outline:0;
   }
   &.btn--disabled{
@@ -69,7 +70,7 @@ a.btn,
       border-color: darken($primary_color, 8%);
     }
     &:focus{
-      box-shadow: 0 0 0 2px rgba($primary_color, .3);
+      box-shadow: 0 0 0 3px rgba($primary_color, .3);
       border-color: darken($primary_color, 13%);
       outline:0;
     }
@@ -118,7 +119,7 @@ a.btn,
       border-color: darken($destructive_color, 10%);
     }
     &:focus{
-      box-shadow: 0 0 0 2px rgba($destructive_color, .3);
+      box-shadow: 0 0 0 3px rgba($destructive_color, .3);
       border-color: darken($destructive_color, 15%);
       outline:0;
     }
@@ -160,7 +161,7 @@ a.btn,
       color: darken($primary_color, 15%);
     }
     &:focus{
-      box-shadow: 0 0 0 2px #f5f5f5;
+      box-shadow: 0 0 0 3px rgba($primary_color, .5);
       outline: 0;
     }
     &.btn--disabled{
@@ -184,7 +185,6 @@ a.btn,
     opacity: 0.8;
     cursor: not-allowed;
   }
-
 }
 
 .btn-group{
@@ -193,6 +193,9 @@ a.btn,
     border-radius: 0;
     border-left-width: 1px;
     border-right-width: 0;
+    &:focus{
+      z-index: 1;
+    }
   }
   .btn:first-child{
     margin-left: 0;
@@ -212,47 +215,143 @@ a.btn,
   }
 }
 
-$toogle_height: 1.25em;
+
+
+$toggle_height: 1.25rem;
 
 .btn{
   &.btn--toggle{
+    font-size: 1em;
     background-image: none;
     background-color: #ccc;
     border: none;
-    height: calc(#{$toogle_height} + 4px);
-    width: calc(#{$toogle_height} * 2.5);
+    height: calc(#{$toggle_height} + 4px);
+    width: calc(#{$toggle_height} * 2.6);
     position: relative;
-    border-radius: $toogle_height;
+    border-radius: $toggle_height;
     box-shadow: 0 1px 2px inset rgba(#000, .2);
     transition: background .1s ease-in-out;
     vertical-align: middle;
-    cursor: auto;
+    span{
+      display: none;
+      font-size: .75em;
+      font-weight: 400;
+      line-height: 1em;
+      margin-left: -.55em;
+      padding-right: 1.25rem;
+      text-align: right;
+      color: #fff;
+    }
     &:after{
       content: '';
       position: absolute;
-      width : $toogle_height;
-      height: $toogle_height;
+      width : $toggle_height;
+      height: $toggle_height;
       top: 2px;
       left: 2px;
-      border-radius: $toogle_height;
+      border-radius: $toggle_height;
       background-color: #fff;
       box-shadow: 0 1px 2px rgba(#000, .2);
       transition: all .1s ease-in-out;
     }
-    &:focus{
-      box-shadow: 0 0 0 2px rgba($primary_color, 1);
+    &:focus,
+    &.btn--toggle-focus{
+      box-shadow: 0 0 0 3px rgba(#000, .3);
     }
     &.btn--toggle-on{
       background-color: $primary_color;
+      span{
+        display: block;
+      }
+      &:focus,
+      &.btn--toggle-focus{
+        box-shadow: 0 0 0 3px rgba($primary_color, .3);
+      }
       &:after{
         left: 100%;
-        margin-left: calc(-2px - #{$toogle_height});
+        margin-left: calc(-2px - #{$toggle_height});
       }
     }
     &.btn--toggle-disabled{
       opacity: .25;
       &:focus{
         box-shadow: none;
+      }
+    }
+  }
+}
+
+
+
+
+$checkbox_size: 1.25em;
+.btn{
+  &.btn--checkbox{
+    background-image: none;
+    background-color: #fff;
+    border: none;
+    display: inline-block;
+    padding: 0;
+    height: $checkbox_size;
+    width: $checkbox_size;
+    position: relative;
+    box-shadow: 0 0 0 2px #aaa;
+    margin: 3px;
+    vertical-align: middle;
+
+    &:after,
+    &:before{
+      content: '';
+      position: absolute;
+      bottom: 35%;
+      left: 13%;
+      width: calc(#{$checkbox_size}/2.5);
+      height: 3px;
+      transform: rotate(45deg);
+      border-radius: 2px;
+    }
+    &:before{
+      width: calc(#{$checkbox_size}/1.6);
+      transform: rotate(-45deg);
+      bottom: 44%;
+      left: 30%;
+    }
+
+    &:focus,
+    &.btn--checkbox-focus{
+      box-shadow: 0 0 0 2px #aaa, 0 0 0 5px rgba(#aaa, .5);
+    }
+    &.btn--checkbox-on:focus,
+    &.btn--checkbox-on.btn--checkbox-focus{
+      box-shadow: 0 0 0 2px $primary_color, 0 0 0 5px rgba($primary_color, .3);
+    }
+
+    &.btn--checkbox:hover,
+    &.btn--checkbox.btn--checkbox-hover{
+      &:after,
+      &:before{
+        background-color: #bbb;
+      }
+    }
+
+    &.btn--checkbox-on,
+    &.btn--checkbox-on:hover,
+    &.btn--checkbox-on.btn--checkbox-hover{
+      background-color: $primary_color;
+      box-shadow: 0 0 0 2px $primary_color;
+      &:after,
+      &:before{
+        background-color: #fff;
+      }
+    }
+
+    &.btn--checkbox-disabled,
+    &.btn--checkbox-disabled:focus,
+    &.btn--checkbox-disabled:hover,{
+      box-shadow: 0 0 0 2px #ddd;
+      &:after,
+      &:before{
+        background-color: #fff;
       }
     }
   }

@@ -4,6 +4,17 @@ class PlayResult
   constructor: ->
     $('.play-main__result .highlight-pop').hide()
 
+    $('.play-main__result__wrapper .highlight').on 'mouseenter', (event) ->
+      item = $(event.target)
+      popup = item.prev('.highlight-pop')
+      pkg = popup.data('package')
+      color = popup.data('color')
+
+      $("#agent-compact-#{pkg}").addClass("agent-compact--highlight-#{color}")
+
+    $('.play-main__result__wrapper .highlight').on 'mouseleave', (event) ->
+      $('aside .agent-compact').removeClass().addClass('agent-compact')
+
     $('.play-main__result__wrapper').on 'click', (event) ->
       item = $(event.target)
       if item.hasClass('highlight')

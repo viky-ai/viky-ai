@@ -13,6 +13,7 @@ static og_status NlpInterpretRequestBuildSentence(og_nlp_th ctrl_nlp_th, json_t 
 static og_status NlpInterpretRequestBuildPackages(og_nlp_th ctrl_nlp_th, json_t *json_packages);
 static og_status NlpInterpretRequestBuildPackage(og_nlp_th ctrl_nlp_th, const char *package_id);
 static og_status NlpInterpretRequestBuildPrimaryPackage(og_nlp_th ctrl_nlp_th, json_t *json_primary_package);
+static og_status NlpInterpretRequestBuildPrimaryPackages(og_nlp_th ctrl_nlp_th, json_t *json_primary_packages);
 static og_status NlpInterpretRequestBuildContexts(og_nlp_th ctrl_nlp_th, json_t *json_contexts);
 static og_status NlpInterpretRequestBuildContext(og_nlp_th ctrl_nlp_th, const char *flag);
 
@@ -114,12 +115,12 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
 
   IFE(NlpGlueInit(ctrl_nlp_th));
   IFE(NlpEnableListInit(ctrl_nlp_th));
+  IFE(NlpPrimaryPackageInit(ctrl_nlp_th));
   IFE(NlpWhyNotMatchingInit(ctrl_nlp_th, param->name));
   IFE(NlpMatchGroupNumbersInit(ctrl_nlp_th));
   IFE(NlpRequestExpressionListsSortInit(ctrl_nlp_th, param->name));
   IFE(NlpExplainHighlightInit(ctrl_nlp_th, param->name));
   IFE(NlpSuperListInit(ctrl_nlp_th, param->name));
-
 
   DONE;
 }
@@ -157,6 +158,7 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
   IFE(NlpMatchGroupNumbersFlush(ctrl_nlp_th));
   IFE(NlpGlueFlush(ctrl_nlp_th));
   IFE(NlpEnableListFlush(ctrl_nlp_th));
+  IFE(NlpPrimaryPackageFlush(ctrl_nlp_th));
   IFE(NlpWhyNotMatchingFlush(ctrl_nlp_th));
   IFE(NlpRequestExpressionListsSortFlush(ctrl_nlp_th));
   IFE(NlpExplainHighlightFlush(ctrl_nlp_th));
@@ -174,7 +176,6 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
   IFE(OgHeapFlush(ctrl_nlp_th->hrequest_position));
   IFE(OgHeapFlush(ctrl_nlp_th->horiginal_request_input_part));
   IFE(OgHeapFlush(ctrl_nlp_th->horip));
-
 
   ctrl_nlp_th->hinterpret_package = NULL;
   ctrl_nlp_th->hrequest_context = NULL;
@@ -350,6 +351,7 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
 
   IFE(NlpGlueReset(ctrl_nlp_th));
   IFE(NlpEnableListReset(ctrl_nlp_th));
+  IFE(NlpPrimaryPackageReset(ctrl_nlp_th));
   IFE(NlpWhyNotMatchingReset(ctrl_nlp_th));
   IFE(NlpWarningReset(ctrl_nlp_th));
 
@@ -372,8 +374,6 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
   ctrl_nlp_th->spellchecking_level = nlp_spellchecking_level_low;
   ctrl_nlp_th->show_explanation = FALSE;
   ctrl_nlp_th->show_private = FALSE;
-  ctrl_nlp_th->primary_package = NULL;
-  ctrl_nlp_th->primary_package_id = NULL;
 
   ctrl_nlp_th->basic_request_word_used = -1;
   ctrl_nlp_th->basic_group_request_word_nb = -1;
@@ -386,6 +386,7 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
 static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_request)
 {
   json_t *json_primary_package = NULL;
+  json_t *json_primary_packages = NULL;
   json_t *json_packages = NULL;
   json_t *json_contexts = NULL;
   json_t *json_sentence = NULL;
@@ -397,7 +398,6 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
   json_t *json_trace = NULL;
   json_t *json_date_now = NULL;
   json_t *json_spellchecking = NULL;
-  json_t *json_enable_list = NULL;
 
   for (void *iter = json_object_iter(json_request); iter; iter = json_object_iter_next(json_request, iter))
   {
@@ -408,6 +408,10 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
     if (Ogstricmp(key, "primary-package") == 0)
     {
       json_primary_package = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "primary-packages") == 0)
+    {
+      json_primary_packages = json_object_iter_value(iter);
     }
     else if (Ogstricmp(key, "packages") == 0)
     {
@@ -455,7 +459,7 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
     }
     else if (Ogstricmp(key, "enable-list") == 0)
     {
-      json_enable_list = json_object_iter_value(iter);
+      // TODO supprimer l'option quand c'est deployé sur master
     }
     else
     {
@@ -613,24 +617,6 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
     }
   }
 
-  IFX(json_enable_list)
-  {
-    if (json_is_boolean(json_enable_list))
-    {
-      ctrl_nlp_th->enable_list = json_boolean_value(json_enable_list);
-      if (ctrl_nlp_th->enable_list)
-      {
-
-        NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestParse: enable-list request")
-      }
-    }
-    else
-    {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestParse: json_enable_list is not a boolean");
-      DPcErr;
-    }
-  }
-
   // The Accept-Language string can be non extant
 
   // setup
@@ -642,6 +628,7 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
   IFE(NlpInterpretRequestBuildSentence(ctrl_nlp_th, json_sentence));
   IFE(NlpInterpretRequestBuildPackages(ctrl_nlp_th, json_packages));
   IFE(NlpInterpretRequestBuildPrimaryPackage(ctrl_nlp_th, json_primary_package));
+  IFE(NlpInterpretRequestBuildPrimaryPackages(ctrl_nlp_th, json_primary_packages));
   IFE(NlpInterpretRequestBuildAcceptLanguage(ctrl_nlp_th, json_accept_language));
   IFE(NlpWhyNotMatchingBuild(ctrl_nlp_th, json_why_not_matching));
 
@@ -653,7 +640,6 @@ static og_status NlpInterpretRequestBuildSentence(og_nlp_th ctrl_nlp_th, json_t 
   if (json_is_string(json_sentence))
   {
     ctrl_nlp_th->request_sentence = json_string_value(json_sentence);
-
 
     if (!g_utf8_validate(ctrl_nlp_th->request_sentence, -1, NULL))
     {
@@ -668,7 +654,7 @@ static og_status NlpInterpretRequestBuildSentence(og_nlp_th ctrl_nlp_th, json_t 
       DPcErr;
     }
 
-    if (strlen(ctrl_nlp_th->request_sentence) >= DOgNlpInterpretationSentenceMaxLength )
+    if (strlen(ctrl_nlp_th->request_sentence) >= DOgNlpInterpretationSentenceMaxLength)
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildSentence: too long text in sentence");
       DPcErr;
@@ -755,26 +741,28 @@ static og_status NlpInterpretRequestBuildPackages(og_nlp_th ctrl_nlp_th, json_t 
 
 static og_status NlpInterpretRequestBuildPrimaryPackage(og_nlp_th ctrl_nlp_th, json_t *json_primary_package)
 {
+  og_string primary_package_id = NULL;
+
   if (json_primary_package == NULL) CONT;
 
   if (json_typeof(json_primary_package) == JSON_NULL) CONT;
 
   if (!json_is_string(json_primary_package))
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildPrimaryPackage: 'primary-packages' is not a string");
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildPrimaryPackage: 'primary-package' is not a string");
     DPcErr;
   }
   else
   {
-    ctrl_nlp_th->primary_package_id = json_string_value(json_primary_package);
+    primary_package_id = json_string_value(json_primary_package);
   }
 
   // lookup primary package
-  ctrl_nlp_th->primary_package = NlpPackageGet(ctrl_nlp_th, ctrl_nlp_th->primary_package_id);
-  IFN(ctrl_nlp_th->primary_package)
+  package_t primary_package = NlpPackageGet(ctrl_nlp_th, primary_package_id);
+  IFN(primary_package)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildPrimaryPackage: unknown primary-package '%s'",
-        ctrl_nlp_th->primary_package_id);
+        primary_package_id);
     DPcErr;
   }
 
@@ -784,7 +772,7 @@ static og_status NlpInterpretRequestBuildPrimaryPackage(og_nlp_th ctrl_nlp_th, j
   struct interpret_package *interpret_package_all = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, 0);
   for (int i = 0; i < package_used; i++)
   {
-    if (interpret_package_all[i].package == ctrl_nlp_th->primary_package)
+    if (interpret_package_all[i].package == primary_package)
     {
       primary_package_is_used = TRUE;
       break;
@@ -794,10 +782,35 @@ static og_status NlpInterpretRequestBuildPrimaryPackage(og_nlp_th ctrl_nlp_th, j
   if (!primary_package_is_used)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildPrimaryPackage: primary-package '%s' must"
-        " be listed in 'packages'", ctrl_nlp_th->primary_package_id);
+        " be listed in 'packages'", primary_package_id);
     DPcErr;
   }
 
+  IFE(NlpAddPrimaryPackage(ctrl_nlp_th, primary_package));
+  ctrl_nlp_th->nb_primary_packages = g_hash_table_size(ctrl_nlp_th->primary_package_hash);
+  DONE;
+}
+
+static og_status NlpInterpretRequestBuildPrimaryPackages(og_nlp_th ctrl_nlp_th, json_t *json_primary_packages)
+{
+  if (json_primary_packages == NULL) CONT;
+
+  if (json_typeof(json_primary_packages) == JSON_NULL) CONT;
+
+  if (json_is_array(json_primary_packages))
+  {
+    int array_size = json_array_size(json_primary_packages);
+    for (int i = 0; i < array_size; i++)
+    {
+      json_t *json_primary_package = json_array_get(json_primary_packages, i);
+      IFE(NlpInterpretRequestBuildPrimaryPackage(ctrl_nlp_th, json_primary_package));
+    }
+  }
+  else
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildPackages: 'primary-packages' is not a array");
+    DPcErr;
+  }
   DONE;
 }
 

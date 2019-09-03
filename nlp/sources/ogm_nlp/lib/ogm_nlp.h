@@ -793,9 +793,10 @@ struct og_ctrl_nlp_threaded
 
   /** interpret request */
 
-  /** Primary package can be null for backward compatibilities */
-  og_string primary_package_id;
-  package_t primary_package;
+  /** HashTable key: ptr (interpretation from primary package) , value: int (NULL) */
+  GHashTable *primary_package_hash;
+  /** Number of primary packages can be zero for backward compatibilities */
+  int nb_primary_packages;
   og_bool show_private;
 
   og_heap hinterpret_package;
@@ -810,7 +811,6 @@ struct og_ctrl_nlp_threaded
   og_heap hrequest_word;
   og_heap hba;
   enum nlp_spellchecking_level spellchecking_level;
-  og_bool enable_list;
 
   /** Heap of struct request_input_part */
   og_heap hrequest_input_part;
@@ -1261,10 +1261,17 @@ og_status NlpMatchCurrentEntity(struct nlp_match_entities_ctrl *me_ctrl);
 og_status NlpMatchEntitiesChangeToAlternativeString(struct nlp_match_entities_ctrl *me_ctrl,
     int length_normalized_string_word, unsigned char *normalized_string_word);
 
-/* nlpenablelist*/
-/* nlpglue.c */
+/* nlpenablelist.c*/
 og_status NlpEnableListInit(og_nlp_th ctrl_nlp_th);
 og_status NlpEnableListFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpEnableListReset(og_nlp_th ctrl_nlp_th);
 og_status NlpEnableList(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions);
+
+/* nlpprimarypackage.c*/
+og_status NlpPrimaryPackageInit(og_nlp_th ctrl_nlp_th);
+og_status NlpPrimaryPackageFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpPrimaryPackageReset(og_nlp_th ctrl_nlp_th);
+og_status NlpAddPrimaryPackage(og_nlp_th ctrl_nlp_th, package_t primary_package);
+og_status NlpIsPrimaryPackage(og_nlp_th ctrl_nlp_th, package_t primary_package);
+
 

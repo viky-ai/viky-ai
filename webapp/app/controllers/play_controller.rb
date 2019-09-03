@@ -1,39 +1,23 @@
 class PlayController < ApplicationController
-  before_action :define_interpreter_and_check_rights, only: [:interpret]
+  before_action :set_user_state
+  before_action :set_available_agents, except: [:reset]
 
   def index
-    @interpreter = PlayInterpreter.new
-    @interpreter.agents = interpreter_agents_from_user_ui_state
-
-    unless @interpreter.agents.empty?
-      user_state = UserUiState.new(current_user)
-      @interpreter.text = user_state.play_search.dig('text')
-      @interpreter.language = user_state.play_search.dig('language')
-      @interpreter.spellchecking = user_state.play_search.dig('spellchecking')
-      @interpreter.agent = @interpreter.agents.first
-      @interpreter.valid? ? @interpreter.proceed : @interpreter.errors.clear
-    end
+    @interpreter = PlayInterpreter.new(@user_state.play_search.merge(current_user: current_user, available_agents: @available_agents))
+    @interpreter.valid? ? @interpreter.proceed : @interpreter.errors.clear
   end
 
   def interpret
-    user_state = UserUiState.new(current_user)
-    user_state.play_search = {
-      text: @interpreter.text,
-      language: @interpreter.language,
-      spellchecking: @interpreter.spellchecking
-    }
-    user_state.save
-
+    @interpreter = PlayInterpreter.new(play_params.merge(current_user: current_user, available_agents: @available_agents))
+    save_state(@interpreter, @user_state)
     respond_to do |format|
       format.js {
         if @interpreter.valid?
           @interpreter.proceed
-          @aside = render_to_string(partial: 'aside', locals: { interpreter: @interpreter })
           @form = render_to_string(partial: 'form', locals: { interpreter: @interpreter })
-          @result = render_to_string(partial: "result", locals: { interpreter: @interpreter })
+          @result = render_to_string(partial: 'result', locals: { interpreter: @interpreter })
           render partial: 'interpret_succeed'
         else
-          @aside = render_to_string(partial: 'aside', locals: { interpreter: @interpreter })
           @form = render_to_string(partial: 'form', locals: { interpreter: @interpreter })
           render partial: 'interpret_failed'
         end
@@ -42,13 +26,13 @@ class PlayController < ApplicationController
   end
 
   def reset
-    user_state = UserUiState.new(current_user)
-    user_state.play_search = {
-      text: "",
-      language: "*",
-      spellchecking: "low"
+    @user_state.play_search = {
+      agent_ids: @user_state.play_search['agent_ids'],
+      text: '',
+      language: '*',
+      spellchecking: 'low'
     }
-    user_state.save
+    @user_state.save
     redirect_to action: :index
   end
 
@@ -56,23 +40,24 @@ class PlayController < ApplicationController
   private
 
     def play_params
-      params.require(:play_interpreter).permit(:agent_id, :text, :language, :spellchecking)
+      params.require(:play_interpreter).permit(:text, :language, :spellchecking, agent_ids: [])
     end
 
-    def interpreter_agents_from_user_ui_state
-      user_state = UserUiState.new(current_user)
-      Agent.where(id: user_state.play_agents_selection).order(name: :asc)
+    def save_state(interpreter, user_state)
+      user_state.play_search = {
+        agent_ids: interpreter.agent_ids,
+        text: interpreter.text,
+        language: interpreter.language,
+        spellchecking: interpreter.spellchecking
+      }
+      user_state.save
     end
 
-    def define_interpreter_and_check_rights
-      @interpreter = PlayInterpreter.new(play_params)
-      @interpreter.agents = interpreter_agents_from_user_ui_state
-      begin
-        @interpreter.agent = Agent.find(@interpreter.agent_id)
-        access_denied and return unless current_user.can? :show, @interpreter.agent
-      rescue ActiveRecord::RecordNotFound
-        redirect_to '/404' and return
-      end
+    def set_user_state
+      @user_state = UserUiState.new(current_user)
     end
 
+    def set_available_agents
+      @available_agents = Agent.where(id: @user_state.play_agents_selection).order(name: :asc)
+    end
 end

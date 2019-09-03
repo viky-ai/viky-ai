@@ -8,6 +8,7 @@
   display: grid;
   grid-gap: .5em;
   grid-template-columns: minmax(100px, 1fr) auto;
+  align-items: center;
 
   &.agent-compact--new{
     display:block;
@@ -97,6 +98,7 @@
 
   .agent-compact__actions{
     padding: .725em;
+    line-height: 0;
   }
 
 }

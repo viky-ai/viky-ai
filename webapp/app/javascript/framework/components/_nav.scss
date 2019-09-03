@@ -90,7 +90,8 @@
           fill: rgba(white, .4);
         }
         &.current,
-        &:hover{
+        &:hover,
+        &:focus{
           background-color: rgba(black, .5);
           color: #fff;
           .icon svg{

@@ -41,8 +41,8 @@ Rails.application.routes.draw do
     end
   end
   get  '/play', to: 'play#index'
-  get  '/play/reset', to: 'play#reset'
   post '/play', to: 'play#interpret'
+  get  '/play/reset', to: 'play#reset'
 
   scope '/agents' do
     resources :favorites, only: [:create, :destroy]
