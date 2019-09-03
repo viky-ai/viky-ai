@@ -55,7 +55,7 @@ module Webapp
     require "#{config.root}/lib/ping_pong_bot/app.rb"
 
     # Adding throttling
-    require "#{config.root}/config/initializers/rack-throttle.rb"
+    require "#{config.root}/config/initializers/rules-custom.rb"
     
     redis = Redis.new(url: ENV.fetch('VIKYAPP_REDIS_RACK_THROTTLE') { "redis://localhost:6379/4/#{Rails.env}" })
 

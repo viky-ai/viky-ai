@@ -14,29 +14,22 @@ module Rack
       end
 
       def allowed?(request)
+        return true unless Feature.rack_throttle_enabled?
+  
+        # Throttle only for interpret requests
+        path_details = Rails.application.routes.recognize_path request.path rescue {}
+        return true unless path_details[:controller] == 'api/v1/nlp' && path_details[:action] == 'interpret'
         
-        if Feature.rack_throttle_enabled?
-          if Feature.rack_throttle_limit_day_disabled? && @options[:time_window] == :day
-            allowed = true
-          elsif Feature.rack_throttle_limit_hour_disabled? && @options[:time_window] == :hour
-            allowed = true
-          elsif Feature.rack_throttle_limit_minute_disabled? && @options[:time_window] == :minute
-            allowed = true
-          elsif Feature.rack_throttle_limit_second_disabled? && @options[:time_window] == :second
-            allowed = true
-          else
-            return true if whitelisted?(request)
-            count = cache_get(key = cache_key(request)).to_i + 1 rescue 1
-            allowed = count <= max_per_window(request).to_i
-            begin
-              cache_set(key, count)
-              allowed
-            rescue => e
-              allowed = true
-            end
-          end
-        else 
+        if Feature.rack_throttle_limit_day_disabled? && @options[:time_window] == :day
           allowed = true
+        elsif Feature.rack_throttle_limit_hour_disabled? && @options[:time_window] == :hour
+          allowed = true
+        elsif Feature.rack_throttle_limit_minute_disabled? && @options[:time_window] == :minute
+          allowed = true
+        elsif Feature.rack_throttle_limit_second_disabled? && @options[:time_window] == :second
+          allowed = true
+        else
+          allowed = super(request)
         end
 
         if !allowed
@@ -71,11 +64,8 @@ module Rack
     end
 
     # Limitations rules
-
     def self.second_rule 
       [
-        { method: "GET", path: "/assets/.*", limit: 300 },          # assets requests
-        { method: "GET", path: "/api_internal/.*", limit: 1000 },   # NLS requests
         { method: "GET", path: "/api/v1/agents/.*/interpret.json", limit: self.second_limit }
       ]
     end
