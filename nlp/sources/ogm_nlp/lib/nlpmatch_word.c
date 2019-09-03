@@ -79,6 +79,7 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
           request_word->regex_input_part->self_index, FALSE, 1.0);
       IFE(status);
     }
+    DONE;
   }
 
   if (request_word->is_number)
