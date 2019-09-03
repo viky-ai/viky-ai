@@ -36,7 +36,7 @@ module Webapp
     else
       config.action_mailer.delivery_method = :postmark
       config.action_mailer.postmark_settings = {
-        api_token: ENV.fetch("POSTMARK_TOKEN") { "***REMOVED***" }
+        api_token: ENV.fetch("POSTMARK_TOKEN") { nil }
       }
     end
 
