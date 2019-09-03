@@ -121,3 +121,50 @@ static og_status NlpEnableListInterpretation(og_nlp_th ctrl_nlp_th, GQueue *sort
   DONE;
 }
 
+og_status NlpEnableListCheckOverlapAfterAnyCalculation(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions)
+{
+  for (GList *iter1 = sorted_request_expressions->head; iter1; iter1 = iter1->next)
+  {
+    struct request_expression *request_expression = iter1->data;
+    request_expression->overlapped = FALSE;
+  }
+
+  // Because some expressions contain anys (nb_anys > 0), and because the any are calculated in the end
+  // it changes their start_position_char and end_position_char thus the checks on overlaps must be
+  // done but only for expressions that have been selected
+  for (GList *iter1 = sorted_request_expressions->head; iter1; iter1 = iter1->next)
+  {
+    struct request_expression *request_expression1 = iter1->data;
+    {
+      if (!request_expression1->keep_as_result) continue;
+      for (GList *iter2 = iter1->next; iter2; iter2 = iter2->next)
+      {
+        struct request_expression *request_expression2 = iter2->data;
+        {
+          if (!request_expression2->keep_as_result) continue;
+          if (request_expression1->nb_anys == 0 && request_expression2->nb_anys == 0) continue;
+          og_bool local_overlapped = TRUE;
+          // Check if request_expression2 is overlapped with request_expression1
+          if (request_expression1->start_position_char <= request_expression2->start_position_char
+              && request_expression1->end_position_char <= request_expression2->start_position_char) local_overlapped =
+          FALSE;
+          else if (request_expression2->start_position_char <= request_expression1->start_position_char
+              && request_expression2->end_position_char <= request_expression1->start_position_char) local_overlapped =
+          FALSE;
+          if (local_overlapped)
+          {
+            request_expression2->keep_as_result = FALSE;
+            if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+            {
+              OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
+                  "NlpEnableListCheckOverlapAfterAnyCalculation: expression overlapped, thus removed");
+              IFE(NlpRequestExpressionLog(ctrl_nlp_th, request_expression2, 2));
+            }
+          }
+        }
+      }
+    }
+  }
+  DONE;
+}
+

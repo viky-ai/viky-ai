@@ -21,6 +21,7 @@ module Nls
         a = package.new_interpretation('a', scope: 'public')
         a << Expression.new('aaa')
 
+
         b = package.new_interpretation('b', scope: 'public')
         b << Expression.new('bbb')
 
@@ -34,6 +35,9 @@ module Nls
         ef << Expression.new('eee')
         ef << Expression.new('fff')
 
+        g = package.new_interpretation('g', scope: 'public')
+        g << Expression.new("avanttout @{tout}", aliases: { tout: Alias.any } )
+
         package
       end
 
@@ -45,6 +49,8 @@ module Nls
         check_interpret('bbb aaa ccc', interpretations: %w[a b c])
         check_interpret('aaa bbb ccc', interpretations: %w[ab c])
         check_interpret('aaa bbb eee', interpretations: %w[ab ef])
+        check_interpret('avanttout mot', interpretations: ['g'])
+        check_interpret('avanttout aaa', interpretations: ['g'])
       end
     end
   end
