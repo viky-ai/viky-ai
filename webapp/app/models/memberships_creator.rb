@@ -22,7 +22,7 @@ class MembershipsCreator
         Membership.new(user_id: user.id, agent_id: @agent.id, rights: @rights)
       end
       atomic_save(new_memberships)
-      send_emails if valid?
+      send_emails if valid? && Feature.email_configured?
     end
     valid?
   end
