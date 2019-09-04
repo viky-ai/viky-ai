@@ -355,6 +355,33 @@ class EntitiesImportTest < ActiveSupport::TestCase
     ENV['VIKYAPP_ENTITIES_QUOTA'] = nil;
   end
 
+  test 'Entities quota is per user' do
+
+    ENV['VIKYAPP_ENTITIES_QUOTA'] = '5';
+    
+    user = users(:admin)
+    assert_equal 4, EntitiesList.joins(:agent).where('agents.owner_id = ?', user.id).sum(:entities_count)
+
+    elist = entities_lists(:terminator_targets)
+    assert_equal user, elist.agent.owner
+    assert_equal 0, elist.entities_count
+
+    io = StringIO.new
+    io << "Terms,Auto solution,Solution\n"
+    io << "Sarah,true,''\n"
+    io << "John,true,''"
+    entities_import = get_entities_import(elist, io)
+
+    assert_not entities_import.save
+
+    expected = [
+      "Quota exceeded (maximum is 5 entities), actual: 4 and you are trying to import 2 more entities"
+    ]
+    assert_equal expected, entities_import.errors.full_messages
+    
+    ENV['VIKYAPP_ENTITIES_QUOTA'] = nil;
+  end
+
 
   private
 

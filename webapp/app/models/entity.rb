@@ -155,7 +155,7 @@ class Entity < ApplicationRecord
 
     def check_owner_quota
       entities_quota = ENV.fetch('VIKYAPP_ENTITIES_QUOTA') { nil }
-      unless entities_quota == nil
+      unless entities_quota.nil?
         total = EntitiesList.joins(:agent).where("agents.owner_id = ?", entities_list.agent.owner_id).sum(:entities_count)
         if total >= Integer(entities_quota)
           errors.add(:quota, I18n.t('errors.entity.quota', maximum: entities_quota, actual: total))

@@ -34,7 +34,7 @@ module Rack
 
         if !allowed
           agent = Agent.find_by api_token: request.params["agent_token"]
-          if agent then 
+          if agent 
             log = InterpretRequestLog.new(
               timestamp: Time.now.iso8601(3),
               agent: agent
