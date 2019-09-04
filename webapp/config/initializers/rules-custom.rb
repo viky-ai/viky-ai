@@ -4,7 +4,8 @@ module Rack
       
       protected
       def client_identifier_for_rule(request, rule)
-        agent = Agent.find_by api_token: request.params["agent_token"]
+        api_token = request.params["agent_token"] || request.get_header("HTTP_AGENT_TOKEN")
+        agent = Agent.find_by api_token: api_token
 
         if agent.nil?
           "#{ip(request)}_#{rule[:method]}_#{rule[:path]}"
@@ -15,7 +16,7 @@ module Rack
 
       def allowed?(request)
         return true unless Feature.rack_throttle_enabled?
-  
+
         # Throttle only for interpret requests
         path_details = Rails.application.routes.recognize_path request.path rescue {}
         return true unless path_details[:controller] == 'api/v1/nlp' && path_details[:action] == 'interpret'
@@ -33,7 +34,8 @@ module Rack
         end
 
         if !allowed
-          agent = Agent.find_by api_token: request.params["agent_token"]
+          api_token = request.params["agent_token"] || request.get_header("HTTP_AGENT_TOKEN")
+          agent = Agent.find_by api_token: api_token
           if agent 
             log = InterpretRequestLog.new(
               timestamp: Time.now.iso8601(3),
