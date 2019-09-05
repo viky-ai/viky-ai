@@ -15,6 +15,7 @@ module Webapp
 
     # SMTP or POSTMARK
     smtp_enabled = ENV.fetch("SMTP_ENABLED") { false }
+    postmark_enabled = ENV.fetch("POSTMARK_TOKEN") { false }
     if smtp_enabled == "true"
       config.action_mailer.delivery_method = :smtp
       config.action_mailer.smtp_settings = {
@@ -33,10 +34,10 @@ module Webapp
       if ENV.fetch("SMTP_ENABLE_STARTTLS_AUTO") { true } == "false"
         config.action_mailer.smtp_settings[:enable_starttls_auto] = false
       end
-    else
+    elsif postmark_enabled
       config.action_mailer.delivery_method = :postmark
       config.action_mailer.postmark_settings = {
-        api_token: ENV.fetch("POSTMARK_TOKEN") { nil }
+        api_token: ENV.fetch("POSTMARK_TOKEN")
       }
     end
 

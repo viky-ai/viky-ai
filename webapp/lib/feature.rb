@@ -13,6 +13,8 @@ module Feature
   end
 
   def self.email_configured?
+    return true if Rails.env.test?
+
     smtp_enabled = ENV.fetch("SMTP_ENABLED") { false }
     postmark_enabled = ENV.fetch("POSTMARK_TOKEN") { false }
     postmark_enabled || smtp_enabled == 'true'

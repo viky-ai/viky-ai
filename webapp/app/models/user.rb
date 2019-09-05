@@ -15,9 +15,10 @@ class User < ApplicationRecord
   scope :locked, -> { where.not(locked_at: nil) }
 
   # Include default devise modules except :omniauthable
-  devise :invitable, :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable,
-         :confirmable, :lockable, :timeoutable
+  devise :database_authenticatable, :registerable,
+         :rememberable, :trackable, :validatable,
+         :timeoutable
+  devise :lockable, :recoverable, :confirmable, :invitable if Feature.email_configured?
 
   validates :username, uniqueness: true, length: { in: 3..25 }, presence: true,
     allow_blank: false, if: Proc.new {|u| !u.invitation_token.nil? || (u.confirmation_token.nil? && u.invitation_token.nil?) }
