@@ -8,7 +8,7 @@ module Task::Cmd
       if opts[:capture_output]
         stdout_and_stderr.each { |line| data << line }
       else
-        stdout_and_stderr.each { |line| Task::Print.substep "⤷ #{line}" }
+        stdout_and_stderr.each { |line| Task::Print.substep "⤷ #{line.rstrip}" }
       end
 
       # Process::Status object returned.
@@ -16,7 +16,7 @@ module Task::Cmd
 
       unless exit_status.success?
         Task::Print.step cmd
-        data.each { |line| Task::Print.substep "⤷ #{line}" } if opts[:capture_output]
+        data.each { |line| Task::Print.substep "⤷ #{line.rstrip}" } if opts[:capture_output]
         raise "Command \"#{cmd}\" failed"
       end
     end
