@@ -33,15 +33,16 @@ namespace :db do
     users_to_keep  = users_to_keep.flatten.uniq
     agents_to_keep = agents_to_keep.flatten.uniq
 
-    Agent.all.each do |agent|
+    Agent.find_each.each do |agent|
       unless agents_to_keep.include? agent.id
         puts Rainbow("Delete agent: #{agent.slug}").white
+        agent.agent_regression_checks.delete_all
         agent.memberships.each { |m| m.destroy }
         agent.destroy
       end
     end
 
-    User.all.each do |user|
+    User.find_each.each do |user|
       unless users_to_keep.include? user.id
         puts Rainbow("Delete user: #{user.email}").white
         user.destroy
