@@ -37,6 +37,8 @@ yarn-debug.log*
 /public/uploads
 /coverage/
 /import/*
+/backups/*
+!/backups/.keep
 
 .env
 *.rdb
