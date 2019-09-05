@@ -126,7 +126,7 @@ module Nls
         js_isolation_2 = package.new_interpretation("js_isolation_2")
         js_isolation_2 << Expression.new("@{js_isolation_1} jsisolationdeux"    , aliases: { js_isolation_1: js_isolation_1 }, solution: "`{ js_isolation_0: js_isolation_0, js_isolation_1: js_isolation_1, js_isolation_2: 'js_isolation_2' }`", keep_order: true, glue_distance: 20)
         js_isolation_2 << Expression.new("@{js_isolation_1} jsisolationdeux bis", aliases: { js_isolation_1: js_isolation_1 }, solution: "`{ js_isolation_1: js_isolation_1, js_isolation_2: 'js_isolation_2', bug: undef_variable }`", keep_order: true, glue_distance: 20)
-        js_isolation_2 << Expression.new("jsisolationdeux", solution: "`{ bug: undef_variable }`", keep_order: true, glue_distance: 20)
+        js_isolation_2 << Expression.new("jsisolationdeux", solution: "`{ \n  bug: undef_variable\n }`", keep_order: true, glue_distance: 20)
 
         js_isolation_moment_1 = package.new_interpretation("js_isolation_moment_1")
         js_isolation_moment_1 << Expression.new('js_isolation_moment', solution: "leaks", keep_order: true, glue_distance: 20)
@@ -339,6 +339,33 @@ module Nls
           check_interpret('big sol test', interpretation: 'big_sol_test', solution: solution)
         end
 
+      end
+
+      def test_test_js_detailled_error
+
+        exception = assert_raises RestClient::InternalServerError, "'undef_variable' must no be undefined" do
+          check_interpret('jsisolationdeux', interpretation: nil)
+        end
+
+        # generic error
+        assert exception.message.include?("JavaScript error : ReferenceError: identifier 'undef_variable' undefined"), exception.message
+        assert !exception.http_body.nil?, 'Error should have a body'
+        error_body = JSON.parse(exception.http_body)
+
+        # detailled javascript error
+        assert_equal 'javascript', error_body['errors_code']
+        js_error = error_body['errors_javascript']
+        assert !js_error.nil?
+        assert_equal "ReferenceError: identifier 'undef_variable' undefined (at line 2)", js_error['message']
+        assert !js_error['solution_location'].nil?
+        assert_equal 'js_isolation_2', js_error['solution_location']['slug']
+        assert_equal 2, js_error['solution_location']['position']
+        assert_equal 2, js_error['solution_location']['line_number']
+        assert_equal ['( { ', '  bug: undef_variable', ' } )'], js_error['code']
+        assert !js_error['context'].nil?
+        assert js_error['context'].include? 'const start_position = 0;'
+        assert js_error['context'].include? 'const end_position = 15;'
+        assert js_error['context'].include? 'const request_raw_text = "jsisolationdeux";'
       end
 
     end

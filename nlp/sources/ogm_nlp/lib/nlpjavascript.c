@@ -172,7 +172,8 @@ static og_status NlpJsLoadLibMoment(og_nlp_th ctrl_nlp_th)
   }
   else
   {
-    NlpLog(DOgNlpTraceJs, "NlpJsInit: loading libs 'moment' done. ("DOgNlpJsMomentSecretName")", ctrl_nlp_th->js->random_number);
+    NlpLog(DOgNlpTraceJs, "NlpJsInit: loading libs 'moment' done. ("DOgNlpJsMomentSecretName")",
+        ctrl_nlp_th->js->random_number);
   }
 
   DONE;
@@ -391,6 +392,84 @@ og_bool NlpJsStackLocalWipe(og_nlp_th ctrl_nlp_th)
   return cleaned;
 }
 
+static og_status split_error_message(json_t *json_errors, og_string multiple_errors)
+{
+  if (multiple_errors == NULL) CONT;
+
+  int imultiple_errors = strlen(multiple_errors);
+  char errors[imultiple_errors + 1];
+  strncpy(errors, multiple_errors, imultiple_errors + 1);
+
+  char *saveptr = NULL;
+  char *error_line = strtok_r(errors, "\n", &saveptr);
+  while (error_line != NULL)
+  {
+    json_array_append_new(json_errors, json_string(error_line));
+    error_line = strtok_r(NULL, "\n", &saveptr);
+  }
+
+  DONE;
+}
+
+static og_status NlpJsEvalBuildError(og_nlp_th ctrl_nlp_th, duk_context *ctx, og_string script)
+{
+
+  ctrl_nlp_th->json_answer_error = json_object();
+  json_t *errors_javascript = json_object();
+  json_object_set_new(ctrl_nlp_th->json_answer_error, "errors_code", json_string("javascript"));
+  json_object_set_new(ctrl_nlp_th->json_answer_error, "errors", json_array());
+  json_object_set_new(ctrl_nlp_th->json_answer_error, "errors_javascript", errors_javascript);
+
+  if (duk_get_prop_string(ctx, -1, "lineNumber"))
+  {
+    og_string lineNumber = duk_safe_to_string(ctx, -1);
+    ctrl_nlp_th->js->last_error_linenumber = atol(lineNumber);
+  }
+  duk_pop(ctx);
+
+  og_string error = duk_to_string(ctx, -1);
+  json_object_set_new(errors_javascript, "message", json_string(error));
+
+  og_char_buffer now_eval[DPcPathSize];
+  snprintf(now_eval, DPcPathSize, DOgNlpJsMomentSecretName ".now_form_request.toJSON()",
+      ctrl_nlp_th->js->random_number);
+
+  json_t *errors_context = json_array();
+  json_object_set_new(errors_javascript, "context", errors_context);
+  json_t *errors_code = json_array();
+  json_object_set_new(errors_javascript, "code", errors_code);
+  split_error_message(errors_code, script);
+
+  // show now
+  og_char_buffer now[DPcPathSize];
+  now[0] = '\0';
+  if (duk_peval_string(ctx, now_eval) == 0)
+  {
+    og_char_buffer now_json[DPcPathSize];
+    snprintf(now_json, DPcPathSize, "now returned by `moment()` is '%s'", duk_safe_to_string(ctx, -1));
+    json_array_append_new(errors_context, json_string(now_json));
+    snprintf(now, DPcPathSize, "// %s\n", now_json);
+  }
+
+  IFE(NlpThrowErrorTh(ctrl_nlp_th, "%s", script));
+  IFE(NlpThrowErrorTh(ctrl_nlp_th, "\n// ====== Eval =======\n"
+      "%s// JavaScript error : %s from here :\n// ===================\n", now, error));
+
+  // read variables in backward to provide better message
+  for (GList *iter = ctrl_nlp_th->js->variables_values->head; iter; iter = iter->next)
+  {
+    og_string variable_value = iter->data;
+    IFE(NlpThrowErrorTh(ctrl_nlp_th, "%s", variable_value));
+    json_array_append_new(errors_context, json_string(variable_value));
+  }
+
+  IFE(NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval: duk_peval_lstring eval failed: %s :\n// ===== Context =====", error));
+
+  DPcErr;
+
+  DONE;
+}
+
 og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_string original_js_script,
     json_t **p_json_anwser)
 {
@@ -452,7 +531,7 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
   // starting and ending '{' '}' => surround by '(' ')'
   if (trimed_script[0] == '{' && trimed_script[trimed_script_length - 1] == '}')
   {
-    snprintf(enhanced_script, enhanced_script_size, "(\n%s\n)", trimed_script);
+    snprintf(enhanced_script, enhanced_script_size, "( %s )", trimed_script);
   }
   else
   {
@@ -475,6 +554,9 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
     NlpLog(DOgNlpTraceJs, "NlpJsEval js to evaluate : \n// =========\n%s%s\n//=========\n", now, enhanced_script);
   }
 
+  // reset line number
+  ctrl_nlp_th->js->last_error_linenumber = -1;
+
   // put object, method + args
   if (!duk_get_global_string(ctx, "duktape_nlp"))
   {
@@ -487,33 +569,7 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
   // eval securely
   if (duk_pcall_prop(ctx, -3, 1) != 0)
   {
-    og_string error = duk_safe_to_string(ctx, -1);
-
-    og_char_buffer now_eval[DPcPathSize];
-    snprintf(now_eval, DPcPathSize, DOgNlpJsMomentSecretName ".now_form_request.toJSON()",
-        ctrl_nlp_th->js->random_number);
-
-    // show now
-    og_char_buffer now[DPcPathSize];
-    now[0] = '\0';
-    if (duk_peval_string(ctx, now_eval) == 0)
-    {
-      snprintf(now, DPcPathSize, "// now returned by `moment()` is '%s'\n", duk_safe_to_string(ctx, -1));
-    }
-
-    IFE(NlpThrowErrorTh(ctrl_nlp_th, "%s", enhanced_script));
-    IFE(NlpThrowErrorTh(ctrl_nlp_th, "\n// ====== Eval =======\n"
-        "%s// JavaScript error : %s\n// ===================\n", now, error));
-
-    // read variables in backward to provide better message
-    for (GList *iter = ctrl_nlp_th->js->variables_values->tail; iter; iter = iter->next)
-    {
-      og_string variable_value = iter->data;
-      IFE(NlpThrowErrorTh(ctrl_nlp_th, "%s", variable_value));
-    }
-
-    IFE(NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval: duk_peval_lstring eval failed: %s :\n// ===== Context =====", error));
-
+    NlpJsEvalBuildError(ctrl_nlp_th, ctx, enhanced_script);
     DPcErr;
   }
 
@@ -590,7 +646,7 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
               " return dummy string, try to convert it from CESU-8 successful : %s", computed_string_converted);
 
           // free converted string
-          g_free((gchar *) computed_string_converted);
+          g_free((gchar*) computed_string_converted);
 
           if (*p_json_anwser == NULL)
           {
@@ -647,7 +703,7 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
             NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval : NlpJsDukCESU8toUTF8 failed computed json object"
                 " contains error duk_get_string return dummy string");
             // free converted string
-            g_free((gchar *) computed_json_converted);
+            g_free((gchar*) computed_json_converted);
             DPcErr;
           }
 
@@ -659,7 +715,7 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
           *p_json_anwser = json_stringn(computed_json + 1, icomputed_json - 2);
 
           // free converted string
-          g_free((gchar *) computed_json_converted);
+          g_free((gchar*) computed_json_converted);
         }
         else
         {
@@ -673,12 +729,12 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
                 error->line, error->column, error->source, error->text, computed_json);
 
             // free converted string
-            g_free((gchar *) computed_json_converted);
+            g_free((gchar*) computed_json_converted);
             DPcErr;
           }
 
           // free converted string
-          g_free((gchar *) computed_json_converted);
+          g_free((gchar*) computed_json_converted);
 
         }
 
@@ -702,7 +758,8 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
   DONE;
 }
 
-og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_string variable_eval, int variable_eval_length)
+og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_string variable_eval,
+    int variable_eval_length)
 {
   int variable_name_size = strlen(variable_name);
   if (variable_name_size == 0)
@@ -998,7 +1055,7 @@ static og_status NlpJsDukCESU8toUTF8(og_nlp_th ctrl_nlp_th, og_string cesu, int 
   og_string pattern = "(\\xED[\\xA0-\\xAF][\\x80-\\xBF]\\xED[\\xB0-\\xBF][\\x80-\\xBF])";
 
   GError *regexp_error = NULL;
-  GRegex * regex = g_regex_new(pattern, G_REGEX_RAW, 0, &regexp_error);
+  GRegex *regex = g_regex_new(pattern, G_REGEX_RAW, 0, &regexp_error);
   if (!regex || regexp_error)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpJsDukCESU8toUTF8: g_regex_new failed: %s\npattern: %s\n", regexp_error->message,
