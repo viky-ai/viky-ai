@@ -4,7 +4,9 @@ class RegistrationsController < Devise::RegistrationsController
 
   # GET /resource/sign_up
   def new
-    if Feature.user_registration_enabled?
+    if Feature.user_registration_disabled?
+      redirect_to new_user_session_path, alert: t('controllers.registrations.disabled_message')
+    else
       super
     else
       redirect_to new_user_session_path, alert: t('controllers.registrations.disabled_message')
@@ -13,7 +15,9 @@ class RegistrationsController < Devise::RegistrationsController
 
   # POST /resource
   def create
-    if Feature.user_registration_enabled?
+    if Feature.user_registration_disabled?
+      redirect_to new_user_session_path, alert: t('controllers.registrations.disabled_message')
+    else
       super
     else
       redirect_to new_user_session_path, alert: t('controllers.registrations.disabled_message')

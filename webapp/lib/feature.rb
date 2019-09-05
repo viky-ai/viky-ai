@@ -1,7 +1,7 @@
 module Feature
 
-  def self.user_registration_enabled?
-    ENV['VIKYAPP_USER_REGISTRATION'] == 'true'
+  def self.user_registration_disabled?
+    ENV['VIKYAPP_USER_REGISTRATION'] == 'false'
   end
 
   def self.enable_user_registration
