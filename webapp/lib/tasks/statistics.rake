@@ -1,3 +1,5 @@
+require_relative 'lib/task'
+
 namespace :statistics do
 
   desc 'Creates and configures stats indices'
@@ -5,7 +7,7 @@ namespace :statistics do
     environments = [Rails.env]
     environments << 'test' if Rails.env == 'development'
     environments.each do |environment|
-      Statistics::Print.step("Environment #{environment}.")
+      Task::Print.step("Environment #{environment}.")
       # use a client with a bigger timeout
       client = IndexManager.client(
         transport_options: {
@@ -13,25 +15,25 @@ namespace :statistics do
         }
       )
       unless cluster_ready?(client)
-        Statistics::Print.error('Cannot perform tasks : cluster is not ready')
+        Task::Print.error('Cannot perform tasks : cluster is not ready')
         exit 1
       end
       IndexManager.fetch_template_configurations.each do |template_conf|
         active_template = StatisticsIndexTemplate.new template_conf
-        Statistics::Print.substep("Index #{active_template.index_name}.")
+        Task::Print.substep("Index #{active_template.index_name}.")
         save_template(client, active_template) unless template_exists?(client, active_template)
         inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
         save_template(client, inactive_template) unless template_exists?(client, inactive_template)
 
         alias_name = InterpretRequestLog::INDEX_ALIAS_NAME
         if index_exists?(client, alias_name)
-          Statistics::Print.notice("Delete index with same name as alias (#{alias_name}) because it should not exists.")
+          Task::Print.notice("Delete index with same name as alias (#{alias_name}) because it should not exists.")
           client.indices.delete index: alias_name
         end
 
         index_with_valid_regexp_pattern = "#{active_template.index_patterns[0..-2]}.*"
         if index_exists?(client, index_with_valid_regexp_pattern)
-          Statistics::Print.notice("Index like #{active_template.index_patterns} already exists : skipping index creation.")
+          Task::Print.notice("Index like #{active_template.index_patterns} already exists : skipping index creation.")
         else
           index = StatisticsIndex.from_template active_template
           create_index(client, index)
@@ -41,11 +43,11 @@ namespace :statistics do
       end
     end
     unless Rails.env == 'test'
-      Statistics::Print.step("Configure Kibana.")
+      Task::Print.step("Configure Kibana.")
       begin
         StatisticsVisualizer.new.configure
       rescue RuntimeError => e
-        Statistics::Print.error(e)
+        Task::Print.error(e)
       end
     end
   end
@@ -53,7 +55,7 @@ namespace :statistics do
 
   desc 'Reindex the specified statistics index into a new one'
   task :reindex, [:src_index] => :environment do |t, args|
-    Statistics::Print.error('Missing param: src index') unless args.src_index.present?
+    Task::Print.error('Missing param: src index') unless args.src_index.present?
     src_name = args.src_index
     # use a client with a bigger timeout
     client = IndexManager.client(
@@ -62,11 +64,11 @@ namespace :statistics do
       }
     )
     unless cluster_ready?(client)
-      Statistics::Print.error('Cannot perform tasks : cluster is not ready')
+      Task::Print.error('Cannot perform tasks : cluster is not ready')
       exit 1
     end
     unless index_exists?(client, src_name)
-      Statistics::Print.error("Source index #{src_name} does not exists.")
+      Task::Print.error("Source index #{src_name} does not exists.")
       exit 1
     end
     template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
@@ -78,10 +80,10 @@ namespace :statistics do
     template = src_index.active? ? active_template : inactive_template
     if src_index.need_reindexing? template
       dest_index = StatisticsIndex.from_template template
-      Statistics::Print.step("Reindex #{src_index.name} to #{dest_index.name}.")
+      Task::Print.step("Reindex #{src_index.name} to #{dest_index.name}.")
       reindex_into_new(client, src_index, dest_index)
     else
-      Statistics::Print.notice("No need to reindex #{src_index.name} : skipping.")
+      Task::Print.notice("No need to reindex #{src_index.name} : skipping.")
     end
   end
 
@@ -96,7 +98,7 @@ namespace :statistics do
         }
       )
       unless cluster_ready?(client)
-        Statistics::Print.error('Cannot perform tasks : cluster is not ready')
+        Task::Print.error('Cannot perform tasks : cluster is not ready')
         exit 1
       end
       template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
@@ -110,17 +112,17 @@ namespace :statistics do
       active_indices = indices.first.select { |index| index.need_reindexing? active_template }
       inactive_indices = indices.second.select { |index| index.need_reindexing? inactive_template }
       if (active_indices + inactive_indices).empty?
-        Statistics::Print.step('Nothing to reindex.')
+        Task::Print.step('Nothing to reindex.')
       else
-        Statistics::Print.step("Reindex indices #{(active_indices.map(&:name) + inactive_indices.map(&:name))}.")
+        Task::Print.step("Reindex indices #{(active_indices.map(&:name) + inactive_indices.map(&:name))}.")
         active_indices.each do |src_index|
           dest_index = StatisticsIndex.from_template active_template
-          Statistics::Print.substep("Reindex #{src_index.name} to #{dest_index.name}.")
+          Task::Print.substep("Reindex #{src_index.name} to #{dest_index.name}.")
           reindex_into_new(client, src_index, dest_index)
         end
         inactive_indices.each do |src_index|
           dest_index = StatisticsIndex.from_template inactive_template
-          Statistics::Print.substep("Reindex #{src_index.name} to #{dest_index.name}.")
+          Task::Print.substep("Reindex #{src_index.name} to #{dest_index.name}.")
           reindex_into_new(client, src_index, dest_index)
         end
       end
@@ -132,7 +134,7 @@ namespace :statistics do
   task :rollover => :environment do |t, args|
     max_age = '7d'
     max_docs = 100_000
-    Statistics::Print.step("Roll over alias #{InterpretRequestLog::INDEX_ALIAS_NAME} with conditions max_age=#{max_age} or max_docs=#{max_docs}.")
+    Task::Print.step("Roll over alias #{InterpretRequestLog::INDEX_ALIAS_NAME} with conditions max_age=#{max_age} or max_docs=#{max_docs}.")
     # use a client with a bigger timeout
     client = IndexManager.client(
       transport_options: {
@@ -140,7 +142,7 @@ namespace :statistics do
       }
     )
     unless cluster_ready?(client)
-      Statistics::Print.error('Cannot perform tasks : cluster is not ready')
+      Task::Print.error('Cannot perform tasks : cluster is not ready')
       exit 1
     end
     template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
@@ -153,29 +155,29 @@ namespace :statistics do
       }
     })
     unless res['rolled_over']
-      Statistics::Print.notice('No need to roll over because no condition reached.')
+      Task::Print.notice('No need to roll over because no condition reached.')
       exit 0
     end
     old_index = res['old_index']
-    Statistics::Print.substep("Index #{old_index} rolled over to #{dest_index.name}.")
+    Task::Print.substep("Index #{old_index} rolled over to #{dest_index.name}.")
     shrink_node_name = pick_random_node(client)
     client.indices.put_settings index: old_index, body: {
       'index.routing.allocation.require._name' => shrink_node_name,
       'index.blocks.write' => true
     }
-    Statistics::Print.substep("Index #{old_index} switched to read only and migrating to #{shrink_node_name}.")
+    Task::Print.substep("Index #{old_index} switched to read only and migrating to #{shrink_node_name}.")
     client.cluster.health wait_for_no_relocating_shards: true
-    Statistics::Print.substep('Shards migration completed.')
+    Task::Print.substep('Shards migration completed.')
     inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
     target_name = StatisticsIndex.from_template inactive_template
     client.indices.shrink index: old_index, target: target_name.name
-    Statistics::Print.substep("Index #{old_index} shrink into #{target_name.name}.")
+    Task::Print.substep("Index #{old_index} shrink into #{target_name.name}.")
     client.indices.forcemerge index: target_name.name, max_num_segments: 1
-    Statistics::Print.substep("Index #{target_name.name} force merged.")
+    Task::Print.substep("Index #{target_name.name} force merged.")
     client.indices.put_settings index: target_name.name, body: {
       'index.number_of_replicas' => 1
     }
-    Statistics::Print.substep("Configured a replica for index #{target_name.name}.")
+    Task::Print.substep("Configured a replica for index #{target_name.name}.")
     update_index_aliases(client, [
       { add: { index: target_name.name, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } },
       { remove: { index: old_index, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } }
@@ -188,13 +190,13 @@ namespace :statistics do
   private
     def template_exists?(client, template)
       exists = client.indices.exists_template? name: template.name
-      Statistics::Print.notice("Template #{template.name} already exists : skipping.") if exists
+      Task::Print.notice("Template #{template.name} already exists : skipping.") if exists
       exists
     end
 
     def save_template(client, template)
       client.indices.put_template name: template.name, body: template.configuration
-      Statistics::Print.success("Save index template #{template.name} succeed.")
+      Task::Print.success("Save index template #{template.name} succeed.")
     end
 
     def reindex_into_new(client, src_index, dest_index)
@@ -237,16 +239,16 @@ namespace :statistics do
 
     def create_index(client, index)
       client.indices.create index: index.name
-      Statistics::Print.success("Creation of index #{index.name} succeed.")
+      Task::Print.success("Creation of index #{index.name} succeed.")
     end
 
     def update_index_aliases(client, actions, index_alias)
       client.indices.update_aliases body: { actions: actions }
-      Statistics::Print.success("Update aliases #{index_alias} succeed.")
+      Task::Print.success("Update aliases #{index_alias} succeed.")
     end
 
     def reindex(src_index, dest_index)
-      Statistics::Print.substep("Wait for reindexing of #{src_index.name} to #{dest_index.name} ...")
+      Task::Print.substep("Wait for reindexing of #{src_index.name} to #{dest_index.name} ...")
       # use a client with a bigger timeout
       client = IndexManager.client(
         transport_options: {
@@ -261,13 +263,13 @@ namespace :statistics do
         }
       )
 
-      Statistics::Print.success("Reindexing of #{src_index.name} to #{dest_index.name} succeed.")
-      Statistics::Print.notice("Reindexing result : #{result.to_json}")
+      Task::Print.success("Reindexing of #{src_index.name} to #{dest_index.name} succeed.")
+      Task::Print.notice("Reindexing result : #{result.to_json}")
     end
 
     def delete_index(client, index_name)
       client.indices.delete index: index_name
-      Statistics::Print.success("Remove index #{index_name} succeed.")
+      Task::Print.success("Remove index #{index_name} succeed.")
     end
 
     def pick_random_node(client)
@@ -283,45 +285,16 @@ namespace :statistics do
       cluster_ready = false
       timetout = '30s'
       while !cluster_ready && retry_count < max_retries do
-        Statistics::Print.substep("Wait for #{timetout} statistics cluster to be ready...")
+        Task::Print.substep("Wait for #{timetout} statistics cluster to be ready...")
         begin
           client.cluster.health(wait_for_status: expected_status, timeout: timetout)
           cluster_ready = true
         rescue Elasticsearch::Transport::Transport::Errors::RequestTimeout => e
           retry_count += 1
-          Statistics::Print.notice("Cluster is not ready for the #{retry_count}/#{max_retries} attempt")
+          Task::Print.notice("Cluster is not ready for the #{retry_count}/#{max_retries} attempt")
         end
       end
       cluster_ready
     end
 
-
-  module Statistics
-    module Print
-      def self.step(text)
-        puts "#{time_log} " + Rainbow(text).white
-      end
-
-      def self.substep(text)
-        puts "#{time_log} " + Rainbow("  #{text}").white
-      end
-
-      def self.notice(text)
-        puts "#{time_log} " + Rainbow(text).yellow
-      end
-
-      def self.error(text)
-        puts "#{time_log} " + Rainbow(text).red
-      end
-
-      def self.success(text)
-        puts "#{time_log} " + Rainbow(text).green
-      end
-
-      private
-        def time_log
-          "[#{DateTime.now.strftime("%FT%T")}]"
-        end
-    end
-  end
 end

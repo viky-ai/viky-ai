@@ -1,5 +1,6 @@
 require 'rainbow'
 require 'open3'
+require 'fileutils'
 
 module Task
   require_relative 'task/print.rb'

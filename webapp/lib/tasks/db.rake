@@ -1,23 +1,24 @@
+require_relative 'lib/task'
+
 namespace :db do
 
   desc "Keeps only users related agents - Usage: rails db:truncate[toto@blague.com,titi@grosminet.com]"
   task :truncate => [:environment] do |t, args|
     unless args.extras.count > 0
-      puts Rainbow('Need user emails').red
+      Task::Print.error "Need user emails"
       exit 0
     end
 
     emails = args.extras
     emails.each do |email|
       if User.find_by_email(email).nil?
-        puts Rainbow("User with email: #{email} doesn't exist.").red
+        Task::Print.error "User with email: #{email} doesn't exist."
         exit 0
       end
     end
 
     agents_to_keep = []
     users_to_keep  = []
-    users_to_keep << User.find_by_email("viky-demo@pertimm.com").id
 
     Nlp::Package.sync_active = false
 
@@ -33,18 +34,21 @@ namespace :db do
     users_to_keep  = users_to_keep.flatten.uniq
     agents_to_keep = agents_to_keep.flatten.uniq
 
+
+    Task::Print.step "Delete agents"
     Agent.find_each.each do |agent|
       unless agents_to_keep.include? agent.id
-        puts Rainbow("Delete agent: #{agent.slug}").white
+        Task::Print.substep "Delete agent: #{agent.slug}"
         agent.agent_regression_checks.delete_all
         agent.memberships.each { |m| m.destroy }
         agent.destroy
       end
     end
 
+    Task::Print.step "Delete users"
     User.find_each.each do |user|
       unless users_to_keep.include? user.id
-        puts Rainbow("Delete user: #{user.email}").white
+        Task::Print.substep "Delete user: #{user.email}"
         user.destroy
       end
     end

@@ -1,3 +1,5 @@
+require_relative 'lib/task'
+
 namespace :doc do
   desc "Build doc static site (for development)"
   task :build do
@@ -15,7 +17,7 @@ namespace :doc do
         system 'cp  ../../doc/_site/index.html public/index.html'
       end
     else
-      puts "#{doc_dir} directory do not exists."
+      Task::Print.error "#{doc_dir} directory do not exists."
     end
   end
 end

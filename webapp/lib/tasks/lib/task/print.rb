@@ -25,7 +25,7 @@ module Task::Print
 
   private
 
-  def time_log
+  def self.time_log
     "[#{DateTime.now.strftime("%FT%T")}]"
   end
 end

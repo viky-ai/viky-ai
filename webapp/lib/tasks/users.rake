@@ -1,4 +1,4 @@
-require 'rainbow'
+require_relative 'lib/task'
 
 namespace :users do
 
@@ -10,12 +10,12 @@ namespace :users do
         admin:    true
       })
       if u.errors.empty?
-        puts Rainbow("\nUser will receive an email invitation").green unless Rails.env.test?
+        Task::Print.success("User will receive an email invitation") unless Rails.env.test?
       else
-        puts Rainbow("\nUser creation failed, please fix following errors:").yellow
-        errors = []
-        errors << u.errors.full_messages.collect{|e| "  - #{e}"}
-        puts Rainbow(errors.join("\n")).yellow + "\n\n"
+        Task::Print.error("User creation failed, please fix following errors:")
+        u.errors.full_messages.each do |msg|
+          Task::Print.warning("  - #{msg}")
+        end
       end
     end
   end
@@ -24,7 +24,7 @@ namespace :users do
   task :set_admin, [:email] => [:environment] do |t, args|
     u = User.find_by_email(args[:email])
     if u.nil?
-      puts Rainbow("\nSorry, user with email '#{args[:email]}' doesn't exist.\n").yellow
+      Task::Print.error("Sorry, user with email '#{args[:email]}' doesn't exist.")
     else
       u.admin = true
       u.save
@@ -35,7 +35,7 @@ namespace :users do
   task :unset_admin, [:email] => [:environment] do |t, args|
     u = User.find_by_email(args[:email])
     if u.nil?
-      puts Rainbow("\nSorry, user with email '#{args[:email]}' doesn't exist.\n").yellow
+      Task::Print.error("Sorry, user with email '#{args[:email]}' doesn't exist.\n")
     else
       u.admin = false
       u.save

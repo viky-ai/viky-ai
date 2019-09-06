@@ -1,3 +1,5 @@
+require_relative 'lib/task'
+
 namespace :viky do
 
   desc "Setup database and statistics"
