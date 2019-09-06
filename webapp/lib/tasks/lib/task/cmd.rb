@@ -19,7 +19,7 @@ module Task::Cmd
         data.each do |line|
           Task::Print.substep "⤷ #{line}" if opts[:capture_output]
         end
-        Task::Print.error "Command \"#{cmd}\" failed"
+        raise "Command \"#{cmd}\" failed"
       end
     end
 
