@@ -2,7 +2,7 @@ class Task::Backup
 
   def self.pg(attribute)
     config = Rails.configuration.database_configuration
-    config[Rails.env][attribute]
+    config[Rails.env].with_indifferent_access[attribute]
   end
 
   def self.datetime_for_filename

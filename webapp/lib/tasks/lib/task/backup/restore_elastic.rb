@@ -24,6 +24,8 @@ class Task::Backup::RestoreElastic < Task::Backup
         { remove: { index: 'stats-interpret_request_log-*', alias: InterpretRequestLog::INDEX_ALIAS_NAME } },
         { remove: { index: 'stats-interpret_request_log-*', alias: InterpretRequestLog::SEARCH_ALIAS_NAME } }
       ] }
+      current_stats_indices = client.cat.indices(index: 'stats-interpret_request_log-*', h: ['index']).split("\n")
+      client.indices.delete index: current_stats_indices
     end
 
     client.snapshot.create_repository repository: repository, body: {
@@ -42,8 +44,6 @@ class Task::Backup::RestoreElastic < Task::Backup
       wait_for_completion: true,
       body: {
         indices: 'stats-interpret_request_log-*',
-        rename_pattern: 'stats-interpret_request_log-(\w+)-([0-9]+)-(.+)',
-        rename_replacement: "stats-interpret_request_log-$1-$2-$3-#{SecureRandom.hex(4)}",
         index_settings: {
           'index.number_of_replicas' => 0
         }

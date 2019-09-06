@@ -200,7 +200,6 @@ namespace :statistics do
     end
 
     def reindex_into_new(client, src_index, dest_index)
-      dest_index.snapshot_id = src_index.snapshot_id if src_index.snapshot?
       create_index(client, dest_index)
       if src_index.active?
         update_index_aliases(client, [
@@ -211,11 +210,6 @@ namespace :statistics do
       else
         client.indices.put_settings index: dest_index.name, body: {
           'index.number_of_replicas' => 1
-        }
-      end
-      if src_index.snapshot?
-        client.indices.put_settings index: dest_index.name, body: {
-          'index.number_of_replicas' => 0
         }
       end
       reindex(src_index, dest_index)
@@ -296,5 +290,4 @@ namespace :statistics do
       end
       cluster_ready
     end
-
 end
