@@ -7,12 +7,14 @@ class Nlp::Interpret
   include ActiveModel::Validations
   include ActiveModel::Validations::Callbacks
 
-  attr_accessor :agents, :format, :sentence, :language, :spellchecking, :verbose, :now, :context
+  attr_accessor :agents, :format, :sentence, :language, :spellchecking,
+                :verbose, :now, :context, :no_overlap
 
   validates_presence_of :agents, :format, :sentence
   validates :sentence, byte_size: { maximum: 1024*8 }
   validates_inclusion_of :format, in: %w( json )
   validates_inclusion_of :verbose, in: [ "true", "false" ]
+  validates_inclusion_of :no_overlap, in: [ "true", "false" ], allow_blank: true
   validates_inclusion_of :spellchecking, in: %w( inactive low medium high ), allow_blank: true
   validate :now_format
 
@@ -117,7 +119,8 @@ class Nlp::Interpret
         "packages"         => packages,
         "sentence"         => sentence,
         "show-explanation" => verbose == 'true',
-        "show-private"     => verbose == 'true'
+        "show-private"     => verbose == 'true',
+        "no-overlap"       => no_overlap == 'true'
       }
       p["now"] = now unless now.blank?
       p

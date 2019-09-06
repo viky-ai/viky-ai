@@ -20,6 +20,7 @@ class PlayInterpreter
       language: language,
       spellchecking: spellchecking,
       verbose: 'false',
+      no_overlap: 'true',
       sentence: text,
       context: {
         user_id: current_user.id,
