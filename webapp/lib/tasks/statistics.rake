@@ -19,11 +19,8 @@ namespace :statistics do
         exit 1
       end
       IndexManager.fetch_template_configurations.each do |template_conf|
-        active_template = StatisticsIndexTemplate.new template_conf
+        active_template, = save_template(client, template_conf)
         Task::Print.substep("Index #{active_template.index_name}.")
-        save_template(client, active_template) unless template_exists?(client, active_template)
-        inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
-        save_template(client, inactive_template) unless template_exists?(client, inactive_template)
 
         alias_name = InterpretRequestLog::INDEX_ALIAS_NAME
         if index_exists?(client, alias_name)
@@ -72,10 +69,7 @@ namespace :statistics do
       exit 1
     end
     template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
-    active_template = StatisticsIndexTemplate.new template_conf
-    save_template(client, active_template)
-    inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
-    save_template(client, inactive_template)
+    active_template, inactive_template = save_template(client, template_conf)
     src_index = StatisticsIndex.from_name src_name
     template = src_index.active? ? active_template : inactive_template
     if src_index.need_reindexing? template
@@ -102,10 +96,7 @@ namespace :statistics do
         exit 1
       end
       template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
-      active_template = StatisticsIndexTemplate.new template_conf
-      save_template(client, active_template)
-      inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
-      save_template(client, inactive_template)
+      active_template, inactive_template = save_template(client, template_conf)
       indices = client.indices.get(index: 'stats-*').keys
                               .map { |index_name| StatisticsIndex.from_name index_name }
                               .partition { |index| index.active? }
@@ -188,15 +179,22 @@ namespace :statistics do
 
 
   private
+    def save_template(client, template_conf)
+      active_template = StatisticsIndexTemplate.new template_conf, 'active'
+      inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
+      [active_template, inactive_template]
+        .select { |template| template_exists?(client, template) }
+        .each do |template|
+        client.indices.put_template name: template.name, body: template.configuration
+        Task::Print.success("Save index template #{template.name} succeed.")
+      end
+      return active_template, inactive_template
+    end
+
     def template_exists?(client, template)
       exists = client.indices.exists_template? name: template.name
       Task::Print.notice("Template #{template.name} already exists : skipping.") if exists
       exists
-    end
-
-    def save_template(client, template)
-      client.indices.put_template name: template.name, body: template.configuration
-      Task::Print.success("Save index template #{template.name} succeed.")
     end
 
     def reindex_into_new(client, src_index, dest_index)
