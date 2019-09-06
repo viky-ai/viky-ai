@@ -1,14 +1,20 @@
 module IndexManager
 
   def self.client(options = {})
-    config = fetch_statistics_configuration()
+    environment = Rails.env
+    config = Rails.application.config_for(:statistics, env: environment).symbolize_keys
+
+    raise "Missing statistics configuration for environment #{environment}" if config.empty?
+
     Elasticsearch::Client.new(config[:client].symbolize_keys.merge(options))
   end
 
-  def self.fetch_statistics_configuration(environment = Rails.env)
-    config = Rails.application.config_for(:statistics, env: environment).symbolize_keys
-    raise "Missing statistics configuration for environment #{environment}" if config.empty?
-    config
+  def self.long_waiting_client
+    IndexManager.client(
+      transport_options: {
+        request: { timeout: 5.minutes }
+      }
+    )
   end
 
   def self.fetch_template_configurations(filter_name = '')

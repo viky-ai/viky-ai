@@ -8,26 +8,20 @@ namespace :statistics do
     environments << 'test' if Rails.env == 'development'
     environments.each do |environment|
       Task::Print.step("Environment #{environment}.")
-      # use a client with a bigger timeout
-      client = IndexManager.client(
-        transport_options: {
-          request: { timeout: 5.minutes }
-        }
-      )
+      client = IndexManager.long_waiting_client
       unless cluster_ready?(client)
         Task::Print.error('Cannot perform tasks : cluster is not ready')
         exit 1
       end
+
       IndexManager.fetch_template_configurations.each do |template_conf|
         active_template, = save_template(client, template_conf)
         Task::Print.substep("Index #{active_template.index_name}.")
-
         alias_name = InterpretRequestLog::INDEX_ALIAS_NAME
         if index_exists?(client, alias_name)
           Task::Print.notice("Delete index with same name as alias (#{alias_name}) because it should not exists.")
           client.indices.delete index: alias_name
         end
-
         index_with_valid_regexp_pattern = "#{active_template.index_patterns[0..-2]}.*"
         if index_exists?(client, index_with_valid_regexp_pattern)
           Task::Print.notice("Index like #{active_template.index_patterns} already exists : skipping index creation.")
@@ -36,7 +30,6 @@ namespace :statistics do
           create_index(client, index)
           update_index_aliases(client, [{ add: { index: index.name, alias: alias_name } }], alias_name)
         end
-
       end
     end
     unless Rails.env == 'test'
@@ -54,12 +47,7 @@ namespace :statistics do
   task :reindex, [:src_index] => :environment do |t, args|
     Task::Print.error('Missing param: src index') unless args.src_index.present?
     src_name = args.src_index
-    # use a client with a bigger timeout
-    client = IndexManager.client(
-      transport_options: {
-        request: { timeout: 5.minutes }
-      }
-    )
+    client = IndexManager.long_waiting_client
     unless cluster_ready?(client)
       Task::Print.error('Cannot perform tasks : cluster is not ready')
       exit 1
@@ -68,6 +56,7 @@ namespace :statistics do
       Task::Print.error("Source index #{src_name} does not exists.")
       exit 1
     end
+
     template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
     active_template, inactive_template = save_template(client, template_conf)
     src_index = StatisticsIndex.from_name src_name
@@ -85,12 +74,7 @@ namespace :statistics do
   namespace :reindex do
     desc 'Reindex all statistics indices'
     task :all => :environment do |t, args|
-      # use a client with a bigger timeout
-      client = IndexManager.client(
-        transport_options: {
-          request: { timeout: 5.minutes }
-        }
-      )
+      client = IndexManager.long_waiting_client
       unless cluster_ready?(client)
         Task::Print.error('Cannot perform tasks : cluster is not ready')
         exit 1
@@ -126,12 +110,7 @@ namespace :statistics do
     max_age = '7d'
     max_docs = 100_000
     Task::Print.step("Roll over alias #{InterpretRequestLog::INDEX_ALIAS_NAME} with conditions max_age=#{max_age} or max_docs=#{max_docs}.")
-    # use a client with a bigger timeout
-    client = IndexManager.client(
-      transport_options: {
-        request: { timeout: 5.minutes }
-      }
-    )
+    client = IndexManager.long_waiting_client
     unless cluster_ready?(client)
       Task::Print.error('Cannot perform tasks : cluster is not ready')
       exit 1
@@ -242,11 +221,7 @@ namespace :statistics do
     def reindex(src_index, dest_index)
       Task::Print.substep("Wait for reindexing of #{src_index.name} to #{dest_index.name} ...")
       # use a client with a bigger timeout
-      client = IndexManager.client(
-        transport_options: {
-          request: { timeout: 5.minutes }
-        }
-      )
+      client = IndexManager.long_waiting_client
       result = client.reindex(
         wait_for_completion: true,
         body: {
