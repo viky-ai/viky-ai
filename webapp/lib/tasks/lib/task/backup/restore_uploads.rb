@@ -5,7 +5,7 @@ class Task::Backup::RestoreUploads < Task::Backup
     FileUtils.rm_rf File.join(Rails.root, 'public', 'uploads', 'store')
 
     opts = { capture_output: true }
-    cmd = "tar xf #{dump_file_path(name)} -C #{Rails.root}"
+    cmd = "tar xf #{dump_file_path(name)} -C #{Rails.root}/.."
 
     Task::Cmd::exec(cmd, opts)
   end

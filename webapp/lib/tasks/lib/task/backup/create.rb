@@ -10,8 +10,8 @@ class Task::Backup::Create < Task::Backup
 
   def self.uploads(name)
     opts = { capture_output: true }
-    full_cmd = "tar czPf backups/#{name}/#{name}_#{datetime_for_filename}_app-uploads-data.tgz public/uploads/store/"
-    Task::Cmd::exec(full_cmd, opts)
+    full_cmd = "tar czPf webapp/backups/#{name}/#{name}_#{datetime_for_filename}_app-uploads-data.tgz webapp/public/uploads/store/"
+    Task::Cmd::exec(full_cmd, opts, File.expand_path(File.join(Rails.root, "..")))
   end
 
   def self.elastic(name)

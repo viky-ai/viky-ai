@@ -1,10 +1,10 @@
 module Task::Cmd
 
-  def self.exec(cmd, opts = {})
+  def self.exec(cmd, opts = {}, chdir = Rails.root)
     opts[:env] = {} if opts[:env].nil?
 
     data = [] if opts[:capture_output]
-    Open3.popen2e(opts[:env], cmd, chdir: Rails.root) do |stdin, stdout_and_stderr, wait_thr|
+    Open3.popen2e(opts[:env], cmd, chdir: chdir) do |stdin, stdout_and_stderr, wait_thr|
       if opts[:capture_output]
         stdout_and_stderr.each { |line| data << line }
       else
@@ -15,9 +15,11 @@ module Task::Cmd
       exit_status = wait_thr.value
 
       unless exit_status.success?
-        puts Rainbow("#{time_log} : ").blue + Rainbow("#{cmd}").cyan
-        data.each { |line| puts "    ⤷ ---- #{line}" } if opts[:capture_output]
-        raise "Command \"#{cmd}\" failed"
+        Task::Print.step cmd
+        data.each do |line|
+          Task::Print.substep "⤷ #{line}" if opts[:capture_output]
+        end
+        Task::Print.error "Command \"#{cmd}\" failed"
       end
     end
 
