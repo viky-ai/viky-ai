@@ -113,13 +113,14 @@ en:
       one_alias_one_any: '"Any" option is not permitted with only one annotation.'
       only_one_list: Only one annotation with "List" option is permitted.
       expression_nlp_length: "is too long (maximum is %{count} elements), found: %{actual_count}"
+      quota: "exceeded (maximum is %{maximum} formulations and entities), actual: %{actual}"
     entities_lists:
       unknown_agent: "does not exist"
     entity:
       unknown_locale: "uses an unauthorized locale '%{current_locale}' for this agent"
       term_abscent: "can't contains only locale information"
       term_nlp_length: "is too long (maximum is %{count} elements), found: %{actual_count}"
-      quota: "exceeded (maximum is %{maximum} entities), actual: %{actual}"
+      quota: "exceeded (maximum is %{maximum} formulations and entities), actual: %{actual}"
     entities_import:
       concurrent_import: "An import is already running, please wait."
       no_file: "must be present"
@@ -129,8 +130,8 @@ en:
       unexpected_autosolution: "Auto solution must be true or false"
       missing_column: "Missing column"
       missing_header: "Missing header"
-      quota: "Quota exceeded (maximum is %{maximum} entities), actual: %{actual} and you are trying to import %{to_import} more entities"
-      quota_replace: "Quota exceeded (maximum is %{maximum} entities), you are trying to import %{to_import} entities"
+      quota: "Quota exceeded (maximum is %{maximum} formulations and entities), actual: %{actual} and you are trying to import %{to_import} more entities"
+      quota_replace: "Quota exceeded (maximum is %{maximum} formulations and entities), you are trying to import %{to_import} entities"
     interpretation_alias:
       end_position_lower_than_start: "must be greater than position start"
       overlap: overlap

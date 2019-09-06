@@ -133,8 +133,8 @@ VIKYAPP_RACK_THROTTLE_LIMIT_HOUR=6           # 6 Requests per Hour limit
 VIKYAPP_RACK_THROTTLE_LIMIT_MINUTE=4         # 4 Requests per Minute limit
 VIKYAPP_RACK_THROTTLE_LIMIT_SECOND=2         # 2 Requests per Second limit
 
-# If you want to activate the entities limitation
-VIKYAPP_ENTITIES_QUOTA=5000      # Limit the overall Entities limit to 5000
+# If you want to activate the expression limitation
+VIKYAPP_EXPRESSION_QUOTA=5000      # Limit the overall formulations and entities count to 5000
 
 ```
 

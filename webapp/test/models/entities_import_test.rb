@@ -331,7 +331,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
   
   test 'Import entities limit' do
     
-    ENV['VIKYAPP_ENTITIES_QUOTA'] = '1';
+    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '10'
 
     elist = entities_lists(:weather_conditions)
     assert_equal ["*", "en", "fr", "es"], elist.agent.locales
@@ -348,19 +348,19 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal 2, elist.entities.count
 
     expected = [
-      "Bad entity format: Quota exceeded (maximum is 1 entities), actual: 4 in line 1."
+      "Bad entity format: Quota exceeded (maximum is 10 formulations and entities), actual: 10 in line 1."
     ]
     assert_equal expected, entities_import.errors[:file]
     
-    ENV['VIKYAPP_ENTITIES_QUOTA'] = nil;
+    ENV['VIKYAPP_EXPRESSION_QUOTA'] = nil
   end
 
-  test 'Entities quota is per user' do
+  test 'Quota remaining is less than total import' do
 
-    ENV['VIKYAPP_ENTITIES_QUOTA'] = '5';
+    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '11'
     
     user = users(:admin)
-    assert_equal 4, EntitiesList.joins(:agent).where('agents.owner_id = ?', user.id).sum(:entities_count)
+    assert_equal 10, user.expressions_count
 
     elist = entities_lists(:terminator_targets)
     assert_equal user, elist.agent.owner
@@ -375,11 +375,35 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_not entities_import.save
 
     expected = [
-      "Quota exceeded (maximum is 5 entities), actual: 4 and you are trying to import 2 more entities"
+      "Quota exceeded (maximum is 11 formulations and entities), actual: 10 and you are trying to import 2 more entities"
     ]
     assert_equal expected, entities_import.errors.full_messages
     
-    ENV['VIKYAPP_ENTITIES_QUOTA'] = nil;
+    ENV['VIKYAPP_EXPRESSION_QUOTA'] = nil
+  end
+
+  test 'User can replace even when quota is full' do
+
+    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '10'
+    
+    user = users(:admin)
+    assert_equal 10, user.expressions_count
+
+    elist = entities_lists(:weather_conditions)
+    assert_equal user, elist.agent.owner
+    assert_equal 2, elist.entities.count
+
+    io = StringIO.new
+    io << "Terms,Auto solution,Solution\n"
+    io << "snow,false,\"{'w': 'snow'}\"\n"
+    entities_import = get_entities_import(elist, io, 'replace')
+
+    assert entities_import.save
+    assert_equal 1, entities_import.proceed
+    assert_equal 1, elist.entities.count
+    assert_equal 9, user.expressions_count
+    
+    ENV['VIKYAPP_EXPRESSION_QUOTA'] = nil
   end
 
 
