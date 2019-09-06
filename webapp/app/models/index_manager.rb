@@ -17,28 +17,25 @@ module IndexManager
     )
   end
 
-  def self.fetch_template_configurations(filter_name = '')
+  def self.template_configuration
     template_config_dir = "#{Rails.root}/config/statistics"
-    json_list = Dir.foreach(template_config_dir)
-                   .select { |filename| filename.downcase.end_with? '.json' }
-    json_list.select! { |filename| filename == "#{filter_name}.json" } if filter_name.present?
-    json_list.map { |filename| JSON.parse(ERB.new(File.read("#{template_config_dir}/#{filename}")).result) }
+    filename = 'template-stats-interpret_request_log.json'
+    JSON.parse(ERB.new(File.read("#{template_config_dir}/#{filename}")).result)
   end
 
   def self.reset_indices
     client = IndexManager.client
-    fetch_template_configurations.each do |conf|
-      active_template = StatisticsIndexTemplate.new conf, 'active'
-      client.indices.put_template name: active_template.name, body: conf
-      inactive_template = StatisticsIndexTemplate.new conf, 'inactive'
-      client.indices.put_template name: inactive_template.name, body: conf
-      new_active_index = renew_index(active_template, client)
-      client.indices.update_aliases body: {
-        actions: [
-          { add: { index: new_active_index.name, alias: active_template.indexing_alias } }
-        ]
-      }
-    end
+    template_conf = template_configuration
+    active_template = StatisticsIndexTemplate.new template_conf, 'active'
+    client.indices.put_template name: active_template.name, body: template_conf
+    inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
+    client.indices.put_template name: inactive_template.name, body: template_conf
+    new_active_index = renew_index(active_template, client)
+    client.indices.update_aliases body: {
+      actions: [
+        { add: { index: new_active_index.name, alias: active_template.indexing_alias } }
+      ]
+    }
   end
 
   def self.renew_index(template, client = IndexManager.client)

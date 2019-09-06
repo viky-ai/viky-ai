@@ -14,22 +14,21 @@ namespace :statistics do
         exit 1
       end
 
-      IndexManager.fetch_template_configurations.each do |template_conf|
-        active_template, = save_template(client, template_conf)
-        Task::Print.substep("Index #{active_template.index_name}.")
-        alias_name = InterpretRequestLog::INDEX_ALIAS_NAME
-        if index_exists?(client, alias_name)
-          Task::Print.notice("Delete index with same name as alias (#{alias_name}) because it should not exists.")
-          client.indices.delete index: alias_name
-        end
-        index_with_valid_regexp_pattern = "#{active_template.index_patterns[0..-2]}.*"
-        if index_exists?(client, index_with_valid_regexp_pattern)
-          Task::Print.notice("Index like #{active_template.index_patterns} already exists : skipping index creation.")
-        else
-          index = StatisticsIndex.from_template active_template
-          create_index(client, index)
-          update_index_aliases(client, [{ add: { index: index.name, alias: alias_name } }], alias_name)
-        end
+      template_conf = IndexManager.template_configuration
+      active_template, = save_template(client, template_conf)
+      Task::Print.substep("Index #{active_template.index_name}.")
+      alias_name = InterpretRequestLog::INDEX_ALIAS_NAME
+      if index_exists?(client, alias_name)
+        Task::Print.notice("Delete index with same name as alias (#{alias_name}) because it should not exists.")
+        client.indices.delete index: alias_name
+      end
+      index_with_valid_regexp_pattern = "#{active_template.index_patterns[0..-2]}.*"
+      if index_exists?(client, index_with_valid_regexp_pattern)
+        Task::Print.notice("Index like #{active_template.index_patterns} already exists : skipping index creation.")
+      else
+        index = StatisticsIndex.from_template active_template
+        create_index(client, index)
+        update_index_aliases(client, [{ add: { index: index.name, alias: alias_name } }], alias_name)
       end
     end
     unless Rails.env == 'test'
@@ -57,7 +56,7 @@ namespace :statistics do
       exit 1
     end
 
-    template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
+    template_conf = IndexManager.template_configuration
     active_template, inactive_template = save_template(client, template_conf)
     src_index = StatisticsIndex.from_name src_name
     template = src_index.active? ? active_template : inactive_template
@@ -79,7 +78,8 @@ namespace :statistics do
         Task::Print.error('Cannot perform tasks : cluster is not ready')
         exit 1
       end
-      template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
+
+      template_conf = IndexManager.template_configuration
       active_template, inactive_template = save_template(client, template_conf)
       indices = client.indices.get(index: 'stats-*').keys
                               .map { |index_name| StatisticsIndex.from_name index_name }
@@ -115,7 +115,8 @@ namespace :statistics do
       Task::Print.error('Cannot perform tasks : cluster is not ready')
       exit 1
     end
-    template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
+
+    template_conf = IndexManager.template_configuration
     active_template = StatisticsIndexTemplate.new template_conf
     dest_index = StatisticsIndex.from_template active_template
     res = client.indices.rollover(alias: InterpretRequestLog::INDEX_ALIAS_NAME, new_index: dest_index.name, body:{
