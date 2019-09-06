@@ -1,0 +1,11 @@
+Metrics/BlockLength:
+  Exclude:
+    - 'Rakefile'
+    - 'test/**/*.rb'
+Style/CommentedKeyword:
+  Exclude:
+    - '**/*.rb'
+Metrics/MethodLength:
+  Max: 30
+Metrics/LineLength:
+  Max: 140

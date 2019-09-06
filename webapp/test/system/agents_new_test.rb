@@ -4,23 +4,23 @@ class AgentsNewTest < ApplicationSystemTestCase
 
   def go_to_agents_creation
     admin_go_to_agents_index
-    click_link('New agent')
+    click_link("New agent")
     within(".modal") do
-      assert page.has_text? 'Create a new agent'
+      assert has_text? "Create a new agent"
     end
   end
 
 
   test "Navigation to agent creation" do
     admin_go_to_agents_index
-    assert page.has_text? 'New agent'
-    click_link 'New agent'
+    assert has_text? "New agent"
+    click_link "New agent"
 
     within(".modal") do
-      assert page.has_field? 'Name'
-      assert page.has_field? 'ID'
-      assert page.has_button? 'Create'
-      assert page.has_button? 'Cancel'
+      assert has_field? "Name"
+      assert has_field? "ID"
+      assert has_button? "Create"
+      assert has_button? "Cancel"
     end
   end
 
@@ -28,151 +28,151 @@ class AgentsNewTest < ApplicationSystemTestCase
   test "Agent creation form ok with background color" do
     go_to_agents_creation
     within(".modal") do
-      fill_in 'Name', with: 'Wall-e'
-      fill_in 'ID', with: 'wall-e'
+      fill_in "Name", with: "Wall-e"
+      fill_in "ID", with: "wall-e"
 
       first("button.background-color__red").click
-      click_button 'Create'
+      click_button "Create"
     end
 
-    assert page.has_text?('Your agent has been successfully created.')
-    assert_equal user_agent_path(users(:admin), 'wall-e'), page.current_path
+    assert has_text?("Your agent has been successfully created.")
+    assert_equal user_agent_path(users(:admin), "wall-e"), current_path
     expected = [
       "My awesome weather bot",
       "T-800",
       "Wall-e",
     ]
     admin_go_to_agents_index
-    assert_equal expected, (all('.agent-box h2').collect {|n| n.text})
+    assert_equal expected, (all(".agent-box h2").collect {|n| n.text})
 
     expected = [
       "agent-box__header background-color-gradient__black",
       "agent-box__header background-color-gradient__black",
       "agent-box__header background-color-gradient__red"
     ]
-    assert_equal expected,  all('.agent-box__header').collect {|n| n['class']}
+    assert_equal expected,  all(".agent-box__header").collect {|n| n["class"]}
   end
 
 
   test "Agent creation form ok with uploaded background image" do
     go_to_agents_creation
     within(".modal") do
-      fill_in 'Name', with: 'Wall-e'
-      fill_in 'ID', with: 'wall-e'
+      fill_in "Name", with: "Wall-e"
+      fill_in "ID", with: "wall-e"
 
       click_button("Or upload an image")
-      file = File.join(Rails.root, 'test', 'fixtures', 'files', 'wall-e.jpg')
+      file = File.join(Rails.root, "test", "fixtures", "files", "wall-e.jpg")
 
       # Display import file imput in order to allow capybara attach_file
-      page.execute_script("$('#agent_image').css('opacity','1')")
+      execute_script("$('#agent_image').css('opacity','1')")
 
-      attach_file('agent_image', file)
+      attach_file("agent_image", file)
 
-      click_button 'Create'
+      click_button "Create"
     end
 
-    assert page.has_text?('Your agent has been successfully created.')
+    assert has_text?("Your agent has been successfully created.")
     expected = [
       "My awesome weather bot",
       "T-800",
       "Wall-e",
     ]
     admin_go_to_agents_index
-    assert_equal expected, (all('.agent-box h2').collect {|n| n.text})
-    assert all('.agent-box__header').last[:style].include? "background-image"
+    assert_equal expected, (all(".agent-box h2").collect {|n| n.text})
+    assert all(".agent-box__header").last[:style].include? "background-image"
   end
 
 
   test "Agent creation public" do
     go_to_agents_creation
     within(".modal") do
-      fill_in 'Name', with: 'Wall-e'
-      fill_in 'ID', with: 'wall-e'
-      click_button 'Public'
+      fill_in "Name", with: "Wall-e"
+      fill_in "ID", with: "wall-e"
+      click_button "Public"
 
       first("button.background-color__red").click
-      click_button 'Create'
+      click_button "Create"
     end
 
-    assert page.has_text?('Your agent has been successfully created.')
+    assert has_text?("Your agent has been successfully created.")
     expected = [
       "My awesome weather bot",
       "T-800",
       "Wall-e",
     ]
     admin_go_to_agents_index
-    assert_equal expected, (all('.agent-box h2').collect {|n| n.text})
+    assert_equal expected, (all(".agent-box h2").collect {|n| n.text})
     expected = [
       "agent-box__header background-color-gradient__black",
       "agent-box__header background-color-gradient__black",
       "agent-box__header background-color-gradient__red"
     ]
-    assert_equal expected,  all('.agent-box__header').collect {|n| n['class']}
-    assert_equal 'PUBLIC', first('.background-color-gradient__red span').text
+    assert_equal expected,  all(".agent-box__header").collect {|n| n["class"]}
+    assert_equal "PUBLIC", first(".background-color-gradient__red span").text
   end
 
 
   test "Agent creation with default locales then update" do
     go_to_agents_creation
     within(".modal") do
-      fill_in 'Name', with: 'Locales test'
-      fill_in 'ID', with: 'locales-test'
-      click_button 'Public'
+      fill_in "Name", with: "Locales test"
+      fill_in "ID", with: "locales-test"
+      click_button "Public"
       first("button.background-color__red").click
-      click_button 'Create'
+      click_button "Create"
     end
-    assert page.has_text?('Your agent has been successfully created.')
-    assert_equal ["*", "en", "fr"], Agent.find_by_name('Locales test').ordered_locales
-    click_link 'Configure'
+    assert has_text?("Your agent has been successfully created.")
+    assert_equal ["*", "en", "fr"], Agent.find_by_name("Locales test").ordered_locales
+    click_link "Configure"
     within(".modal") do
       uncheck("fr (French)")
-      click_button 'Update'
+      click_button "Update"
     end
-    assert page.has_text?('Your agent has been successfully updated.')
-    assert_equal ["*", "en"], Agent.find_by_name('Locales test').ordered_locales
+    assert has_text?("Your agent has been successfully updated.")
+    assert_equal ["*", "en"], Agent.find_by_name("Locales test").ordered_locales
   end
 
 
   test "Agent creation form cancel" do
     go_to_agents_creation
-    click_button 'Cancel'
-    assert page.has_no_text?('Create new agent')
+    click_button "Cancel"
+    assert has_no_text?("Create new agent")
   end
 
 
   test "Agent creation form error required" do
     go_to_agents_creation
-    click_button 'Create'
+    click_button "Create"
     expected = [
       "Name can't be blank",
       "ID is too short (minimum is 3 characters)",
       "ID can't be blank",
     ]
     expected.each do |error|
-      assert page.has_text?(error)
+      assert has_text?(error)
     end
-    assert_equal 3, all('.help--error').size
+    assert_equal 3, all(".help--error").size
   end
 
 
   test "Agent creation form error too short" do
     go_to_agents_creation
-    fill_in 'Name', with: 'Wall-e'
-    fill_in 'ID', with: 'A'
-    click_button 'Create'
+    fill_in "Name", with: "Wall-e"
+    fill_in "ID", with: "A"
+    click_button "Create"
     expected = ["ID is too short (minimum is 3 characters)"]
     expected.each do |error|
-      assert page.has_text?(error)
+      assert has_text?(error)
     end
-    assert_equal 1, all('.help--error').size
+    assert_equal 1, all(".help--error").size
   end
 
 
   test "No Api Token is shown in creation" do
     go_to_agents_creation
     within(".modal") do
-      assert !page.has_text?("Api token")
-      assert_nil first("#agent_api_token")
+      assert has_no_text?("Api token")
+      assert has_no_css?("#agent_api_token")
     end
   end
 

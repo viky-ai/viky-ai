@@ -45,6 +45,8 @@ en:
         one: Chatbot
         other: Chatbots
     attributes:
+      user:
+        image: Avatar
       agent:
         name: Name
         agentname: ID

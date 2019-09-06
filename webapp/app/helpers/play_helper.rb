@@ -5,9 +5,9 @@ module PlayHelper
     pos = 0
     opened_tag = 0
     closed_tag = 0
-    interpretations = interpreter.agent_result.body["interpretations"]
+    interpretations = interpreter.result.body["interpretations"]
+    colors = interpreter.result.slug_colors
 
-    colors = slug_colors(interpretations)
     interpreter.text.each_char do |c|
       start_highlight = interpretations.find { |interpretation| interpretation["start_position"] == pos }
       stop_highlight  = interpretations.find { |interpretation| interpretation["end_position"] == pos }
@@ -18,12 +18,20 @@ module PlayHelper
       if start_highlight.nil?
         text_decorated << c
       else
-        text_decorated << "<div class='highlight-pop highlight-pop--#{colors[start_highlight["slug"]]}'>"
+        text_decorated << "<div class='highlight-pop highlight-pop--#{colors[start_highlight["slug"]]}' data-package='#{start_highlight['package']}' data-color='#{colors[start_highlight["slug"]]}'>"
         text_decorated << "  <div x-arrow></div>"
-        text_decorated << "  <h4>Interpretation</h4>"
-        text_decorated << "  <pre>#{start_highlight["slug"]}</pre>"
-        text_decorated << "  <h4>Solution</h4>"
-        text_decorated << "  <pre>#{JSON.pretty_generate(start_highlight["solution"])}</pre>"
+        text_decorated << "  <div class='highlight-pop__content'>"
+        if intent_has_unsuitable_list_pattern?(Intent.find(start_highlight["id"]))
+          text_decorated << "  <p class='warning'>"
+          text_decorated << "    <span class='icon icon--small icon--white'>#{icon_alert}</span>"
+          text_decorated << "    #{t('views.play.warning.bad_list_pattern')}"
+          text_decorated << "  </p>"
+        end
+        text_decorated << "    <h4>Interpretation</h4>"
+        text_decorated << "    <a href='/agents/#{start_highlight["slug"]}'>#{start_highlight["slug"]}</a>"
+        text_decorated << "    <h4>Solution</h4>"
+        text_decorated << "    <pre>#{JSON.pretty_generate(start_highlight["solution"])}</pre>"
+        text_decorated << "  </div>"
         text_decorated << "</div>"
         text_decorated << "<div class='highlight highlight--#{colors[start_highlight["slug"]]}'>"
         text_decorated << "#{c}"
@@ -35,38 +43,23 @@ module PlayHelper
     text_decorated.html_safe
   end
 
-
-  private
-
-  def slug_colors(interpretations)
-    data = {}
-    available_colors = colors
-    interpretations.collect{|i| i["slug"]}.uniq.each_with_index do |slug, i|
-      data[slug] = available_colors[ i % available_colors.size ]
+  def intent_has_unsuitable_list_pattern?(intent)
+    warning = false
+    intent =
+    if intent.interpretations.count == 1
+      first_interpretation = intent.interpretations.first
+      if first_interpretation.interpretation_aliases.count == 1
+        warning = first_interpretation.interpretation_aliases.first.is_list?
+      end
     end
-    data
+    warning
   end
 
-  def colors
-    [
-      "pink",
-      "indigo",
-      "cyan",
-      "light-green",
-      "amber",
-      "brown",
-      "purple",
-      "blue",
-      "teal",
-      "lime",
-      "orange",
-      "red",
-      "deep-purple",
-      "light-blue",
-      "green",
-      "deep-orange",
-      "black"
-    ]
+  def agent_has_unsuitable_list_pattern?(agent)
+    if agent.intents.is_public.count == 1
+      intent = agent.intents.is_public.first
+      warning = intent_has_unsuitable_list_pattern?(intent)
+    end
   end
 
 end

@@ -24,7 +24,11 @@ class AgentDuplicator
           id: source.id,
           slug: source.slug
         }
-        source.image_attacher.copy(record.image_attacher)
+        # cf. https://github.com/shrinerb/shrine/commit/3ad7ddf145bc56f564bf10b14fcc4fcea848f4a2
+        unless source.image_attacher.get.nil?
+          copied_file = record.image_attacher.store.upload(source.image_attacher.get)
+          record.image_attacher.send(:_set, copied_file)
+        end
       end
     end
     fix_interpretation_aliases(new_agent.to_record)

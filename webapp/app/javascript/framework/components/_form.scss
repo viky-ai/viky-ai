@@ -138,8 +138,8 @@
     box-shadow: 0 1px 0 rgba(black, .05) inset;
     &:focus,
     &.focus{
-      border-color: $focus_color;
-      box-shadow: 0 0 0 2px rgba($focus_color, .25);
+      border-color: $primary_color;
+      box-shadow: 0 0 0 3px rgba($primary_color, .3);
       outline:none;
     }
   }
@@ -403,8 +403,8 @@ ul.color-picker{
   }
 
   &.CodeMirror-focused{
-    border-color: $focus_color;
-    box-shadow: 0 0 0 2px rgba($focus_color, .25);
+    border-color: $primary_color;
+    box-shadow: 0 0 0 3px rgba($primary_color, .3);
     outline:none;
   }
 }

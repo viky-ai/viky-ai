@@ -41,6 +41,7 @@
     <file>nlppackage.c</file>
     <file>nlppackagelist.c</file>
     <file>nlpparse.c</file>
+    <file>nlpprimarypackage.c</file>
     <file>nlprip.c</file>
     <file>nlprecal.c</file>
     <file>nlpregex.c</file>

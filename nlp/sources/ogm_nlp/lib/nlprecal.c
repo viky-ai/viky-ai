@@ -30,6 +30,8 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
   {
     struct request_expression *request_expression = request_expressions + i;
     struct interpretation *interpretation = request_expression->expression->interpretation;
+    og_bool is_primary_package = NlpIsPrimaryPackage(ctrl_nlp_th, interpretation->package);
+    IFE(is_primary_package);
 
     if (interpretation->scope == nlp_interpretation_scope_type_hidden)
     {
@@ -37,11 +39,7 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
     }
     else if (interpretation->scope == nlp_interpretation_scope_type_private)
     {
-      if (ctrl_nlp_th->primary_package == NULL)
-      {
-        continue;
-      }
-      else if (ctrl_nlp_th->show_private && interpretation->package == ctrl_nlp_th->primary_package)
+      if (ctrl_nlp_th->show_private && is_primary_package)
       {
         // keep that interpretation
       }
@@ -52,7 +50,7 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
     }
     else if (interpretation->scope == nlp_interpretation_scope_type_public)
     {
-      if (ctrl_nlp_th->primary_package != NULL && interpretation->package != ctrl_nlp_th->primary_package)
+      if (!is_primary_package)
       {
         continue;
       }
@@ -85,6 +83,8 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
     IFE(NlpSolutionCalculate(ctrl_nlp_th, request_expression));
     IFE(NlpCalculateScore(ctrl_nlp_th, request_expression));
   }
+
+  IFE(NlpEnableListCheckOverlapAfterAnyCalculation(ctrl_nlp_th, sorted_request_expressions));
 
   // sort again to take into account scores
   g_queue_sort(sorted_request_expressions, NlpRequestExpressionCmp, NULL);
@@ -165,7 +165,6 @@ static og_status NlpAnyValidate(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_ex
           IFE(NlpRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression,TRUE));
           request_expression->any_validate_status = 2;
           some_expressions_kept = TRUE;
-          if (!ctrl_nlp_th->enable_list) break;
         }
       }
       else
