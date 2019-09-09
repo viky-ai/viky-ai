@@ -102,6 +102,10 @@ class User < ApplicationRecord
     username
   end
 
+  def quota(from, to)
+    IndexManager.client
+  end
+
   private
 
     def clean_username

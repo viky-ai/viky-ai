@@ -134,4 +134,7 @@ gem 'sinatra', require: 'sinatra/base'
 gem 'sinatra-contrib', require: false
 gem 'rest-client'
 
+# Quota limits
 gem 'rack-throttle'
+
+gem 'chartjs-ror'

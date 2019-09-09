@@ -16,7 +16,13 @@ module Rack
       def allowed?(request)
         
         if Feature.rack_throttle_enabled?
-          if Feature.rack_throttle_limit_day_disabled? && @options[:time_window] == :day
+          
+          agent = Agent.find_by api_token: request.params["agent_token"]
+          user = User.find_by id: agent.owner_id
+
+          if user.ignore_quota
+            allowed = true
+          elsif Feature.rack_throttle_limit_day_disabled? && @options[:time_window] == :day
             allowed = true
           elsif Feature.rack_throttle_limit_hour_disabled? && @options[:time_window] == :hour
             allowed = true
@@ -40,7 +46,6 @@ module Rack
         end
 
         if !allowed
-          agent = Agent.find_by api_token: request.params["agent_token"]
           if agent then 
             log = InterpretRequestLog.new(
               timestamp: Time.now.iso8601(3),
