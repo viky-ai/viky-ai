@@ -93,9 +93,27 @@ class EntitiesListsCloner < Clowne::Cloner
     begin
       origin.entities.find_in_batches.each do |batch|
         new_entities = batch.map do |entity|
-          [entity.terms, entity.auto_solution_enabled, entity.solution, entity.position, clone.id, entity.searchable_terms]
+          [
+            entity.terms,
+            entity.auto_solution_enabled,
+            entity.solution,
+            entity.position,
+            clone.id,
+            entity.searchable_terms,
+            entity.case_sensitive,
+            entity.accent_sensitive
+          ]
         end
-        columns = [:terms, :auto_solution_enabled, :solution, :position, :entities_list_id, :searchable_terms]
+        columns = [
+          :terms,
+          :auto_solution_enabled,
+          :solution,
+          :position,
+          :entities_list_id,
+          :searchable_terms,
+          :case_sensitive,
+          :accent_sensitive
+        ]
         Entity.import!(columns, new_entities)
       end
     rescue ActiveRecord::RecordInvalid => e
