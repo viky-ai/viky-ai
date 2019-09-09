@@ -31,6 +31,15 @@ class InterpretRequestLogClient
     result['count']
   end
 
+  def search_documents(query, size)
+    @client.search(
+      index: InterpretRequestLog::SEARCH_ALIAS_NAME,
+      type: InterpretRequestLog::INDEX_TYPE,
+      body: { query: query },
+      size: size
+    )
+  end
+
   def cluster_ready?
     expected_status = Rails.env.production? ? 'green' : 'yellow'
     retry_count = 0
@@ -60,15 +69,10 @@ class InterpretRequestLogClient
     active_template = StatisticsIndexTemplate.new configuration, 'active'
     inactive_template = StatisticsIndexTemplate.new configuration, 'inactive'
     [active_template, inactive_template]
-      .select { |template| template_exists?(template) }
       .each do |template|
-      @client.indices.put_template name: template.name, body: template.configuration
-    end
+        @client.indices.put_template name: template.name, body: template.configuration
+      end
     return active_template, inactive_template
-  end
-
-  def template_exists?(template)
-    @client.indices.exists_template? name: template.name
   end
 
   def index_exists?(name_pattern)
@@ -180,6 +184,15 @@ class InterpretRequestLogClient
       current_version = 'not_found'
     end
     current_version
+  end
+
+  def reset_indices
+    active_template, = save_template_configuration(IndexManager.template_configuration)
+    full_pattern = active_template.index_patterns.gsub('active-*', '*')
+    delete_index full_pattern
+    new_index = create_active_index active_template
+    @client.indices.flush index: new_index.name
+    new_index
   end
 
 

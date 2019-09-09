@@ -3,7 +3,8 @@ require 'test_helper'
 class InterpretRequestLogTest < ActiveSupport::TestCase
 
   setup do
-    IndexManager.reset_indices
+    client = InterpretRequestLogClient.new
+    client.reset_indices
   end
 
   test 'Save a basic interpretation log' do
