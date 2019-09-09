@@ -47,7 +47,9 @@ og_status NlpJsInit(og_nlp_th ctrl_nlp_th)
   g_queue_init(js->variables_name_list);
   g_queue_init(js->variables_values);
 
-  js->random_number = g_random_int_range(1, 0xFFFFFF);
+  GRand *random_generator = g_rand_new();
+  js->random_number = g_rand_int_range(random_generator, 1, 0xFFFFFF);
+  g_rand_free(random_generator);
 
   js->duk_perm_context = duk_create_heap(NULL, NULL, NULL, ctrl_nlp_th, NlpJsDuketapeErrorHandler);
   if (js->duk_perm_context == NULL)
