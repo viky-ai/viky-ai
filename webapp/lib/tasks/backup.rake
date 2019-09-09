@@ -31,11 +31,6 @@ namespace :backup do
       Task::Print.warning("Restore uploads skipped (no dump file)")
     end
 
-    Task::Backup::RestorePostgres.with_restored_database(args.name) do
-      Task::Print.step("Migrate database")
-      Rake::Task["db:migrate"].invoke
-    end
-
     database = Task::Backup::RestorePostgres.database(args.name)
     Task::Print.step("Update .env with VIKYAPP_DB_NAME_DEV=#{database}")
     Task::Cmd.exec("echo \"VIKYAPP_DB_NAME_DEV=#{database}\" >> #{Rails.root}/.env")

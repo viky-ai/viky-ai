@@ -32,20 +32,6 @@ class Task::Backup::RestorePostgres < Task::Backup
     !dump_file_path(name).nil?
   end
 
-  def self.with_restored_database(name)
-    config = ActiveRecord::Base.connection_config
-    ActiveRecord::Base.establish_connection(
-      adapter: 'postgresql',
-      host: config[:host],
-      port: config[:port],
-      username: config[:username],
-      password: config[:password],
-      database: Task::Backup::RestorePostgres.database(name)
-    )
-    yield
-    ActiveRecord::Base.establish_connection(config)
-  end
-
   private
 
   def self.dump_file_path(name)
