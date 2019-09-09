@@ -3,42 +3,25 @@ require_relative 'lib/task'
 namespace :statistics do
 
   desc 'Creates and configures stats indices'
-  task setup: :environment do |t, args|
+  task setup: :environment do |_, _|
     environments = [Rails.env]
     environments << 'test' if Rails.env == 'development'
     environments.each do |environment|
       Task::Print.step("Environment #{environment}.")
-      client = IndexManager.long_waiting_client
-      unless cluster_ready?(client)
+      client = InterpretRequestLogClient.long_waiting_client
+      unless client.cluster_ready?
         Task::Print.error('Cannot perform tasks : cluster is not ready')
         exit 1
       end
 
       template_conf = IndexManager.template_configuration
-      active_template, = save_template(client, template_conf)
+      active_template, inactive_template = client.save_template_configuration(template_conf)
+      Task::Print.success("Index templates #{active_template.name}, #{inactive_template.name} saved.")
       Task::Print.substep("Index #{active_template.index_name}.")
-      alias_name = InterpretRequestLog::INDEX_ALIAS_NAME
-      if index_exists?(client, alias_name)
-        Task::Print.notice("Delete index with same name as alias (#{alias_name}) because it should not exists.")
-        client.indices.delete index: alias_name
-      end
-      index_with_valid_regexp_pattern = "#{active_template.index_patterns[0..-2]}.*"
-      if index_exists?(client, index_with_valid_regexp_pattern)
-        Task::Print.notice("Index like #{active_template.index_patterns} already exists : skipping index creation.")
-      else
-        index = StatisticsIndex.from_template active_template
-        create_index(client, index)
-        update_index_aliases(client, [{ add: { index: index.name, alias: alias_name } }], alias_name)
-      end
+      cleanup_broken_setup(client)
+      setup_active_index(client, active_template)
     end
-    unless Rails.env == 'test'
-      Task::Print.step("Configure Kibana.")
-      begin
-        StatisticsVisualizer.new.configure
-      rescue RuntimeError => e
-        Task::Print.error(e)
-      end
-    end
+    configure_dashboards unless Rails.env == 'test'
   end
 
 
@@ -159,6 +142,34 @@ namespace :statistics do
 
 
   private
+
+    def cleanup_broken_setup(client)
+      alias_name = InterpretRequestLog::INDEX_ALIAS_NAME
+      if client.index_exists? alias_name
+        Task::Print.notice("Delete index with same name as alias (#{alias_name}) because it should not exists.")
+        client.delete_index alias_name
+      end
+    end
+
+    def setup_active_index(client, active_template)
+      index_with_valid_regexp_pattern = "#{active_template.index_patterns[0..-2]}.*"
+      if client.index_exists? index_with_valid_regexp_pattern
+        Task::Print.notice("Index like #{active_template.index_patterns} already exists : skipping index creation.")
+      else
+        new_index = client.create_active_index active_template
+        Task::Print.success("Index #{new_index.name} saved.")
+      end
+    end
+
+    def configure_dashboards
+      Task::Print.step('Configure Kibana.')
+      begin
+        StatisticsVisualizer.new.configure
+      rescue RuntimeError => e
+        Task::Print.error(e)
+      end
+    end
+
     def save_template(client, template_conf)
       active_template = StatisticsIndexTemplate.new template_conf, 'active'
       inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
