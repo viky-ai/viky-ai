@@ -17,6 +17,20 @@ class InterpretRequestLogClient
     @client = Elasticsearch::Client.new(config[:client].symbolize_keys.merge(options))
   end
 
+  def get_document(id)
+    @client.get index: InterpretRequestLog::SEARCH_ALIAS_NAME, type: InterpretRequestLog::INDEX_TYPE, id: id
+  end
+
+  def save_document(json_document, id)
+    refresh = Rails.env == 'test'
+    @client.index index: InterpretRequestLog::INDEX_ALIAS_NAME, type: InterpretRequestLog::INDEX_TYPE, body: json_document, id: id, refresh: refresh
+  end
+
+  def count_documents(params = {})
+    result = @client.count index: InterpretRequestLog::SEARCH_ALIAS_NAME, body: params
+    result['count']
+  end
+
   def cluster_ready?
     expected_status = Rails.env.production? ? 'green' : 'yellow'
     retry_count = 0

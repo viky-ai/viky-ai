@@ -13,14 +13,13 @@ class InterpretRequestLog
   }
 
   def self.count(params = {})
-    client = IndexManager.client
-    result = client.count index: SEARCH_ALIAS_NAME, body: params
-    result['count']
+    client = InterpretRequestLogClient.new
+    client.count_documents(params)
   end
 
   def self.find(id)
-    client = IndexManager.client
-    result = client.get index: SEARCH_ALIAS_NAME, type: INDEX_TYPE, id: id
+    client = InterpretRequestLogClient.new
+    result = client.get_document id
     params = result['_source'].symbolize_keys
     params[:id] = result['_id']
     params.delete(:agent_slug)
@@ -49,9 +48,8 @@ class InterpretRequestLog
   def save
     return false unless valid?
 
-    refresh = Rails.env == 'test'
-    client = IndexManager.client
-    result = client.index index: INDEX_ALIAS_NAME, type: INDEX_TYPE, body: to_json, id: @id, refresh: refresh
+    client = InterpretRequestLogClient.new
+    result = client.save_document(to_json, @id)
     @id = result['_id']
   end
 
