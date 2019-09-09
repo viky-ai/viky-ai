@@ -6,27 +6,8 @@ nlp_route/.env
 nlp_route/log
 nlp_route/coverage
 
-# Glib temp file
-sources/external_dependencies/glib/**/Makefile.in
-sources/external_dependencies/glib/**/Makefile
-sources/external_dependencies/glib/**/TAGS
-sources/external_dependencies/glib/**/tags
-sources/external_dependencies/glib/**/.libs
-sources/external_dependencies/glib/**/.deps
-sources/external_dependencies/glib/**/*.pc
-sources/external_dependencies/glib/**/.*.swp
-sources/external_dependencies/glib/**/.sw?
-sources/external_dependencies/glib/**/*.rc
-sources/external_dependencies/glib/**/*.gcno
-sources/external_dependencies/glib/**/*.gcda
-sources/external_dependencies/glib/**/*.gcov
-sources/external_dependencies/glib/**/*.sourcefiles
-sources/external_dependencies/glib/**/*.stp
-sources/external_dependencies/glib/**/*.exe
-sources/external_dependencies/glib/**/*.def
-sources/external_dependencies/glib/**/*.test
-sources/external_dependencies/glib/**/*.log
-sources/external_dependencies/glib/**/*.trs
+# Glib build dir
+sources/external_dependencies/glib/meson-build
 
 resources/morphology/fr/build
 
