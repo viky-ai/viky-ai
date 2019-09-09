@@ -26,63 +26,61 @@ namespace :statistics do
 
 
   desc 'Reindex the specified statistics index into a new one'
-  task :reindex, [:src_index] => :environment do |t, args|
+  task :reindex, [:src_index] => :environment do |_, args|
     Task::Print.error('Missing param: src index') unless args.src_index.present?
     src_name = args.src_index
-    client = IndexManager.long_waiting_client
-    unless cluster_ready?(client)
+    client = InterpretRequestLogClient.long_waiting_client
+    unless client.cluster_ready?
       Task::Print.error('Cannot perform tasks : cluster is not ready')
       exit 1
     end
-    unless index_exists?(client, src_name)
+    unless client.index_exists? src_name
       Task::Print.error("Source index #{src_name} does not exists.")
       exit 1
     end
 
     template_conf = IndexManager.template_configuration
-    active_template, inactive_template = save_template(client, template_conf)
-    src_index = StatisticsIndex.from_name src_name
-    template = src_index.active? ? active_template : inactive_template
-    if src_index.need_reindexing? template
-      dest_index = StatisticsIndex.from_template template
-      Task::Print.step("Reindex #{src_index.name} to #{dest_index.name}.")
-      reindex_into_new(client, src_index, dest_index)
+    active_template, inactive_template = client.save_template_configuration template_conf
+    current_index = StatisticsIndex.from_name src_name
+    template = current_index.active? ? active_template : inactive_template
+    if current_index.need_reindexing? template
+      new_index = StatisticsIndex.from_template template
+      reindex_into_new(client, current_index, new_index)
     else
-      Task::Print.notice("No need to reindex #{src_index.name} : skipping.")
+      Task::Print.notice("No need to reindex #{current_index.name} : skipping.")
     end
   end
 
 
   namespace :reindex do
     desc 'Reindex all statistics indices'
-    task :all => :environment do |t, args|
-      client = IndexManager.long_waiting_client
-      unless cluster_ready?(client)
+    task :all => :environment do |_, _|
+      client = InterpretRequestLogClient.long_waiting_client
+      unless client.cluster_ready?
         Task::Print.error('Cannot perform tasks : cluster is not ready')
         exit 1
       end
 
       template_conf = IndexManager.template_configuration
-      active_template, inactive_template = save_template(client, template_conf)
-      indices = client.indices.get(index: 'stats-*').keys
-                              .map { |index_name| StatisticsIndex.from_name index_name }
-                              .partition { |index| index.active? }
-      active_indices = indices.first.select { |index| index.need_reindexing? active_template }
-      inactive_indices = indices.second.select { |index| index.need_reindexing? inactive_template }
-      if (active_indices + inactive_indices).empty?
-        Task::Print.step('Nothing to reindex.')
+      active_template, inactive_template = client.save_template_configuration template_conf
+      indices = client
+                  .list_indices
+                  .select { |index| index.need_reindexing? active_template }
+                  .sort_by { |index| index.state }
+                  .map do |index|
+                    template = index.active? ? active_template : inactive_template
+                    {
+                      current_index: index,
+                      new_index: StatisticsIndex.from_template(template)
+                    }
+                  end
+      if indices.present?
+        Task::Print.step("Reindex indices #{indices.map { |conf| conf[:current_index].name }}.")
+        indices.each do |index_conf|
+          reindex_into_new(client, index_conf[:current_index], index_conf[:new_index])
+        end
       else
-        Task::Print.step("Reindex indices #{(active_indices.map(&:name) + inactive_indices.map(&:name))}.")
-        active_indices.each do |src_index|
-          dest_index = StatisticsIndex.from_template active_template
-          Task::Print.substep("Reindex #{src_index.name} to #{dest_index.name}.")
-          reindex_into_new(client, src_index, dest_index)
-        end
-        inactive_indices.each do |src_index|
-          dest_index = StatisticsIndex.from_template inactive_template
-          Task::Print.substep("Reindex #{src_index.name} to #{dest_index.name}.")
-          reindex_into_new(client, src_index, dest_index)
-        end
+        Task::Print.notice('Nothing to reindex.')
       end
     end
   end
@@ -170,80 +168,22 @@ namespace :statistics do
       end
     end
 
-    def save_template(client, template_conf)
-      active_template = StatisticsIndexTemplate.new template_conf, 'active'
-      inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
-      [active_template, inactive_template]
-        .select { |template| template_exists?(client, template) }
-        .each do |template|
-        client.indices.put_template name: template.name, body: template.configuration
-        Task::Print.success("Save index template #{template.name} succeed.")
-      end
-      return active_template, inactive_template
-    end
-
-    def template_exists?(client, template)
-      exists = client.indices.exists_template? name: template.name
-      Task::Print.notice("Template #{template.name} already exists : skipping.") if exists
-      exists
-    end
-
-    def reindex_into_new(client, src_index, dest_index)
-      create_index(client, dest_index)
-      if src_index.active?
-        update_index_aliases(client, [
-          { remove: { index: src_index.name, alias: InterpretRequestLog::INDEX_ALIAS_NAME } },
-          { add: { index: dest_index.name, alias: InterpretRequestLog::INDEX_ALIAS_NAME } }
-        ],
-          InterpretRequestLog::INDEX_ALIAS_NAME)
-      else
-        client.indices.put_settings index: dest_index.name, body: {
-          'index.number_of_replicas' => 1
-        }
-      end
-      reindex(src_index, dest_index)
-      begin
-        update_index_aliases(client, [
-            { remove: { index: src_index.name, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } },
-          ],
-          InterpretRequestLog::SEARCH_ALIAS_NAME)
-      rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
-        # alias does not exist
-      end
-      delete_index(client, src_index.name)
-    end
-
-    def index_exists?(client, index_to_find)
-      expected_status = Rails.env.production? ? 'green' : 'yellow'
-      client.cluster.health(level: 'indices', wait_for_status: expected_status)['indices'].keys.any? do |index|
-        index =~ /^#{index_to_find}$/i
-      end
-    end
-
-    def create_index(client, index)
-      client.indices.create index: index.name
-      Task::Print.success("Creation of index #{index.name} succeed.")
+    def reindex_into_new(client, current_index, new_index)
+      Task::Print.step("Reindex #{current_index.name} to #{new_index.name}.")
+      client.create_index new_index
+      Task::Print.success("Index #{new_index.name} created.")
+      client.switch_indexing_to_new_active(current_index, new_index) if current_index.active?
+      Task::Print.substep("Reindexing of #{current_index.name} to #{new_index.name} in progress...")
+      result = client.reindex current_index, new_index
+      Task::Print.success("Reindexing of #{current_index.name} to #{new_index.name} succeed.")
+      Task::Print.notice("Reindexing result : #{result.to_json}")
+      client.remove_unused_index current_index
+      Task::Print.success("Index #{current_index.name} removed.")
     end
 
     def update_index_aliases(client, actions, index_alias)
       client.indices.update_aliases body: { actions: actions }
       Task::Print.success("Update aliases #{index_alias} succeed.")
-    end
-
-    def reindex(src_index, dest_index)
-      Task::Print.substep("Wait for reindexing of #{src_index.name} to #{dest_index.name} ...")
-      # use a client with a bigger timeout
-      client = IndexManager.long_waiting_client
-      result = client.reindex(
-        wait_for_completion: true,
-        body: {
-          source: { index: src_index.name },
-          dest: { index: dest_index.name }
-        }
-      )
-
-      Task::Print.success("Reindexing of #{src_index.name} to #{dest_index.name} succeed.")
-      Task::Print.notice("Reindexing result : #{result.to_json}")
     end
 
     def delete_index(client, index_name)

@@ -32,4 +32,8 @@ class StatisticsIndex
   def active?
     @state == 'active'
   end
+
+  def inactive?
+    @state == 'inactive'
+  end
 end

@@ -63,8 +63,52 @@ class InterpretRequestLogClient
     index
   end
 
+  def create_index(new_index)
+    @client.indices.create index: new_index.name
+    new_index
+  end
+
   def delete_index(index)
-    name = index.is_a(String) ? index : index.name
+    name = index.is_a?(String) ? index : index.name
     @client.indices.delete index: name
+  end
+
+  def remove_unused_index(index)
+    begin
+      @client.indices.update_aliases body: { actions: [{ remove: { index: index.name, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } }] }
+    rescue Elasticsearch::Transport::Transport::Errors::NotFound => _e
+      # alias does not exist
+    end
+    delete_index index
+  end
+
+  def reindex(current_index, new_index)
+    result = @client.reindex(
+      wait_for_completion: true,
+      body: {
+        source: { index: current_index.name },
+        dest: { index: new_index.name }
+      }
+    )
+    enable_replication new_index if new_index.inactive?
+    result
+  end
+
+  def enable_replication(index)
+    @client.indices.put_settings index: index.name, body: {
+      'index.number_of_replicas' => 1
+    }
+  end
+
+  def switch_indexing_to_new_active(current_index, new_index)
+    @client.indices.update_aliases body: { actions: [
+      { remove: { index: current_index.name, alias: InterpretRequestLog::INDEX_ALIAS_NAME } },
+      { add: { index: new_index.name, alias: InterpretRequestLog::INDEX_ALIAS_NAME } }
+    ] }
+  end
+
+  def list_indices
+    @client.indices.get(index: 'stats-interpret_request_log-*').keys
+                   .map { |name| StatisticsIndex.from_name name }
   end
 end
