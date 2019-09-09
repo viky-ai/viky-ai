@@ -100,10 +100,17 @@ class InterpretRequestLogClient
     }
   end
 
-  def switch_indexing_to_new_active(current_index, new_index)
+  def switch_indexing_to_new_index(current_index, new_index)
     @client.indices.update_aliases body: { actions: [
       { remove: { index: current_index.name, alias: InterpretRequestLog::INDEX_ALIAS_NAME } },
       { add: { index: new_index.name, alias: InterpretRequestLog::INDEX_ALIAS_NAME } }
+    ] }
+  end
+
+  def switch_search_to_new_index(current_index, new_index)
+    @client.indices.update_aliases body: { actions: [
+      { remove: { index: current_index.name, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } },
+      { add: { index: new_index.name, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } }
     ] }
   end
 
@@ -111,4 +118,45 @@ class InterpretRequestLogClient
     @client.indices.get(index: 'stats-interpret_request_log-*').keys
                    .map { |name| StatisticsIndex.from_name name }
   end
+
+  def rollover(new_index, max_age, max_docs)
+    res = @client.indices.rollover(alias: InterpretRequestLog::INDEX_ALIAS_NAME, new_index: new_index.name, body: {
+      conditions: {
+        max_age: max_age,
+        max_docs: max_docs,
+      }
+    })
+    old_index = StatisticsIndex.from_name res['old_index']
+    {
+      rollover_needed?: res['rolled_over'],
+      old_index: old_index
+    }
+  end
+
+  def migrate_index_to_other_node(index)
+    shrink_node_name = pick_random_node
+    @client.indices.put_settings index: index.name, body: {
+      'index.routing.allocation.require._name' => shrink_node_name,
+      'index.blocks.write' => true
+    }
+    @client.cluster.health wait_for_no_relocating_shards: true
+    shrink_node_name
+  end
+
+  def decrease_space_consumption(index, template_conf)
+    inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
+    target_name = StatisticsIndex.from_template inactive_template
+    @client.indices.shrink index: index.name, target: target_name.name
+    @client.indices.forcemerge index: target_name.name, max_num_segments: 1
+    target_name
+  end
+
+
+  private
+
+    def pick_random_node
+      node_stats = @client.nodes.info['nodes']
+      shrink_node = node_stats.keys.sample
+      node_stats[shrink_node]['name']
+    end
 end

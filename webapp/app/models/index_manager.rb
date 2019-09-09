@@ -9,14 +9,6 @@ module IndexManager
     Elasticsearch::Client.new(config[:client].symbolize_keys.merge(options))
   end
 
-  def self.long_waiting_client
-    IndexManager.client(
-      transport_options: {
-        request: { timeout: 5.minutes }
-      }
-    )
-  end
-
   def self.template_configuration
     template_config_dir = "#{Rails.root}/config/statistics"
     filename = 'template-stats-interpret_request_log.json'

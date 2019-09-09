@@ -87,55 +87,36 @@ namespace :statistics do
 
 
   desc 'Roll over index if older than 7 days or have more than 100 000 documents'
-  task :rollover => :environment do |t, args|
+  task :rollover => :environment do |_, _|
     max_age = '7d'
     max_docs = 100_000
     Task::Print.step("Roll over alias #{InterpretRequestLog::INDEX_ALIAS_NAME} with conditions max_age=#{max_age} or max_docs=#{max_docs}.")
-    client = IndexManager.long_waiting_client
-    unless cluster_ready?(client)
+    client = InterpretRequestLogClient.long_waiting_client
+    unless client.cluster_ready?
       Task::Print.error('Cannot perform tasks : cluster is not ready')
       exit 1
     end
 
     template_conf = IndexManager.template_configuration
     active_template = StatisticsIndexTemplate.new template_conf
-    dest_index = StatisticsIndex.from_template active_template
-    res = client.indices.rollover(alias: InterpretRequestLog::INDEX_ALIAS_NAME, new_index: dest_index.name, body:{
-      conditions: {
-        max_age: max_age,
-        max_docs: max_docs,
-      }
-    })
-    unless res['rolled_over']
+    new_index = StatisticsIndex.from_template active_template
+    res = client.rollover(new_index, max_age, max_docs)
+    unless res[:rollover_needed?]
       Task::Print.notice('No need to roll over because no condition reached.')
       exit 0
     end
-    old_index = res['old_index']
-    Task::Print.substep("Index #{old_index} rolled over to #{dest_index.name}.")
-    shrink_node_name = pick_random_node(client)
-    client.indices.put_settings index: old_index, body: {
-      'index.routing.allocation.require._name' => shrink_node_name,
-      'index.blocks.write' => true
-    }
-    Task::Print.substep("Index #{old_index} switched to read only and migrating to #{shrink_node_name}.")
-    client.cluster.health wait_for_no_relocating_shards: true
-    Task::Print.substep('Shards migration completed.')
-    inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
-    target_name = StatisticsIndex.from_template inactive_template
-    client.indices.shrink index: old_index, target: target_name.name
-    Task::Print.substep("Index #{old_index} shrink into #{target_name.name}.")
-    client.indices.forcemerge index: target_name.name, max_num_segments: 1
-    Task::Print.substep("Index #{target_name.name} force merged.")
-    client.indices.put_settings index: target_name.name, body: {
-      'index.number_of_replicas' => 1
-    }
+    old_index = res[:old_index]
+    Task::Print.substep("Index #{old_index.name} rolled over to #{new_index.name}.")
+    Task::Print.substep("Index #{old_index.name} switched to read only and migrating.")
+    shrink_node_name = client.migrate_index_to_other_node(old_index)
+    Task::Print.substep("Shards migration to #{shrink_node_name} completed.")
+    target_name = client.decrease_space_consumption(old_index, template_conf)
+    Task::Print.substep("Index #{target_name.name} disk consumption optimized.")
+    client.enable_replication target_name
     Task::Print.substep("Configured a replica for index #{target_name.name}.")
-    update_index_aliases(client, [
-      { add: { index: target_name.name, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } },
-      { remove: { index: old_index, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } }
-    ],
-      InterpretRequestLog::SEARCH_ALIAS_NAME)
-    delete_index(client, old_index)
+    client.switch_search_to_new_index(old_index, target_name)
+    client.delete_index old_index
+    Task::Print.success("Index #{old_index.name} removed.")
   end
 
 
@@ -172,47 +153,12 @@ namespace :statistics do
       Task::Print.step("Reindex #{current_index.name} to #{new_index.name}.")
       client.create_index new_index
       Task::Print.success("Index #{new_index.name} created.")
-      client.switch_indexing_to_new_active(current_index, new_index) if current_index.active?
+      client.switch_indexing_to_new_index(current_index, new_index) if current_index.active?
       Task::Print.substep("Reindexing of #{current_index.name} to #{new_index.name} in progress...")
       result = client.reindex current_index, new_index
       Task::Print.success("Reindexing of #{current_index.name} to #{new_index.name} succeed.")
       Task::Print.notice("Reindexing result : #{result.to_json}")
       client.remove_unused_index current_index
       Task::Print.success("Index #{current_index.name} removed.")
-    end
-
-    def update_index_aliases(client, actions, index_alias)
-      client.indices.update_aliases body: { actions: actions }
-      Task::Print.success("Update aliases #{index_alias} succeed.")
-    end
-
-    def delete_index(client, index_name)
-      client.indices.delete index: index_name
-      Task::Print.success("Remove index #{index_name} succeed.")
-    end
-
-    def pick_random_node(client)
-      node_stats = client.nodes.info()['nodes']
-      shrink_node = node_stats.keys.sample
-      node_stats[shrink_node]['name']
-    end
-
-    def cluster_ready?(client)
-      expected_status = Rails.env.production? ? 'green' : 'yellow'
-      retry_count = 0
-      max_retries = 3
-      cluster_ready = false
-      timetout = '30s'
-      while !cluster_ready && retry_count < max_retries do
-        Task::Print.substep("Wait for #{timetout} statistics cluster to be ready...")
-        begin
-          client.cluster.health(wait_for_status: expected_status, timeout: timetout)
-          cluster_ready = true
-        rescue Elasticsearch::Transport::Transport::Errors::RequestTimeout => e
-          retry_count += 1
-          Task::Print.notice("Cluster is not ready for the #{retry_count}/#{max_retries} attempt")
-        end
-      end
-      cluster_ready
     end
 end
