@@ -162,7 +162,6 @@ class EntityTest < ActiveSupport::TestCase
     )
     expected = ["*", "en", "fr", "es"]
     assert_equal expected, entity.entities_list.agent.locales
-
     entity.terms = "soleil:pt"
     assert entity.save
     expected = ["*", "en", "fr", "es", "pt"]
@@ -289,7 +288,10 @@ class EntityTest < ActiveSupport::TestCase
   
   test 'Entities limit' do
     
-    ENV['VIKYAPP_ENTITIES_QUOTA'] = '1';
+    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '11'
+    p users(:admin).expressions_count
+    p users(:admin).quota_exceeded?
+
 
     entity = Entity.new(
       terms: [
@@ -305,14 +307,14 @@ class EntityTest < ActiveSupport::TestCase
       entities_list: entities_lists(:weather_conditions)
     )
 
-    entity.save
+    assert entity.save
     assert_not entity_2.save
 
     expected = {
-      quota: ['exceeded (maximum is 1 entities), actual: 4']
+      quota: ['exceeded (maximum is 11 formulations and entities), actual: 11']
     }
-    assert_equal expected, entity.errors.messages
+    assert_equal expected, entity_2.errors.messages
     
-    ENV['VIKYAPP_ENTITIES_QUOTA'] = nil;
+    ENV['VIKYAPP_EXPRESSION_QUOTA'] = nil
   end
 end

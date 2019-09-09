@@ -102,8 +102,20 @@ class User < ApplicationRecord
     username
   end
 
+<<<<<<< HEAD
   def quota(from, to)
     IndexManager.client
+=======
+  def quota_exceeded?
+    quota = ENV.fetch('VIKYAPP_EXPRESSION_QUOTA') { nil }
+    quota.nil? ? false : (expressions_count >= quota.to_i)
+  end
+
+  def expressions_count
+    entities_count = EntitiesList.joins(:agent).where('agents.owner_id = ?', id).sum(:entities_count)
+    interpretations_count = Interpretation.joins(intent: :agent).where('agents.owner_id = ?', id).count
+    entities_count + interpretations_count
+>>>>>>> ca04839bed78bf47c34a7214502d38dc410220f0
   end
 
   private

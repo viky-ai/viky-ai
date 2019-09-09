@@ -297,4 +297,16 @@ class AgentDuplicateTest < ActiveSupport::TestCase
       end
     end
   end
+
+  test 'Should not be able to duplicate an agent when quota is full' do
+    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '10'
+
+    agent = agents(:weather)
+    current_user = users(:admin)
+
+    assert current_user.quota_exceeded?
+    new_agent = AgentDuplicator.new(agent, current_user).duplicate
+    assert_not new_agent.persisted?
+    ENV['VIKYAPP_EXPRESSION_QUOTA'] = nil
+  end
 end

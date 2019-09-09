@@ -17,7 +17,7 @@ class Interpretation < ApplicationRecord
   validates :locale, inclusion: { in: self::LOCALES }, presence: true
   validate :check_aliases_any_and_list_options
   validate :check_expression_nlp_length
-
+  validate :check_owner_quota, on: :create
   before_save :cleanup
 
   def is_minimal
@@ -107,6 +107,16 @@ class Interpretation < ApplicationRecord
         self.solution = nil
       elsif solution.blank?
         self.solution = ''
+      end
+    end
+
+    def check_owner_quota
+      quota = ENV.fetch('VIKYAPP_EXPRESSION_QUOTA') { nil }
+      unless intent.nil?
+        owner = User.find(intent.agent.owner_id)
+        if owner.quota_exceeded?
+          errors.add(:quota, I18n.t('errors.interpretation.quota', maximum: quota, actual: owner.expressions_count))
+        end
       end
     end
 end

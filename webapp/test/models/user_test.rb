@@ -229,4 +229,21 @@ class UserTest < ActiveSupport::TestCase
     admin = users(:admin)
     assert_equal 'admin', admin.slug
   end
+
+  test 'Users expression count' do
+    admin = users(:admin)
+    assert_equal 10, admin.expressions_count
+
+    user = users(:confirmed)
+    assert_equal 0, user.expressions_count
+  end
+
+  test 'Quota exceeded' do
+    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '10'
+    
+    assert users(:admin).quota_exceeded?
+    assert_not users(:confirmed).quota_exceeded?
+
+    ENV['VIKYAPP_EXPRESSION_QUOTA'] = nil;
+  end
 end

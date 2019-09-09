@@ -35,7 +35,6 @@ class EntitiesImport < ApplicationRecord
             index += 1
           else
             validate_csv_row!(row, count + 1)
-
             terms = csv_terms_to_terms(row)
             auto_solution = (row['Auto solution'].downcase == 'true')
             solution = csv_solution_to_solution(row, terms, auto_solution)
@@ -199,18 +198,15 @@ class EntitiesImport < ApplicationRecord
     end
 
     def check_owner_quota
-      entities_quota = ENV.fetch('VIKYAPP_ENTITIES_QUOTA') { nil }
-      unless entities_quota == nil
-        entities_quota = Integer(entities_quota)
-        total = EntitiesList.joins(:agent).where("agents.owner_id = ?", entities_list.agent.owner_id).sum(:entities_count)
+      quota = ENV.fetch('VIKYAPP_EXPRESSION_QUOTA') { nil }
+      unless quota.nil?
+        quota = quota.to_i
+        total = entities_list.agent.owner.expressions_count
         if mode == 'replace'
-          if csv_count_lines > entities_quota
-            errors.add(:base, I18n.t('errors.entities_import.quota_replace', maximum: entities_quota, to_import: csv_count_lines))
-          end
-        else 
-          if total + csv_count_lines > entities_quota
-            errors.add(:base, I18n.t('errors.entities_import.quota', maximum: entities_quota, actual: total, to_import: csv_count_lines))
-          end
+          total = total - entities_list.entities_count
+        end
+        if total + csv_count_lines > quota
+          errors.add(:base, I18n.t('errors.entities_import.quota', maximum: quota, actual: total, to_import: csv_count_lines))
         end
       end
     end
