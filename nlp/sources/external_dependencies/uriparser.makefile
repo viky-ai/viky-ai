@@ -31,7 +31,6 @@ fullclean: clean
 	-cd uriparser && $(MAKE) clean
 	-cd uriparser && git clean -dfx
 	rm -rf uriparser/Makefile
-	rm -rf uriparser/configure
 
 clean:
 	rm -f $(SRCPATH)/include/uriparser/*.h
@@ -41,24 +40,23 @@ clean:
 make: uriparser/Makefile
 	cd uriparser && $(MAKE)
 
-uriparser/configure:
-	cd uriparser && ./autogen.sh
-
-uriparser/Makefile: uriparser/configure
-	cd uriparser && ./configure --prefix="$(DBUILDPATH)" \
-															--bindir="$(DBINPATH)" \
-															--libdir="$(DLIBPATH)" \
-															--includedir="$(SRCPATH)/include" \
-															--disable-test \
-															--disable-doc
+uriparser/Makefile:
+	cd uriparser && cmake -DCMAKE_BUILD_TYPE=Release \
+												-DCMAKE_INSTALL_PREFIX:PATH="$(SRCPATH)/include" \
+												-DCMAKE_INCLUDE_PATH:PATH="$(DBINPATH)" \
+												-DCMAKE_LIBRARY_PATH:PATH="$(DBINPATH)" \
+												-DURIPARSER_BUILD_DOCS:BOOL=OFF \
+												-DURIPARSER_BUILD_TESTS:BOOL=OFF \
+												-DURIPARSER_BUILD_TOOLS:BOOL=OFF \
+												-DURIPARSER_BUILD_WCHAR_T:BOOL=OFF
 
 $(DBINPATH)/liburiparser.so: make
 	mkdir -p $(DBINPATH)
-	cp -af uriparser/.libs/liburiparser.so* $(DBINPATH)/
+	cp -af uriparser/liburiparser.so* $(DBINPATH)/
 
 $(RBINPATH)/liburiparser.so: $(DBINPATH)/liburiparser.so
 	mkdir -p $(RBINPATH)
-	cp -af uriparser/.libs/liburiparser.so* $(RBINPATH)/
+	cp -af uriparser/liburiparser.so* $(RBINPATH)/
 
 $(SRCPATH)/include/uriparser/Uri.h: make
 	mkdir -p $(SRCPATH)/include/uriparser
