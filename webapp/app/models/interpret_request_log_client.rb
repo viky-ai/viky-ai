@@ -48,6 +48,14 @@ class InterpretRequestLogClient
     cluster_ready
   end
 
+  def ping_cluster
+    @client.ping
+  end
+
+  def list_cluster_hosts
+    @client.transport.hosts
+  end
+
   def save_template_configuration(configuration)
     active_template = StatisticsIndexTemplate.new configuration, 'active'
     inactive_template = StatisticsIndexTemplate.new configuration, 'inactive'
@@ -163,6 +171,15 @@ class InterpretRequestLogClient
     @client.indices.shrink index: index.name, target: target_name.name
     @client.indices.forcemerge index: target_name.name, max_num_segments: 1
     target_name
+  end
+
+  def fetch_deployed_index_version(template)
+    begin
+      current_version = @client.indices.get_template(name: template.name)[template.name]['version']
+    rescue
+      current_version = 'not_found'
+    end
+    current_version
   end
 
 
