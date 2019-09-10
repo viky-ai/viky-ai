@@ -47,12 +47,6 @@ module Rack
               allowed = true
             end
           end
-        else 
-          allowed = true
-        elsif Feature.rack_throttle_limit_second_disabled? && @options[:time_window] == :second
-          allowed = true
-        else
-          allowed = super(request)
         end
 
         if !allowed
