@@ -18,10 +18,10 @@ module Rack
         return true unless Feature.rack_throttle_enabled?
 
         api_token = request.params["agent_token"] || request.get_header("HTTP_AGENT_TOKEN")
-        agent = Agent.find_by api_token: api_token
-        user = User.find_by id: agent.owner_id
+        agent = Agent.find_by api_token: api_token if api_token
+        user = User.find_by id: agent.owner_id if agent
 
-        if user.ignore_quota
+        if user&.ignore_quota
           allowed = true
         elsif Feature.rack_throttle_limit_day_disabled? && @options[:time_window] == :day
           allowed = true
