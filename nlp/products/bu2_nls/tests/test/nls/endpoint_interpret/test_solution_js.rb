@@ -356,7 +356,7 @@ module Nls
         assert_equal 'javascript', error_body['errors_code']
         js_error = error_body['errors_javascript']
         assert !js_error.nil?
-        assert_equal "ReferenceError: identifier 'undef_variable' undefined (at line 2)", js_error['message']
+        assert_equal "ReferenceError: identifier 'undef_variable' undefined", js_error['message']
         assert !js_error['solution_location'].nil?
         assert_equal 'js_isolation_2', js_error['solution_location']['slug']
         assert_equal 2, js_error['solution_location']['position']

@@ -16,7 +16,6 @@ static duk_ret_t NlpJsInitResolvModule(duk_context *ctx);
 static duk_ret_t push_file_as_string(duk_context *ctx, og_string filename);
 static og_status NlpJsLoadLibMoment(og_nlp_th ctrl_nlp_th);
 static og_status NlpJsInitIsolatedEval(og_nlp_th ctrl_nlp_th);
-static og_status NlpJsInitBetterErrorMessage(og_nlp_th ctrl_nlp_th);
 static og_status NlpJsDukCESU8toUTF8(og_nlp_th ctrl_nlp_th, og_string cesu, int cesu_length, og_string *utf8);
 
 #define DOgNlpJsMomentSecretName "moment_lib_%06X"
@@ -79,8 +78,6 @@ og_status NlpJsInit(og_nlp_th ctrl_nlp_th)
   duk_put_prop_string(ctx, -2, "load");
   duk_module_node_init(ctx);
 
-  IFE(NlpJsInitBetterErrorMessage(ctrl_nlp_th));
-
   // load and init libs
   IFE(NlpJsLoadLibMoment(ctrl_nlp_th));
 
@@ -120,32 +117,6 @@ static og_status NlpJsInitIsolatedEval(og_nlp_th ctrl_nlp_th)
   else
   {
     NlpLog(DOgNlpTraceJs, "NlpJsInit: NlpJsInitIsolatedEval done.");
-  }
-
-  DONE;
-}
-
-static og_status NlpJsInitBetterErrorMessage(og_nlp_th ctrl_nlp_th)
-{
-  duk_context *ctx = ctrl_nlp_th->js->duk_perm_context;
-
-  // https://github.com/rotaready/moment-range#node--npm
-  og_string extends_error = ""   // keep format
-          "Error.prototype.toString = function () {\n"
-          "  var line = (this || {}).lineNumber;\n"
-          "  return this.name + ': ' + this.message + ' (at line ' + this.lineNumber + ')';\n"
-          "};\n"
-          "";
-
-  if (duk_peval_string(ctx, extends_error) != 0)
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "%s", duk_safe_to_string(ctx, -1));
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsInit: NlpJsInitBetterErrorMessage failed : \n%s", extends_error);
-    DPcErr;
-  }
-  else
-  {
-    NlpLog(DOgNlpTraceJs, "NlpJsInit: NlpJsInitBetterErrorMessage done.");
   }
 
   DONE;
