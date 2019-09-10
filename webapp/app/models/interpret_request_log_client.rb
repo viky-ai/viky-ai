@@ -71,14 +71,9 @@ class InterpretRequestLogClient
     @client.transport.hosts
   end
 
-  def save_template_configuration(configuration)
-    active_template = StatisticsIndexTemplate.new configuration, 'active'
-    inactive_template = StatisticsIndexTemplate.new configuration, 'inactive'
-    [active_template, inactive_template]
-      .each do |template|
-        @client.indices.put_template name: template.name, body: template.configuration
-      end
-    return active_template, inactive_template
+  def save_template(template)
+    @client.indices.put_template name: template.name, body: template.configuration
+    template
   end
 
   def index_exists?(name_pattern)
@@ -175,15 +170,16 @@ class InterpretRequestLogClient
     shrink_node_name
   end
 
-  def decrease_space_consumption(index, template_conf)
-    inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
+  def decrease_space_consumption(index)
+    inactive_template = StatisticsIndexTemplate.new 'inactive'
     target_name = StatisticsIndex.from_template inactive_template
     @client.indices.shrink index: index.name, target: target_name.name
     @client.indices.forcemerge index: target_name.name, max_num_segments: 1
     target_name
   end
 
-  def fetch_deployed_index_version(template)
+  def fetch_deployed_index_version
+    template = StatisticsIndexTemplate.new 'active'
     begin
       current_version = @client.indices.get_template(name: template.name)[template.name]['version']
     rescue
@@ -193,7 +189,10 @@ class InterpretRequestLogClient
   end
 
   def reset_indices
-    active_template, = save_template_configuration(StatisticsIndexTemplate.read_template_configuration)
+    active_template = StatisticsIndexTemplate.new 'active'
+    save_template active_template
+    inactive_template = StatisticsIndexTemplate.new 'inactive'
+    save_template inactive_template
     full_pattern = active_template.index_patterns.gsub('active-*', '*')
     delete_index full_pattern
     new_index = create_active_index active_template

@@ -1,15 +1,9 @@
 class StatisticsIndexTemplate
 
-  def self.read_template_configuration
-    template_config_dir = "#{Rails.root}/config/statistics"
-    filename = 'template-stats-interpret_request_log.json'
-    JSON.parse(ERB.new(File.read("#{template_config_dir}/#{filename}")).result)
-  end
-
   attr_reader :configuration, :state
 
-  def initialize(configuration, state = 'active')
-    @configuration = configuration.clone
+  def initialize(state = 'active')
+    @configuration = read_template_configuration
     @state = state
     @configuration['index_patterns'] = "#{index_full_name}-#{@state}-*"
     if @state == 'inactive'
@@ -37,12 +31,14 @@ class StatisticsIndexTemplate
     index_patterns.split('-')[1]
   end
 
-  def indexing_alias
-    "index-#{index_full_name.gsub('-active', '')}"
-  end
-
   private
     def index_full_name
       index_patterns[0..-3]
+    end
+
+    def read_template_configuration
+      template_config_dir = "#{Rails.root}/config/statistics"
+      filename = 'template-stats-interpret_request_log.json'
+      JSON.parse(ERB.new(File.read("#{template_config_dir}/#{filename}")).result)
     end
 end

@@ -14,10 +14,11 @@ namespace :statistics do
         exit 1
       end
 
-      template_conf = StatisticsIndexTemplate.read_template_configuration
-      active_template, inactive_template = client.save_template_configuration(template_conf)
+      active_template = StatisticsIndexTemplate.new 'active'
+      client.save_template active_template
+      inactive_template = StatisticsIndexTemplate.new 'inactive'
+      client.save_template inactive_template
       Task::Print.success("Index templates #{active_template.name}, #{inactive_template.name} saved.")
-      Task::Print.substep("Index #{active_template.index_name}.")
       cleanup_broken_setup(client)
       setup_active_index(client, active_template)
     end
@@ -39,8 +40,10 @@ namespace :statistics do
       exit 1
     end
 
-    template_conf = StatisticsIndexTemplate.read_template_configuration
-    active_template, inactive_template = client.save_template_configuration template_conf
+    active_template = StatisticsIndexTemplate.new 'active'
+    client.save_template active_template
+    inactive_template = StatisticsIndexTemplate.new 'inactive'
+    client.save_template inactive_template
     current_index = StatisticsIndex.from_name src_name
     template = current_index.active? ? active_template : inactive_template
     if current_index.need_reindexing? template
@@ -61,8 +64,10 @@ namespace :statistics do
         exit 1
       end
 
-      template_conf = StatisticsIndexTemplate.read_template_configuration
-      active_template, inactive_template = client.save_template_configuration template_conf
+      active_template = StatisticsIndexTemplate.new 'active'
+      client.save_template active_template
+      inactive_template = StatisticsIndexTemplate.new 'inactive'
+      client.save_template inactive_template
       indices = client
                   .list_indices
                   .select { |index| index.need_reindexing? active_template }
@@ -97,8 +102,7 @@ namespace :statistics do
       exit 1
     end
 
-    template_conf = StatisticsIndexTemplate.read_template_configuration
-    active_template = StatisticsIndexTemplate.new template_conf
+    active_template = StatisticsIndexTemplate.new 'active'
     new_index = StatisticsIndex.from_template active_template
     res = client.rollover(new_index, max_age, max_docs)
     unless res[:rollover_needed?]
@@ -108,9 +112,9 @@ namespace :statistics do
     old_index = res[:old_index]
     Task::Print.substep("Index #{old_index.name} rolled over to #{new_index.name}.")
     Task::Print.substep("Index #{old_index.name} switched to read only and migrating.")
-    shrink_node_name = client.migrate_index_to_other_node(old_index)
+    shrink_node_name = client.migrate_index_to_other_node old_index
     Task::Print.substep("Shards migration to #{shrink_node_name} completed.")
-    target_name = client.decrease_space_consumption(old_index, template_conf)
+    target_name = client.decrease_space_consumption old_index
     Task::Print.substep("Index #{target_name.name} disk consumption optimized.")
     client.enable_replication target_name
     Task::Print.substep("Configured a replica for index #{target_name.name}.")
@@ -136,7 +140,7 @@ namespace :statistics do
         Task::Print.notice("Index like #{active_template.index_patterns} already exists : skipping index creation.")
       else
         new_index = client.create_active_index active_template
-        Task::Print.success("Index #{new_index.name} saved.")
+        Task::Print.success("Index #{new_index.name} created.")
       end
     end
 
