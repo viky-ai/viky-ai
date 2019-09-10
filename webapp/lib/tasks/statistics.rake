@@ -90,7 +90,7 @@ namespace :statistics do
   task :rollover => :environment do |_, _|
     max_age = '7d'
     max_docs = 100_000
-    Task::Print.step("Roll over alias #{InterpretRequestLog::INDEX_ALIAS_NAME} with conditions max_age=#{max_age} or max_docs=#{max_docs}.")
+    Task::Print.step("Roll over alias #{InterpretRequestLogClient::INDEX_ALIAS_NAME} with conditions max_age=#{max_age} or max_docs=#{max_docs}.")
     client = InterpretRequestLogClient.long_waiting_client
     unless client.cluster_ready?
       Task::Print.error('Cannot perform tasks : cluster is not ready')
@@ -123,7 +123,7 @@ namespace :statistics do
   private
 
     def cleanup_broken_setup(client)
-      alias_name = InterpretRequestLog::INDEX_ALIAS_NAME
+      alias_name = InterpretRequestLogClient::INDEX_ALIAS_NAME
       if client.index_exists? alias_name
         Task::Print.notice("Delete index with same name as alias (#{alias_name}) because it should not exists.")
         client.delete_index alias_name

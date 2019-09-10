@@ -1,5 +1,10 @@
 class InterpretRequestLogClient
 
+  INDEX_NAME = 'stats-interpret_request_log'.freeze
+  INDEX_ALIAS_NAME = ['index', INDEX_NAME].join('-').freeze
+  SEARCH_ALIAS_NAME = ['search', INDEX_NAME].join('-').freeze
+  INDEX_TYPE = 'log'.freeze
+
   def self.long_waiting_client
     InterpretRequestLogClient.new(
       transport_options: {
@@ -19,23 +24,23 @@ class InterpretRequestLogClient
   end
 
   def get_document(id)
-    @client.get index: InterpretRequestLog::SEARCH_ALIAS_NAME, type: InterpretRequestLog::INDEX_TYPE, id: id
+    @client.get index: SEARCH_ALIAS_NAME, type: INDEX_TYPE, id: id
   end
 
   def save_document(json_document, id)
     refresh = Rails.env == 'test'
-    @client.index index: InterpretRequestLog::INDEX_ALIAS_NAME, type: InterpretRequestLog::INDEX_TYPE, body: json_document, id: id, refresh: refresh
+    @client.index index: INDEX_ALIAS_NAME, type: INDEX_TYPE, body: json_document, id: id, refresh: refresh
   end
 
   def count_documents(params = {})
-    result = @client.count index: InterpretRequestLog::SEARCH_ALIAS_NAME, body: params
+    result = @client.count index: SEARCH_ALIAS_NAME, body: params
     result['count']
   end
 
   def search_documents(query, size)
     @client.search(
-      index: InterpretRequestLog::SEARCH_ALIAS_NAME,
-      type: InterpretRequestLog::INDEX_TYPE,
+      index: SEARCH_ALIAS_NAME,
+      type: INDEX_TYPE,
       body: { query: query },
       size: size
     )
@@ -86,7 +91,7 @@ class InterpretRequestLogClient
   def create_active_index(active_template)
     index = StatisticsIndex.from_template active_template
     @client.indices.create index: index.name
-    @client.indices.update_aliases body: { actions: [{ add: { index: index.name, alias: InterpretRequestLog::INDEX_ALIAS_NAME } }] }
+    @client.indices.update_aliases body: { actions: [{ add: { index: index.name, alias: INDEX_ALIAS_NAME } }] }
     index
   end
 
@@ -102,7 +107,7 @@ class InterpretRequestLogClient
 
   def remove_unused_index(index)
     begin
-      @client.indices.update_aliases body: { actions: [{ remove: { index: index.name, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } }] }
+      @client.indices.update_aliases body: { actions: [{ remove: { index: index.name, alias: SEARCH_ALIAS_NAME } }] }
     rescue Elasticsearch::Transport::Transport::Errors::NotFound => _e
       # alias does not exist
     end
@@ -129,15 +134,15 @@ class InterpretRequestLogClient
 
   def switch_indexing_to_new_index(current_index, new_index)
     @client.indices.update_aliases body: { actions: [
-      { remove: { index: current_index.name, alias: InterpretRequestLog::INDEX_ALIAS_NAME } },
-      { add: { index: new_index.name, alias: InterpretRequestLog::INDEX_ALIAS_NAME } }
+      { remove: { index: current_index.name, alias: INDEX_ALIAS_NAME } },
+      { add: { index: new_index.name, alias: INDEX_ALIAS_NAME } }
     ] }
   end
 
   def switch_search_to_new_index(current_index, new_index)
     @client.indices.update_aliases body: { actions: [
-      { remove: { index: current_index.name, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } },
-      { add: { index: new_index.name, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } }
+      { remove: { index: current_index.name, alias: SEARCH_ALIAS_NAME } },
+      { add: { index: new_index.name, alias: SEARCH_ALIAS_NAME } }
     ] }
   end
 
@@ -147,7 +152,7 @@ class InterpretRequestLogClient
   end
 
   def rollover(new_index, max_age, max_docs)
-    res = @client.indices.rollover(alias: InterpretRequestLog::INDEX_ALIAS_NAME, new_index: new_index.name, body: {
+    res = @client.indices.rollover(alias: INDEX_ALIAS_NAME, new_index: new_index.name, body: {
       conditions: {
         max_age: max_age,
         max_docs: max_docs,
@@ -200,8 +205,8 @@ class InterpretRequestLogClient
     return if list_indices.blank?
 
     @client.indices.update_aliases body: { actions: [
-      { remove: { index: 'stats-interpret_request_log-*', alias: InterpretRequestLog::INDEX_ALIAS_NAME } },
-      { remove: { index: 'stats-interpret_request_log-*', alias: InterpretRequestLog::SEARCH_ALIAS_NAME } }
+      { remove: { index: 'stats-interpret_request_log-*', alias: INDEX_ALIAS_NAME } },
+      { remove: { index: 'stats-interpret_request_log-*', alias: SEARCH_ALIAS_NAME } }
     ] }
     list_indices.each { |index| delete_index index }
   end

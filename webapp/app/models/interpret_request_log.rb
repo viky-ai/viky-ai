@@ -1,11 +1,6 @@
 class InterpretRequestLog
   include ActiveModel::Model
 
-  INDEX_NAME = 'stats-interpret_request_log'.freeze
-  INDEX_ALIAS_NAME = ['index', INDEX_NAME].join('-').freeze
-  SEARCH_ALIAS_NAME = ['search', INDEX_NAME].join('-').freeze
-  INDEX_TYPE = 'log'.freeze
-
   attr_accessor :id, :agents, :timestamp, :sentence, :language, :spellchecking, :now, :status, :body, :context
 
   validates :context_to_s, length: {
