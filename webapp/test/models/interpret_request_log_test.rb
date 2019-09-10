@@ -14,7 +14,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
       sentence: "What 's the weather like ?",
       language: 'en',
       spellchecking: 'low',
-      agent: weather_agent,
+      agents: [weather_agent],
     ).with_response('200', {
       'interpretations' => [{
         'id' => intent_weather.id,
@@ -37,7 +37,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
       language: 'en',
       spellchecking: 'low',
       now: '2018-07-10T14:10:36+02:00',
-      agent: weather_agent,
+      agents: [weather_agent],
     ).with_response('200', {
       'interpretations' => [{
         'id' => intent_weather.id,
@@ -67,7 +67,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
       sentence: 'What the weather like today ?',
       language: 'en',
       spellchecking: 'low',
-      agent: weather_agent,
+      agents: [weather_agent],
     ).with_response('200', {
       'interpretations' => [{
         'id' => intent_weather_question.id,
@@ -83,7 +83,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
       sentence: 'What the weather like tomorrow ?',
       language: 'en',
       spellchecking: 'low',
-      agent: weather_agent,
+      agents: [weather_agent],
     ).with_response('200', {
       'interpretations' => [{
         'id' => intent_weather_forecast.id,
@@ -99,7 +99,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
     log = InterpretRequestLog.new(
       timestamp: '2018-07-04T16:00:00.000+02:00',
       sentence: 'What the weather like next Sunday ?',
-      agent: weather_agent,
+      agents: [weather_agent],
     ).with_response('422', {
       errors: [
         "lt 0: OgNlsEndpoints : request error on endpoint : \"POST NlsEndpointInterpret\"",
@@ -112,7 +112,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
       sentence: 'What the weather like next Sunday ?',
       language: 'en',
       spellchecking: 'low',
-      agent: weather_agent,
+      agents: [weather_agent],
     ).with_response('200', {})
     assert log.save
     assert_equal 2, InterpretRequestLog.count(
@@ -140,7 +140,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
     log = InterpretRequestLog.new(
       timestamp: '2018-07-04T16:00:00.000+02:00',
       sentence: 'What the weather like next Sunday ?',
-      agent: weather_agent,
+      agents: [weather_agent],
     ).with_response('401', {
       errors: ['Access denied: wrong token.']
     })
@@ -151,7 +151,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
     log = InterpretRequestLog.new(
         timestamp: '2018-11-21T16:00:00.000+02:00',
         sentence: 'What the weather like today ?',
-        agent: agents(:weather),
+        agents: [agents(:weather)],
         context: {'client_type' => 'console', 'user_id' => '078602e7-0578-49d4-96ee-d8ee2f9b1ecf'}
       ).with_response('200', {
         interpretations: [{
@@ -173,7 +173,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
     log = InterpretRequestLog.new(
       timestamp: '2018-11-21T16:00:00.000+02:00',
       sentence: 'What the weather like today ?',
-      agent: agents(:weather),
+      agents: [agents(:weather)],
       context: { 'foo' => 'bar' * 1000 }
     ).with_response('200', {
       interpretations: [{

@@ -24,7 +24,11 @@ class AgentDuplicator
           id: source.id,
           slug: source.slug
         }
-        source.image_attacher.copy(record.image_attacher)
+        # cf. https://github.com/shrinerb/shrine/commit/3ad7ddf145bc56f564bf10b14fcc4fcea848f4a2
+        unless source.image_attacher.get.nil?
+          copied_file = record.image_attacher.store.upload(source.image_attacher.get)
+          record.image_attacher.send(:_set, copied_file)
+        end
       end
     end
     fix_interpretation_aliases(new_agent.to_record)
@@ -89,9 +93,27 @@ class EntitiesListsCloner < Clowne::Cloner
     begin
       origin.entities.find_in_batches.each do |batch|
         new_entities = batch.map do |entity|
-          [entity.terms, entity.auto_solution_enabled, entity.solution, entity.position, clone.id, entity.searchable_terms]
+          [
+            entity.terms,
+            entity.auto_solution_enabled,
+            entity.solution,
+            entity.position,
+            clone.id,
+            entity.searchable_terms,
+            entity.case_sensitive,
+            entity.accent_sensitive
+          ]
         end
-        columns = [:terms, :auto_solution_enabled, :solution, :position, :entities_list_id, :searchable_terms]
+        columns = [
+          :terms,
+          :auto_solution_enabled,
+          :solution,
+          :position,
+          :entities_list_id,
+          :searchable_terms,
+          :case_sensitive,
+          :accent_sensitive
+        ]
         Entity.import!(columns, new_entities)
       end
     rescue ActiveRecord::RecordInvalid => e

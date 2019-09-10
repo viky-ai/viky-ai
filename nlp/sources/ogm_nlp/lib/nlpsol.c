@@ -369,7 +369,7 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
           json_t *json_solution_regex = NULL;
           json_solution_regex = json_string(string_request_word);
 
-          struct alias *alias = request_input_part->input_part->alias;
+          struct alias *alias = request_word->regex_input_part->alias;
           char solution[DPcPathSize];
           NlpSolutionString(ctrl_nlp_th, json_solution_regex, DPcPathSize, solution);
           NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution (regex): %s",

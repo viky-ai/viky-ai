@@ -110,7 +110,12 @@ class Modal
 
   prepare: ->
     $("#modal_preloader").hide()
-    $(document).on 'keyup', (e) => @close() if e.keyCode == 27
+
+    # ESC key must close the modal unless focus if on a dropdown
+    $(document).on 'keyup', (e) =>
+      if e.keyCode == 27
+        @close() unless $(e.target).closest('.dropdown__trigger').length == 1
+
 
 module.exports = Modal
 

@@ -2,24 +2,24 @@ require "application_system_test_case"
 
 class AgentsTest < ApplicationSystemTestCase
 
-  test 'Navigation to agents index' do
+  test "Navigation to agents index" do
     admin_go_to_agents_index
-    assert page.has_text?("Agents")
-    assert_equal "My awesome weather bot", first('.agent-box h2').text
+    assert has_text?("Agents")
+    assert_equal "My awesome weather bot", first(".agent-box h2").text
   end
 
 
-  test 'blank slate' do
+  test "blank slate" do
     Agent.delete_all
     admin_go_to_agents_index
-    assert page.has_text?("Create your first agent")
+    assert has_text?("Create your first agent")
 
-    click_link 'New agent'
+    click_link "New agent"
 
     within(".modal") do
-      assert page.has_field? 'Name'
-      assert page.has_field? 'ID'
-      assert page.has_button? 'Create'
+      assert has_field? "Name"
+      assert has_field? "ID"
+      assert has_button? "Create"
     end
   end
 
@@ -27,51 +27,51 @@ class AgentsTest < ApplicationSystemTestCase
   #
   # Delete
   #
-  test 'Button to delete agent is not present' do
+  test "Button to delete agent is not present" do
     admin_go_to_agents_index
-    all('.dropdown__trigger > button').first.click
-    assert !page.has_link?("Delete")
+    all(".dropdown__trigger > button").first.click
+    assert !has_link?("Delete")
   end
 
-  test 'Button to delete agent is (not) present' do
+  test "Button to delete agent is (not) present" do
     # Make agent deletable
     agent = agents(:weather)
-    agent.memberships.where.not(rights: 'all').each do |m|
+    agent.memberships.where.not(rights: "all").each do |m|
       assert m.destroy
     end
 
     admin_go_to_agents_index
-    first('.dropdown__trigger > button').click
-    assert page.has_link?("Delete")
+    first(".dropdown__trigger > button").click
+    assert has_link?("Delete")
   end
 
 
-  test 'Delete with confirmation' do
+  test "Delete with confirmation" do
     # Make agent deletable
     agent = agents(:weather)
-    agent.memberships.where.not(rights: 'all').each do |m|
+    agent.memberships.where.not(rights: "all").each do |m|
       assert m.destroy
     end
 
     before_count = Agent.count
     admin_go_to_agents_index
 
-    first('.dropdown__trigger > button').click
-    click_link 'Delete'
+    first(".dropdown__trigger > button").click
+    click_link "Delete"
 
-    assert page.has_text?('Are you sure?')
-    click_button('Delete')
-    assert page.has_text?('Please enter the text exactly as it is displayed to confirm.')
+    assert has_text?("Are you sure?")
+    click_button("Delete")
+    assert has_text?("Please enter the text exactly as it is displayed to confirm.")
 
-    fill_in 'validation', with: 'dElEtE'
-    click_button('Delete')
-    assert page.has_text?('Please enter the text exactly as it is displayed to confirm.')
+    fill_in "validation", with: "dElEtE"
+    click_button("Delete")
+    assert has_text?("Please enter the text exactly as it is displayed to confirm.")
 
-    fill_in 'validation', with: 'DELETE'
-    click_button('Delete')
-    assert page.has_text?('Agent with the name: My awesome weather bot has successfully been deleted.')
+    fill_in "validation", with: "DELETE"
+    click_button("Delete")
+    assert has_text?("Agent with the name: My awesome weather bot has successfully been deleted.")
 
-    assert_equal '/agents', current_path
+    assert_equal "/agents", current_path
     assert_equal before_count - 1, Agent.count
   end
 
@@ -79,139 +79,139 @@ class AgentsTest < ApplicationSystemTestCase
   #
   # Configure
   #
-  test 'Configure from index' do
+  test "Configure from index" do
     admin_go_to_agents_index
-    first('.dropdown__trigger > button').click
-    click_link 'Configure'
-    assert page.has_text?('Configure agent')
-    fill_in 'Name', with: ''
-    click_button 'Update'
+    first(".dropdown__trigger > button").click
+    click_link "Configure"
+    assert has_text?("Configure agent")
+    fill_in "Name", with: ""
+    click_button "Update"
 
     expected = ["Name can't be blank"]
     expected.each do |error|
-      assert page.has_text?(error)
+      assert has_text?(error)
     end
-    assert_equal 1, all('.help--error').size
+    assert_equal 1, all(".help--error").size
 
-    fill_in 'Name', with: 'My new updated agent'
-    click_button 'Update'
-    assert page.has_text?('Your agent has been successfully updated.')
-    assert page.has_text?('My new updated agent')
+    fill_in "Name", with: "My new updated agent"
+    click_button "Update"
+    assert has_text?("Your agent has been successfully updated.")
+    assert has_text?("My new updated agent")
   end
 
-  test 'Configure an agent where user has edit rights; The user owns another agent with the same name' do
+  test "Configure an agent where user has edit rights; The user owns another agent with the same name" do
     user = users(:edit_on_agent_weather)
 
     new_agent = Agent.new(
       name: "Weather agent 2",
       agentname: agents(:weather).agentname,
       description: "Agent A decription",
-      visibility: 'is_public',
-      nlp_updated_at: '2019-05-09 10:07:53.484942'
+      visibility: "is_public",
+      nlp_updated_at: "2019-05-09 10:07:53.484942"
     )
     new_agent.memberships << Membership.new(user_id: user.id, rights: "all")
     assert new_agent.save
 
     user_go_to_agent_show(user, agents(:weather))
-    click_link 'Configure'
-    within('.modal') do
-      assert page.has_text? 'Configure agent'
-      fill_in 'Name', with: 'Updated weather agent of admin'
-      click_button 'Update'
+    click_link "Configure"
+    within(".modal") do
+      assert has_text? "Configure agent"
+      fill_in "Name", with: "Updated weather agent of admin"
+      click_button "Update"
     end
-    assert page.has_text? 'Your agent has been successfully updated.'
-    assert_equal '/agents/admin/weather', current_path
-    assert page.has_text? 'Updated weather agent of admin'
+    assert has_text? "Your agent has been successfully updated."
+    assert_equal "/agents/admin/weather", current_path
+    assert has_text? "Updated weather agent of admin"
   end
 
 
-  test 'Cancel configure from index' do
+  test "Cancel configure from index" do
     admin_go_to_agents_index
-    first('.dropdown__trigger > button').click
-    click_link 'Configure'
-    assert page.has_text?('Configure agent')
-    click_button 'Cancel'
-    assert page.has_no_text?('Configure agent')
-    assert_equal '/agents', current_path
+    first(".dropdown__trigger > button").click
+    click_link "Configure"
+    assert has_text?("Configure agent")
+    click_button "Cancel"
+    assert has_no_text?("Configure agent")
+    assert_equal "/agents", current_path
   end
 
 
   #
   # Search
   #
-  test 'Agents can be found by name' do
+  test "Agents can be found by name" do
     admin_go_to_agents_index
-    fill_in 'search_query', with: '800'
-    click_button '#search'
-    assert page.has_content?('T-800')
-    assert page.has_no_content?('My awesome weather bot')
-    assert_equal '/agents', current_path
+    fill_in "search_query", with: "800"
+    click_button "#search"
+    assert has_content?("T-800")
+    assert has_no_content?("My awesome weather bot")
+    assert_equal "/agents", current_path
   end
 
 
-  test 'Agents can be found by agentname' do
+  test "Agents can be found by agentname" do
     admin_go_to_agents_index
-    fill_in 'search_query', with: 'inator'
-    click_button '#search'
-    assert page.has_content?('T-800')
-    assert page.has_no_content?('My awesome weather bot')
-    assert_equal '/agents', current_path
+    fill_in "search_query", with: "inator"
+    click_button "#search"
+    assert has_content?("T-800")
+    assert has_no_content?("My awesome weather bot")
+    assert_equal "/agents", current_path
   end
 
 
-  test 'Empty search agent' do
+  test "Empty search agent" do
     admin_go_to_agents_index
-    fill_in 'search_query', with: 'inator'
-    click_button '#search'
-    assert page.has_content?('T-800')
-    assert page.has_no_content?('My awesome weather bot')
-    fill_in 'search_query', with: ''
-    click_button '#search'
-    assert page.has_content?('T-800')
-    assert page.has_content?('My awesome weather bot')
-    assert_equal '/agents', current_path
+    fill_in "search_query", with: "inator"
+    click_button "#search"
+    assert has_content?("T-800")
+    assert has_no_content?("My awesome weather bot")
+    fill_in "search_query", with: ""
+    click_button "#search"
+    assert has_content?("T-800")
+    assert has_content?("My awesome weather bot")
+    assert_equal "/agents", current_path
   end
 
 
-  test 'Agents can be sorted by last updated date' do
+  test "Agents can be sorted by last updated date" do
     admin_go_to_agents_index
-    find('.dropdown__trigger', text: 'Sort by name').click
-    find('.dropdown__content', text: 'Sort by last update').click
+    find(".dropdown__trigger", text: "Sort by name").click
+    find(".dropdown__content", text: "Sort by last update").click
 
-    click_button '#search'
+    click_button "#search"
     expected = [
-      'admin/weather',
-      'admin/terminator'
+      "admin/weather",
+      "admin/terminator"
     ]
     assert_equal expected, (all(".agents-box-grid .agent-box").map { |div|
-      div.all('h3').first.text
+      div.all("h3").first.text
     })
   end
 
 
-  test 'Agents can be filtered by visibility' do
+  test "Agents can be filtered by visibility" do
     agent = agents(:weather_confirmed)
     agent.visibility = Agent.visibilities[:is_public]
     assert agent.save
 
     admin_go_to_agents_index
-    assert page.has_content?('admin/terminator')
-    assert page.has_content?('admin/weather')
-    assert page.has_content?('confirmed/weather')
+    assert has_content?("admin/terminator")
+    assert has_content?("admin/weather")
+    assert has_content?("confirmed/weather")
 
-    click_button 'Private'
-    assert page.has_no_content?('admin/terminator')
-    assert page.has_content?('admin/weather')
-    assert page.has_no_content?('confirmed/weather')
+    click_button "Private"
+    assert has_no_content?("admin/terminator")
+    assert has_content?("admin/weather")
+    assert has_no_content?("confirmed/weather")
 
-    click_button 'Public'
-    assert page.has_content?('admin/terminator')
-    assert page.has_no_content?('admin/weather')
-    assert page.has_content?('confirmed/weather')
+    click_button "Public"
+    assert has_content?("admin/terminator")
+    assert has_no_content?("admin/weather")
+    assert has_content?("confirmed/weather")
   end
 
 
-  test 'Agents can be filtered by owner' do
+  test "Agents can be filtered by owner" do
     agent_public = agents(:weather_confirmed)
     agent_public.visibility = Agent.visibilities[:is_public]
     assert agent_public.save
@@ -220,54 +220,54 @@ class AgentsTest < ApplicationSystemTestCase
     assert FavoriteAgent.create(user: admin, agent: agents(:weather))
 
     admin_go_to_agents_index
-    assert page.has_content?('admin/terminator')
-    assert page.has_content?('admin/weather')
-    assert page.has_content?('confirmed/weather')
+    assert has_content?("admin/terminator")
+    assert has_content?("admin/weather")
+    assert has_content?("confirmed/weather")
 
-    click_button 'Yours'
-    assert page.has_content?('admin/terminator')
-    assert page.has_content?('admin/weather')
-    assert page.has_no_content?('confirmed/weather')
+    click_button "Yours"
+    assert has_content?("admin/terminator")
+    assert has_content?("admin/weather")
+    assert has_no_content?("confirmed/weather")
 
-    click_button 'Favorites'
-    assert page.has_no_content?('admin/terminator')
-    assert page.has_content?('admin/weather')
-    assert page.has_content?('confirmed/weather')
+    click_button "Favorites"
+    assert has_no_content?("admin/terminator")
+    assert has_content?("admin/weather")
+    assert has_content?("confirmed/weather")
   end
 
 
-  test 'Keep agents search criteria' do
+  test "Keep agents search criteria" do
     agent = agents(:weather_confirmed)
     agent.visibility = Agent.visibilities[:is_public]
     assert agent.save
 
     admin_go_to_agents_index
-    find('.dropdown__trigger', text: 'Sort by name').click
-    find('.dropdown__content', text: 'Sort by last update').click
-    click_button 'Private'
-    click_button 'Yours'
-    assert page.has_content?('admin/weather')
-    assert page.has_no_content?('admin/terminator')
-    assert page.has_no_content?('confirmed/weather')
+    find(".dropdown__trigger", text: "Sort by name").click
+    find(".dropdown__content", text: "Sort by last update").click
+    click_button "Private"
+    click_button "Yours"
+    assert has_content?("admin/weather")
+    assert has_no_content?("admin/terminator")
+    assert has_no_content?("confirmed/weather")
 
     click_link "My awesome weather bot admin/weather"
-    assert page.has_content?('Sharing overview')
+    assert has_content?("Sharing overview")
     admin_go_to_agents_index
-    assert page.has_content?('admin/weather')
-    assert page.has_no_content?('admin/terminator')
-    assert page.has_no_content?('confirmed/weather')
+    assert has_content?("admin/weather")
+    assert has_no_content?("admin/terminator")
+    assert has_no_content?("confirmed/weather")
 
-    assert page.has_content?('Sort by last update')
-    assert first('button[data-input-value="owned"]').matches_css?(".btn--primary")
-    assert first('button[data-input-value="private"]').matches_css?(".btn--primary")
+    assert has_content?("Sort by last update")
+    assert first("button[data-input-value='owned']").matches_css?(".btn--primary")
+    assert first("button[data-input-value='private']").matches_css?(".btn--primary")
   end
 
 
-  test 'Agents search can be reset' do
+  test "Agents search can be reset" do
     admin_go_to_agents_index
-    fill_in 'search_query', with: 'weather'
-    click_button '#search'
-    assert page.has_content?('1 agent found. Reset search')
+    fill_in "search_query", with: "weather"
+    click_button "#search"
+    assert has_content?("1 agent found. Reset search")
   end
 
 
@@ -277,22 +277,22 @@ class AgentsTest < ApplicationSystemTestCase
   test "Api Token is shown in edit" do
     admin_go_to_agents_index
 
-    first('.dropdown__trigger > button').click
-    click_link 'Configure'
-    assert page.has_text?('Configure agent')
+    first(".dropdown__trigger > button").click
+    click_link "Configure"
+    assert has_text?("Configure agent")
 
-    assert page.has_text?('API token')
+    assert has_text?("API token")
     assert_not_nil find("#agent_api_token")[:readonly]
     prev_value = find("#agent_api_token").value
 
     first(".field--api-token a").click
-    assert_not page.has_text?(prev_value)
+    assert_not has_text?(prev_value)
 
-    click_button 'Update'
-    assert page.has_text?('Your agent has been successfully updated.')
+    click_button "Update"
+    assert has_text?("Your agent has been successfully updated.")
 
-    first('.dropdown__trigger > button').click
-    click_link 'Configure'
+    first(".dropdown__trigger > button").click
+    click_link "Configure"
     after_value = find("#agent_api_token").value
 
     assert_not_equal prev_value, after_value

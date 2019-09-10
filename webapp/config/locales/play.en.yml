@@ -25,15 +25,19 @@ en:
       aside:
         title: Playground's Agents
         btn_edit: Edit
+        select_all: Select All
+        select_none: Select None
       form:
         btn: Interpret
         btn_loading_html: Interpret <span class="icon icon--x-small icon--spin">%{icon}</span>
         reset: Reset
       result:
-        title_html:
-          zero: "<strong>No interpretation found</strong> with agent"
-          one: "<strong>%{count} interpretation found</strong> with agent"
-          other: "<strong>%{count} interpretations found</strong> with agent"
+        title:
+          zero: "No interpretation found"
+          one: "%{count} interpretation found"
+          other: "%{count} interpretations found"
       error:
         title: Sorry, an error occurred
         status: "Error %{status}"
+      warning:
+        bad_list_pattern: This agent use a list pattern that is not well suitable for Play UI.

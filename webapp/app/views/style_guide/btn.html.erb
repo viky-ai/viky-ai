@@ -158,7 +158,7 @@
 
 
 <section>
-  <h2>Drag buttons</h2>
+  <h2>Drag button</h2>
 <%= highlight_html do %>
 <button class="btn btn--outline btn--drag">
   <span class="icon icon--small">
@@ -171,9 +171,30 @@
 
 
 <section>
-  <h2>Toggle buttons</h2>
+  <h2>Toggle button</h2>
 <%= highlight_html do %>
 <button class="btn btn--toggle"></button>
+<button class="btn btn--toggle btn--toggle-focus"></button>
+<button class="btn btn--toggle btn--toggle-disabled"></button>
 <button class="btn btn--toggle btn--toggle-on"></button>
+<button class="btn btn--toggle btn--toggle-on btn--toggle-focus"></button>
+<button class="btn btn--toggle btn--toggle-on btn--toggle-disabled"></button>
+<button class="btn btn--toggle"><span>9999</span></button>
+<button class="btn btn--toggle btn--toggle-on"><span>129</span></button>
+<button class="btn btn--toggle btn--toggle-on"><span>37</span></button>
+<button class="btn btn--toggle btn--toggle-on"><span>0</span></button>
+<% end %>
+</section>
+
+<section>
+  <h2>Checkbox button</h2>
+<%= highlight_html do %>
+<button class="btn btn--checkbox"></button>
+<button class="btn btn--checkbox btn--checkbox-focus"></button>
+<button class="btn btn--checkbox btn--checkbox-hover"></button>&nbsp;
+<button class="btn btn--checkbox btn--checkbox-on"></button>
+<button class="btn btn--checkbox btn--checkbox-on btn--checkbox-focus"></button>
+<button class="btn btn--checkbox btn--checkbox-on btn--checkbox-hover"></button>
+<button class="btn btn--checkbox btn btn--checkbox-disabled"></button>
 <% end %>
 </section>

@@ -1,4 +1,4 @@
-<% if @interpreter.agents.empty? %>
+<% if @interpreter.available_agents.empty? %>
   <%= render partial: "blankslate" %>
 <% else %>
   <% content_for :left_aside do %>

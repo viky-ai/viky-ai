@@ -1,7 +1,5 @@
-<%= form_with(url: "/play", method: :post, class: "play-main__form", model: interpreter) do |f| %>
+<%= form_with(url: "/play", method: :post, class: "play-main__form", id: "play-form", model: interpreter) do |f| %>
 
-  <input type="hidden" name="play_interpreter[agent_id]"
-         value="<%= interpreter.agent.id %>" id="play_input_agent_id">
   <input type="hidden" name="play_interpreter[language]"
          value="<%= interpreter.language %>" class="js-nlp-language-input">
   <input type="hidden" name="play_interpreter[spellchecking]"
@@ -9,16 +7,13 @@
 
   <div class="inputs-wrapper">
 
-    <div class="field field--agent">
+    <div class="field field--text">
       <div class="control">
-        <label class="label label--uppercase">Agent</label>
+        <%= f.label :text, class: 'label--uppercase' %>
+        <span class="badge badge--small badge--outline"><%= t('required') %></span>
         <br />
-        <%= render partial: "agents_dropdown", locals: { interpreter: interpreter } %>
-        <a href="<%= edit_play_selection_path %>"
-           class="btn btn--small btn--primary"
-           data-action="open-remote-modal">
-          <%= t('views.play.aside.btn_edit') %>
-        </a>
+        <%= f.text_area :text, id: 'play_interpreter_text' %>
+        <%= display_errors(interpreter, :text) %>
       </div>
     </div>
 
@@ -46,16 +41,6 @@
       </div>
     </div>
 
-    <div class="field field--text">
-      <div class="control">
-        <%= f.label :text, class: 'label--uppercase' %>
-        <span class="badge badge--small badge--outline"><%= t('required') %></span>
-        <br />
-        <%= f.text_area :text, id: 'play_interpreter_text' %>
-        <%= display_errors(interpreter, :text) %>
-      </div>
-    </div>
-
     <div class="field field--submit">
       <button class="btn btn--primary" data-disable-with='<%= t('views.play.form.btn_loading_html', icon: icon_loading) %>'>
         <%= t('views.play.form.btn') %>
@@ -69,5 +54,4 @@
     </div>
 
   </div>
-
 <% end %>

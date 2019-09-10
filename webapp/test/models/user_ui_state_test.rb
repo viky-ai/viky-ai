@@ -53,11 +53,11 @@ class UserUiStateTest < ActiveSupport::TestCase
     assert_equal [], user_state.play_agents_selection
 
     # Set play_agents_selection
-    user_state.play_agents_selection = ["a", "b"]
+    user_state.play_agents_selection = [agents(:terminator).id, agents(:weather).id]
     assert user_state.save
 
     user_state = UserUiState.new(user)
-    assert_equal ["a", "b"], user_state.play_agents_selection
+    assert_equal [agents(:terminator).id, agents(:weather).id].sort, user_state.play_agents_selection.sort
   end
 
 

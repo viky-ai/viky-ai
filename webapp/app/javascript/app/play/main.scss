@@ -1,9 +1,10 @@
 @import '../../framework/abstracts/variables';
 
+$play_small_breakpoint: 500px;
 $play_breakpoint: 1000px;
+$play_form_color: #fafafa;
 
 body[data-controller-name="play"] .modal{
-
   form{
     margin: 0;
     padding: .75em 1em 0 1em;
@@ -26,10 +27,11 @@ body[data-controller-name="play"] .modal{
 
   .agent-compact{
     &.agent-compact--play-chooser:hover{
-      box-shadow: 0 0 0 2px rgba($primary_color, .75), 0 3px 3px rgba(black, .1);
-      cursor: auto;
+      cursor: pointer;
+      box-shadow: 0 0 0 2px $primary_color, 0 3px 3px rgba(black, .1);
     }
-    &.agent-compact--play-chooser.agent-compact--play-chooser--disabled:hover{
+    &.agent-compact--play-chooser.agent-compact--play-chooser--disabled{
+      cursor: auto;
       box-shadow: 0 3px 3px rgba(black, .1);
     }
   }
@@ -48,51 +50,115 @@ body[data-controller-name="play"] .modal{
 }
 
 
+
+
 body[data-controller-name="play"]{
-  aside{
-    display: none;
-    @media (min-width: $play_breakpoint){
-      display: block;
-    }
+  .app-wrapper{
+    display: block;
     overflow: auto;
-    width: 300px;
-    background-color: #fff;
-    box-shadow: 2px 0 3px rgba(#000, .05);
+    -webkit-overflow-scrolling: touch;
+    @media (min-width: $play_breakpoint){
+      display: flex;
+    }
+  }
+
+  main{
+    overflow: unset;
+    height: auto;
+    @media (min-width: $play_breakpoint){
+      overflow: auto;
+      height: 100%;
+    }
+  }
+
+  aside{
+    width: 100%;
+    @media (min-width: $play_breakpoint){
+      width: 300px;
+      overflow: auto;
+      background-color: #fff;
+      box-shadow: 2px 0 3px rgba(#000, .05);
+    }
+
     h2{
-      padding: 1em 1em;
+      padding: .5em 1.5em;
       margin: 0;
       font-size: 1em;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(#000, .05);
-      background-color: #fcfcfc;
+      background-color: $play_form_color;
+      span{
+        text-transform: uppercase;
+        font-size: .7em;
+        font-weight: 400;
+      }
+      .btn{
+        font-size: .7em;
+      }
+      @media (min-width: $play_breakpoint){
+        background-color: #fcfcfc;
+        padding: 1em;
+        border-bottom: 1px solid rgba(#000, .05);
+        span{
+          text-transform: none;
+          font-size: 1em;
+          font-weight: 300;
+        }
+        .btn{
+          font-size: .8em;
+        }
+      }
+    }
+    .play-selection-options{
+      display: none;
+      text-align: center;
+      padding: .5em 0 0 0;
+      @media (min-width: $play_breakpoint){
+        display: block;
+      }
     }
     ul{
       list-style: none;
-      padding: 0;
+      padding: .25em 1.25em;
       margin: 0;
       background-color: #fff;
+
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      grid-row-gap: .4em;
+      grid-column-gap: .75em;
+
+      max-height: 130px;
+      overflow: auto;
+
+      border-bottom: 1px solid rgba(#000, .075);
+      border-top: 1px solid rgba(#000, .075);
+
+      @media (min-width: $play_breakpoint){
+        max-height: none;
+        overflow: unset;
+        border: none;
+        padding: .25em .5em;
+      }
+
       li{
         margin: 0;
-        a{
-          display: block;
-          padding: .35em .5em;
-          text-decoration: none;
-          border-right: 5px solid transparent;
-          &:hover,
-          &:focus{
-            border-right: 5px solid #ddd;
-          }
-        }
-        &.current a{
-          border-right: 5px solid $primary_color;
-        }
+        padding: 0;
         .agent-compact{
+          padding: .25em .5em .25em .25em;
           font-size: .85em;
           box-shadow: none;
           text-decoration: none;
-          padding: .25em;
+          position: relative;
+          .agent-compact__id a.agent-compact__id__visual{
+            transition: all .2s;
+            &:hover,
+            &:focus{
+              transform: scale(1.075);
+              border-radius: 2px;
+            }
+          }
           .agent-compact__actions{
             padding-right: 0;
           }
@@ -113,7 +179,7 @@ body[data-controller-name="play"]{
 
 
 .play-main{
-  background-color: #fafafa;
+  background-color: $play_form_color;
   border-bottom: 1px solid rgba(#000, .1);
 
   @media (min-width: $play_breakpoint){
@@ -124,15 +190,22 @@ body[data-controller-name="play"]{
     max-width: 66em;
   }
   .banner{
-    margin: 0 2em 2em 2em;
+    margin: 0 1.5em 1.5em 1.5em;
+    @media (min-width: $play_breakpoint){
+      margin: 0 2em 2em 2em;
+    }
   }
 }
 
 .play-main__form{
-  padding: 1.5em 2em;
+  padding: 1em 1.5em;
+  @media (min-width: $play_breakpoint){
+    padding: 1.5em 2em;
+  }
+
   textarea{
-    height: 6.6em;
-    resize: none;
+    min-height: 6.6em;
+    resize: vertical;
   }
   .label--uppercase{
     text-transform: uppercase;
@@ -141,18 +214,14 @@ body[data-controller-name="play"]{
   }
   .inputs-wrapper{
     display: grid;
-    grid-template-columns: min-content min-content auto;
+    grid-template-columns: min-content auto;
     grid-column-gap: 1em;
 
     grid-template-areas:
-      "agent    agent         agent"
-      "language spellchecking spellchecking"
-      "text     text          text"
-      "submit   submit        submit";
+      "language spellchecking"
+      "text     text         "
+      "submit   submit       ";
 
-    .field--agent{
-      grid-area: agent;
-    }
     .field--language{
       grid-area: language;
     }
@@ -167,9 +236,9 @@ body[data-controller-name="play"]{
     }
     @media (min-width: 500px){
       grid-template-areas:
-        "language spellchecking agent"
-        "text     text     text"
-        "submit   submit   submit";
+        "language spellchecking"
+        "text     text         "
+        "submit   submit       ";
     }
     @media (min-width: 600px){
       grid-column-gap: 2em;
@@ -180,6 +249,7 @@ body[data-controller-name="play"]{
         display: none;
       }
       grid-template-columns: auto min-content;
+      grid-template-rows: 75px auto auto;
       grid-template-areas:
         "text   language"
         "text   spellchecking"
@@ -191,19 +261,26 @@ body[data-controller-name="play"]{
 .play-main__result{
   .play-main__result__wrapper{
     background-color: #fff;
-    padding: 2em;
+    padding: 1.5em;
     border-top: 1px solid rgba(#000, .1);
     border-bottom-left-radius: 3px;
     border-bottom-right-radius: 3px;
     h2{
       font-size: .9em;
-      margin: -2rem -2rem 1.5rem -2rem;
-      padding: 1rem 2rem;
+      margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+      padding: 1rem 1.5rem;
       background-color: #fcfcfc;
       border-bottom: 1px solid rgba(#000, .075);
+      @media (min-width: $play_breakpoint){
+        margin: -1.75rem -2rem 1.5rem -2rem;
+        padding: 1rem 2rem;
+      }
     }
     & > div{
       line-height: 1.75em;
+    }
+    @media (min-width: $play_breakpoint){
+      padding: 1.75em 2em;
     }
   }
 
@@ -214,6 +291,7 @@ body[data-controller-name="play"]{
     z-index: 2;
     padding: 1em;
     border-radius: 3px;
+    max-height: 45vh;
 
     @media (min-width: $play_breakpoint){
       max-width: calc(100vw - 350px);
@@ -224,6 +302,18 @@ body[data-controller-name="play"]{
         background-color: darken($color, 5%);
       }
     }
+    .highlight-pop__content{
+      max-height: calc(45vh - 2em);
+      overflow: auto;
+    }
+
+    p.warning{
+      font-size: .85em;
+      margin: 0 0 1em 0;
+      background-color: rgba(#000, .2);
+      padding: .5em .75em;
+      border-radius: 2px;
+    }
 
     h4{
       margin: 0 0 .25em 0;
@@ -231,22 +321,27 @@ body[data-controller-name="play"]{
       text-transform: uppercase;
       color: rgba(#fff, .8);
     }
-    pre{
+    a, pre{
+      display: block;
       margin: 0 0 1em 0;
       font-size: .75em;
       line-height: 1.3em;
       font-family: $family-monospace;
-      overflow: auto;
+      color: rgba(#fff, 1);
+      text-decoration: none;
       &:last-child{
         margin: 0;
       }
+    }
+    a:hover, a:focus{
+      text-decoration: underline;
     }
     [x-arrow] {
       position: absolute;
       width: 12px;
       height: 12px;
-      background-color: #333;
-      border-radius: 6px;
+      border-radius: 2px;
+      transform: rotate(45deg);
     }
   }
 
@@ -271,9 +366,9 @@ body[data-controller-name="play"]{
     position: relative;
     white-space: nowrap;
     display: inline-block;
-    padding: 0 .25em;
+    padding: 0 .15em;
     border-radius: 2px;
-    max-width: 100%;
+    max-width: 40%;
     overflow: hidden;
     text-overflow: ellipsis;
     vertical-align: top;
@@ -282,15 +377,15 @@ body[data-controller-name="play"]{
       display: block;
       content: "";
       width: 100%;
-      height: 3px;
-      border-radius: 2px;
-      bottom: -1px;
+      height: 2px;
+      border-bottom-left-radius: 2px;
+      border-bottom-right-radius: 2px;
+      bottom: 0;
       left: 0;
-      background-color: green;
     }
     @each $name, $color in $colors{
       &.highlight--#{$name}{
-        color: darken($color, 15%);
+        color: darken($color, 10%);
         background-color: rgba($color, .05);
         &:after{
           background-color: $color;
@@ -304,6 +399,18 @@ body[data-controller-name="play"]{
        -ms-user-select: none;
            user-select: none;
       &.highlight--open{ cursor: zoom-out; }
+    }
+  }
+}
+
+body[data-controller-name="play"] aside ul li .agent-compact{
+  @each $name, $color in $colors{
+    &.agent-compact--highlight-#{$name}{
+      box-shadow: 0 0 0 2px rgba($color, .75), 0 0 0 4px rgba($color, .25);
+      background-color: rgba($color, .05);
+      h5, h6{
+        color: darken($color, 10%);
+      }
     }
   }
 }

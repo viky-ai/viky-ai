@@ -70,8 +70,8 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
   // Should not happen, but safer to do it
   if (score->coverage != 0)
   {
-  score->spelling /= score->coverage;
-  score->locale /= score->coverage;
+    score->spelling /= score->coverage;
+    score->locale /= score->coverage;
   }
 
   if (request_expression->expression->any_input_part_position >= 0)
@@ -137,7 +137,7 @@ og_status NlpCalculateScoreDuringParsing(og_nlp_th ctrl_nlp_th, struct request_e
     {
       struct request_word *request_word = request_input_part->request_word;
       score->locale += 1;
-      score->spelling += request_word->spelling_score*request_input_part->score_spelling;
+      score->spelling += request_word->spelling_score * request_input_part->score_spelling;
     }
 
     else if (request_input_part->type == nlp_input_part_type_Interpretation)
@@ -182,20 +182,17 @@ static og_status NlpCalculateTotalScore(og_nlp_th ctrl_nlp_th, struct request_ex
 
 static og_status NlpCalculateScoreMatchScope(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
-  if (ctrl_nlp_th->primary_package != NULL)
+  og_bool is_primary_package = NlpIsPrimaryPackage(ctrl_nlp_th,
+      request_expression->expression->interpretation->package);
+  IFE(is_primary_package);
+
+  if (is_primary_package)
   {
-    if (ctrl_nlp_th->primary_package == request_expression->expression->interpretation->package)
-    {
-      request_expression->score->scope = 1;
-    }
-    else
-    {
-      request_expression->score->scope = 0.9;
-    }
+    request_expression->score->scope = 1;
   }
   else
   {
-    request_expression->score->scope = 1;
+    request_expression->score->scope = 0.9;
   }
   DONE;
 }

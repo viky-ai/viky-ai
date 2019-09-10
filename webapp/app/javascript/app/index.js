@@ -36,6 +36,7 @@ window.App.Statement = require('./chatbots/statements');
 import './play/main.scss';
 import './play/chooser.coffee';
 import './play/form.coffee';
+window.App.PlayAside  = require('./play/aside.coffee');
 window.App.PlayResult  = require('./play/result.coffee');
 
 import './agents/agent_form.coffee';

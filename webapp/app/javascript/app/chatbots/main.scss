@@ -39,10 +39,6 @@ aside.chatbots-list{
       background-color: rgba(#000, .8);
       border-color: #000;
       color: #fff;
-      &:focus,
-      &.focus{
-        box-shadow: 0 0 0 2px rgba($focus_color, .5);
-      }
     }
   }
 
