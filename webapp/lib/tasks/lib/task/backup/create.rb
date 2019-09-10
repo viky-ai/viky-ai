@@ -15,18 +15,10 @@ class Task::Backup::Create < Task::Backup
   end
 
   def self.elastic(name)
-    client = IndexManager.client
-    repository_name = 'viky-es-backup_dev'
-    client.snapshot.create_repository repository: repository_name, body: {
-      type: 'fs',
-      settings: { location: "/backup_data/#{name}/es-backup" }
-    }
+    client = InterpretRequestLogClient.long_waiting_client
+    client.create_repository "/backup_data/#{name}/es-backup"
     snapshot_name = "#{name}-statistics-#{datetime_for_filename}"
-    client.snapshot.create repository: repository_name, snapshot: snapshot_name, wait_for_completion: true, body: {
-      indices: 'stats-*',
-      include_global_state: false
-    }
-    client.snapshot.delete_repository repository: repository_name
+    client.create_snapshot(snapshot_name)
+    client.delete_repository
   end
-
 end

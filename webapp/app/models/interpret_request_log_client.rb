@@ -15,6 +15,7 @@ class InterpretRequestLogClient
     raise "Missing statistics configuration for environment #{environment}" if config.empty?
 
     @client = Elasticsearch::Client.new(config[:client].symbolize_keys.merge(options))
+    @repository_name = 'viky-es-backup_dev'
   end
 
   def get_document(id)
@@ -193,6 +194,53 @@ class InterpretRequestLogClient
     new_index = create_active_index active_template
     @client.indices.flush index: new_index.name
     new_index
+  end
+
+  def clear_indices
+    return if list_indices.blank?
+
+    @client.indices.update_aliases body: { actions: [
+      { remove: { index: 'stats-interpret_request_log-*', alias: InterpretRequestLog::INDEX_ALIAS_NAME } },
+      { remove: { index: 'stats-interpret_request_log-*', alias: InterpretRequestLog::SEARCH_ALIAS_NAME } }
+    ] }
+    list_indices.each { |index| delete_index index }
+  end
+
+  def create_repository(location)
+    @client.snapshot.create_repository repository: @repository_name, body: {
+      type: 'fs',
+      settings: { location: location }
+    }
+  end
+
+  def delete_repository
+    @client.snapshot.delete_repository repository: @repository_name
+  end
+
+  def create_snapshot(snapshot_name)
+    @client.snapshot.create repository: @repository_name, snapshot: snapshot_name, wait_for_completion: true, body: {
+      indices: 'stats-interpret_request_log-*',
+      include_global_state: false
+    }
+  end
+
+  def restore_most_recent_snapshot
+    snapshot = @client.cat.snapshots(
+      repository: @repository_name,
+      s: 'end_epoch',
+      h: 'id'
+    ).split("\n").last
+    @client.snapshot.restore(
+      repository: @repository_name,
+      snapshot: snapshot,
+      wait_for_completion: true,
+      body: {
+        indices: 'stats-interpret_request_log-*',
+        index_settings: {
+          'index.number_of_replicas' => 1
+        }
+      }
+    )
   end
 
 
