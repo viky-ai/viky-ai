@@ -31,7 +31,9 @@
           <tr>
             <th>User</th>
             <th>Agents</th>
-            <th>Status</th>
+            <% if Feature.email_configured? %>
+              <th>Status</th>
+            <% end %>
             <th>Last log in</th>
             <th class="number">Log in count</th>
             <th class="actions"></th>
@@ -69,8 +71,8 @@
                   </span>
                 </span>
               </td>
-              <td>
-                <% if Feature.email_configured? %>
+              <% if Feature.email_configured? %>
+                <td>
                   <% if user.confirmed? %>
                     <span class="badge badge--success">
                       <%= t('views.backend.users.index.status.confirmed') %>
@@ -120,12 +122,8 @@
                       <% end %>
                     <% end %>
                   <% end %>
-                <% else %>
-                  <span class="badge badge--warning">
-                    <%= t('views.backend.users.index.status.not-confirmed') %>
-                  </span>
-                <% end %>
-              </td>
+                </td>
+              <% end %>
 
               <td>
                 <% if !Feature.email_configured? || user.confirmed? %>
