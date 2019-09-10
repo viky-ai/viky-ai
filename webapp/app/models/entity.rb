@@ -155,9 +155,13 @@ class Entity < ApplicationRecord
 
     def check_owner_quota
       quota = ENV.fetch('VIKYAPP_EXPRESSION_QUOTA') { nil }
+
+      puts "quota => #{quota}"
+
       unless entities_list.nil?
         owner = User.find(entities_list.agent.owner_id)
-        if owner.quota_exceeded?
+        p owner
+        if owner.quota_exceeded? && !owner.ignore_quota?
           errors.add(:quota, I18n.t('errors.entity.quota', maximum: quota, actual: owner.expressions_count))
         end
       end

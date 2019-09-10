@@ -8,6 +8,7 @@ Rails.application.routes.draw do
       member do
         get :confirm_destroy
         get :reinvite
+        get :ignore_quota
       end
       post :impersonate, on: :member
     end

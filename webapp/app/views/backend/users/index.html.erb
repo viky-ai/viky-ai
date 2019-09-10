@@ -32,6 +32,7 @@
             <th>Status</th>
             <th>Last log in</th>
             <th class="number">Log in count</th>
+            <th class="actions">Ignore Quota</th>
             <th class="actions"></th>
           </tr>
         </thead>
@@ -130,6 +131,18 @@
               <td class="number">
                 <% if user.confirmed? %>
                   <%= user.sign_in_count %>
+                <% end %>
+              </td>
+
+              <td class="actions">
+                <% if user.ignore_quota? %>
+                  <a  href="<%= ignore_quota_backend_user_path(user) %>" 
+                      class="btn btn--toggle btn--toggle-on">
+                  </a>
+                <% else %>
+                  <a href="<%= ignore_quota_backend_user_path(user) %>" 
+                      class="btn btn--toggle">
+                  </a>
                 <% end %>
               </td>
               <td class="actions">

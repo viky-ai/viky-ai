@@ -205,7 +205,7 @@ class EntitiesImport < ApplicationRecord
         if mode == 'replace'
           total = total - entities_list.entities_count
         end
-        if total + csv_count_lines > quota
+        if total + csv_count_lines > quota && !entities_list.agent.owner.ignore_quota?
           errors.add(:base, I18n.t('errors.entities_import.quota', maximum: quota, actual: total, to_import: csv_count_lines))
         end
       end

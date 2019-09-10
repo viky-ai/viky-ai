@@ -36,4 +36,11 @@ class Backend::UsersController < Backend::ApplicationController
     redirect_to agents_path, notice: t('views.backend.users.index.switch.success_message', email: user.email)
   end
 
+  def ignore_quota
+    @user = User.friendly.find(params[:id])
+    @user.ignore_quota = !@user.ignore_quota;
+    @user.save
+    redirect_to backend_users_path
+  end
+
 end
