@@ -14,7 +14,7 @@ namespace :statistics do
         exit 1
       end
 
-      template_conf = IndexManager.template_configuration
+      template_conf = StatisticsIndexTemplate.read_template_configuration
       active_template, inactive_template = client.save_template_configuration(template_conf)
       Task::Print.success("Index templates #{active_template.name}, #{inactive_template.name} saved.")
       Task::Print.substep("Index #{active_template.index_name}.")
@@ -39,7 +39,7 @@ namespace :statistics do
       exit 1
     end
 
-    template_conf = IndexManager.template_configuration
+    template_conf = StatisticsIndexTemplate.read_template_configuration
     active_template, inactive_template = client.save_template_configuration template_conf
     current_index = StatisticsIndex.from_name src_name
     template = current_index.active? ? active_template : inactive_template
@@ -61,7 +61,7 @@ namespace :statistics do
         exit 1
       end
 
-      template_conf = IndexManager.template_configuration
+      template_conf = StatisticsIndexTemplate.read_template_configuration
       active_template, inactive_template = client.save_template_configuration template_conf
       indices = client
                   .list_indices
@@ -97,7 +97,7 @@ namespace :statistics do
       exit 1
     end
 
-    template_conf = IndexManager.template_configuration
+    template_conf = StatisticsIndexTemplate.read_template_configuration
     active_template = StatisticsIndexTemplate.new template_conf
     new_index = StatisticsIndex.from_template active_template
     res = client.rollover(new_index, max_age, max_docs)

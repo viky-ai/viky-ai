@@ -1,5 +1,11 @@
 class StatisticsIndexTemplate
 
+  def self.read_template_configuration
+    template_config_dir = "#{Rails.root}/config/statistics"
+    filename = 'template-stats-interpret_request_log.json'
+    JSON.parse(ERB.new(File.read("#{template_config_dir}/#{filename}")).result)
+  end
+
   attr_reader :configuration, :state
 
   def initialize(configuration, state = 'active')

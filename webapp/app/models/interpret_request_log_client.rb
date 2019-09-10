@@ -193,7 +193,7 @@ class InterpretRequestLogClient
   end
 
   def reset_indices
-    active_template, = save_template_configuration(IndexManager.template_configuration)
+    active_template, = save_template_configuration(StatisticsIndexTemplate.read_template_configuration)
     full_pattern = active_template.index_patterns.gsub('active-*', '*')
     delete_index full_pattern
     new_index = create_active_index active_template

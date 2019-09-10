@@ -6,7 +6,7 @@ rescue
 end
 if is_reachable
   if Rails.env.development? || Rails.env.production?
-    template_conf = IndexManager.template_configuration
+    template_conf = StatisticsIndexTemplate.read_template_configuration
     template = StatisticsIndexTemplate.new template_conf
     current_version = client.fetch_deployed_index_version template
     if current_version != template.version
