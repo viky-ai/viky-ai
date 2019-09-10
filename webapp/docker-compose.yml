@@ -25,7 +25,7 @@ services:
       node.name: viky-stats
       ES_JAVA_OPTS: -Xms128m -Xmx392m
     volumes:
-      - ../../tmp:/backup_data
+      - viky-stats-backup:/backup_data
       - viky-stats:/usr/share/elasticsearch/data
   viky-stats-test:
     image: "docker.elastic.co/elasticsearch/elasticsearch:6.6.1"
@@ -64,3 +64,9 @@ volumes:
   vikyapp-redis: {}
   viky-stats: {}
   viky-stats-test: {}
+  viky-stats-backup:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./tmp
