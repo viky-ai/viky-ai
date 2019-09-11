@@ -152,6 +152,9 @@ class Console
     $('#js-nlp-spellchecking-input').val(data.spellchecking)
     $('#js-console-now-input-container input').val(data.now) if data.now?
 
+    # Set current focus on submit button
+    $('#console-send-sentence')[0].focus()
+
     @toogle_form_is_needed()
 
     Rails.fire($('#js-console-form')[0], 'submit')
