@@ -4,52 +4,39 @@ class ExpressionsQuota
   constructor: ->
     options = {
       chart: {
-        height: 280,
         type: "radialBar"
       },
-      series: [90],
       plotOptions: {
         radialBar: {
-          hollow: {
-            margin: 15,
-            size: "70%"
-          },
-          track: {
-            dropShadow: {
-              enabled: true,
-              top: 2,
-              left: 0,
-              blur: 4,
-              opacity: 0.15
-            }
-          },
+          startAngle: -135,
+          endAngle: 135,
           dataLabels: {
             name: {
-              offsetY: -10,
-              show: true,
-              color: "#888",
-              fontSize: "13px"
+              fontSize: '1.5em',
+              offsetY: 70,
+              color: '#888'
             },
             value: {
-              color: "#111",
-              fontSize: "30px",
-              show: true,
-              formatter: (val) ->
-                val
-            }
-            total:{
-              show: true,
-              label: 'Remaining',
-              formatter: (w) ->
-                500
+              fontSize: '4em',
+              color: '#0086ea'
             }
           }
         }
       },
       stroke: {
-        lineCap: "round",
+        dashArray: 4,
       },
-      labels: ["Used"]
+      states: {
+        hover: {
+          filter: {
+            type: 'none',
+            value: 0
+          }
+        }
+      }
+      colors: ['#0086ea']
+      series: [expressions_data.consumed],
+      labels: [expressions_data.label]
     }
     chart = new ApexCharts(document.querySelector("#meter"), options)
     chart.render()
