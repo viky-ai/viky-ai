@@ -10,6 +10,7 @@ namespace :viky do
       Rake::Task["db:setup"].invoke
     end
     Rake::Task["viky:clear_old_running_entities_imports"].invoke
+    Rake::Task["viky:run_agent_regression_checks"].invoke
 
     # Statistics related
     Rake::Task["statistics:setup"].invoke
