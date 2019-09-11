@@ -407,4 +407,12 @@ ul.color-picker{
     box-shadow: 0 0 0 3px rgba($primary_color, .3);
     outline:none;
   }
+
+  .CodeMirror-gutter-wrapper.js-error .CodeMirror-linenumber{
+    color: $alert_color;
+    font-weight: bold;
+  }
+  .CodeMirror-linebackground.js-error{
+    background-color: rgba($alert_color, .1);
+  }
 }

@@ -53,6 +53,7 @@ import './console/console.coffee';
 import './console/console_explain_footer.coffee'
 import './console/console_footer.coffee';
 import './console/console_test_suite.coffee';
+import './console/debug_solution.coffee';
 
 import './intents/main.scss';
 import './intents/intent_form.coffee';
