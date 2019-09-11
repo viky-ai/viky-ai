@@ -23,4 +23,10 @@ namespace :viky do
     end
   end
 
+  desc 'Run every regression checks on every agents'
+  task :run_agent_regression_checks => [:environment] do |_, _|
+    Agent.find_each do |agent|
+      agent.run_regression_checks
+    end
+  end
 end
