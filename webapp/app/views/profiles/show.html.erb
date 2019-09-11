@@ -8,37 +8,92 @@
     </a>
   </div>
 </header>
-
-<div class="grid">
-
-  <div class="grid_sidebar">
-
-    <div class="card">
-      <div class="card-content">
-        <div class="profile">
-          <div class="avatar avatar--large">
-            <img src="<%= @profile.image_url(:square) %>">
-          </div>
-          <h2><%= @profile.name %></h2>
-          <h3 class="tagline"><%= @profile.username %></h3>
-          <p>
-            <%= @profile.bio %>
-          </p>
-        </div>
-      </div>
-    </div>
-
+<div class="profile-graphs">
+  <div class="card profile-graphs__requests">
+    <h2>
+      API Requests
+      <small>(From <%= l(@from, format: :long) %> to <%= l(@to, format: :long) %>)</small> 
+    </h2>
+    <div id="chart"></div>
   </div>
 
-  <div class="grid_main">
+  <div class="card profile-graphs__expressions">
+    <h2>Formulations and Entities</h2>
+    <div id="meter"></div>
+  </div>
+</div>
 
-    <div class="agents-box-grid agents-box-grid--with-sidebar">
-      <% @agents.each do |agent| %>
-        <%= render '/agents/agent_box', agent: agent, editable: false %>
-      <% end %>
-    </div>
+<div class="profile-details">
+  <div class="card profile-details__requests">
+    <h2>Rejected requests per agent</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Agent</th>
+          <th>Today</th>
+          <th>Last 10 days</th>
+          <th>Last 30 days</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @agent_requests.each do |requests| %>
+         <% agent = Agent.find(requests['key']) %>
+          <tr>
+            <td>
+              <a href="<%= user_agent_path(agent.owner, agent)%>">
+                <strong>
+                    <%= agent.name %>
+                </strong>
+                <small><%= agent.slug %></small>
+              </a>
+            </td>
+            <td><%= requests['today']['doc_count'] %></td>
+            <td><%= requests['10_days']['doc_count'] %></td>
+            <td><%= requests['30_days']['doc_count'] %></td>
+          </tr> 
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="card profile-details__expressions">
+    <h2>Formulations and Entities per agent</h2>
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <a href="/agents/nerisa/building_features/interpretations">
+              <strong>building_features</strong>
+              <small>nerisa/building_features</small>
+            </a>
+          </td>
+          <td>1000</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="/agents/nerisa/building_features/interpretations">
+              <strong>building_features</strong>
+              <small>nerisa/building_features</small>
+            </a>
+          </td>
+          <td>500</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="/agents/nerisa/building_features/interpretations">
+              <strong>building_features</strong>
+              <small>nerisa/building_features</small>
+            </a>
+          </td>
+          <td>40</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
     <%= paginate @agents %>
 
   </div>
 
-</div>
+<script>
+  requests_data = <%= prepare_requests_data(@processed_requests, @rejected_requests, @from, @to)%>;
+</script>

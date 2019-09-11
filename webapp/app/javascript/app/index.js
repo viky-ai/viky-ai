@@ -21,9 +21,13 @@ import 'autosize'
 import LocalTime from "local-time"
 LocalTime.start()
 
+// ApexCharts
+import 'apexcharts'
 import './nav/nav.coffee';
 
 import './profile/main.scss';
+import './profile/requests.coffee';
+import './profile/expressions.coffee';
 
 import './authentication/main.scss';
 

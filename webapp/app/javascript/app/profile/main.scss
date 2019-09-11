@@ -28,3 +28,42 @@
     text-align: center;
   }
 }
+
+.profile-graphs, .profile-details{
+  display: grid;
+  grid-row-gap: 1em;
+  grid-column-gap: 2em;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  .card{
+    padding: 1em;
+    overflow: hidden;
+    h2{
+      padding: 1em;
+      margin: -1em -1em 0em -1em;
+      background-color: #fafafa;
+      font-size: 1em;
+      font-weight: 400;
+      small{
+        color: #aaa;
+        font-size: 0.8em;
+      }
+    }
+  }
+}
+
+.profile-details{
+  table{
+    a, strong, small{
+      display: block;
+      text-decoration: none;
+    }
+  }
+  
+}
+
+.expression-container{
+  a, strong, small{
+    display: block;
+    text-decoration: none;
+  }
+}

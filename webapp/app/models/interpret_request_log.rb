@@ -58,6 +58,86 @@ class InterpretRequestLog
     @id.present?
   end
 
+  def self.requests_over_time(from, to, owner_id, status)
+    client = IndexManager.client
+    query = {
+      "size": 0,
+      "query": {
+        "bool": {
+          "must": [
+            { "match": { "owner_id": owner_id } },
+            { "match": { "status": status } },
+            {
+              "range": {
+                "timestamp": {
+                  "gte": from.to_s,
+                  "lte": to.to_s
+                }
+              }
+            }
+            ],
+          "must_not": {
+            "term": {
+              "context.client_type": "console"
+            }
+          }
+        }
+      },
+      "aggregations": {
+        "requests_over_time": {
+          "date_histogram": {
+            "field": "timestamp",
+            "interval": "1m",
+            "time_zone": from.zone,
+            "format": "yyyy-MM-dd'T'HH:mm",
+            "min_doc_count": 1
+          }
+        }
+      }
+    }
+    results = client.search index: SEARCH_ALIAS_NAME, body: query
+    results['aggregations']['requests_over_time']['buckets']
+  end
+
+  def self.requests_over_agents(owner_id, status, aggregations={})
+    client = IndexManager.client
+    query = {
+      "size": 0,
+      "query":{
+        "bool":{
+          "must": [
+            { "match": { "owner_id": owner_id } },
+            { "match": { "status": status } }
+          ],
+          "must_not": {
+            "term": {
+              "context.client_type": "console"
+            }
+          }
+        }
+      },
+      "aggs":{
+        "requests_over_agents":{
+          "terms": { "field": "agent_id" }
+        }
+      }
+    }
+    aggregations.each do |key, value|
+      query[:aggs][:requests_over_agents][:aggs] ||= {}
+      query[:aggs][:requests_over_agents][:aggs][key] = {
+        "filter": {
+          "range": {
+            "timestamp": {
+              "gte": value[:from].to_s,
+              "lte": value[:to].to_s
+            }
+          }
+        }
+      }
+    end
+    results = client.search index: SEARCH_ALIAS_NAME, body: query
+    results['aggregations']['requests_over_agents']['buckets']
+  end
 
   private
 

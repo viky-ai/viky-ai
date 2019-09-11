@@ -2,8 +2,25 @@ class ProfilesController < ApplicationController
   before_action :set_profile
 
   def show
-    @agents = current_user.agents.order(name: :asc)
-                .page(params[:page]).per(12)
+    @to = DateTime.now
+    @from = (DateTime.now - 30.days).beginning_of_day
+    @processed_requests = InterpretRequestLog.requests_over_time(@from, @to, @profile.id, 200)
+    @rejected_requests = InterpretRequestLog.requests_over_time(@from, @to, @profile.id, 503)
+    request_aggs = {
+      "30_days": {
+        from: @from,
+        to: @to
+      },
+      "10_days": {
+        from: (@to - 10.days).beginning_of_day,
+        to: @to
+      },
+      "today": {
+        from: @to.beginning_of_day,
+        to: @to
+      }
+    }
+    @agent_requests = InterpretRequestLog.requests_over_agents(@profile.id, 503, request_aggs)
   end
 
   def edit

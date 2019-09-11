@@ -191,4 +191,125 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
     expected = [:context_to_s, "is too long (maximum is 1000 characters)"]
     assert_equal expected, log.errors.first
   end
+
+  test 'API Requests over time for a user' do
+    user = users(:admin)
+    weather_agent = agents(:weather)
+    
+    log_1 = InterpretRequestLog.new(
+      timestamp: '2019-09-09T14:25:14.053+02:00',
+      sentence: "What 's the weather like ?",
+      agent: weather_agent,
+    ).with_response('200', {})
+
+    log_2 = InterpretRequestLog.new(
+      timestamp: '2019-09-09T14:26:14.053+02:00',
+      sentence: "What 's the weather like ?",
+      agent: weather_agent,
+    ).with_response('200', {})
+
+    log_3 = InterpretRequestLog.new(
+      timestamp: '2019-09-09T14:27:14.053+02:00',
+      sentence: "What 's the weather like ?",
+      agent: weather_agent,
+    ).with_response('503', {})
+
+    assert log_1.save
+    assert log_2.save
+    assert log_3.save
+
+    from = DateTime.parse('2019-09-01T00:00:00+02:00')
+    to = DateTime.parse('2019-09-10T17:46:29+02:00')
+    processed_requests = InterpretRequestLog.requests_over_time(from, to, user.id, 200)
+    rejected_requests = InterpretRequestLog.requests_over_time(from, to, user.id, 503)
+    assert_equal 2, processed_requests.size
+    assert_equal 1, processed_requests[0]['doc_count']
+    assert_equal "2019-09-09T14:25", processed_requests[0]['key_as_string']
+    assert_equal 1, processed_requests[1]['doc_count']
+    assert_equal "2019-09-09T14:26", processed_requests[1]['key_as_string']
+    assert_equal 1, rejected_requests.size
+    assert_equal 1, rejected_requests[0]['doc_count']
+    assert_equal "2019-09-09T14:27", rejected_requests[0]['key_as_string']
+  end
+
+  test 'API requests over agents for a user' do
+    user = users(:admin)
+    weather_agent = agents(:weather)
+    terminator_agent = agents(:terminator)
+
+    log_1 = InterpretRequestLog.new(
+      timestamp: '2019-09-09T14:25:14.053+02:00',
+      sentence: "What 's the weather like ?",
+      agent: weather_agent
+    ).with_response('200', {})
+
+    log_2 = InterpretRequestLog.new(
+      timestamp: '2019-09-09T14:26:14.053+02:00',
+      sentence: "What 's the weather like ?",
+      agent: weather_agent
+    ).with_response('200', {})
+
+    log_3 = InterpretRequestLog.new(
+      timestamp: '2019-09-09T14:27:14.053+02:00',
+      sentence: 'Find Sarah',
+      agent: terminator_agent
+    ).with_response('200', {})
+
+    assert log_1.save
+    assert log_2.save
+    assert log_3.save
+
+    requests = InterpretRequestLog.requests_over_agents(user.id, 200)
+    
+    assert_equal 2, requests.size
+    assert_equal weather_agent.id, requests[0]['key']
+    assert_equal 2, requests[0]['doc_count']
+    assert_equal terminator_agent.id, requests[1]['key']
+    assert_equal 1, requests[0]['doc_count']
+  end
+
+  test 'API requests over agents for a user per day' do
+    user = users(:admin)
+    weather_agent = agents(:weather)
+    terminator_agent = agents(:terminator)
+    
+    log_1 = InterpretRequestLog.new(
+      timestamp: '2019-09-09T14:25:14.053+02:00',
+      sentence: "What 's the weather like ?",
+      agent: weather_agent,
+    ).with_response('200', {})
+    
+    log_2 = InterpretRequestLog.new(
+      timestamp: '2019-09-08T14:26:14.053+02:00',
+      sentence: "What 's the weather like ?",
+      agent: weather_agent,
+    ).with_response('200', {})
+
+    log_3 = InterpretRequestLog.new(
+      timestamp: '2019-09-09T14:27:14.053+02:00',
+      sentence: "Find Sarah",
+      agent: terminator_agent,
+    ).with_response('200', {})
+    
+    assert log_1.save
+    assert log_2.save
+    assert log_3.save
+
+    aggregations = {
+      "yesterday": {
+        from: DateTime.parse('2019-09-08T00:00:00.053+02:00'),
+        to: DateTime.parse('2019-09-08T23:59:59+02:00')
+      }
+    }
+
+    requests = InterpretRequestLog.requests_over_agents(user.id, 200, aggregations)
+    assert_equal 2, requests.size
+    assert_equal weather_agent.id, requests[0]['key']
+    assert_equal 2, requests[0]['doc_count']
+    assert_equal 1, requests[0]['yesterday']['doc_count']
+
+    assert_equal terminator_agent.id, requests[1]['key']
+    assert_equal 1, requests[1]['doc_count']
+    assert_equal 0, requests[1]['yesterday']['doc_count']
+  end
 end
