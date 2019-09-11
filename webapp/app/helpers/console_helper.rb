@@ -1,5 +1,41 @@
 module ConsoleHelper
 
+  def solution_debug_link(body)
+    slug = body["errors_javascript"]["solution_location"]["slug"]
+
+    parent_id = body["errors_javascript"]["solution_location"]["id"]
+    position = body["errors_javascript"]["solution_location"]["position"]
+    line_number = body["errors_javascript"]["solution_location"]["line_number"]
+
+    if slug.split('/')[2] == "interpretations"
+      interpretation = Interpretation.find_by_position_and_intent_id(position, parent_id)
+      agent = interpretation.intent.agent
+      href = "/agents/#{slug}?locale=#{interpretation.locale}"
+      href << "&debug[type]=interpretations"
+      href << "&debug[id]=#{interpretation.id}"
+    else
+      list = EntitiesList.find(parent_id)
+      entity = list.entities.find_by_position(position)
+      agent = list.agent
+      href = "/agents/#{slug}?"
+      href << "search=#{entity.terms.first['term']}&" if list.entities_count > 100
+      href << "debug[type]=entities"
+      href << "&debug[id]=#{entity.id}"
+    end
+    href << "&debug[line]=#{line_number}#debug-solution"
+
+    if current_user.can?(:show, agent)
+      html  = "<a href='#{href}' class='btn btn--outline'>"
+      html << "  <span class='icon icon--small'>#{icon_search}</span>"
+      html << t('views.console.js_error.btn')
+      html << "</a>"
+      html.html_safe
+    else
+      return nil
+    end
+  end
+
+
   def highlight(words, interpretation_index)
     highlights = []
     words.each_with_index do |word, word_index|
@@ -26,10 +62,13 @@ module ConsoleHelper
       html << '<li>'
       position = matches['expression_pos']
       parent_id = matches['interpretation_id']
+
       if matches['interpretation_slug'].include? 'entities_list'
-        entity = Entity.find_by_position_and_entities_list_id(position, parent_id)
-        agent = entity.entities_list.agent
+        list = EntitiesList.find(parent_id)
+        entity = list.entities.find_by_position(position)
+        agent = list.agent
         href = "/agents/#{matches['interpretation_slug']}"
+        href << "?search=#{entity.terms.first['term']}" if list.entities_count > 100
         href << "#smooth-scroll-to-entity-#{entity.id}"
       else
         interpretation = Interpretation.find_by_position_and_intent_id(position, parent_id)
@@ -38,6 +77,7 @@ module ConsoleHelper
         href << "?locale=#{interpretation.locale}"
         href << "#smooth-scroll-to-interpretation-#{interpretation.id}"
       end
+
       if current_user.can?(:show, agent)
         html << "<a href='#{href}'>"
         html << "  <em>#{matches['expression']}</em>"

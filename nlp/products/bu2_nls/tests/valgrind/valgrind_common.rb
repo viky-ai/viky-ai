@@ -58,6 +58,12 @@ module Valgrind
         "Accept-Language" => Nls::Interpretation.default_locale
       }
 
+      error_query=
+      {
+        "packages" => [ @main_uuid ],
+        "sentence" => "with error js piscine",
+        "Accept-Language" => Nls::Interpretation.default_locale
+      }
 
       expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
 
@@ -87,10 +93,18 @@ module Valgrind
       end
 
       ruby_log_append(filename, "test regex query")
-      # launch number query
+      # launch regex query
       (10 * nb_request_factor).times do
         response = Nls::Nls.interpret(regex_query, params)
         assert !response.nil?
+      end
+
+      ruby_log_append(filename, "test error query")
+      # launch regex query
+      (10 * nb_request_factor).times do
+        assert_raises RestClient::InternalServerError, "'undef_variable'" do
+          Nls::Nls.interpret(error_query, params)
+        end
       end
 
       ruby_log_append(filename, "test package update")
