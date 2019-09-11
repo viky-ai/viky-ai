@@ -37,6 +37,12 @@ class ConsoleController < ApplicationController
     )
     body, status = nlp.proceed
 
+    # Mimic interpret API endpoint behavior
+    if status == 200
+      console_output = render_to_string(partial: 'api/v1/nlp/interpret', format: 'json', locals: { body: body })
+      body = JSON.parse(console_output)
+    end
+
     respond_to do |format|
       format.js {
         @tabs = render_to_string(
