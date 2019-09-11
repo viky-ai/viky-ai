@@ -1,11 +1,11 @@
 require_relative 'lib/task'
 
+doc_dir = ENV['VIKY_DOCUMENTATION_PATH']
+return if doc_dir.blank?
+
 namespace :doc do
   desc 'Build doc static site (for development)'
   task :build do
-    doc_dir = ENV['VIKY_DOCUMENTATION_PATH']
-    abort 'Please, provide VIKY_DOCUMENTATION_PATH environment variable.' if doc_dir.nil?
-
     if File.directory?(doc_dir)
       Bundler.with_clean_env do
         Task::Cmd.exec('bundle install', {}, doc_dir)
