@@ -52,15 +52,16 @@
 
 
 .entity-form{
-  grid-template:
+  grid-template-columns: 1fr calc(50% - 0.5em);
+  grid-template-areas:
     "terms terms"
     "solution solution"
     "submit delete";
 
   @media (min-width: 750px){
-    grid-template:
-      "terms solution" auto
-      "submit delete" auto / 1fr 1fr;
+    grid-template-areas:
+      "terms solution"
+      "submit delete";
   }
 
   .entity-form__terms {
