@@ -1,11 +1,11 @@
 $ = require('jquery');
 
 class CodeEditor
-  @buildJavaScriptEditor: (textarea, readonly=false)->
+  @buildJavaScriptEditor: (textarea, readonly=false, lineNumbers=true)->
     return if $(textarea).length == 0
 
     options = {
-      lineNumbers: true,
+      lineNumbers: lineNumbers,
       mode: "javascript",
       autoRefresh: true,
       tabSize: 2,
@@ -15,8 +15,10 @@ class CodeEditor
         'Tab': (editor) -> editor.execCommand 'insertSoftTab'
     }
 
-    options.readOnly = 'nocursor' if readonly
+    options.readOnly = true if readonly
+    code_editor = CodeMirror.fromTextArea(textarea, options);
+    $(code_editor.display.wrapper).addClass("CodeMirror--read-only") if readonly
 
-    return CodeMirror.fromTextArea(textarea, options);
+    return code_editor
 
 module.exports = CodeEditor

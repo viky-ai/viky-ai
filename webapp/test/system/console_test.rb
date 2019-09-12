@@ -402,7 +402,11 @@ class ConsoleTest < ApplicationSystemTestCase
                 "slug" => intents(:weather_forecast).slug,
                 "position" => interpretations(:weather_forecast_tomorrow).position,
                 "line_number" => 1
-              }
+              },
+              "context" => [
+                "Context line 1",
+                "Context line 2"
+              ]
             }
           }
         }
