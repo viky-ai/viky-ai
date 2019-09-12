@@ -344,7 +344,7 @@ module Nls
       def test_test_js_detailled_error
 
         exception = assert_raises RestClient::InternalServerError, "'undef_variable' must no be undefined" do
-          check_interpret('jsisolationdeux', interpretation: nil)
+          check_interpret('jsisolationdeux', interpretation: nil, now: '2017-12-03T12:00:00+03:00')
         end
 
         # generic error
@@ -363,9 +363,15 @@ module Nls
         assert_equal 2, js_error['solution_location']['line_number']
         assert_equal ['( { ', '  bug: undef_variable', ' } )'], js_error['code']
         assert !js_error['context'].nil?
-        assert js_error['context'].include? 'const start_position = 0;'
-        assert js_error['context'].include? 'const end_position = 15;'
-        assert js_error['context'].include? 'const request_raw_text = "jsisolationdeux";'
+        expected_context = [
+          '// Current datetime: \'2017-12-03T12:00:00+03:00\'',
+          '// available with Moment.js',
+          'const raw_text = "jsisolationdeux";',
+          'const start_position = 0;',
+          'const end_position = 15;',
+          'const request_raw_text = "jsisolationdeux";'
+        ]
+        assert_equal js_error['context'], expected_context
       end
 
     end
