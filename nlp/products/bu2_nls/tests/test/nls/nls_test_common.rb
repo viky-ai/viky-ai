@@ -244,6 +244,7 @@ module Nls
       pg_building_feature << i_sea_view
 
       i_swimming_pool = Interpretation.new("swimming-pool").new_textual(["swimming pool", "pool"], solution: "swimming pool" )
+      i_swimming_pool.new_textual(["error js piscine"], solution: "`{key: undef_variable}`" )
       pg_building_feature << i_swimming_pool
 
       i_building_feature = Interpretation.new("building-feature")

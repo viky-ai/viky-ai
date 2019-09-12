@@ -1,3 +1,5 @@
 App.CardListHelper.updateItem("#entity-<%= @entity.id %>", "<%= escape_javascript(@form) %>");
 App.CardListHelper.updateDraggable();
 new App.EntityForm($('#entity-<%= @entity.id %> > form'))
+
+$("body").trigger('entities:edit:complete');

@@ -11,7 +11,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     driver_options = { browser: :chrome, options: options }
 
     Capybara::Selenium::Driver.new(app, driver_options).tap do |driver|
-      driver.browser.manage.window.size = Selenium::WebDriver::Dimension.new(1200, 720)
+      driver.browser.manage.window.size = Selenium::WebDriver::Dimension.new(1400, 900)
     end
   end
 

@@ -359,4 +359,63 @@ class ConsoleTest < ApplicationSystemTestCase
     end
   end
 
+
+  test "Console and NLP error" do
+    admin_go_to_agents_index
+    click_link "My awesome weather bot admin/weather"
+
+    within(".console") do
+      fill_in "interpret[sentence]", with: "Hello"
+      Nlp::Interpret.any_instance.stubs("send_nlp_request").returns(
+        {
+          status: 500,
+          body: {
+            "errors": [
+              "NLP error message"
+            ]
+          }
+        }
+      )
+      click_button "console-send-sentence"
+      assert has_content?("500 Oops, an error occurred.")
+    end
+  end
+
+
+  test "Console and JavaScript error" do
+    admin_go_to_agents_index
+    click_link "My awesome weather bot admin/weather"
+
+    within(".console") do
+      fill_in "interpret[sentence]", with: "Hello"
+
+      Nlp::Interpret.any_instance.stubs("send_nlp_request").returns(
+        {
+          status: 500,
+          body: {
+            "errors_code" => "javascript",
+            "errors" => [],
+            "errors_javascript" => {
+              "message" => "SyntaxError: invalid object literal (line 5)",
+              "solution_location" => {
+                "id" => intents(:weather_forecast).id,
+                "slug" => intents(:weather_forecast).slug,
+                "position" => interpretations(:weather_forecast_tomorrow).position,
+                "line_number" => 1
+              }
+            }
+          }
+        }
+      )
+
+      click_button "console-send-sentence"
+      assert has_content?("500 Oops, an error occurred.")
+      assert has_content?("SyntaxError: invalid object literal (line 5)")
+      click_link "See the offending code"
+    end
+
+    interpretation_dom_id = "#interpretation-#{interpretations(:weather_forecast_tomorrow).id}"
+    assert has_css?("#{interpretation_dom_id}.highlight.highlight--alert", count: 1)
+  end
+
 end

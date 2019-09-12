@@ -23,6 +23,19 @@ en:
         auto: "Auto"
         manual: "Manual"
         addon: "Now (ISO 8601)"
+      js_error:
+        message_html: >
+          <p>
+            It's a JavaScript error related to the evaluation of a solution.
+          </p>
+          <p>
+            The JavaScript runtime returns the following error:<br />
+            <code>%{code}</code>
+          </p>
+        btn: See the offending code
+        note_html: >
+          Note: viky.ai uses <a target="_blank" href="https://duktape.org/">Duktape 2.4</a>
+          JavaScript runtime which support ECMAScript E5/E5.1
       go_to_api_endpoint: Go to API endpoint
       download_package: Download package
       fullscreen_enter: Enter in fullscreen mode
