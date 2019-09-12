@@ -33,6 +33,7 @@ en:
             <code>%{code}</code>
           </p>
         btn: See the offending code
+        context_intro: "JavaScript execution context:"
         note_html: >
           Note: viky.ai uses <a target="_blank" href="https://duktape.org/">Duktape 2.4</a>
           JavaScript runtime which support ECMAScript E5/E5.1

@@ -396,6 +396,17 @@ ul.color-picker{
   height: auto;
   border: 1px solid #ddd;
   border-radius: 3px;
+
+  &.CodeMirror--read-only{
+    &.CodeMirror-focused{
+      box-shadow: none;
+      border-color: #ddd;
+    }
+    .CodeMirror-cursor{
+      display: none;
+    }
+  }
+
   .CodeMirror-code{
     font-family: $family-monospace;
     font-size: .8em;
@@ -413,6 +424,10 @@ ul.color-picker{
     font-weight: bold;
   }
   .CodeMirror-linebackground.js-error{
-    background-color: rgba($alert_color, .1);
+    background-color: rgba($alert_color, .2);
+  }
+
+  .CodeMirror-selected{
+    background: rgba($primary_color, .1);
   }
 }

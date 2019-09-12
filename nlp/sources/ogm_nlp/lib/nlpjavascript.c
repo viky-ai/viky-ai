@@ -419,9 +419,11 @@ static og_status NlpJsEvalBuildError(og_nlp_th ctrl_nlp_th, duk_context *ctx, og
   if (duk_peval_string(ctx, now_eval) == 0)
   {
     og_char_buffer now_json[DPcPathSize];
-    snprintf(now_json, DPcPathSize, "now returned by `moment()` is '%s'", duk_safe_to_string(ctx, -1));
+    snprintf(now_json, DPcPathSize, "// Current datetime: '%s'", duk_safe_to_string(ctx, -1));
+    og_string with_moment = "// available with Moment.js";
     json_array_append_new(errors_context, json_string(now_json));
-    snprintf(now, DPcPathSize, "// %s\n", now_json);
+    json_array_append_new(errors_context, json_string(with_moment));
+    snprintf(now, DPcPathSize, "%s available with Moment.js\n", now_json);
   }
 
   IFE(NlpThrowErrorTh(ctrl_nlp_th, "%s", script));

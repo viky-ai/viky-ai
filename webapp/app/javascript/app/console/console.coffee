@@ -49,6 +49,8 @@ class Console
         , 500
         $("#console-reset-btn").show()
         $('#console-output').scrollTop(0)
+        if $('#js-error-context').length == 1
+          App.CodeEditor.buildJavaScriptEditor($('#js-error-context')[0], true, false)
 
     $("body").on 'ajax:error', (event) ->
       if $(event.target).attr('id') == "js-console-form"
