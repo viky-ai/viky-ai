@@ -152,7 +152,7 @@ class RackThrottleTest < ActionDispatch::IntegrationTest
       assert_equal '403', response.code
     end
 
-    travel_to DateTime.parse('2019-09-13T00:00:00+02:00') do
+    travel_to DateTime.parse('2019-09-13T01:00:00+02:00') do
       send_interpret_request
       assert_equal '200', response.code
     end

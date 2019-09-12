@@ -21,6 +21,13 @@ class ProfilesController < ApplicationController
       }
     }
     @agent_requests = InterpretRequestLog.requests_over_agents(@profile.id, 503, request_aggs)
+    @expressions_count = Agent
+                          .select('agents.id, (coalesce(COUNT(interpretations.id),0) + coalesce(SUM(entities_lists.entities_count),0)) as total')
+                          .where(owner_id: @profile.id)
+                          .left_outer_joins(:entities_lists, intents: :interpretations)
+                          .group(:id)
+                          .order('total DESC, agents.name')
+                          .page(params[:expressions_page]).per(10)
   end
 
   def edit
