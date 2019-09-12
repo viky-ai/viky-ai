@@ -49,6 +49,7 @@ class AgentRegressionCheck < ApplicationRecord
     else
       self.got = ''
       self.state = 'error'
+      agent.nlp_updated_at = nil if [500, 503].include? status
     end
     save
   end

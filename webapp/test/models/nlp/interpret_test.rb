@@ -92,4 +92,27 @@ class InterpretTest < ActiveSupport::TestCase
     assert interpret.packages.include? agents(:weather_confirmed).id
     assert_equal 3, interpret.packages.size
   end
+
+  test 'Agent regression checks ready to rerun when NLP crashed' do
+    weather = agents(:weather)
+    create_agent_regression_check_fixtures
+
+    weather.nlp_updated_at = '2000-01-01 01:01:01.000000'
+    assert weather.save
+    Nlp::Interpret.any_instance.stubs(:send_nlp_request).raises(EOFError)
+    weather.agent_regression_checks.first.run
+    assert_nil weather.nlp_updated_at
+
+    weather.nlp_updated_at = '2000-01-01 01:01:01.000000'
+    assert weather.save
+    Nlp::Interpret.any_instance.stubs(:send_nlp_request).raises(Errno::ECONNREFUSED)
+    weather.agent_regression_checks.first.run
+    assert_nil weather.nlp_updated_at
+
+    weather.nlp_updated_at = '2000-01-01 01:01:01.000000'
+    assert weather.save
+    Nlp::Interpret.any_instance.stubs(:send_nlp_request).raises(StandardError)
+    weather.agent_regression_checks.first.run
+    assert_nil weather.nlp_updated_at
+  end
 end
