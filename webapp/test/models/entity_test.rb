@@ -287,11 +287,7 @@ class EntityTest < ActiveSupport::TestCase
 
   
   test 'Entities limit' do
-    
     ENV['VIKYAPP_EXPRESSION_QUOTA'] = '11'
-    p users(:admin).expressions_count
-    p users(:admin).quota_exceeded?
-
 
     entity = Entity.new(
       terms: [

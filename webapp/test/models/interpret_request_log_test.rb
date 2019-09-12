@@ -265,7 +265,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
     assert_equal weather_agent.id, requests[0]['key']
     assert_equal 2, requests[0]['doc_count']
     assert_equal terminator_agent.id, requests[1]['key']
-    assert_equal 1, requests[0]['doc_count']
+    assert_equal 1, requests[1]['doc_count']
   end
 
   test 'API requests over agents for a user per day' do
