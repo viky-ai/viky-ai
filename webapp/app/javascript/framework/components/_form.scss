@@ -91,7 +91,7 @@
   label{
     font-weight: 400;
     margin-bottom: .5em;
-    line-height: 1.5;
+    line-height: 1.5em;
     display: inline-block;
     vertical-align: middle;
     &.radio,
@@ -126,7 +126,7 @@
   textarea{
     min-width: 1em;
     width: 100%;
-    line-height: 1.5;
+    line-height: 1.5em;
     font-weight: 300;
     vertical-align: top;
 
@@ -263,6 +263,12 @@
         fill: $alert_color;
       }
     }
+  }
+  .label + .help,
+  label + .help{
+    line-height: 1.1em;
+    vertical-align: text-top;
+    margin-left: .5em;
   }
 }
 
