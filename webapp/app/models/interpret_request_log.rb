@@ -8,12 +8,12 @@ class InterpretRequestLog
   }
 
   def self.count(params = {})
-    client = InterpretRequestLogClient.new
+    client = InterpretRequestLogClient.build_client
     client.count_documents(params)
   end
 
   def self.find(id)
-    client = InterpretRequestLogClient.new
+    client = InterpretRequestLogClient.build_client
     result = client.get_document id
     params = result['_source'].symbolize_keys
     params[:id] = result['_id']
@@ -43,7 +43,7 @@ class InterpretRequestLog
   def save
     return false unless valid?
 
-    client = InterpretRequestLogClient.new
+    client = InterpretRequestLogClient.build_client
     result = client.save_document(to_json, @id)
     @id = result['_id']
   end

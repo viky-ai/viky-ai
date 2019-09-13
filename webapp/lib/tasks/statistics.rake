@@ -4,23 +4,27 @@ namespace :statistics do
 
   desc 'Creates and configures stats indices'
   task setup: :environment do |_, _|
-    environments = [Rails.env]
-    environments << 'test' if Rails.env == 'development'
-    environments.each do |environment|
-      Task::Print.step("Environment #{environment}.")
-      client = InterpretRequestLogClient.long_waiting_client
-      unless client.cluster_ready?
-        Task::Print.error('Cannot perform tasks : cluster is not ready')
-        exit 1
-      end
+    Task::Print.step("Environment #{Rails.env}.")
+    client = InterpretRequestLogClient.long_waiting_client
+    unless client.cluster_ready?
+      Task::Print.error('Cannot perform tasks : cluster is not ready')
+      exit 1
+    end
 
-      active_template = StatisticsIndexTemplate.new 'active'
-      client.save_template active_template
-      inactive_template = StatisticsIndexTemplate.new 'inactive'
-      client.save_template inactive_template
-      Task::Print.success("Index templates #{active_template.name}, #{inactive_template.name} saved.")
-      cleanup_broken_setup(client)
-      setup_active_index(client, active_template)
+    active_template = StatisticsIndexTemplate.new 'active'
+    client.save_template active_template
+    inactive_template = StatisticsIndexTemplate.new 'inactive'
+    client.save_template inactive_template
+    Task::Print.success("Index templates #{active_template.name}, #{inactive_template.name} saved.")
+    cleanup_broken_setup(client)
+    setup_active_index(client, active_template)
+    if ['development', 'test'].include? Rails.env
+      Task::Print.step('Environment test.')
+      active_test_template = StatisticsIndexTestTemplate.new
+      client.save_template active_test_template
+      Task::Print.success("Index templates #{active_test_template.name} saved.")
+      test_client = InterpretRequestLogTestClient.new
+      setup_active_index(test_client, active_test_template)
     end
     configure_dashboards unless Rails.env == 'test'
   end
@@ -95,7 +99,7 @@ namespace :statistics do
   task :rollover => :environment do |_, _|
     max_age = '7d'
     max_docs = 100_000
-    Task::Print.step("Roll over alias #{InterpretRequestLogClient::INDEX_ALIAS_NAME} with conditions max_age=#{max_age} or max_docs=#{max_docs}.")
+    Task::Print.step("Roll over alias #{client.index_alias_name} with conditions max_age=#{max_age} or max_docs=#{max_docs}.")
     client = InterpretRequestLogClient.long_waiting_client
     unless client.cluster_ready?
       Task::Print.error('Cannot perform tasks : cluster is not ready')
@@ -127,7 +131,7 @@ namespace :statistics do
   private
 
     def cleanup_broken_setup(client)
-      alias_name = InterpretRequestLogClient::INDEX_ALIAS_NAME
+      alias_name = client.index_alias_name
       if client.index_exists? alias_name
         Task::Print.notice("Delete index with same name as alias (#{alias_name}) because it should not exists.")
         client.delete_index alias_name

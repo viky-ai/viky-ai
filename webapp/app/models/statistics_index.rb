@@ -3,11 +3,12 @@ class StatisticsIndex
   attr_reader :base_name, :state, :version, :uid
 
   def self.from_template(template)
-    StatisticsIndex.new template.index_name, template.state, template.version
+    index_name = template.index_patterns.split('-')[0..1].join('-')
+    StatisticsIndex.new index_name, template.state, template.version
   end
 
   def self.from_name(name)
-    base_name = name.split('-')[1]
+    base_name = name.split('-')[0..1].join('-')
     state = name.split('-')[2]
     version = name.split('-')[3]
     uid = name.split('-')[4]
@@ -22,7 +23,7 @@ class StatisticsIndex
   end
 
   def name
-    ['stats', @base_name, @state, @version, @uid].join('-')
+    [@base_name, @state, @version, @uid].join('-')
   end
 
   def need_reindexing?(template)

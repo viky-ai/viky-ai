@@ -5,7 +5,8 @@ class StatisticsIndexTemplate
   def initialize(state = 'active')
     @configuration = read_template_configuration
     @state = state
-    @configuration['index_patterns'] = "#{index_full_name}-#{@state}-*"
+    @index_name = "#{@configuration['index_patterns'][0..-3]}-#{@state}"
+    @configuration['index_patterns'] = "#{@index_name}-*"
     if @state == 'inactive'
       @configuration[:settings] = {
         number_of_shards: 1,
@@ -16,7 +17,7 @@ class StatisticsIndexTemplate
   end
 
   def name
-    "template-#{index_full_name}"
+    "template-#{@index_name}"
   end
 
   def version
@@ -27,14 +28,8 @@ class StatisticsIndexTemplate
     @configuration['index_patterns']
   end
 
-  def index_name
-    index_patterns.split('-')[1]
-  end
 
   private
-    def index_full_name
-      index_patterns[0..-3]
-    end
 
     def read_template_configuration
       template_config_dir = "#{Rails.root}/config/statistics"

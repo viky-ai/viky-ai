@@ -3,7 +3,7 @@ require 'test_helper'
 class NlsControllerTest < ActionDispatch::IntegrationTest
 
   setup do
-    client = InterpretRequestLogClient.new
+    client = InterpretRequestLogTestClient.new
     client.reset_indices
   end
 
@@ -166,7 +166,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
       ]
     }
     assert_equal expected, JSON.parse(response.body)
-    client = InterpretRequestLogClient.new
+    client = InterpretRequestLogTestClient.new
     result = client.search_documents({ match: { sentence: sentence } },1)
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 'abc', found[:context]['session_id']
@@ -221,7 +221,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
           agent_token: agent.api_token
         }
 
-    client = InterpretRequestLogClient.new
+    client = InterpretRequestLogTestClient.new
     result = client.search_documents({ match: { sentence: sentence } },1)
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 503, found[:status]
@@ -241,7 +241,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
           agent_token: agent.api_token
         }
 
-    client = InterpretRequestLogClient.new
+    client = InterpretRequestLogTestClient.new
     result = client.search_documents({ match: { sentence: sentence } },1)
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 503, found[:status]
@@ -262,7 +262,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
           }
     end
 
-    client = InterpretRequestLogClient.new
+    client = InterpretRequestLogTestClient.new
     result = client.search_documents({ match: { sentence: sentence } },1)
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 500, found[:status]

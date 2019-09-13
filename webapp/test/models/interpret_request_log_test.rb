@@ -3,7 +3,7 @@ require 'test_helper'
 class InterpretRequestLogTest < ActiveSupport::TestCase
 
   setup do
-    client = InterpretRequestLogClient.new
+    client = InterpretRequestLogTestClient.new
     client.reset_indices
   end
 
