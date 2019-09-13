@@ -38,7 +38,7 @@
     .CodeMirror-scroll {
       min-height: 6em;
     }
-    &.readonly {
+    &.CodeMirror--read-only{
       opacity: .6;
       background-color: #f5f5f5;
       filter: grayscale(25%);
