@@ -15,3 +15,6 @@ en:
         kibana_ui: Index explorer
       switched: Switched
       comeback: Comeback
+      sign_in: Log in
+      sign_up: Sign up
+      manage_agents_html: Manage Agents &rarr;
