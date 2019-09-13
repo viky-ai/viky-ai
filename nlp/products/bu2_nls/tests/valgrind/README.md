@@ -14,7 +14,7 @@ Massif
 ======
 
 launch the command
-`rake test_massif`
+`bundle exec rake test_massif`
 
 a graph opens
 if the slope is not null, launch the memory check with memcheck
@@ -24,10 +24,10 @@ Memcheck
 ========
 
 launch the command
-`rake test_memcheck`
+`bundle exec rake test_memcheck`
 
 callgrind
 =========
 
 launch the command
-`rake test_callgrind`
+`bundle exec rake test_callgrind`

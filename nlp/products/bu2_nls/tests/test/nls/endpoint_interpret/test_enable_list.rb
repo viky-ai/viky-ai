@@ -31,6 +31,9 @@ module Nls
         ab = package.new_interpretation('ab', scope: 'public')
         ab << Expression.new('aaa bbb', keep_order: true)
 
+        bd = package.new_interpretation('bd', scope: 'public')
+        bd << Expression.new('bbb ddd', keep_order: true)
+
         ef = package.new_interpretation('ef', scope: 'public')
         ef << Expression.new('eee')
         ef << Expression.new('fff')
@@ -51,6 +54,8 @@ module Nls
         check_interpret('aaa bbb eee', interpretations: %w[ab ef])
         check_interpret('avanttout mot', interpretations: ['g'])
         check_interpret('avanttout aaa', interpretations: ['g'])
+        check_interpret('aaa bbb ddd', interpretations: %w[ab bd])
+        check_interpret('aaa bbb ddd', interpretations: ['ab'], no_overlap: true)
       end
     end
   end

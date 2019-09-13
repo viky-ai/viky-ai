@@ -146,7 +146,7 @@ og_status NlpEnableListCheckOverlapAfterAnyCalculation(og_nlp_th ctrl_nlp_th, GQ
         struct request_expression *request_expression2 = iter2->data;
         {
           if (!request_expression2->keep_as_result) continue;
-          if (request_expression1->nb_anys == 0 && request_expression2->nb_anys == 0) continue;
+          if (!ctrl_nlp_th->no_overlap && request_expression1->nb_anys == 0 && request_expression2->nb_anys == 0) continue;
           og_bool local_overlapped = TRUE;
           // Check if request_expression2 is overlapped with request_expression1
           if (request_expression1->start_position_char <= request_expression2->start_position_char

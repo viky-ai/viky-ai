@@ -76,6 +76,7 @@ module Nls
         primary_package: nil,
         primary_packages: nil,
         show_private: nil,
+        no_overlap: nil,
         spellchecking: nil
       }
       opts = default_opt.merge(opts)
@@ -131,6 +132,7 @@ module Nls
       request['now'] = opts[:now]                     unless opts[:now].nil?
       request['show-explanation'] = true              if     opts[:explain]
       request['show-private'] = true                  if     opts[:show_private]
+      request['no-overlap'] = true                    if     opts[:no_overlap]
 
       request
     end
@@ -242,6 +244,7 @@ module Nls
       pg_building_feature << i_sea_view
 
       i_swimming_pool = Interpretation.new("swimming-pool").new_textual(["swimming pool", "pool"], solution: "swimming pool" )
+      i_swimming_pool.new_textual(["error js piscine"], solution: "`{key: undef_variable}`" )
       pg_building_feature << i_swimming_pool
 
       i_building_feature = Interpretation.new("building-feature")
@@ -358,6 +361,9 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
       show_private = false
       show_private = expected[:show_private] if expected.has_key?(:show_private)
 
+      no_overlap = false
+      no_overlap = expected[:no_overlap] if expected.has_key?(:no_overlap)
+
       explain = false
       explain = expected[:explain] if expected.has_key?(:explain)
 
@@ -371,6 +377,7 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
         primary_package: primary_package,
         primary_packages: primary_packages,
         show_private: show_private,
+        no_overlap: no_overlap,
         spellchecking: spellchecking
       }
 

@@ -679,6 +679,9 @@ struct og_ctrl_nlp_js
   /** random number used to protect variable internal name (moment lib). */
   guint32 random_number;
 
+  /** in case of js error : linenumber where the error is located*/
+  int last_error_linenumber;
+
 };
 
 /** non matching expression that will be search upon the "why-not-matching" object of an interpret request */
@@ -779,6 +782,7 @@ struct og_ctrl_nlp_threaded
   /** common request */
   json_t *json_answer;
   json_t *json_answer_unit;
+  json_t *json_answer_error;
   json_t *json_warnings;
   int nb_warnings;
 
@@ -798,6 +802,7 @@ struct og_ctrl_nlp_threaded
   /** Number of primary packages can be zero for backward compatibilities */
   int nb_primary_packages;
   og_bool show_private;
+  og_bool no_overlap;
 
   og_heap hinterpret_package;
   og_string request_sentence;

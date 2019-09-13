@@ -11,7 +11,11 @@ class Api::V1::NlpController < Api::V1::ApplicationController
           render json: { errors: [I18n.t('controllers.api.access_denied')] }, status: 401
         else
           @body, @status = nlp.proceed
-          render json: @body, status: @status unless @status == 200
+          if @status == 200
+            render partial: 'interpret', locals: { body: @body }
+          else
+            render json: @body, status: @status
+          end
         end
       }
     end

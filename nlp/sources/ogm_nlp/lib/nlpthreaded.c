@@ -90,6 +90,7 @@ PUBLIC(og_status) OgNlpThreadedReset(og_nlp_th ctrl_nlp_th)
   IFE(OgNlpThreadedResetKeepJsonAnswer(ctrl_nlp_th));
 
   json_decrefp(&ctrl_nlp_th->json_answer);
+  json_decrefp(&ctrl_nlp_th->json_answer_error);
 
   DONE;
 }
@@ -132,3 +133,28 @@ PUBLIC(og_status) OgNlpThreadedFlush(og_nlp_th ctrl_nlp_th)
 
   DONE;
 }
+
+
+PUBLIC(og_status) OgNlpThreadedGetCustomError(og_nlp_th ctrl_nlp_th, json_t **json_answer_error)
+{
+  if (ctrl_nlp_th->json_answer_error)
+  {
+    if (json_answer_error)
+    {
+      *json_answer_error = ctrl_nlp_th->json_answer_error;
+      json_incref(*json_answer_error);
+    }
+
+    json_decrefp(&ctrl_nlp_th->json_answer_error);
+  }
+  else
+  {
+    if (json_answer_error)
+    {
+      *json_answer_error = NULL;
+    }
+  }
+
+  DONE;
+}
+

@@ -248,6 +248,36 @@
   p{
     margin: 0;
   }
+  .c-explain__js-error{
+    border-left: 2px solid $alert_color;
+    margin-left: 1em;
+    padding: 1em 0 0 1.4em;
+    font-size: .9em;
+    line-height: 1.5em;
+    code{
+      font-family: $family-monospace;
+      font-size: .925em;
+      line-height: 1.5em;
+      color: darken($alert_color, 10%);
+    }
+    p + p{
+      margin: .75em 0 0 0;
+    }
+    .CodeMirror{
+      border: none;
+      background-color: rgba(#000, .025);
+      padding: .5em 1em;
+      pre{
+        font-size: 1em;
+      }
+    }
+    .c-explain__js-error__note{
+      margin-top: 1em;
+      font-size: .85em;
+      line-height: 1.5em;
+      color: #777;
+    }
+  }
   .c-explain__footer{
     margin-top: 2em;
     font-size: .8em;
