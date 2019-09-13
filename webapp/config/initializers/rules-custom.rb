@@ -18,8 +18,8 @@ module Rack
         return true unless Feature.rack_throttle_enabled?
 
         unless Feature.rack_throttle_limit_day_disabled?
-          p "Day limit enabled"
-          p "date: #{DateTime.current} cache count: #{cache_get(key = cache_key(request)).to_i + 1}"
+          p "Day limit enabled for date: #{DateTime.current}"
+          p "request: #{request.request_method} #{request.url} window: #{@options[:time_window]} cache_count: #{cache_get(key = cache_key(request)).to_i + 1}"
         end
         api_token = request.params["agent_token"] || request.get_header("HTTP_AGENT_TOKEN")
         agent = Agent.find_by api_token: api_token if api_token
