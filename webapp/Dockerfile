@@ -29,7 +29,7 @@ COPY Gemfile /webapp
 COPY Gemfile.lock /webapp
 
 # Production dependencies
-RUN bundle install --without development test --deployment --jobs=$(nproc)
+RUN bundle install --without development test --jobs=$(nproc)
 
 # Copy application code
 COPY . /webapp

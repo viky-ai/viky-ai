@@ -9,10 +9,12 @@
 # docker build --target test_image -t docker-registry.pertimm.net/viky.ai/platform/nlp_test .
 # docker run -t docker-registry.pertimm.net/viky.ai/platform/nlp_test
 
+ARG VIKY_IMAGE_TAG=latest
+
 # ============================================================================
 # Compile and package Nls
 # ============================================================================
-FROM docker-registry.pertimm.net/tools/docker-ebusiness-build-stack AS build_image
+FROM docker-registry.pertimm.net/viky.ai/platform/tools_nlp_base:${VIKY_IMAGE_TAG} AS build_image
 
 ENV OG_REPO_PATH=/builds/nls
 ENV OG_TOOL_PATH=${OG_REPO_PATH}/tools

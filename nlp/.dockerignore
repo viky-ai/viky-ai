@@ -1,15 +1,23 @@
+.vscode/
+
 build/
 ship/
+
+tools/docker
 
 nlp_route/.bundle
 nlp_route/.env
 nlp_route/log
 nlp_route/coverage
 
+resources/morphology/fr/build
+resources/morphology/en/build
+
 # Glib build dir
 sources/external_dependencies/glib/meson-build
 
-resources/morphology/fr/build
+# uriparser build dir
+sources/external_dependencies/uriparser/build
 
 # Duktape temp file
 sources/external_dependencies/duktape/dist
