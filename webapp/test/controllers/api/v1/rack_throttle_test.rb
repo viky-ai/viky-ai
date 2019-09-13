@@ -58,7 +58,7 @@ class RackThrottleTest < ActionDispatch::IntegrationTest
   test 'Should be limited if more than 4 requests are made in one minute' do
     Feature.enable_rack_throttle_limit_minute
 
-    travel_to DateTime.parse('2019-09-12T14:07:00+02:00') do
+    travel_to DateTime.parse('2019-09-12T14:07:00') do
       send_interpret_request
       assert_equal '200', response.code
 
@@ -66,17 +66,17 @@ class RackThrottleTest < ActionDispatch::IntegrationTest
       assert_equal '200', response.code
     end
 
-    travel_to DateTime.parse('2019-09-12T14:07:04+02:00') do
+    travel_to DateTime.parse('2019-09-12T14:07:04') do
       send_interpret_request
       assert_equal '200', response.code
     end
     
-    travel_to DateTime.parse('2019-09-12T14:07:06+02:00') do
+    travel_to DateTime.parse('2019-09-12T14:07:06') do
       send_interpret_request
       assert_equal '200', response.code
     end
     
-    travel_to DateTime.parse('2019-09-12T14:07:07+02:00') do
+    travel_to DateTime.parse('2019-09-12T14:07:07') do
       send_interpret_request
       assert_equal '403', response.code
     end
@@ -85,7 +85,7 @@ class RackThrottleTest < ActionDispatch::IntegrationTest
   test 'Should be limited if more than 6 requests are made in one hour' do
     Feature.enable_rack_throttle_limit_hour
     
-    travel_to DateTime.parse('2019-09-12T14:00:00+02:00') do
+    travel_to DateTime.parse('2019-09-12T14:00:00') do
       send_interpret_request
       assert_equal '200', response.code
 
@@ -93,7 +93,7 @@ class RackThrottleTest < ActionDispatch::IntegrationTest
       assert_equal '200', response.code
     end
 
-    travel_to DateTime.parse('2019-09-12T14:20:00+02:00') do
+    travel_to DateTime.parse('2019-09-12T14:20:00') do
       send_interpret_request
       assert_equal '200', response.code
 
@@ -104,7 +104,7 @@ class RackThrottleTest < ActionDispatch::IntegrationTest
       assert_equal '200', response.code
     end
 
-    travel_to DateTime.parse('2019-09-12T14:45:00+02:00') do
+    travel_to DateTime.parse('2019-09-12T14:45:00') do
       send_interpret_request
       assert_equal '200', response.code
 
@@ -112,7 +112,7 @@ class RackThrottleTest < ActionDispatch::IntegrationTest
       assert_equal '403', response.code
     end
 
-    travel_to DateTime.parse('2019-09-12T15:00:00+02:00') do
+    travel_to DateTime.parse('2019-09-12T15:00:00') do
       send_interpret_request
       assert_equal '200', response.code
     end
@@ -121,7 +121,7 @@ class RackThrottleTest < ActionDispatch::IntegrationTest
   test 'Should be limited if more than 8 requests are made in one day' do
     Feature.enable_rack_throttle_limit_day
     
-    travel_to DateTime.parse('2019-09-12T14:45:00+02:00') do
+    travel_to DateTime.parse('2019-09-12T14:45:00') do
       p '-------------------------request 1--------------------------------'
       send_interpret_request
       assert_equal '200', response.code
@@ -139,7 +139,7 @@ class RackThrottleTest < ActionDispatch::IntegrationTest
       assert_equal '200', response.code
     end
 
-    travel_to DateTime.parse('2019-09-12T20:00:00+02:00') do
+    travel_to DateTime.parse('2019-09-12T20:00:00') do
       p '-----------------------------request 5---------------------------'
       send_interpret_request
       assert_equal '200', response.code
@@ -161,7 +161,7 @@ class RackThrottleTest < ActionDispatch::IntegrationTest
       assert_equal '403', response.code
     end
 
-    travel_to DateTime.parse('2019-09-13T01:00:00+02:00') do
+    travel_to DateTime.parse('2019-09-13T01:00:00') do
       p '----------------------------request 10--------------------------'
       send_interpret_request
       assert_equal '200', response.code
