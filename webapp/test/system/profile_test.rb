@@ -10,17 +10,6 @@ class ProfileTest < ApplicationSystemTestCase
     assert page.has_text?("Your profile")
   end
 
-
-  test "Display user's agents" do
-    go_to_profile
-    within(".agents-box-grid") do
-      assert page.has_content?("My awesome weather bot")
-      assert page.has_content?("T-800")
-      assert page.has_no_content?("Weather bot")
-    end
-  end
-
-
   test "Edit profile access" do
     go_to_profile
     click_link "Edit your profile"

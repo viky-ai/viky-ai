@@ -37,7 +37,9 @@
       </thead>
       <tbody>
         <% @agent_requests.each do |requests| %>
-         <% agent = Agent.find(requests['key']) %>
+        <%# TODO: handle deleted agent %>
+        <% agent = Agent.find_by_id(requests['key']) %>
+        <% if agent %>
           <tr>
             <td>
               <a href="<%= user_agent_path(agent.owner, agent)%>">
@@ -50,7 +52,8 @@
             <td><%= requests['today']['doc_count'] %></td>
             <td><%= requests['10_days']['doc_count'] %></td>
             <td><%= requests['30_days']['doc_count'] %></td>
-          </tr> 
+          </tr>
+        <% end %> 
         <% end %>
       </tbody>
     </table>
