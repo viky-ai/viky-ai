@@ -103,7 +103,7 @@
   padding: 1.5em 3em 1em 1em;
   grid-template-columns: 1fr;
   @media (min-width: 600px) {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr calc(50% - 0.5em);
   }
 }
 
