@@ -185,8 +185,6 @@ Rails.application.routes.draw do
   get 'style-guide', to: 'style_guide#index'
   get 'style-guide/:page_id', to: "style_guide#page"
 
-  get 'brain', to: 'brain#index'
-
   unless File.exist? File.join(Rails.root, 'public', 'index.html')
     devise_scope :user do
       unauthenticated :user do

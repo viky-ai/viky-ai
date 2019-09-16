@@ -35,7 +35,11 @@ og_status NlsEndpointInterpret(struct og_listening_thread *lt, struct og_nls_req
   memset(input, 0, sizeof(struct og_nlp_interpret_input));
   input->json_input = request->body;
 
-  IFE(OgNlpInterpret(lt->hnlp_th, input, output));
+  IF(OgNlpInterpret(lt->hnlp_th, input, output))
+  {
+    IFE(OgNlpThreadedGetCustomError(lt->hnlp_th, &response->custom_errors));
+    DPcErr;
+  }
 
   response->body = json_incref(output->json_output);
 

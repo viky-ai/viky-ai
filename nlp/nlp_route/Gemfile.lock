@@ -57,7 +57,7 @@ DEPENDENCIES
   minitest-reporters
   mocha
   parallel
-  rake
+  rake (~> 12.3)
   redis (~> 3.3.0)
   rest-client
   simplecov

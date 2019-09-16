@@ -7,6 +7,7 @@ module Valgrind
     def test_valgrind_memcheck
 
       supression_file = File.join(File.expand_path(__dir__), 'valgrind_supression.supp')
+      supression_glib_file = File.join(ENV['OG_REPO_PATH'], 'sources/external_dependencies/glib', 'glib.supp')
 
       command = []
       command << "G_DEBUG=resident-modules G_SLICE=always-malloc"
@@ -21,6 +22,7 @@ module Valgrind
       command << "--keep-stacktraces=alloc-then-free"
       command << "--log-file=valgrind.log"
       command << "--suppressions=#{supression_file}"
+      command << "--suppressions=#{supression_glib_file}" if File.exist? supression_glib_file
       command << "./ogm_nls -n"
 
       # clean file

@@ -362,12 +362,15 @@ static int nlp_interpret(struct og_info *info, char *json_interpret_filename)
   DONE;
 }
 
-static og_status split_error_message(json_t *json_errors, char *multiple_errors)
+static og_status split_error_message(json_t *json_errors, og_string multiple_errors)
 {
   if (multiple_errors == NULL) CONT;
 
+  int imultiple_errors = strlen(multiple_errors);
+  char errors[imultiple_errors + 1];
+  strncpy(errors, multiple_errors, imultiple_errors + 1);
+
   char *saveptr = NULL;
-  char *errors = multiple_errors;
   char *error_line = strtok_r(errors, "\n", &saveptr);
   while (error_line != NULL)
   {
@@ -382,7 +385,14 @@ static og_status split_error_message(json_t *json_errors, char *multiple_errors)
 
 static int nlp_send_errors_as_json(struct og_info *info)
 {
-  json_t * root = json_object();
+
+  json_t * root = NULL;
+  IFE(OgNlpThreadedGetCustomError(info->hnlpi, &root));
+  if (root == NULL)
+  {
+    root = json_object();
+  }
+
   json_t * errors = json_array();
   json_object_set_new(root, "errors", errors);
 

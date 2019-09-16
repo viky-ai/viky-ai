@@ -107,6 +107,17 @@
     <p>
       <span class="badge badge--danger"><%= status %></span>
       <%= t('views.console.error_occurred') %>
+      <% if body['errors_code'] == 'javascript' %>
+        <div class="c-explain__js-error">
+          <%= t('views.console.js_error.message_html', code: body['errors_javascript']['message']) %>
+          <p><%= solution_debug_link(body) %></p>
+          <p><%= t('views.console.js_error.context_intro') %></p>
+          <textarea id="js-error-context"><%= body['errors_javascript']['context'].join("\n") %></textarea>
+          <p class="c-explain__js-error__note">
+            <%= t('views.console.js_error.note_html') %>
+          </p>
+        </div>
+      <% end %>
     </p>
   <% end %>
 

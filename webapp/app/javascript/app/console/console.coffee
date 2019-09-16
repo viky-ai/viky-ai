@@ -49,6 +49,8 @@ class Console
         , 500
         $("#console-reset-btn").show()
         $('#console-output').scrollTop(0)
+        if $('#js-error-context').length == 1
+          App.CodeEditor.buildJavaScriptEditor($('#js-error-context')[0], true, false)
 
     $("body").on 'ajax:error', (event) ->
       if $(event.target).attr('id') == "js-console-form"
@@ -151,6 +153,9 @@ class Console
     $('#js-nlp-language-input').val(data.language)
     $('#js-nlp-spellchecking-input').val(data.spellchecking)
     $('#js-console-now-input-container input').val(data.now) if data.now?
+
+    # Set current focus on submit button
+    $('#console-send-sentence')[0].focus()
 
     @toogle_form_is_needed()
 

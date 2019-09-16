@@ -144,6 +144,7 @@ og_status OgNlsEndpointsMemoryReset(struct og_listening_thread *lt)
     response->default_body = NULL;
   }
   json_decrefp(&response->body);
+  json_decrefp(&response->custom_errors);
 
   DONE;
 }

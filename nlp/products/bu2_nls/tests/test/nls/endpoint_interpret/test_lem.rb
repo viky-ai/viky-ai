@@ -51,6 +51,9 @@ module Nls
         be = lem_package.new_interpretation('be')
         be << Expression.new('be', locale: 'en')
 
+        cancel = lem_package.new_interpretation('cancel')
+        cancel << Expression.new('cancel', locale: 'en')
+
         # en root
         ladies = lem_package.new_interpretation('ladies')
         ladies << Expression.new('ladies', locale: 'en')
@@ -94,7 +97,7 @@ module Nls
         check_interpret('doing', locale: 'en', interpretation: 'do',     score: 0.99)
         check_interpret('been',  locale: 'en', interpretation: 'be',     score: 0.99)
         check_interpret('knife', locale: 'en', interpretation: 'knives', score: 0.99)
-
+        check_interpret('cancelled', locale: 'en', interpretation: 'cancel', score: 0.99)
       end
     end
   end

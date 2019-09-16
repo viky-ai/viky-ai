@@ -6,24 +6,38 @@
  */
 #include "ogm_nls.h"
 
-static og_status split_error_message(json_t *errors, char *multiple_errors);
+static og_status split_error_message(json_t *json_errors, og_string multiple_errors);
 
 /*
  *  Handling errors for listening threads.
  */
 og_status OgListeningThreadError(struct og_listening_thread *lt)
 {
-  json_t *root = lt->response->body;
-  if (root == NULL || ((json_is_object(root) && json_object_size(root) > 0) || json_is_array(root)))
+  json_t *root = lt->response->custom_errors;
+  if (root != NULL && json_is_object(root))
   {
-    // erase preview root;
-    json_decrefp(&root);
-    lt->response->body = json_object();
+    // use custom errors as base
+  }
+  else
+  {
     root = lt->response->body;
+    if (root == NULL || ((json_is_object(root) && json_object_size(root) > 0) || json_is_array(root)))
+    {
+      // erase preview root;
+      json_decrefp(&root);
+      lt->response->body = json_object();
+      root = lt->response->body;
+    }
   }
 
-  json_t *errors = json_array();
-  json_object_set_new(root, "errors", errors);
+  json_t *errors = json_object_get(root, "errors");
+  if (errors == NULL || !json_is_array(errors))
+  {
+    // erase preview errors;
+    json_decrefp(&errors);
+    errors = json_array();
+    json_object_set_new(root, "errors", errors);
+  }
 
   char erreur[DOgErrorSize];
   while (OgErrLast(lt->herr, erreur, 0))
@@ -64,12 +78,15 @@ og_status OgListeningThreadError(struct og_listening_thread *lt)
   DONE;
 }
 
-static og_status split_error_message(json_t *json_errors, char *multiple_errors)
+static og_status split_error_message(json_t *json_errors, og_string multiple_errors)
 {
   if (multiple_errors == NULL) CONT;
 
+  int imultiple_errors = strlen(multiple_errors);
+  char errors[imultiple_errors + 1];
+  strncpy(errors, multiple_errors, imultiple_errors + 1);
+
   char *saveptr = NULL;
-  char *errors = multiple_errors;
   char *error_line = strtok_r(errors, "\n", &saveptr);
   while (error_line != NULL)
   {
