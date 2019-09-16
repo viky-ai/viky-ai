@@ -1712,9 +1712,10 @@ coffee-loader@^0.9.0:
   dependencies:
     loader-utils "^1.0.2"
 
-coffeescript@1.12.7:
-  version "1.12.7"
-  resolved "https://registry.yarnpkg.com/coffeescript/-/coffeescript-1.12.7.tgz#e57ee4c4867cf7f606bfc4a0f2d550c0981ddd27"
+coffeescript@2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/coffeescript/-/coffeescript-2.4.1.tgz#815fd337df0a34d49e74a98a6ebea9c3e7930f70"
+  integrity sha512-34GV1aHrsMpTaO3KfMJL40ZNuvKDR/g98THHnE9bQj8HjMaZvSrLik99WWqyMhRtbe8V5hpx5iLgdcSvM/S2wg==
 
 collection-visit@^1.0.0:
   version "1.0.0"
