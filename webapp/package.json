@@ -9,7 +9,7 @@
     "coffeescript": "1.12.7",
     "jquery": "^3.2.1",
     "local-time": "^2.0.0",
-    "marked": "^0.3.19",
+    "marked": "^0.7.0",
     "moment": "^2.19.3",
     "mousetrap": "^1.6.1",
     "normalize.css": "^7.0.0",
