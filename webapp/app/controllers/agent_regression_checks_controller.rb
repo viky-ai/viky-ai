@@ -93,7 +93,7 @@ class AgentRegressionChecksController < ApplicationController
 
     def notify_ui
       ActionCable.server.broadcast(
-        "agent_regression_checks_channel_#{@agent.id}",
+        "agent_console_channel_#{@agent.id}",
         agent_id: @agent.id,
         timestamp: Time.now.to_f * 1000,
         payload: JSON.parse(@agent.regression_checks_to_json)
