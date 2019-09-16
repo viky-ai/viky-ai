@@ -57,6 +57,10 @@
         <% end %>
       </tbody>
     </table>
+    <div class="details-pagination">
+      <%= paginate @agent_requests, window: 1, param_name: :requests_page %>
+      <p class="pagination-info"><%= page_entries_info @agent_requests %></p>
+    </div>
   </div>
   <div class="card profile-details__expressions">
     <h2>Formulations and Entities per agent</h2>

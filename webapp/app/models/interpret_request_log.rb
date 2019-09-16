@@ -77,8 +77,8 @@ class InterpretRequestLog
             }
             ],
           "must_not": {
-            "term": {
-              "context.client_type": "console"
+            "terms": {
+              "context.client_type": ["console", "regression_test"]
             }
           }
         }
@@ -110,8 +110,8 @@ class InterpretRequestLog
             { "match": { "status": status } }
           ],
           "must_not": {
-            "term": {
-              "context.client_type": "console"
+            "terms": {
+              "context.client_type": ["console", "regression_test"]
             }
           }
         }

@@ -2,6 +2,7 @@ class ProfilesController < ApplicationController
   before_action :set_profile
 
   def show
+    p "controller params: #{params}"
     @to = DateTime.now
     @from = (DateTime.now - 30.days).beginning_of_day
     @processed_requests = InterpretRequestLog.requests_over_time(@from, @to, @profile.id, 200)
@@ -20,7 +21,8 @@ class ProfilesController < ApplicationController
         to: @to
       }
     }
-    @agent_requests = InterpretRequestLog.requests_over_agents(@profile.id, 503, request_aggs)
+    requests_per_agent = InterpretRequestLog.requests_over_agents(@profile.id, 503, request_aggs)
+    @agent_requests = paginate_requests(requests_per_agent, 1, params[:requests_page])
     @expressions_count = Agent
                           .select('agents.id, (coalesce(COUNT(interpretations.id),0) + coalesce(SUM(entities_lists.entities_count),0)) as total')
                           .where(owner_id: @profile.id)
@@ -86,6 +88,14 @@ class ProfilesController < ApplicationController
 
     def user_without_password_params
       params.require(:profile).permit(:email, :name, :username, :bio, :image, :remove_image)
+    end
+
+    def paginate_requests(requests_array, per_page, page)
+      page ||= 1
+      start_index = per_page * (page.to_i - 1)
+      end_index = start_index + (per_page -1) 
+      end_index = end_index >= requests_array.size ? -1 : end_index
+      Kaminari.paginate_array(requests_array[start_index..end_index], total_count: requests_array.size).page(page.to_i).per(per_page)
     end
 
 end
