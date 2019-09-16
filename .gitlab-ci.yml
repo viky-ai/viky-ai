@@ -200,6 +200,7 @@ deploy_dev:
     NAMESPACE: $KUBE_NAMESPACE
   before_script:
     # Init helm
+    - echo "$KUBE_NAMESPACE"
     - export HELM_HOST="localhost:44134"
     - helm init --client-only --wait
     - auto-deploy ensure_namespace
