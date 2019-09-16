@@ -22,6 +22,9 @@ variables:
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
   DOCKER_IMAGE_TOOLS_RUBY: $CI_REGISTRY_IMAGE/tools_ruby_base
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
+  # Needed for Gitlab Managed
+  TILLER_NAMESPACE: ${KUBE_NAMESPACE}
+  HELM_HOST: "localhost:44134"
 
 # Build docker image
 
@@ -178,41 +181,38 @@ deploy_dev:
   except:
     - master
     - tags
-  image: dtzar/helm-kubectl:2.13.1
+  image: "registry.gitlab.com/gitlab-org/cluster-integration/auto-deploy-image:v0.1.0"
   dependencies:
     - elastic_keystore
     - build_webapp
     - build_nlp
   environment:
     name: ${CI_COMMIT_REF_NAME}
-    url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
-    # on_stop: delete_env
+    url: https://viky-${KUBE_NAMESPACE}-kube.viky.ai
+    on_stop: delete_env
   variables:
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
-    NAMESPACE: viky-${CI_ENVIRONMENT_SLUG}
-    VIKY_DOMAIN: viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
-  script:
-    - export KUBECONFIG=$KUBECONFIG
-    - echo "Init helm ..."
+    VIKY_DOMAIN: viky-${KUBE_NAMESPACE}-kube.viky.ai
+  before_script:
+    # Init helm
     - helm init --client-only --wait
-    - echo "Create namespace"
-    - kubectl create namespace "${NAMESPACE}" || true
-    - echo "Create old secrets"
-    - kubectl delete secret es-keystore-secret --namespace "${NAMESPACE}" || true
-    - kubectl delete secret pertimm-registry --namespace "${NAMESPACE}" || true
-    - echo "Create Pertimm Registry Secret"
-    - kubectl create secret docker-registry pertimm-registry --namespace "${NAMESPACE}" --docker-server="${PERTIMM_REGISTRY_URL}" --docker-username="${PERTIMM_REGISTRY_USERNAME}" --docker-password="${PERTIMM_REGISTRY_PASSWORD}" --docker-email="${PERTIMM_REGISTRY_EMAIL}" || true
+    - auto-deploy ensure_namespace
+    - auto-deploy initialize_tiller
+    - auto-deploy create_secret
     - echo "Create ES Keystore secret"
-    - kubectl create secret generic es-keystore-secret --namespace "${NAMESPACE}" --from-file "elasticsearch.keystore"  || true
+    - kubectl create secret generic es-keystore-secret --namespace "${KUBE_NAMESPACE}" --from-file "elasticsearch.keystore"  || true
+    # Go to Kubernetes directory
+    - cd deployment/kubernetes/
     - echo "Generate Override values"
-    - deployment/kubernetes/bin/generateOverrideValuesFile.sh
-    - echo "Deploy Viky Infrastructure"
+    - bin/generateOverrideValuesFile.sh
+  script:
+    # Deploy Viky Infrastructure
     - cat custom-values.yml
-    - helm upgrade --force --wait --values custom-values.yml,deployment/kubernetes/viky-infra/custom-values/production.yaml --install "${NAMESPACE}-infra" --timeout 600 --namespace "${NAMESPACE}" deployment/kubernetes/viky-infra/
-    - echo "Deploy Viky Platform"
-    - helm upgrade --force --wait --values custom-values.yml,deployment/kubernetes/viky-platform/custom-values/production.yaml --install "${NAMESPACE}-platform" --namespace "${NAMESPACE}" deployment/kubernetes/viky-platform/
+    - helm upgrade --force --wait --values custom-values.yml,viky-infra/custom-values/production.yaml --install "${KUBE_NAMESPACE}-infra" --timeout 600 --namespace "${KUBE_NAMESPACE}" viky-infra/
+    # Deploy Viky Platform
+    - helm upgrade --force --wait --values custom-values.yml,viky-platform/custom-values/production.yaml --install "${KUBE_NAMESPACE}-platform" --namespace "${KUBE_NAMESPACE}" viky-platform/
 
 # Deploy master on rancher preprod
 deploy_preprod:
@@ -257,7 +257,6 @@ deploy_preprod:
     - helm upgrade --force --wait --values custom-values.yml,deployment/kubernetes/viky-infra/custom-values/production.yaml --install "${NAMESPACE}-infra" --timeout 600 --namespace "${NAMESPACE}" deployment/kubernetes/viky-infra/
     - echo "Deploy Viky Platform"
     - helm upgrade --force --wait --values custom-values.yml,deployment/kubernetes/viky-platform/custom-values/production.yaml --install "${NAMESPACE}-platform" --namespace "${NAMESPACE}" deployment/kubernetes/viky-platform/
-
 
 # remove environment
 delete_env:
