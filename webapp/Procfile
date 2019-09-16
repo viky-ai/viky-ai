@@ -6,6 +6,6 @@ workers:  bundle exec sidekiq -C config/sidekiq.yml -L ./log/sidekiq.log
 webpack:  ./bin/webpack-dev-server
 web:      bundle exec rails s -p 3000 -b 0.0.0.0
 nls:      ./bin/foreman_nls.sh $MY_CURRENT_GIT_BRANCH
-stats:    docker kill viky-stats01-dev ; docker run -p 9200:9200 -v $(pwd)/backups:/backup_data -e "path.repo=/backup_data" -e "discovery.type=single-node" -e "node.name=viky-stats01-dev"  -e "ES_JAVA_OPTS=-Xms128m -Xmx392m" --rm --mount 'type=volume,src=vikyapp_stats01_dev,dst=/usr/share/elasticsearch/data'  --name viky-stats01-dev  docker.elastic.co/elasticsearch/elasticsearch:6.6.1
+stats:    docker kill viky-stats01-dev ; docker run -p 9200:9200 -v $(pwd)/backups:/backup_data -e "path.repo=/backup_data" -e "discovery.type=single-node" -e "node.name=viky-stats01-dev"  -e "ES_JAVA_OPTS=-Xms128m -Xmx392m" --rm --mount 'type=volume,src=vikyapp_stats01_dev,dst=/usr/share/elasticsearch/data'  --name viky-stats01-dev  docker.elastic.co/elasticsearch/elasticsearch:7.3.2
 cerebro:      docker kill viky-cerebro-dev;  sleep 1; docker run -p 9201:9000 --link viky-stats01-dev --rm --name viky-cerebro-dev yannart/cerebro:latest ./bin/cerebro -Dhosts.0.host=http://viky-stats01-dev:9200
-kibana:       docker kill viky-kibana;       sleep 5; docker run -p 5601:5601 --link viky-stats01-dev  -e "SERVER_BASEPATH=/kibana" -e "SERVER_REWRITEBASEPATH=true" -e "ELASTICSEARCH_URL=http://viky-stats01-dev:9200" --rm --name viky-kibana docker.elastic.co/kibana/kibana:6.6.1
+kibana:       docker kill viky-kibana;       sleep 5; docker run -p 5601:5601 --link viky-stats01-dev  -e "SERVER_BASEPATH=/kibana" -e "SERVER_REWRITEBASEPATH=true" -e "ELASTICSEARCH_HOSTS=http://viky-stats01-dev:9200" --rm --name viky-kibana docker.elastic.co/kibana/kibana:7.3.2

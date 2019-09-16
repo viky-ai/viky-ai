@@ -5,73 +5,71 @@
     "search-stats-interpret_request_log": {}
   },
   "mappings": {
-    "log": {
-      "properties": {
-        "timestamp": {
-          "type": "date"
-        },
-        "agent_id": {
-          "type": "keyword"
-        },
-        "agent_slug": {
-          "type": "keyword"
-        },
-        "language": {
-          "type": "keyword"
-        },
-        "spellchecking": {
-          "type": "keyword"
-        },
-        "now": {
-          "type": "date"
-        },
-        "owner_id": {
-          "type": "keyword"
-        },
-        "sentence": {
-          "type": "text",
-          "fields": {
-            "keyword": {
-              "type": "keyword",
-              "ignore_above": 256
-            }
+    "properties": {
+      "timestamp": {
+        "type": "date"
+      },
+      "agent_id": {
+        "type": "keyword"
+      },
+      "agent_slug": {
+        "type": "keyword"
+      },
+      "language": {
+        "type": "keyword"
+      },
+      "spellchecking": {
+        "type": "keyword"
+      },
+      "now": {
+        "type": "date"
+      },
+      "owner_id": {
+        "type": "keyword"
+      },
+      "sentence": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
           }
-        },
-        "status": {
-          "type": "integer"
-        },
-        "context":{
-          "type": "object"
-        },
-        "body": {
-          "properties": {
-            "interpretations": {
-              "properties": {
-                "id": {
-                  "type": "keyword"
-                },
-                "package": {
-                  "type": "keyword"
-                },
-                "score": {
-                  "type": "float"
-                },
-                "slug": {
-                  "type": "keyword"
-                },
-                "solution": {
-                  "type": "object",
-                  "enabled": false
-                },
-                "explanation": {
-                  "type": "object",
-                  "enabled": false
-                }
+        }
+      },
+      "status": {
+        "type": "integer"
+      },
+      "context":{
+        "type": "object"
+      },
+      "body": {
+        "properties": {
+          "interpretations": {
+            "properties": {
+              "id": {
+                "type": "keyword"
+              },
+              "package": {
+                "type": "keyword"
+              },
+              "score": {
+                "type": "float"
+              },
+              "slug": {
+                "type": "keyword"
+              },
+              "solution": {
+                "type": "object",
+                "enabled": false
+              },
+              "explanation": {
+                "type": "object",
+                "enabled": false
               }
-            },
-            "errors": {
-              "type": "text"
             }
+          },
+          "errors": {
+            "type": "text"
           }
         }
       }

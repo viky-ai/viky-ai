@@ -107,12 +107,12 @@ GEM
       railties (>= 3.2, < 6.1)
     down (4.8.1)
       addressable (~> 2.5)
-    elasticsearch (6.8.0)
-      elasticsearch-api (= 6.8.0)
-      elasticsearch-transport (= 6.8.0)
-    elasticsearch-api (6.8.0)
+    elasticsearch (7.3.0)
+      elasticsearch-api (= 7.3.0)
+      elasticsearch-transport (= 7.3.0)
+    elasticsearch-api (7.3.0)
       multi_json
-    elasticsearch-transport (6.8.0)
+    elasticsearch-transport (7.3.0)
       faraday
       multi_json
     erubi (1.8.0)
@@ -391,7 +391,7 @@ DEPENDENCIES
   devise (~> 4.7.1)
   devise_invitable (~> 2.0.1)
   dotenv-rails (~> 2.1, >= 2.1.1)
-  elasticsearch (~> 6.0)
+  elasticsearch (~> 7.3)
   foreman
   friendly_id (~> 5.2.5)
   html-pipeline

@@ -1,7 +1,5 @@
 class InterpretRequestLogClient
 
-  INDEX_TYPE = 'log'.freeze
-
   def self.long_waiting_client
     InterpretRequestLogClient.new(
       transport_options: {
@@ -27,11 +25,11 @@ class InterpretRequestLogClient
   end
 
   def get_document(id)
-    @client.get index: search_alias_name, type: INDEX_TYPE, id: id
+    @client.get index: search_alias_name, id: id
   end
 
   def save_document(json_document, id)
-    @client.index index: index_alias_name, type: INDEX_TYPE, body: json_document, id: id, refresh: @refresh_on_save
+    @client.index index: index_alias_name, body: json_document, id: id, refresh: @refresh_on_save
   end
 
   def count_documents(params = {})
@@ -42,7 +40,6 @@ class InterpretRequestLogClient
   def search_documents(query, size)
     @client.search(
       index: search_alias_name,
-      type: INDEX_TYPE,
       body: { query: query },
       size: size
     )
