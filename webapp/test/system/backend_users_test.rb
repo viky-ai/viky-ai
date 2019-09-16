@@ -32,7 +32,6 @@ class BackendUsersTest < ApplicationSystemTestCase
   test "Users can be filtered" do
     admin_login
 
-    find("nav.h-nav .dropdown__trigger").click
     click_link("Users management")
 
     find(".dropdown__trigger", text: "All").click
@@ -49,7 +48,6 @@ class BackendUsersTest < ApplicationSystemTestCase
   test "Users can be sorted by email" do
     admin_login
 
-    find("nav.h-nav .dropdown__trigger").click
     click_link("Users management")
 
     find(".dropdown__trigger", text: "Sort by last log in").click
@@ -75,7 +73,6 @@ class BackendUsersTest < ApplicationSystemTestCase
   test "Users can be found by search" do
     admin_login
 
-    find("nav.h-nav .dropdown__trigger").click
     click_link("Users management")
 
     assert has_content?("Backend / User management")
@@ -93,7 +90,6 @@ class BackendUsersTest < ApplicationSystemTestCase
   test "Users can be found by search trimmed" do
     admin_login
 
-    find("nav.h-nav .dropdown__trigger").click
     click_link("Users management")
 
     assert has_content?("Backend / User management")
@@ -113,7 +109,6 @@ class BackendUsersTest < ApplicationSystemTestCase
 
     admin_login
 
-    find("nav.h-nav .dropdown__trigger").click
     click_link("Users management")
     assert has_content?("#{before_count} users")
 
@@ -139,7 +134,6 @@ class BackendUsersTest < ApplicationSystemTestCase
     before_count = User.count
     admin_login
 
-    find("nav.h-nav .dropdown__trigger").click
     click_link("Users management")
     assert has_content?("#{before_count} users")
 
@@ -182,7 +176,6 @@ class BackendUsersTest < ApplicationSystemTestCase
   test "Invitations can be resent to not confirmed users only" do
     admin_login
 
-    find("nav.h-nav .dropdown__trigger").click
     click_link("Users management")
 
     assert has_content?("7 users")
@@ -209,7 +202,6 @@ class BackendUsersTest < ApplicationSystemTestCase
       assert has_text?("admin")
     end
 
-    find("nav.h-nav .dropdown__trigger").click
     click_link("Users management")
     assert has_text?("edit_on_agent_weather@viky.ai")
     within("table") do
@@ -230,5 +222,4 @@ class BackendUsersTest < ApplicationSystemTestCase
       assert has_text?("admin")
     end
   end
-
 end
