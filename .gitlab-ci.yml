@@ -197,8 +197,10 @@ deploy_dev:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
     VIKY_DOMAIN: viky-${KUBE_NAMESPACE}-kube.viky.ai
+    NAMESPACE: $KUBE_NAMESPACE
   before_script:
     # Init helm
+    - export HELM_HOST="localhost:44134"
     - helm init --client-only --wait
     - auto-deploy ensure_namespace
     - auto-deploy initialize_tiller
