@@ -1,6 +1,9 @@
 {
   "version": 5,
   "index_patterns": "stats-interpret_request_log-*",
+  "settings": {
+    "number_of_shards": 2
+  },
   "aliases": {
     "search-stats-interpret_request_log": {}
   },

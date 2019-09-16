@@ -8,7 +8,7 @@ class StatisticsIndexTemplate
     @index_name = "#{@configuration['index_patterns'][0..-3]}-#{@state}"
     @configuration['index_patterns'] = "#{@index_name}-*"
     if @state == 'inactive'
-      @configuration[:settings] = {
+      @configuration['settings'] = {
         number_of_shards: 1,
         number_of_replicas: 0,
         codec: 'best_compression'
