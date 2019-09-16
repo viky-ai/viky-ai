@@ -5798,9 +5798,10 @@ sort-keys@^1.0.0:
   dependencies:
     is-plain-obj "^1.0.0"
 
-sortablejs@^1.7.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/sortablejs/-/sortablejs-1.7.0.tgz#80a2b2370abd568e1cec8c271131ef30a904fa28"
+sortablejs@^1.7.0, sortablejs@^1.9.0:
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/sortablejs/-/sortablejs-1.10.0.tgz#0ebc054acff2486569194a2f975b2b145dd5e7d6"
+  integrity sha512-+e0YakK1BxgEZpf9l9UiFaiQ8ZOBn1p/4qkkXr8QDVmYyCrUDTyDRRGm0AgW4E4cD0wtgxJ6yzIRkSPUwqhuhg==
 
 source-list-map@^2.0.0:
   version "2.0.0"
@@ -6509,11 +6510,11 @@ vue@^2.2.4, vue@^2.5.22:
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.22.tgz#3bf88041af08b8539c37b268b70ca79245e9cc30"
 
 vuedraggable@^2.17.0:
-  version "2.17.0"
-  resolved "https://registry.yarnpkg.com/vuedraggable/-/vuedraggable-2.17.0.tgz#489c16c9bcb9eb06f441944d3c52e5f2bb7060f9"
-  integrity sha512-TAC5tJTSbHSINQCSB59qHnuzT0Ad+E3IgvSWuA1e9UaebD8DxKaY1tCdvL3XvuLoaM3wc1dhpP/NbjpdxYsrng==
+  version "2.23.0"
+  resolved "https://registry.yarnpkg.com/vuedraggable/-/vuedraggable-2.23.0.tgz#1f4a5a601675a5dbf0d96ee61aebfffa43445262"
+  integrity sha512-RgdH16k43WNoxyRcv/OarB/DZh9SY5TYthk9TS4YiHXpelD1DytEG0phLAXiXx5EhsmdH8ltSWxklGa4g1WTCw==
   dependencies:
-    sortablejs "^1.7.0"
+    sortablejs "^1.9.0"
 
 watchpack@^1.4.0:
   version "1.4.0"
