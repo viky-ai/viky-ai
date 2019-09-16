@@ -98,6 +98,7 @@ struct og_nls_response
 
   json_t *default_body;
   json_t *body;
+  json_t *custom_errors;
 };
 
 enum lt_running_state

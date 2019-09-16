@@ -110,6 +110,7 @@ DEFPUBLIC(og_nlp) OgNlpInit(struct og_nlp_param *param);
 DEFPUBLIC(og_status) OgNlpFlush(og_nlp hnlp);
 
 DEFPUBLIC(og_nlp_th) OgNlpThreadedInit(og_nlp ctrl_nlp, struct og_nlp_threaded_param *param);
+DEFPUBLIC(og_status) OgNlpThreadedGetCustomError(og_nlp_th ctrl_nlp_th, json_t **json_answer_error);
 DEFPUBLIC(og_status) OgNlpThreadedReset(og_nlp_th ctrl_nlp_th);
 DEFPUBLIC(og_status) OgNlpThreadedFlush(og_nlp_th ctrl_nlp_th);
 

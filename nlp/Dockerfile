@@ -46,12 +46,7 @@ RUN factory.pl -s bu2_nls   build
 # ============================================================================
 # Setup a lightweigth image only with minimal binaries
 # ============================================================================
-FROM ruby:2.4-slim-stretch AS run_image
-
-# TODO Mouadh HSOUMI
-# Demander à brice pourquoi on a mis --deployment dans le bundle install
-# https://github.com/docker-library/ruby/issues/288
-ENV BUNDLE_PATH__SYSTEM=false
+FROM ruby:2.4-slim-stretch AS ruby_build_image
 
 # Add libxml2 needed for XSD validation
 # Add curl needed for healthcheck
@@ -68,12 +63,6 @@ RUN set -ex; \
     ; \
     rm -rf /var/lib/apt/lists/*
 
-# dockerize : https://github.com/jwilder/dockerize
-ENV DOCKERIZE_VERSION v0.6.0
-RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-
 WORKDIR /
 
 # Firstly bundle install (faster build)
@@ -83,10 +72,44 @@ COPY ./nlp_route/Gemfile.lock /nlp_route/
 WORKDIR /nlp_route/
 
 # Production dependencies
-RUN bundle install --without development test --deployment --jobs=$(nproc)
+RUN set -ex; \
+    bundle install --without development test --jobs=$(nproc) ;\
+    find /usr/local/bundle/cache/ -name "*.gem"  -delete ;\
+    find /usr/local/bundle/gems/  -name "*.c"    -delete ;\
+    find /usr/local/bundle/gems/  -name "*.o"    -delete
+
+
+
+# ============================================================================
+# Setup a lightweigth image only with minimal binaries
+# ============================================================================
+FROM ruby:2.4-slim-stretch AS run_image
+
+# Add libxml2 needed for XSD validation
+# Add curl needed for healthcheck
+RUN set -ex; \
+    apt-get update ; \
+    apt-get install -y --no-install-recommends \
+      ca-certificates \
+      libxml2 \
+      wget \
+    ; \
+    rm -rf /var/lib/apt/lists/*
+
+# dockerize : https://github.com/jwilder/dockerize
+ENV DOCKERIZE_VERSION v0.6.0
+RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
+# Copy dependencies
+COPY --from=ruby_build_image  /nlp_route         /nlp_route
+COPY --from=ruby_build_image  /usr/local/bundle  /usr/local/bundle
 
 # Copy application code
 COPY ./nlp_route/ /nlp_route/
+
+WORKDIR /nlp_route/
 
 COPY --from=build_image /builds/nls/ship /
 RUN ln -sfn `readlink -f /nls-* | head -n 1` /nls

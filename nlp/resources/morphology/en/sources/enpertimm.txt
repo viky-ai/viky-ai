@@ -11275,6 +11275,7 @@ canary::=+Nc-s
 cancel::=+Nc-s
 cancel::=+Vmn----
 canceled::cancel+Vmis-s-
+cancelled::cancel+Vmis-s-
 canceled::cancel+Vmps-sm
 canceling::cancel+Vmpp---
 cancellation::=+Nc-s

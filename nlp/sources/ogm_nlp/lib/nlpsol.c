@@ -26,7 +26,7 @@ static og_status NlpSolutionCleanRecursive(og_nlp_th ctrl_nlp_th, struct request
 og_status NlpSolutionCalculate(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
   IFE(NlpSolutionClean(ctrl_nlp_th, request_expression));
-  IFE(NlpSolutionCalculatePositions(ctrl_nlp_th,request_expression));
+  IFE(NlpSolutionCalculatePositions(ctrl_nlp_th, request_expression));
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceSolution)
   {
@@ -251,7 +251,7 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
           Irequest_expression);
       IFN(sub_request_expression) DPcErr;
 
-      json_t * sub_solution = sub_request_expression->json_solution;
+      json_t *sub_solution = sub_request_expression->json_solution;
       if (sub_solution == NULL)
       {
         sub_solution = json_null();
@@ -271,8 +271,8 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
 
       if (alias_solutions_nb >= DOgAliasSolutionSize)
       {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
-            alias_solutions_nb, DOgAliasSolutionSize);
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: alias_solutions_nb (%d) >="
+            " DOgAliasSolutionSize (%d)", alias_solutions_nb, DOgAliasSolutionSize);
         DPcErr;
 
       }
@@ -300,7 +300,7 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
             request_input_part->Irequest_expression);
         IFN(sub_request_expression) DPcErr;
 
-        json_t * sub_solution = sub_request_expression->json_solution;
+        json_t *sub_solution = sub_request_expression->json_solution;
         if (sub_solution == NULL)
         {
           sub_solution = json_null();
@@ -315,8 +315,8 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
 
         if (alias_solutions_nb >= DOgAliasSolutionSize)
         {
-          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
-              alias_solutions_nb, DOgAliasSolutionSize);
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: alias_solutions_nb (%d) >="
+              " DOgAliasSolutionSize (%d)", alias_solutions_nb, DOgAliasSolutionSize);
           DPcErr;
 
         }
@@ -352,8 +352,8 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
               alias->alias, solution);
           if (alias_solutions_nb >= DOgAliasSolutionSize)
           {
-            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
-                alias_solutions_nb, DOgAliasSolutionSize);
+            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: alias_solutions_nb (%d) >="
+                " DOgAliasSolutionSize (%d)", alias_solutions_nb, DOgAliasSolutionSize);
             DPcErr;
 
           }
@@ -376,8 +376,8 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
               alias->alias, solution);
           if (alias_solutions_nb >= DOgAliasSolutionSize)
           {
-            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
-                alias_solutions_nb, DOgAliasSolutionSize);
+            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: alias_solutions_nb (%d) >="
+                " DOgAliasSolutionSize (%d)", alias_solutions_nb, DOgAliasSolutionSize);
             DPcErr;
 
           }
@@ -422,8 +422,8 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
 
     if (alias_solutions_nb >= DOgAliasSolutionSize)
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
-          alias_solutions_nb, DOgAliasSolutionSize);
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: alias_solutions_nb (%d) >="
+          " DOgAliasSolutionSize (%d)", alias_solutions_nb, DOgAliasSolutionSize);
       DPcErr;
 
     }
@@ -764,9 +764,20 @@ static og_status NlpSolutionComputeJSRecursive(og_nlp_th ctrl_nlp_th, struct req
       IF(NlpJsEval(ctrl_nlp_th, string_value_js_size, string_value_js, json_solution_computed_value))
       {
         struct expression *ex = request_expression->expression;
-        NlpThrowErrorTh(ctrl_nlp_th,
-            "NlpSolutionComputeJSRecursive : Error creating json_solution_computed_value for expression '%s' '%s' in '%s' '%s'",
-            ex->text, ex->interpretation->id, ex->interpretation->slug, ex->interpretation->id);
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionComputeJSRecursive : Error creating json_solution_computed_value "
+            "for expression '%s' '%s' in '%s'", ex->text, ex->interpretation->id, ex->interpretation->slug);
+
+        // add error location
+        json_t *js_error = json_object_get(ctrl_nlp_th->json_answer_error, "errors_javascript");
+        if (js_error)
+        {
+          json_t *json_location = json_object();
+          json_object_set_new(js_error, "solution_location", json_location);
+          json_object_set_new(json_location, "id", json_string(ex->interpretation->id));
+          json_object_set_new(json_location, "slug", json_string(ex->interpretation->slug));
+          json_object_set_new(json_location, "position", json_integer(ex->pos));
+          json_object_set_new(json_location, "line_number", json_integer(ctrl_nlp_th->js->last_error_linenumber));
+        }
         DPcErr;
       }
 
@@ -778,8 +789,8 @@ static og_status NlpSolutionComputeJSRecursive(og_nlp_th ctrl_nlp_th, struct req
   return solution_built;
 }
 
-static og_status NlpSolutionBuildRawTextToString(og_nlp_th ctrl_nlp_th, int buffer_size, gchar buffer[],
-    int raw_size, og_string raw)
+static og_status NlpSolutionBuildRawTextToString(og_nlp_th ctrl_nlp_th, int buffer_size, gchar buffer[], int raw_size,
+    og_string raw)
 {
   // 6 is max the size of a char in UTF-8
   int max_buffer_size = buffer_size - 6;
@@ -884,7 +895,7 @@ static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_e
   // Adding the "raw_text" variable for use in javascript
   unsigned char *raw_text_name = "raw_text";
 
-  IFE(NlpSolutionCalculatePositions(ctrl_nlp_th,request_expression));
+  IFE(NlpSolutionCalculatePositions(ctrl_nlp_th, request_expression));
 
   int start_position = request_expression->start_position_byte;
   int end_position = request_expression->end_position_byte;
@@ -892,7 +903,9 @@ static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_e
 
   const unsigned char *raw_text_string = ctrl_nlp_th->request_sentence + start_position;
   char raw_text_string_value[DOgNlpMaxRawTextSize];
-  IFE(NlpSolutionBuildRawTextToString(ctrl_nlp_th, DOgNlpMaxRawTextSize, raw_text_string_value, (length_position > DOgNlpMaxRawTextSize ? DOgNlpMaxRawTextSize : length_position), raw_text_string));
+  og_status status = NlpSolutionBuildRawTextToString(ctrl_nlp_th, DOgNlpMaxRawTextSize, raw_text_string_value,
+      (length_position > DOgNlpMaxRawTextSize ? DOgNlpMaxRawTextSize : length_position), raw_text_string);
+  IFE(status);
 
   IFE(NlpJsAddVariable(ctrl_nlp_th, raw_text_name, raw_text_string_value, -1));
   NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: raw_text is '%s'", raw_text_string_value);
@@ -915,15 +928,17 @@ static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_e
   const unsigned char *request_raw_text_string = ctrl_nlp_th->request_sentence;
   length_position = strlen(ctrl_nlp_th->request_sentence);
 
-  char request_raw_text_value[DOgNlpMaxRequestRawTextSize*2+9];
-  IFE(NlpSolutionBuildRawTextToString(ctrl_nlp_th, DOgNlpMaxRequestRawTextSize, request_raw_text_value, (length_position > DOgNlpMaxRequestRawTextSize ? DOgNlpMaxRequestRawTextSize : length_position), request_raw_text_string));
+  char request_raw_text_value[DOgNlpMaxRequestRawTextSize * 2 + 9];
+  status = NlpSolutionBuildRawTextToString(ctrl_nlp_th, DOgNlpMaxRequestRawTextSize, request_raw_text_value,
+      (length_position > DOgNlpMaxRequestRawTextSize ? DOgNlpMaxRequestRawTextSize : length_position),
+      request_raw_text_string);
+  IFE(status);
 
   IFE(NlpJsAddVariable(ctrl_nlp_th, request_raw_text_name, request_raw_text_value, -1));
   NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: request_raw_text is '%s'", request_raw_text_value);
 
   DONE;
 }
-
 
 static og_status NlpSolutionBuildRawTextGetAnyPositions(og_nlp_th ctrl_nlp_th,
     struct request_expression *request_expression, int *pstart_position_any, int *pend_position_any)
@@ -964,7 +979,6 @@ static og_status NlpSolutionBuildRawTextGetAnyPositions(og_nlp_th ctrl_nlp_th,
   }
   DONE;
 }
-
 
 static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_package_solution)
@@ -1016,7 +1030,16 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
   json_t *json_new_solution = json_deep_copy(json_package_solution);
 
   json_t *json_solution_computed_value = NULL;
-  IFE(NlpSolutionComputeJSRecursive(ctrl_nlp_th, request_expression, json_new_solution, &json_solution_computed_value));
+  IF(NlpSolutionComputeJSRecursive(ctrl_nlp_th, request_expression, json_new_solution, &json_solution_computed_value))
+  {
+    if (json_solution_computed_value != json_new_solution)
+    {
+      json_decrefp(&json_solution_computed_value);
+    }
+    json_decrefp(&json_new_solution);
+
+    DPcErr;
+  }
 
   if (json_solution_computed_value != NULL)
   {

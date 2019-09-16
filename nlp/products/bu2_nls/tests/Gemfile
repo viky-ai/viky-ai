@@ -1,14 +1,17 @@
 source 'https://rubygems.org/'
 
-gem 'activesupport'
+gem 'bundler', '~>1.17.0'
+
+gem 'activesupport', '~>5.2'
 
 gem 'dotenv'
-gem 'minitest', '~>5.10.3'
+gem 'minitest'
 gem 'minitest-reporters'
+gem 'parallel'
+gem 'redis', '~>3.3.0'
 gem 'rest-client'
 
 gem 'rake'
-gem 'parallel'
 
 gem 'awesome_print'
 gem 'term-ansicolor'
@@ -18,5 +21,4 @@ gem 'uuidtools'
 gem 'm'
 
 gem 'mocha'
-gem 'simplecov', :require => false
-gem 'redis', '~>3.3.0'
+gem 'simplecov', require: false
