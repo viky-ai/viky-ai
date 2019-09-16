@@ -11,7 +11,7 @@
     "jquery": "^3.2.1",
     "local-time": "^2.0.0",
     "marked": "^0.7.0",
-    "moment": "^2.19.3",
+    "moment": "^2.24.0",
     "mousetrap": "^1.6.1",
     "normalize.css": "^7.0.0",
     "popper.js": "^1.15.0",
