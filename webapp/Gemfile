@@ -66,8 +66,8 @@ gem 'mini_magick', '>= 4.3.5'
 
 # Markdown
 gem 'html-pipeline'
-gem "commonmarker", "~> 0.14", require: false
-gem "sanitize", "~> 2.0", require: false
+gem "commonmarker", "~> 0.16", require: false
+gem "sanitize", "~> 4.6", require: false
 gem "rinku", "~> 1.7", require: false
 
 # Graph

@@ -182,6 +182,8 @@ GEM
     nio4r (2.5.1)
     nokogiri (1.10.4)
       mini_portile2 (~> 2.4.0)
+    nokogumbo (1.5.0)
+      nokogiri
     oj (3.9.1)
     orm_adapter (0.5.0)
     pg (0.21.0)
@@ -272,8 +274,10 @@ GEM
       ffi (~> 1.9)
     ruby_dep (1.5.0)
     rubyzip (1.2.4)
-    sanitize (2.1.1)
+    sanitize (4.6.6)
+      crass (~> 1.0.2)
       nokogiri (>= 1.4.4)
+      nokogumbo (~> 1.4)
     sass (3.7.4)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
@@ -298,7 +302,7 @@ GEM
       rack (>= 1.5.0)
       rack-protection (>= 1.5.0)
       redis (>= 3.3.5, < 5)
-    simplecov (0.17.0)
+    simplecov (0.17.1)
       docile (~> 1.1)
       json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
@@ -370,7 +374,7 @@ DEPENDENCIES
   capybara
   clowne
   coffee-rails (~> 4.2)
-  commonmarker (~> 0.14)
+  commonmarker (~> 0.16)
   csv
   devise (~> 4.3.0)
   devise_invitable (~> 1.7.2)
@@ -401,7 +405,7 @@ DEPENDENCIES
   rest-client
   rgl
   rinku (~> 1.7)
-  sanitize (~> 2.0)
+  sanitize (~> 4.6)
   sass-rails (~> 5.0)
   selenium-webdriver
   shrine
