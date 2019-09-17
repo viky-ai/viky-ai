@@ -59,7 +59,11 @@ Rails.application.configure do
 
   # Use a different redis cache store in production.
   redis_cache_db = ENV.fetch("VIKYAPP_CACHE_REDIS_URL") { "redis://localhost:6379/0" }
-  config.cache_store = :redis_store, "#{redis_cache_db}/cache", { expires_in: 23.hours }
+  config.cache_store = :redis_cache_store, {
+    driver: :hiredis,
+    url: "#{redis_cache_db}/cache",
+    expires_in: 23.hours
+  }
 
   # Use a real queuing backend for Active Job (and separate queues per environment)
   # config.active_job.queue_adapter     = :resque

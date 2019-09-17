@@ -38,10 +38,9 @@ gem 'turbolinks', '~> 5'
 gem 'jbuilder', '~> 2.5'
 
 # Use Redis adapter to run Action Cable in production
-gem 'redis', '~> 3.0'
+gem 'redis', '~> 4.0'
+gem 'hiredis'
 
-# redis-rails provides a full set of stores (*Cache*, Session, HTTP Cache)
-gem 'redis-rails', '~> 5'
 gem 'local_time'
 
 # Use Sidekiq to manage background jobs
