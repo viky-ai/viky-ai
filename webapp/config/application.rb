@@ -52,8 +52,8 @@ module Webapp
     # Ping Pong Bot (Sinatra App)
     require "#{config.root}/lib/ping_pong_bot/app.rb"
 
-    # require "#{config.root}/app/middlewares/health_check.rb"
-    # config.middleware.insert_after Rails::Rack::Logger, HealthCheck
+    require "#{config.root}/app/middlewares/health_check.rb"
+    config.middleware.insert_after Rails::Rack::Logger, HealthCheck
 
     config.active_job.queue_adapter     = :sidekiq
     config.active_job.queue_name_prefix = "webapp"
