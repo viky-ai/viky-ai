@@ -8,83 +8,17 @@
     </a>
   </div>
 </header>
-<div class="profile-graphs">
-  <div class="card profile-graphs__requests">
-    <h2>
-      API Requests
-      <small>(From <%= l(@from, format: :long) %> to <%= l(@to, format: :long) %>)</small> 
-    </h2>
-    <div id="chart"></div>
+<div class="profile-row profile-row-graph">
+  <div class="profile-column">
+    <%= render 'quota_info' %>
+    <%= render 'expressions_graph' %>
   </div>
-
-  <div class="card profile-graphs__expressions">
-    <h2>Formulations and Entities</h2>
-    <div id="meter"></div>
-  </div>
+  <%= render 'requests_graph' %>
 </div>
 
-<div class="profile-details">
-  <div class="card profile-details__requests">
-    <h2>Rejected requests per agent</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Agent</th>
-          <th>Today</th>
-          <th>Last 10 days</th>
-          <th>Last 30 days</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @agent_requests.each do |requests| %>
-        <%# TODO: handle deleted agent %>
-        <% agent = Agent.find_by_id(requests['key']) %>
-        <% if agent %>
-          <tr>
-            <td>
-              <a href="<%= user_agent_path(agent.owner, agent)%>">
-                <strong>
-                    <%= agent.name %>
-                </strong>
-                <small><%= agent.slug %></small>
-              </a>
-            </td>
-            <td><%= requests['today']['doc_count'] %></td>
-            <td><%= requests['10_days']['doc_count'] %></td>
-            <td><%= requests['30_days']['doc_count'] %></td>
-          </tr>
-        <% end %> 
-        <% end %>
-      </tbody>
-    </table>
-    <div class="details-pagination">
-      <%= paginate @agent_requests, window: 1, param_name: :requests_page %>
-      <p class="pagination-info"><%= page_entries_info @agent_requests %></p>
-    </div>
-  </div>
-  <div class="card profile-details__expressions">
-    <h2>Formulations and Entities per agent</h2>
-    <table>
-      <tbody>
-        <% @expressions_count.each do |e|%>
-          <% agent = Agent.find(e.id) %>
-          <tr>
-            <td>
-              <a href="<%= user_agent_path(agent.owner, agent)%>">
-                <strong><%= agent.name %></strong>
-                <small><%= agent.slug %></small>
-              </a>
-            </td>
-            <td><%= e.total %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-    <div class="details-pagination">
-      <%= paginate @expressions_count, window: 1, param_name: :expressions_page %>
-      <p class="pagination-info"><%= page_entries_info @expressions_count %></p>
-    </div>
-  </div>
+<div class="profile-row profile-row-table">
+  <%= render 'requests_list' %>
+  <%= render 'expressions_list' %>
 </div>
 
 <script>

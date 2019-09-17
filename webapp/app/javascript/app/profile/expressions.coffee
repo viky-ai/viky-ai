@@ -12,13 +12,7 @@ class ExpressionsQuota
           endAngle: 135,
           dataLabels: {
             name: {
-              fontSize: '1.5em',
-              offsetY: 70,
-              color: '#888'
-            },
-            value: {
-              fontSize: '4em',
-              color: '#0086ea'
+              offsetY: 170,
             }
           }
         }

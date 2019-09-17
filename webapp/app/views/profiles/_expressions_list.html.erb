@@ -1,0 +1,23 @@
+<div class="card profile-details__expressions">
+  <h2><%= t('views.profile.expressions.list.title') %></h2>
+  <table>
+    <tbody>
+      <% @expressions_count.each do |e|%>
+        <% agent = Agent.find(e.id) %>
+        <tr>
+          <td>
+            <a href="<%= user_agent_path(agent.owner, agent)%>">
+              <strong><%= agent.name %></strong>
+              <small><%= agent.slug %></small>
+            </a>
+          </td>
+          <td><%= e.total %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <div class="table-pagination">
+    <%= paginate @expressions_count, window: 1, param_name: :expressions_page %>
+    <p class="pagination-info"><%= page_entries_info @expressions_count %></p>
+  </div>
+</div>

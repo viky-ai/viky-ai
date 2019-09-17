@@ -1,0 +1,11 @@
+ <div class="card">
+    <h2>
+      <%= t('views.profile.expressions.graph.title') %>
+      <small title="<%= t('views.profile.expressions.graph.help', limit: number_with_delimiter(Integer(ENV.fetch('VIKYAPP_EXPRESSION_QUOTA')))) %>">
+        <span class="icon icon--x-small">
+          <%= icon_information %>
+        </span>
+      </small>
+    </h2>
+    <div id="meter"></div>
+</div>

@@ -1,0 +1,16 @@
+<div class="card">
+  <h2>
+    <%= t('views.profile.quota.title') %>
+    <small title="<%= t('views.profile.quota.help') %>">
+      <span class="icon icon--x-small">
+        <%= icon_information %>
+      </span>
+    </small>
+  </h2>
+  <div class="card-content quota-info">
+    <p><%= t('views.profile.quota.limit_html', limit: Rack::Throttle.day_limit, time: 'day') %></p>
+    <p><%= t('views.profile.quota.limit_html', limit: Rack::Throttle.hour_limit, time: 'hour') %></p>
+    <p><%= t('views.profile.quota.limit_html', limit: Rack::Throttle.minute_limit, time: 'minute') %></p>
+    <p><%= t('views.profile.quota.limit_html', limit: Rack::Throttle.second_limit, time: 'second') %></p>
+  </div>
+</div>

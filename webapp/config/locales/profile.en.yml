@@ -27,3 +27,24 @@ en:
         errors_message: "Deletion failed: %{errors}."
       stop_switch:
         success_message: Welcome home!
+      quota:
+        title: Your requests quota
+        help: You are allowed a fixed number of API requests per time period
+        limit_html: <strong>%{limit}</strong> requests/%{time}
+      expressions:
+        graph:
+          title: Formulations and Entities
+          help: You are allowed a total of %{limit} formulations and entities for your agents
+        list:
+          title: Formulations and Entities per agent
+      requests:
+        graph:
+          title: API Requests
+          duration: (From %{from} to %{to})
+        list:
+          title: Rejected requests per agent
+          header:
+            agent: Agent
+            today: Today
+            ten_days: Last 10 days
+            thirty_days: Last 30 days
