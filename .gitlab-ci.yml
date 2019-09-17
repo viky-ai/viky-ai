@@ -189,14 +189,14 @@ deploy_dev:
     - build_webapp
     - build_nlp
   environment:
-    name: ${CI_COMMIT_REF_NAME}
-    url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
+    name: environment-test
+    url: https://viky-environment-test-kube.viky.ai
     # on_stop: delete_env
   variables:
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
-    VIKY_DOMAIN: viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
+    VIKY_DOMAIN: viky-environment-test-kube.viky.ai
     NAMESPACE: $KUBE_NAMESPACE
   before_script:
     - echo "$KUBE_NAMESPACE"
