@@ -200,8 +200,10 @@ deploy_dev:
     NAMESPACE: $KUBE_NAMESPACE
   before_script:
     - echo "$KUBE_NAMESPACE"
+    - echo "$KUBE_NAMESPACE"
     # Init helm
     - helm init --client-only --wait
+    - kubectl get pods --all-namespaces
     - auto-deploy ensure_namespace
     - auto-deploy initialize_tiller
     - auto-deploy create_secret
