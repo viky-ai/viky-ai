@@ -48,12 +48,12 @@ class Bot < ApplicationRecord
       )
       .joins('RIGHT OUTER JOIN bots ON "bots".id = "latest_session".bot_id')
       .where(id: bot_ids)
-      .order('CASE
+      .order(Arel.sql 'CASE
                 WHEN latest_session.session_updated_at is null THEN 1
                 ELSE 0
               END')
-      .order('"latest_session".session_updated_at DESC')
-      .order('"bots".updated_at DESC')
+      .order(Arel.sql '"latest_session".session_updated_at DESC')
+      .order(Arel.sql '"bots".updated_at DESC')
   end
 
   def self.ping(endpoint)

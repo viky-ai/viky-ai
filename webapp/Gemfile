@@ -1,18 +1,16 @@
 source 'https://rubygems.org'
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-git_source(:github) do |repo_name|
-  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
-  "https://github.com/#{repo_name}.git"
-end
+ruby '2.4.4'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.1.4'
+gem 'rails', '~> 5.2.3'
 
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 0.18'
 
 # Use Puma as the app server
-gem 'puma', '~> 3.7'
+gem 'puma', '~> 3.11'
 
 gem 'oj'
 
@@ -23,9 +21,9 @@ gem 'csv'
 gem 'dotenv-rails', '~> 2.1', '>= 2.1.1'
 
 # Use Devise as authentication solution
-gem 'devise', '~> 4.3.0'
-gem 'devise_invitable', '~> 1.7.2'
-gem 'friendly_id', '~> 5.1.0'
+gem 'devise', '~> 4.7.1'
+gem 'devise_invitable', '~> 2.0.1'
+gem 'friendly_id', '~> 5.2.5'
 
 # Allow admin to switch user
 gem 'pretender'
@@ -93,7 +91,6 @@ gem 'webpacker', '~> 4.0'
 
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'
-gem 'listen', '>= 3.0.5', '< 3.2'
 
 # Bulk inserts in active record
 gem 'activerecord-import'
@@ -101,10 +98,11 @@ gem 'activerecord-import'
 # YAJL JSON parsing and generation library
 gem 'yajl-ruby', require: 'yajl'
 
+# Reduces boot times through caching; required in config/boot.rb
+gem 'bootsnap', '>= 1.1.0', require: false
+
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-  gem 'capybara'
-  gem 'selenium-webdriver'
 end
 
 group :development do
@@ -115,6 +113,8 @@ group :development do
 end
 
 group :test do
+  gem 'capybara'
+  gem 'selenium-webdriver'
   gem 'mocha'
   gem 'shrine-memory'
   gem 'simplecov', require: false

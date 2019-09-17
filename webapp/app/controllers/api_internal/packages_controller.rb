@@ -6,7 +6,7 @@ class ApiInternal::PackagesController < ApiInternal::ApplicationController
     render json: Agent
         .left_outer_joins(:entities_lists)
         .group(:id)
-        .order('SUM(entities_lists.entities_count) DESC, agents.updated_at DESC, agents.id DESC')
+        .order(Arel.sql 'SUM(entities_lists.entities_count) DESC, agents.updated_at DESC, agents.id DESC')
         .pluck(:id)
         .to_json
   end

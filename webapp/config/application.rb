@@ -7,11 +7,10 @@ require 'csv'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-
 module Webapp
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 5.1
+    config.load_defaults 5.2
 
     # SMTP or POSTMARK
     smtp_enabled = ENV.fetch("SMTP_ENABLED") { false }
@@ -53,8 +52,8 @@ module Webapp
     # Ping Pong Bot (Sinatra App)
     require "#{config.root}/lib/ping_pong_bot/app.rb"
 
-    require "#{config.root}/app/middlewares/health_check.rb"
-    config.middleware.insert_after Rails::Rack::Logger, HealthCheck
+    # require "#{config.root}/app/middlewares/health_check.rb"
+    # config.middleware.insert_after Rails::Rack::Logger, HealthCheck
 
     config.active_job.queue_adapter     = :sidekiq
     config.active_job.queue_name_prefix = "webapp"
