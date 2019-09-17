@@ -189,8 +189,8 @@ deploy_dev:
     - build_webapp
     - build_nlp
   environment:
-    name: ${KUBE_NAMESPACE}
-    url: https://viky-${KUBE_NAMESPACE}-kube.viky.ai
+    name: test-environement-only-name
+    url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
     # on_stop: delete_env
   variables:
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
