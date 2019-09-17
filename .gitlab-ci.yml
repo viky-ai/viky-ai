@@ -189,19 +189,18 @@ deploy_dev:
     - build_webapp
     - build_nlp
   environment:
-    name: kube/test-environement
+    name: ${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-    # on_stop: delete_env
+    on_stop: delete_env
   variables:
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
-    VIKY_DOMAIN: viky-${KUBE_NAMESPACE}-kube.viky.ai
+    VIKY_DOMAIN: viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
     NAMESPACE: $KUBE_NAMESPACE
   before_script:
     - echo "$KUBE_NAMESPACE"
     # Init helm
-    - export HELM_HOST="localhost:44134"
     - helm init --client-only --wait
     - auto-deploy ensure_namespace
     - auto-deploy initialize_tiller
@@ -243,7 +242,6 @@ deploy_preprod:
     NAMESPACE: beta
     VIKY_DOMAIN: viky-beta-kube.viky.ai
   script:
-    - export KUBECONFIG=$KUBECONFIG
     - echo "Init helm ..."
     - helm init --client-only --wait
     - echo "Create namespace"
@@ -276,14 +274,14 @@ delete_env:
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
     action: stop
   variables:
-    NAMESPACE: viky-${CI_ENVIRONMENT_SLUG}
+    NAMESPACE: $KUBE_NAMESPACE
   script:
-    - export KUBECONFIG=$KUBECONFIG
-    - echo "Init helm ..."
     - helm init --client-only --wait
-    - helm delete --purge "${NAMESPACE}-platform"
-    - helm delete --purge "${NAMESPACE}-infra"
-    - kubectl delete namespace ${NAMESPACE}
+    - auto-deploy ensure_namespace
+    - auto-deploy initialize_tiller
+    - helm init --client-only --wait
+    - helm delete --purge "${KUBE_NAMESPACE}-platform"
+    - helm delete --purge "${KUBE_NAMESPACE}-infra"
   when: manual
   allow_failure: true
 
