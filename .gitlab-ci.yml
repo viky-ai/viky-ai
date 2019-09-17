@@ -80,8 +80,8 @@ test_webapp:
     VIKYAPP_STATISTICS_URL: "http://elasticsearch:9200"
   services:
     - postgres:9.6-alpine
-    - redis:3.2-alpine
-    - name: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
+    - redis:5.0-alpine
+    - name: docker.elastic.co/elasticsearch/elasticsearch:7.3.2
       command:
         [
           "bin/elasticsearch",
@@ -98,7 +98,7 @@ test_nlp:
   needs: ["build_nlp"]
   image: ${DOCKER_IMAGE_NLP}_test:${CI_COMMIT_REF_SLUG}
   services:
-    - redis:3.2-alpine
+    - redis:5.0-alpine
   variables:
     GIT_STRATEGY: none
     VIKYAPP_REDIS_PACKAGE_NOTIFIER: "redis://redis/3"
