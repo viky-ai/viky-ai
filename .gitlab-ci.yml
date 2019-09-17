@@ -189,7 +189,7 @@ deploy_dev:
     - build_webapp
     - build_nlp
   environment:
-    name: test-environement-only-name
+    name: kube/test-environement
     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
     # on_stop: delete_env
   variables:
