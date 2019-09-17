@@ -28,6 +28,9 @@ ENV PATH="/webapp/bin:${PATH}"
 COPY Gemfile /webapp
 COPY Gemfile.lock /webapp
 
+# Get correct bundler version
+RUN gem install bundler -v 2.0.2
+
 # Production dependencies
 RUN bundle install --without development test --jobs=$(nproc)
 
