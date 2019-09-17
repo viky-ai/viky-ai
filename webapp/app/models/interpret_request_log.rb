@@ -139,6 +139,46 @@ class InterpretRequestLog
     results['aggregations']['requests_over_agents']['buckets']
   end
 
+  def self.requests_over_users(from, to)
+    client = IndexManager.client
+    query = {
+      "size": 0,
+      "query": {
+        "bool": {
+          "must": {
+            "range":{
+              "timestamp":{
+                "gte": from.to_s,
+                "lte": to.to_s,
+                "time_zone": from.zone
+              }
+            }
+          },
+          "must_not": {
+            "terms": {
+              "context.client_type": ["console", "regression_test"]
+            }
+          }
+        }
+      },
+      "aggs": {
+        "requests_over_users": {
+          "terms": { "field": "owner_id" },
+          "aggs": {
+            "processed": {
+              "filter": { "match": { "status": 200 } }
+            },
+            "rejected":{
+              "filter": { "match": { "status": 503 } }
+            }
+          }
+        }
+      } 
+    }
+    results = client.search index: SEARCH_ALIAS_NAME, body: query
+    results['aggregations']['requests_over_users']['buckets']
+  end
+
   private
 
     def to_json

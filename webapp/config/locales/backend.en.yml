@@ -117,3 +117,9 @@ en:
         top_tests_failures: Agents with most tests in failure
         detail_test_failure: "Agent last update: %{agent_last_update}\nTests last run: %{test_last_run}"
         no_top_tests_failure: All tests pass
+        top_requests_users:
+          title: Users with most requests in the last 30 days
+          header:
+            user: User
+            processed: Processed requests
+            rejected: Rejected requests

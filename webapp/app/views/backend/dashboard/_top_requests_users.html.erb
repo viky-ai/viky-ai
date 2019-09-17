@@ -1,0 +1,41 @@
+<h2>
+  <%= t("views.backend.dashboard.top_requests_users.title") %>
+</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th><%= t("views.backend.dashboard.top_requests_users.header.user") %></th>
+      <th><%= t("views.backend.dashboard.top_requests_users.header.processed") %></th>
+      <th><%= t("views.backend.dashboard.top_requests_users.header.rejected") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @top_requests_users.each do |data| %>
+      <% user = User.find(data['key']) %>
+      <tr>
+        <td>
+          <div class="user">
+            <div class="user__avatar">
+              <img src="<%= user.image_url(:square) %>" />
+            </div>
+            <div class="user__info">
+              <%= user.name_or_username %>
+              <% if user.admin? %>
+                <span class="badge badge--primary"><%= t('views.backend.users.index.admin_badge') %></span>
+              <% end %>
+              <small><%= user.email %></small>
+            </div>
+          </div>
+        </td>
+        <td><%= data['processed']['doc_count'] %></td>
+        <td><%= data['rejected']['doc_count'] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div class="top-pagination">
+  <%= paginate @top_requests_users, window: 1, param_name: :requests_page %>
+  <p class="pagination-info"><%= page_entries_info @top_requests_users %></p>
+</div>

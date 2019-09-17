@@ -79,7 +79,7 @@
           width: .6em;
           height: .6em;
         }
-        tbody tr td:nth-child(2){
+        tr td:not(:first-child), tr th:not(:first-child){
           text-align: right;
         }
       }
