@@ -202,6 +202,7 @@ deploy_dev:
     - echo "$KUBE_NAMESPACE"
     - echo "$KUBECONFIG"
     - cat $KUBECONFIG || true
+    - export HELM_HOST="localhost:44134"
     # Init helm
     - helm init --client-only --wait
     - kubectl get pods --all-namespaces
