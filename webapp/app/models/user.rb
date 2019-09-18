@@ -113,6 +113,38 @@ class User < ApplicationRecord
     entities_count + interpretations_count
   end
 
+  def expressions_per_agent
+    Agent.find_by_sql ["
+      SELECT 
+        agents.id, (i.total + e.total) AS total
+      FROM agents 
+      JOIN
+      (
+        SELECT  
+          agents.id as agent_id, coalesce(SUM(entities_lists.entities_count),0) as total 
+        FROM agents 
+        LEFT OUTER JOIN entities_lists 
+        ON entities_lists.agent_id = agents.id 
+        GROUP BY agents.id 
+      ) AS e 
+      ON agents.id = e.agent_id 
+      JOIN
+      (
+        SELECT  
+          agents.id as agent_id, COUNT(interpretations.id) as total 
+        FROM agents 
+        LEFT OUTER JOIN intents 
+        ON intents.agent_id = agents.id 
+        LEFT OUTER JOIN interpretations 
+        ON interpretations.intent_id = intents.id 
+        GROUP BY agents.id
+      ) AS i 
+    ON e.agent_id = i.agent_id
+    WHERE agents.owner_id = ?
+    ORDER BY total DESC
+    ", id]
+  end
+
   private
 
     def clean_username

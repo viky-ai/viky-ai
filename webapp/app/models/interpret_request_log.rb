@@ -99,7 +99,7 @@ class InterpretRequestLog
     results['aggregations']['requests_over_time']['buckets']
   end
 
-  def self.requests_over_agents(owner_id, status, aggregations={})
+  def self.requests_over_agents(from, to, owner_id, status, aggregations={})
     client = IndexManager.client
     query = {
       "size": 0,
@@ -107,7 +107,15 @@ class InterpretRequestLog
         "bool":{
           "must": [
             { "match": { "owner_id": owner_id } },
-            { "match": { "status": status } }
+            { "match": { "status": status } },
+            {
+              "range": {
+                "timestamp": {
+                  "gte": from.to_s,
+                  "lte": to.to_s
+                }
+              }
+            }
           ],
           "must_not": {
             "terms": {

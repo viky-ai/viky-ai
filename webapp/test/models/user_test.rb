@@ -246,4 +246,21 @@ class UserTest < ActiveSupport::TestCase
 
     ENV['VIKYAPP_EXPRESSION_QUOTA'] = nil;
   end
+
+  test 'Expressions per agent' do
+    admin = users(:admin)
+    agent_expressions = admin.expressions_per_agent
+    assert_equal 2, agent_expressions.count
+    assert_equal agents(:weather).id, agent_expressions.first.id
+    assert_equal 7, agent_expressions.first.total
+
+    assert_equal agents(:terminator).id, agent_expressions.second.id
+    assert_equal 3, agent_expressions.second.total
+
+    user = users(:confirmed)
+    agent_expressions = user.expressions_per_agent
+    assert_equal 1, agent_expressions.count
+    assert_equal agents(:weather_confirmed).id, agent_expressions.first.id
+    assert_equal 0, agent_expressions.first.total
+  end
 end
