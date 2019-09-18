@@ -64,6 +64,11 @@ module Rack
       Integer(ENV.fetch("VIKYAPP_RACK_THROTTLE_LIMIT_SECOND") { 10 })
     end
 
+    def self.expressions_limit
+      limit = ENV.fetch('VIKYAPP_EXPRESSION_QUOTA'){ nil }
+      limit.nil? ? limit : limit.to_i
+    end
+
     # Limitations rules
     def self.second_rule 
       [

@@ -198,14 +198,15 @@ class EntitiesImport < ApplicationRecord
     end
 
     def check_owner_quota
-      quota = ENV.fetch('VIKYAPP_EXPRESSION_QUOTA') { nil }
+      return if entities_list.agent.owner.ignore_quota
+
+      quota = Rack::Throttle.expressions_limit
       unless quota.nil?
-        quota = quota.to_i
         total = entities_list.agent.owner.expressions_count
         if mode == 'replace'
           total = total - entities_list.entities_count
         end
-        if total + csv_count_lines > quota && !entities_list.agent.owner.ignore_quota?
+        if total + csv_count_lines > quota
           errors.add(:base, I18n.t('errors.entities_import.quota', maximum: quota, actual: total, to_import: csv_count_lines))
         end
       end

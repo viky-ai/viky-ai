@@ -1,7 +1,7 @@
  <div class="card">
     <h2>
       <%= t('views.profile.expressions.graph.title') %>
-      <small title="<%= t('views.profile.expressions.graph.help', limit: number_with_delimiter(Integer(ENV.fetch('VIKYAPP_EXPRESSION_QUOTA')))) %>">
+      <small title="<%= t('views.profile.expressions.graph.help', limit: number_with_delimiter(Rack::Throttle.expressions_limit)) %>">
         <span class="icon icon--x-small">
           <%= icon_information %>
         </span>

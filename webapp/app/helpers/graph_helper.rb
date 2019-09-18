@@ -22,7 +22,7 @@ module GraphHelper
 
   def prepare_expressions_data(user)
     expressions = user.expressions_count
-    quota = ENV.fetch('VIKYAPP_EXPRESSION_QUOTA') { nil }
+    quota = Rack::Throttle.expressions_limit
     JSON.generate({
       consumed: quota.nil? ? 0 : (expressions * 100 / quota.to_f).to_i,
       label: "#{expressions} used out of #{quota}"

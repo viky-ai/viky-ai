@@ -103,8 +103,10 @@ class User < ApplicationRecord
   end
 
   def quota_exceeded?
-    quota = ENV.fetch('VIKYAPP_EXPRESSION_QUOTA') { nil }
-    quota.nil? ? false : (expressions_count >= quota.to_i)
+    return false if ignore_quota
+
+    quota = Rack::Throttle.expressions_limit
+    quota.nil? ? false : (expressions_count >= quota)
   end
 
   def expressions_count

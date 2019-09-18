@@ -111,7 +111,7 @@ class Interpretation < ApplicationRecord
     end
 
     def check_owner_quota
-      quota = ENV.fetch('VIKYAPP_EXPRESSION_QUOTA') { nil }
+      quota = Rack::Throttle.expressions_limit
       unless intent.nil?
         owner = User.find(intent.agent.owner_id)
         if owner.quota_exceeded?
