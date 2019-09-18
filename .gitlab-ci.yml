@@ -221,6 +221,12 @@ deploy_dev:
     - auto-deploy ensure_namespace
     - auto-deploy initialize_tiller
     - auto-deploy create_secret
+    - echo "Create ES Keystore secret"
+    - kubectl create secret generic es-keystore-secret --namespace "${KUBE_NAMESPACE}" --from-file "elasticsearch.keystore"  || true
+    # Go to Kubernetes directory
+    - cd deployment/kubernetes/
+    - echo "Generate Override values"
+    - bin/generateOverrideValuesFile.sh
   script:
     - cat custom-values.yml
     # Deploy Viky Platform
