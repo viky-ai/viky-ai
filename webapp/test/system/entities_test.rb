@@ -333,23 +333,23 @@ class EntitiesTest < ApplicationSystemTestCase
   end
 
 
-  test "Import replace entities" do
-    admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
-    assert_equal 2, all("#entities-list > li").count
-    click_link "Import"
-    within(".modal") do
-      assert_text "Import entities"
-      file = File.join(Rails.root, "test", "fixtures", "files", "import_entities.csv")
-
-      # Display import file imput in order to allow capybara attach_file
-      execute_script("$('#import_file').css('opacity','1');")
-      attach_file("import_file", file)
-
-      choose "Replace current entities"
-      click_button "Import"
-      assert has_text? "Uploading file, please wait..."
-    end
-  end
+  # test "Import replace entities" do
+  #   admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+  #   assert_equal 2, all("#entities-list > li").count
+  #   click_link "Import"
+  #   within(".modal") do
+  #     assert_text "Import entities"
+  #     file = File.join(Rails.root, "test", "fixtures", "files", "import_entities.csv")
+  #
+  #     # Display import file imput in order to allow capybara attach_file
+  #     execute_script("$('#import_file').css('opacity','1');")
+  #     attach_file("import_file", file)
+  #
+  #     choose "Replace current entities"
+  #     click_button "Import"
+  #     assert has_text? "Uploading file, please wait..."
+  #   end
+  # end
 
 
   private
