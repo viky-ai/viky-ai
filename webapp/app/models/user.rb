@@ -145,6 +145,38 @@ class User < ApplicationRecord
     ", id]
   end
 
+  def self.expressions_count
+    Agent.find_by_sql ["
+      SELECT 
+        DISTINCT agents.owner_id, (i.total + e.total) AS total
+      FROM agents 
+      INNER JOIN
+      (
+        SELECT  
+          agents.owner_id as id, coalesce(SUM(entities_lists.entities_count),0) as total 
+        FROM agents 
+        LEFT OUTER JOIN entities_lists 
+        ON entities_lists.agent_id = agents.id 
+        GROUP BY agents.owner_id 
+      ) AS e 
+      ON agents.owner_id = e.id 
+      JOIN
+      (
+        SELECT  
+          agents.owner_id as id, COUNT(interpretations.id) as total 
+        FROM agents 
+        LEFT OUTER JOIN intents 
+        ON intents.agent_id = agents.id 
+        LEFT OUTER JOIN interpretations 
+        ON interpretations.intent_id = intents.id 
+        GROUP BY agents.owner_id
+      ) AS i 
+      ON e.id = i.id
+      ORDER BY total DESC
+    "]
+  end
+  
+
   private
 
     def clean_username

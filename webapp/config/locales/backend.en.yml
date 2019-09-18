@@ -123,3 +123,4 @@ en:
             user: User
             processed: Processed requests
             rejected: Rejected requests
+        top_expressions_users: Users with most formulations and entities

@@ -122,47 +122,37 @@ class RackThrottleTest < ActionDispatch::IntegrationTest
     Feature.enable_rack_throttle_limit_day
     
     travel_to DateTime.parse('2019-09-12T14:45:00') do
-      p '-------------------------request 1--------------------------------'
       send_interpret_request
       assert_equal '200', response.code
 
-      p '-----------------------------request 2-----------------------------'
       send_interpret_request
       assert_equal '200', response.code
 
-      p '-----------------------------request 3----------------------------'
       send_interpret_request
       assert_equal '200', response.code
 
-      p '-----------------------------request 4---------------------------'
       send_interpret_request
       assert_equal '200', response.code
     end
 
     travel_to DateTime.parse('2019-09-12T20:00:00') do
-      p '-----------------------------request 5---------------------------'
       send_interpret_request
       assert_equal '200', response.code
 
-      p '-----------------------------request 6---------------------------'
       send_interpret_request
       assert_equal '200', response.code
 
-      p '-------------------------------request 7-------------------------'
       send_interpret_request
       assert_equal '200', response.code
 
-      p '-------------------------------request 8-------------------------'
       send_interpret_request
       assert_equal '200', response.code
 
-      p '------------------------------request 9-------------------------'
       send_interpret_request
       assert_equal '403', response.code
     end
 
     travel_to DateTime.parse('2019-09-13T01:00:00') do
-      p '----------------------------request 10--------------------------'
       send_interpret_request
       assert_equal '200', response.code
     end

@@ -259,7 +259,9 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
     assert log_2.save
     assert log_3.save
 
-    requests = InterpretRequestLog.requests_over_agents(user.id, 200)
+    from = DateTime.parse('2019-09-01T00:00:00.053+02:00')
+    to = DateTime.parse('2019-09-30T23:59:59+02:00')
+    requests = InterpretRequestLog.requests_over_agents(from, to, user.id, 200)
     
     assert_equal 2, requests.size
     assert_equal weather_agent.id, requests[0]['key']
@@ -301,8 +303,9 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
         to: DateTime.parse('2019-09-08T23:59:59+02:00')
       }
     }
-
-    requests = InterpretRequestLog.requests_over_agents(user.id, 200, aggregations)
+    from = DateTime.parse('2019-09-01T00:00:00.053+02:00')
+    to = DateTime.parse('2019-09-30T23:59:59+02:00')
+    requests = InterpretRequestLog.requests_over_agents(from,to,user.id, 200, aggregations)
     assert_equal 2, requests.size
     assert_equal weather_agent.id, requests[0]['key']
     assert_equal 2, requests[0]['doc_count']
