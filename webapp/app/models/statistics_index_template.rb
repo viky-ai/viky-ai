@@ -2,12 +2,13 @@ class StatisticsIndexTemplate
 
   attr_reader :configuration, :state
 
-  def initialize(configuration, state = 'active')
-    @configuration = configuration.clone
+  def initialize(state = 'active')
+    @configuration = read_template_configuration
     @state = state
-    @configuration['index_patterns'] = "#{index_full_name}-#{@state}-*"
+    @index_name = "#{@configuration['index_patterns'][0..-3]}-#{@state}"
+    @configuration['index_patterns'] = "#{@index_name}-*"
     if @state == 'inactive'
-      @configuration[:settings] = {
+      @configuration['settings'] = {
         number_of_shards: 1,
         number_of_replicas: 0,
         codec: 'best_compression'
@@ -16,7 +17,7 @@ class StatisticsIndexTemplate
   end
 
   def name
-    "template-#{index_full_name}"
+    "template-#{@index_name}"
   end
 
   def version
@@ -27,16 +28,12 @@ class StatisticsIndexTemplate
     @configuration['index_patterns']
   end
 
-  def index_name
-    index_patterns.split('-')[1]
-  end
-
-  def indexing_alias
-    "index-#{index_full_name.gsub('-active', '')}"
-  end
 
   private
-    def index_full_name
-      index_patterns[0..-3]
+
+    def read_template_configuration
+      template_config_dir = "#{Rails.root}/config/statistics"
+      filename = 'template-stats-interpret_request_log.json'
+      JSON.parse(ERB.new(File.read("#{template_config_dir}/#{filename}")).result)
     end
 end

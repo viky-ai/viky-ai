@@ -1,4 +1,4 @@
-require 'fileutils'
+require_relative 'lib/task'
 
 namespace :svg do
 

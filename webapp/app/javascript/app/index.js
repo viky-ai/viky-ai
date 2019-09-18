@@ -1,7 +1,8 @@
 // App specific
 
 // Sortable (https://github.com/RubaXa/Sortable)
-window.Sortable = require('sortablejs');
+import Sortable from 'sortablejs';
+window.Sortable = Sortable;
 
 // Mousetrap (https://github.com/ccampbell/mousetrap)
 window.Mousetrap = require('mousetrap/mousetrap.js');

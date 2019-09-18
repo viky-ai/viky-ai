@@ -32,7 +32,7 @@ class AgentTransfer
           raise ActiveRecord::Rollback
         end
       end
-      AgentMailer.transfer_ownership(@previous_owner, @new_owner, @agent).deliver_later
+      AgentMailer.transfer_ownership(@previous_owner, @new_owner, @agent).deliver_later if Feature.email_configured?
     end
   end
 

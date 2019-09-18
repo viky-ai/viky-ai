@@ -20,7 +20,7 @@
           <%= t('views.entities_lists.show.import.select_import.file_label') %>
         </p>
 
-        <%= import_form.hidden_field :file, value: @entities_import.cached_file_data %>
+        <%= import_form.hidden_field :file, value: @entities_import.cached_file_data, id: nil %>
         <div class="field field--upload">
           <%= import_form.file_field :file, id: :import_file, accept: 'text/csv', multiple: false %>
           <label for="import_file">

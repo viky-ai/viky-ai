@@ -7,9 +7,11 @@
     <%= render "search" %>
   </div>
   <div class="header__tools">
-    <a href="<%= new_user_invitation_path %>" class="btn btn--primary">
-      <span class="icon icon--small"><%= icon_add_circle %></span> New invitation
-    </a>
+    <% if Feature.email_configured? %>
+      <a href="<%= new_user_invitation_path %>" class="btn btn--primary">
+        <span class="icon icon--small"><%= icon_add_circle %></span> New invitation
+      </a>
+    <% end %>
   </div>
 </header>
 <style>
@@ -29,7 +31,9 @@
           <tr>
             <th>User</th>
             <th>Agents</th>
-            <th>Status</th>
+            <% if Feature.email_configured? %>
+              <th>Status</th>
+            <% end %>
             <th>Last log in</th>
             <th class="number">Log in count</th>
             <th class="actions"></th>
@@ -67,60 +71,62 @@
                   </span>
                 </span>
               </td>
-              <td>
-                <% if user.confirmed? %>
-                  <span class="badge badge--success">
-                    <%= t('views.backend.users.index.status.confirmed') %>
-                  </span>
-                <% else %>
-                  <span class="badge badge--warning">
-                    <%= t('views.backend.users.index.status.not-confirmed') %>
-                  </span>
-                  <% unless user.confirmation_sent_at.nil? %>
-                    <p>
-                      <small>
-                        <%= t('views.backend.users.index.last_confirmation') %>
-                        <%= l(user.confirmation_sent_at, format: :long) %>.
-                      </small>
-                    </p>
-                  <% end %>
-                <% end %>
-
-                <% if user.locked_at? %>
-                  <span class="badge badge--danger">
-                    <%= t('views.backend.users.index.status.locked') %>
-                  </span>
-                  <p>
-                    <small>
-                      <%= t('views.backend.users.index.locked_since') %>
-                      <%= l(user.locked_at, format: :long) %>.
-                    </small>
-                  </p>
-                <% end %>
-
-                <% unless user.invitation_status == :not_invited %>
-                  <% if user.invitation_status == :valid %>
-                    <p>
-                      <small title="<%= t('views.backend.users.index.invitation_send_on', date: l(user.created_at, format: :long)) %> <% unless user.invited_by.nil? %><%= t('views.backend.users.index.invited_by', email: user.invited_by.email) %><% end %>">
-                        <%= t('views.backend.users.index.invitation_expires_in') %>
-                        <%= distance_of_time_in_words(
-                              user.invitation_sent_at, user.invitation_sent_at + User.invite_for,
-                              scope: 'views.datetime.distance_in_words.short'
-                            ) %>
-                      </small>
-                    </p>
+              <% if Feature.email_configured? %>
+                <td>
+                  <% if user.confirmed? %>
+                    <span class="badge badge--success">
+                      <%= t('views.backend.users.index.status.confirmed') %>
+                    </span>
                   <% else %>
-                    <% if user.invitation_status == :expired %>
-                      <span class="badge badge--danger">
-                        <%= t('views.backend.users.index.status.invitation-expired') %>
-                      </span>
+                    <span class="badge badge--warning">
+                      <%= t('views.backend.users.index.status.not-confirmed') %>
+                    </span>
+                    <% unless user.confirmation_sent_at.nil? %>
+                      <p>
+                        <small>
+                          <%= t('views.backend.users.index.last_confirmation') %>
+                          <%= l(user.confirmation_sent_at, format: :long) %>.
+                        </small>
+                      </p>
                     <% end %>
                   <% end %>
-                <% end %>
-              </td>
+
+                  <% if user.locked_at? %>
+                    <span class="badge badge--danger">
+                      <%= t('views.backend.users.index.status.locked') %>
+                    </span>
+                    <p>
+                      <small>
+                        <%= t('views.backend.users.index.locked_since') %>
+                        <%= l(user.locked_at, format: :long) %>.
+                      </small>
+                    </p>
+                  <% end %>
+
+                  <% unless user.invitation_status == :not_invited %>
+                    <% if user.invitation_status == :valid %>
+                      <p>
+                        <small title="<%= t('views.backend.users.index.invitation_send_on', date: l(user.created_at, format: :long)) %> <% unless user.invited_by.nil? %><%= t('views.backend.users.index.invited_by', email: user.invited_by.email) %><% end %>">
+                          <%= t('views.backend.users.index.invitation_expires_in') %>
+                          <%= distance_of_time_in_words(
+                                user.invitation_sent_at, user.invitation_sent_at + User.invite_for,
+                                scope: 'views.datetime.distance_in_words.short'
+                              ) %>
+                        </small>
+                      </p>
+                    <% else %>
+                      <% if user.invitation_status == :expired %>
+                        <span class="badge badge--danger">
+                          <%= t('views.backend.users.index.status.invitation-expired') %>
+                        </span>
+                      <% end %>
+                    <% end %>
+                  <% end %>
+                </td>
+              <% end %>
 
               <td>
-                <% if user.confirmed? %>
+                <% if !Feature.email_configured? || user.confirmed? %>
                   <% unless user.current_sign_in_at.nil? %>
                     <%= l(user.current_sign_in_at, format: :long) %>
                   <% end %>
@@ -128,12 +134,12 @@
               </td>
 
               <td class="number">
-                <% if user.confirmed? %>
+                <% if !Feature.email_configured? || user.confirmed? %>
                   <%= user.sign_in_count %>
                 <% end %>
               </td>
               <td class="actions">
-                <% unless user.confirmed? %>
+                <% unless !Feature.email_configured? || user.confirmed? %>
                   <a href="<%= reinvite_backend_user_path(user) %>"
                      class="btn btn--primary btn--small btn--outline">
                     <%= t('views.backend.users.index.reinvite.btn') %>
@@ -146,7 +152,7 @@
                     <%= t('views.backend.users.index.delete.btn') %>
                   </a>
                 <% end %>
-                <% if current_user.email != user.email && user.confirmed? %>
+                <% if current_user.email != user.email && (!Feature.email_configured? || user.confirmed?) %>
                   <%= link_to t('views.backend.users.index.switch.btn'), impersonate_backend_user_path(user.id), method: :post, class: "btn btn--primary btn--small btn--outline" %>
                 <% end %>
               </td>

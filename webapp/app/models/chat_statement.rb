@@ -4,7 +4,7 @@ class ChatStatement < ApplicationRecord
   belongs_to :chat_session, touch: true
 
   enum speaker: [:user, :bot, :moderator]
-  enum nature: [:text, :image, :video, :map, :button, :button_group, :card, :list, :notification, :geolocation]
+  enum nature: [:text, :image, :video, :interactive_map, :button, :button_group, :card, :list, :notification, :geolocation]
 
   validates :content, presence: true
   validate :content_format
@@ -27,7 +27,7 @@ class ChatStatement < ApplicationRecord
         Chatbot::Image.new(content)
       when 'video'
         Chatbot::Video.new(content)
-      when 'map'
+      when 'interactive_map'
         Chatbot::Map.new(content)
       when 'button'
         Chatbot::Button.new(content)

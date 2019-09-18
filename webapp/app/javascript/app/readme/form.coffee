@@ -1,6 +1,9 @@
 # Marked (Markdown parsing)
 marked = require('marked')
 
+# HTML sanitizer
+DOMPurify = require('dompurify');
+
 class ReadmeForm
   constructor: ->
     @cm = null
@@ -24,7 +27,7 @@ class ReadmeForm
 
   update: ->
     $('.markdown-editor__preview').html(
-      marked(@cm.getValue())
+      DOMPurify.sanitize(marked(@cm.getValue()))
     )
     $("body").trigger 'code:highlight'
 

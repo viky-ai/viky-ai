@@ -1,0 +1,28 @@
+<% if interactive_map.params['endpoint'] == 'javascript' %>
+  <script>
+    App.Statement.display_js_map("<%= map.params['api_key'] %>", "<%= statement.id %>", <%= interactive_map.params['payload'].to_json.html_safe %>)
+  </script>
+<% end %>
+
+<div class="chatbot__widget chatbot__widget--map">
+  <div id=<%="map-#{statement.id}"%> class="chatbot__widget--map__wrapper">
+    <% unless interactive_map.params['endpoint'] == 'javascript' %>
+      <iframe
+        width="600"
+        height="450"
+        frameborder="0" style="border:0"
+        src="<%= "https://www.google.com/maps/embed/v1/#{interactive_map.params['endpoint']}?key=#{interactive_map.params['api_key']}&#{interactive_map.params['query']}" %>" allowfullscreen>
+      </iframe>
+    <% end %>
+  </div>
+  <% if interactive_map.has_info? %>
+    <div class="chatbot__widget--map__info">
+      <% if interactive_map.title.present? %>
+        <h2><%= interactive_map.title %></h2>
+      <% end %>
+      <% if interactive_map.description.present? %>
+        <p><%= interactive_map.description %></p>
+      <% end %>
+    </div>
+  <% end %>
+</div>

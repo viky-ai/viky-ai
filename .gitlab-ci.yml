@@ -20,6 +20,7 @@ variables:
   DOCKER_DRIVER: overlay2
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
+  DOCKER_IMAGE_TOOLS_NLP: $CI_REGISTRY_IMAGE/tools_nlp_base
   DOCKER_IMAGE_TOOLS_RUBY: $CI_REGISTRY_IMAGE/tools_ruby_base
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
   # Needed for Gitlab Managed
@@ -34,6 +35,11 @@ build_ruby_base:
   script:
     - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}      deployment/docker_tools/ruby_base "--target image_ruby_base"
     - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}_test deployment/docker_tools/ruby_base "--target image_ruby_base_test"
+
+build_nlp_base:
+  stage: prerequist
+  script:
+    - docker_build ${DOCKER_IMAGE_TOOLS_NLP} nlp/tools/docker
 
 build_backup:
   <<: *kubernetes_runner
@@ -57,12 +63,14 @@ elastic_keystore:
 
 build_webapp:
   <<: *kubernetes_runner
+  needs: ["build_ruby_base"]
   stage: build
   script:
     - docker_build ${DOCKER_IMAGE_APP}      webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_run"
 
 build_webapp_test:
   <<: *kubernetes_runner
+  needs: ["build_ruby_base"]
   stage: build
   script:
     - docker_build ${DOCKER_IMAGE_APP}_test webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_test"
@@ -70,23 +78,32 @@ build_webapp_test:
 build_nlp:
   <<: *kubernetes_runner
   stage: build
+  needs: ["build_nlp_base"]
   script:
-    - docker_build ${DOCKER_IMAGE_NLP}      nlp "--target run_image"
-    - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--target test_image"
+    - docker_build ${DOCKER_IMAGE_NLP}      nlp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target run_image"
+    - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target test_image"
 
 # Test
 .test_webapp: &test_webapp
   stage: test
   image: ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
+  needs: ["build_webapp_test"]
   variables:
     POSTGRES_USER: superman
     POSTGRES_PASSWORD: sup_3rman
     POSTGRES_DB: vikyapp_test
   services:
-    - postgres:9.6-alpine
-    - redis:3.2-alpine
-    - name: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
-      command: ["bin/elasticsearch", "-Ediscovery.type=single-node"] # Important other wise, port 9200 will never be exposed
+    - postgres:11-alpine
+    - redis:5.0-alpine
+    - name: docker.elastic.co/elasticsearch/elasticsearch:7.3.2
+      # Important other wise, port 9200 will never be exposed
+      command:
+        [
+          "bin/elasticsearch",
+          "-Ediscovery.type=single-node",
+          "-Enetwork.host=_site_",
+        ]
+      alias: elasticsearch
   before_script:
     - export VIKYAPP_DB_USERNAME="${POSTGRES_USER}"
     - export VIKYAPP_DB_PASSWORD="${POSTGRES_PASSWORD}"
@@ -120,7 +137,7 @@ test_nlp:
   needs: ["build_nlp"]
   image: ${DOCKER_IMAGE_NLP}_test:${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
   services:
-    - redis:3.2-alpine
+    - redis:5.0-alpine
   variables:
     GIT_STRATEGY: none
   script:
