@@ -4,7 +4,19 @@ SimpleCov.command_name "system"
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   include ActiveJob::TestHelper
 
-  driven_by :selenium, using: :headless_chrome, screen_size: [1400, 900]
+  Capybara.register_driver(:headless_chrome) do |app|
+    options = Selenium::WebDriver::Chrome::Options.new
+    options.add_argument 'no-sandbox'
+    options.headless!
+    driver_options = { browser: :chrome, options: options }
+
+    Capybara::Selenium::Driver.new(app, driver_options).tap do |driver|
+      driver.browser.manage.window.size = Selenium::WebDriver::Dimension.new(1400, 900)
+    end
+  end
+
+  driven_by :headless_chrome
+  #driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400]
 
   def login_as(login, password)
     visit new_user_session_path
