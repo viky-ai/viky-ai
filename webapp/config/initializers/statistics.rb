@@ -1,3 +1,5 @@
+require 'interpret_request_log_client'
+
 client = InterpretRequestLogClient.long_waiting_client
 begin
   is_reachable = client.ping_cluster

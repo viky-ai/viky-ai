@@ -16,6 +16,8 @@ Rails.application.configure do
   # Run rails dev:cache to toggle caching.
   if Rails.root.join('tmp/caching-dev.txt').exist?
     config.action_controller.perform_caching = true
+    config.action_controller.enable_fragment_cache_logging = true
+
     redis_cache_db = ENV.fetch("VIKYAPP_CACHE_REDIS_URL") { "redis://localhost:6379/0" }
     config.cache_store = :redis_cache_store, {
       driver: :hiredis,
@@ -23,7 +25,7 @@ Rails.application.configure do
       expires_in: 23.hours
     }
     config.public_file_server.headers = {
-      'Cache-Control' => "public, max-age=#{2.days.seconds.to_i}"
+      'Cache-Control' => "public, max-age=#{2.days.to_i}"
     }
   else
     config.action_controller.perform_caching = false
