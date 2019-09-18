@@ -37,6 +37,7 @@ build_ruby_base:
     - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}_test deployment/docker_tools/ruby_base "--target image_ruby_base_test"
 
 build_nlp_base:
+  <<: *kubernetes_runner
   stage: prerequist
   script:
     - docker_build ${DOCKER_IMAGE_TOOLS_NLP} nlp/tools/docker
