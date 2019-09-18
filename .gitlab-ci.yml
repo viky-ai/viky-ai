@@ -205,9 +205,7 @@ deploy_dev:
     - auto-deploy initialize_tiller
     - auto-deploy create_secret
   script:
-    # Deploy Viky Infrastructure
     - cat custom-values.yml
-    - helm upgrade --force --wait --values custom-values.yml,viky-infra/custom-values/production.yaml --install "${KUBE_NAMESPACE}-infra" --timeout 600 --namespace "${KUBE_NAMESPACE}" viky-infra/
     # Deploy Viky Platform
     - helm upgrade --force --wait --values custom-values.yml,viky-platform/custom-values/production.yaml --install "${KUBE_NAMESPACE}-platform" --namespace "${KUBE_NAMESPACE}" viky-platform/
 
@@ -248,9 +246,7 @@ deploy_preprod:
     - kubectl create secret generic es-keystore-secret --namespace="${NAMESPACE}" --from-file "elasticsearch.keystore"  || true
     - echo "Generate Override values"
     - deployment/kubernetes/bin/generateOverrideValuesFile.sh
-    - echo "Deploy Viky Infrastructure"
     - cat custom-values.yml
-    - helm upgrade --force --wait --values custom-values.yml,deployment/kubernetes/viky-infra/custom-values/production.yaml --install "${NAMESPACE}-infra" --timeout 600 --namespace "${NAMESPACE}" deployment/kubernetes/viky-infra/
     - echo "Deploy Viky Platform"
     - helm upgrade --force --wait --values custom-values.yml,deployment/kubernetes/viky-platform/custom-values/production.yaml --install "${NAMESPACE}-platform" --namespace "${NAMESPACE}" deployment/kubernetes/viky-platform/
 
