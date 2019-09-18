@@ -199,22 +199,11 @@ deploy_dev:
     VIKY_DOMAIN: viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
     NAMESPACE: $KUBE_NAMESPACE
   before_script:
-    - echo "$KUBE_NAMESPACE"
-    - echo "$KUBECONFIG"
-    - cat $KUBECONFIG || true
     - export HELM_HOST="localhost:44134"
-    # Init helm
-    - helm init --client-only --wait
-    - kubectl get pods --all-namespaces
+    - helm init --client-only
     - auto-deploy ensure_namespace
     - auto-deploy initialize_tiller
     - auto-deploy create_secret
-    - echo "Create ES Keystore secret"
-    - kubectl create secret generic es-keystore-secret --namespace "${KUBE_NAMESPACE}" --from-file "elasticsearch.keystore"  || true
-    # Go to Kubernetes directory
-    - cd deployment/kubernetes/
-    - echo "Generate Override values"
-    - bin/generateOverrideValuesFile.sh
   script:
     # Deploy Viky Infrastructure
     - cat custom-values.yml
