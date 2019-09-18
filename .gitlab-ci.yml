@@ -218,6 +218,7 @@ deploy_dev:
     NAMESPACE: $KUBE_NAMESPACE
   before_script:
     - export HELM_HOST="localhost:44134"
+    - export RELEASE_NAME=viky-$(echo '${KUBE_NAMESPACE}' | sha1sum | awk '{print $1}' | cut -c -10)
     - helm init --client-only
     - auto-deploy ensure_namespace
     - auto-deploy initialize_tiller
@@ -231,7 +232,7 @@ deploy_dev:
   script:
     - cat custom-values.yml
     # Deploy Viky Platform
-    - helm upgrade --force --wait --values custom-values.yml,viky-platform/custom-values/production.yaml --install "${KUBE_NAMESPACE}-platform" --namespace "${KUBE_NAMESPACE}" viky-platform/
+    - helm upgrade --force --wait --values custom-values.yml,viky-platform/custom-values/production.yaml --install "${RELEASE_NAME}" --namespace "${KUBE_NAMESPACE}" viky-platform/
 
 # Deploy master on rancher preprod
 deploy_preprod:
@@ -281,7 +282,7 @@ delete_env:
   except:
     - master
     - tags
-  image: dtzar/helm-kubectl:2.13.1
+  image: "registry.gitlab.com/gitlab-org/cluster-integration/auto-deploy-image:v0.1.0"
   environment:
     name: ${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
@@ -289,12 +290,12 @@ delete_env:
   variables:
     NAMESPACE: $KUBE_NAMESPACE
   script:
-    - helm init --client-only --wait
+    - export HELM_HOST="localhost:44134"
+    - export RELEASE_NAME=viky-$(echo '${KUBE_NAMESPACE}' | sha1sum | awk '{print $1}' | cut -c -10)
+    - helm init --client-only
     - auto-deploy ensure_namespace
     - auto-deploy initialize_tiller
-    - helm init --client-only --wait
-    - helm delete --purge "${KUBE_NAMESPACE}-platform"
-    - helm delete --purge "${KUBE_NAMESPACE}-infra"
+    - helm delete --purge "${RELEASE_NAME}"
   when: manual
   allow_failure: true
 
