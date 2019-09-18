@@ -102,7 +102,7 @@ build_nlp:
         [
           "bin/elasticsearch",
           "-Ediscovery.type=single-node",
-          "-Enetwork.host=_site_",
+          "-Enetwork.host=0.0.0.0",
         ]
       alias: elasticsearch
   before_script:
@@ -112,6 +112,7 @@ build_nlp:
     - export VIKYAPP_ACTIONCABLE_REDIS_URL="redis://${CI_SERVICE_HOST:-redis}:6379/1"
     - export VIKYAPP_ACTIVEJOB_REDIS_URL="redis://${CI_SERVICE_HOST:-redis}:6379/2"
     - export VIKYAPP_STATISTICS_URL="http://${CI_SERVICE_HOST:-elasticsearch}:9200"
+    - export VIKYAPP_STATISTICS_NO_REPLICA="true"
     - cd /webapp
   artifacts:
     # expire_in: 1 week

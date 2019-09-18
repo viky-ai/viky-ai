@@ -6,6 +6,13 @@ namespace :statistics do
   task setup: :environment do |_, _|
     Task::Print.step("Environment #{Rails.env}.")
     client = InterpretRequestLogClient.long_waiting_client
+
+    # cluster will yellow forever
+    if ENV['VIKYAPP_STATISTICS_NO_REPLICA'] == 'true'
+      client.disable_all_replication
+      Task::Print.success("Indices replica has been disable according to VIKYAPP_STATISTICS_NO_REPLICA env.")
+    end
+
     unless client.cluster_ready?
       Task::Print.error('Cannot perform tasks : cluster is not ready')
       exit 1

@@ -124,6 +124,12 @@ class InterpretRequestLogClient
     }
   end
 
+  def disable_all_replication()
+    @client.indices.put_settings index: '_all', body: {
+      'index.number_of_replicas' => 0
+    }
+  end
+
   def switch_indexing_to_new_index(current_index, new_index)
     @client.indices.update_aliases body: { actions: [
       { remove: { index: current_index.name, alias: index_alias_name } },
