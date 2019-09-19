@@ -125,7 +125,7 @@ class InterpretRequestLogClient
   end
 
   def disable_all_replication()
-    @client.indices.put_settings index: '_all', body: {
+    @client.indices.put_settings index: '_all', ignore_unavailable: true, allow_no_indices: true, body: {
       'index.number_of_replicas' => 0
     }
   end
