@@ -14,6 +14,14 @@
   <div class="field">
     <div class="control">
       <span class="label"><%= t('activerecord.attributes.entity.terms') %></span>
+      <span class="label--with-option">
+        <% if entity.case_sensitive %>
+          <span class="badge"><%= t('views.entities.show.case_sensitive') %></span>
+        <% end %>
+        <% if entity.accent_sensitive %>
+          <span class="badge"><%= t('views.entities.show.accent_sensitive') %></span>
+        <% end %>
+      </span>
       <div class="terms"><%= entity.terms_to_s.gsub("\n", "<br>").html_safe %></div>
     </div>
   </div>

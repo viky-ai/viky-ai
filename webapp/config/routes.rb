@@ -35,10 +35,15 @@ Rails.application.routes.draw do
   end
 
   namespace :play do
-    resource :selection, only: [:edit, :update]
+    resource :selection, only: [:edit, :update] do
+      collection do
+        get :search
+      end
+    end
   end
   get  '/play', to: 'play#index'
   post '/play', to: 'play#interpret'
+  get  '/play/reset', to: 'play#reset'
 
   scope '/agents' do
     resources :favorites, only: [:create, :destroy]
@@ -49,13 +54,11 @@ Rails.application.routes.draw do
           get :confirm_transfer_ownership
           post :transfer_ownership
           post :duplicate
-          get :search_users_for_transfer_ownership
           get :generate_token
           get :interpret, to: 'console#interpret'
           get :full_export, to: 'agents_exports#full_export'
           get :agents_selection, to: 'agents_selection#index'
         end
-        get :search_users_to_share_agent, controller: 'memberships'
 
         resources :memberships, only: [:index, :new, :create, :update, :destroy] do
           get :confirm_destroy
@@ -182,8 +185,6 @@ Rails.application.routes.draw do
 
   get 'style-guide', to: 'style_guide#index'
   get 'style-guide/:page_id', to: "style_guide#page"
-
-  get 'brain', to: 'brain#index'
 
   unless File.exist? File.join(Rails.root, 'public', 'index.html')
     devise_scope :user do

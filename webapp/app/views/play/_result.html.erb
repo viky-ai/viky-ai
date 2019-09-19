@@ -1,10 +1,35 @@
-<% if interpreter.results.present? && interpreter.results[interpreter.agent.id].present? %>
-  <h2>
-    <% count = interpreter.results[interpreter.agent.id]['interpretations'].size %>
-    <%= t('views.play.result.title_html', count: count) %>
-    <a href="<%= user_agent_path(interpreter.agent.owner.username, interpreter.agent.agentname) %>"><%= interpreter.agent.name %></a>.
-  </h2>
-  <div class="card card--play-result">
-    <%= play_highlight(interpreter).gsub("\n", "<br />").html_safe %>
-  </div>
+<% r = interpreter.result %>
+<% if r.present? %>
+  <% if r.succeed? %>
+    <div class="play-main__result__wrapper">
+      <h2>
+        <span>
+          <strong><%= t('views.play.result.title', count: r.interpretations_count) %></strong>
+        </span>
+      </h2>
+      <div>
+        <%= play_highlight(interpreter).gsub("\n", "<br />").html_safe %>
+      </div>
+    </div>
+  <% else %>
+    <div class="banner banner--alert">
+      <div class="banner__content">
+        <div>
+          <img src='<%= asset_path("robot-confused.png") %>'
+               srcset='<%= asset_path("robot-confused.png") %> 1x,
+                   <%= asset_path("robot-confused@2x.png") %> 2x'
+               style='width: 80px'/>
+        </div>
+        <div>
+          <h3><%= t('views.play.error.title') %></h3>
+          <p>
+            <%= t('views.play.error.status', status: r.status) %>
+            <% unless r.error_messages.blank? %>
+              &mdash; <%= r.error_messages %>.</p>
+            <% end %>
+          </p>
+        </div>
+      </div>
+    </div>
+  <% end %>
 <% end %>

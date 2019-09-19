@@ -73,6 +73,11 @@
       box-shadow: 0 0 0 1px $primary_color,
                   0 0 0 3px rgba($primary_color, .5),
                   0 4px 3px rgba(0, 0, 0, .1);
+      &.highlight--alert{
+        box-shadow: 0 0 0 1px $alert_color,
+                    0 0 0 3px rgba($alert_color, .5),
+                    0 4px 3px rgba(0, 0, 0, .1);
+      }
     }
 
     & > span,
@@ -87,11 +92,16 @@
       grid-template-areas:
         "name  stats"
         "desc  stats";
-      grid-template-columns: auto minmax(0, 140px);
+      grid-template-columns: auto min-content;
 
       .card-list__item__name{
         grid-area: name;
         display: block;
+        &.card-list__item__name--with-badges{
+          em{
+            font-style: normal;
+          }
+        }
       }
       .card-list__item__desc{
         grid-area: desc;
@@ -107,6 +117,7 @@
         padding: 0 1rem;
         color: #aaa;
         text-align: right;
+        white-space: nowrap;
       }
     }
 
@@ -114,6 +125,12 @@
     & > a:hover{
       .card-list__item__name{
         text-decoration: underline;
+        &.card-list__item__name--with-badges{
+          text-decoration: none;
+          em{
+            text-decoration: underline;
+          }
+        }
       }
     }
 

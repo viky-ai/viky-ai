@@ -228,7 +228,7 @@ class EntityTest < ActiveSupport::TestCase
 
 
   test 'search' do
-    assert_equal 4, Entity.count
+    assert_equal 8, Entity.count
     assert_equal 1, Entity.search('Soleil').count
     expected = [
       {"term" => "sun", "locale" => "en"},

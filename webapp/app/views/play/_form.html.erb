@@ -1,20 +1,57 @@
-<%= form_with(url: "/play", method: :post, class: "play-form", model: interpreter) do |f| %>
-  <input type="hidden" name="play_interpreter[ownername]" value="<%= interpreter.agent.owner.username %>" id="play_input_ownername">
-  <input type="hidden" name="play_interpreter[agentname]" value="<%= interpreter.agent.agentname %>" id="play_input_agentname">
-  <div class="field">
-    <div class="field">
+<%= form_with(url: "/play", method: :post, class: "play-main__form", id: "play-form", model: interpreter) do |f| %>
+
+  <input type="hidden" name="play_interpreter[language]"
+         value="<%= interpreter.language %>" class="js-nlp-language-input">
+  <input type="hidden" name="play_interpreter[spellchecking]"
+         value="<%= interpreter.spellchecking %>" class="js-nlp-spellchecking-input">
+
+  <div class="inputs-wrapper">
+
+    <div class="field field--text">
       <div class="control">
-        <%= f.label :text %>
+        <%= f.label :text, class: 'label--uppercase' %>
         <span class="badge badge--small badge--outline"><%= t('required') %></span>
+        <br />
         <%= f.text_area :text, id: 'play_interpreter_text' %>
         <%= display_errors(interpreter, :text) %>
       </div>
     </div>
-    <button class="btn btn--primary" data-disable-with="Loading...">
-      <%= t('views.play.form.btn') %>
-      <span class="icon icon--x-small">
-        <%= icon_send %>
-      </span>
-    </button>
+
+    <div class="field field--language">
+      <div class="control">
+        <span class="label label--uppercase"><%= t('nlp.locales.label') %></span>
+        <br />
+        <%= render partial: "/shared/nlp_locales_dropdown", locals: {
+            current_value: interpreter.language,
+            form_selector: ".play-main__form",
+            input_selector: ".js-nlp-language-input"
+        } %>
+      </div>
+    </div>
+
+    <div class="field field--spellchecking">
+      <div class="control">
+        <span class="label label--uppercase"><%= t('nlp.spellchecking.label') %></span>
+        <br />
+        <%= render partial: "/shared/nlp_spellchecking_dropdown", locals: {
+            current_value: interpreter.spellchecking,
+            form_selector: ".play-main__form",
+            input_selector: ".js-nlp-spellchecking-input"
+        } %>
+      </div>
+    </div>
+
+    <div class="field field--submit">
+      <button class="btn btn--primary" data-disable-with='<%= t('views.play.form.btn_loading_html', icon: icon_loading) %>'>
+        <%= t('views.play.form.btn') %>
+        <span class="icon icon--x-small">
+          <%= icon_send %>
+        </span>
+      </button>
+      <% unless interpreter.query_default_state? %>
+        <%= link_to t('views.play.form.reset'), play_reset_path, class: "btn btn--plain" %>
+      <% end %>
+    </div>
+
   </div>
 <% end %>

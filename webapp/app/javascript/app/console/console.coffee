@@ -49,6 +49,25 @@ class Console
         , 500
         $("#console-reset-btn").show()
         $('#console-output').scrollTop(0)
+        if $('#js-error-context').length == 1
+          App.CodeEditor.buildJavaScriptEditor($('#js-error-context')[0], true, false)
+
+    $("body").on 'ajax:error', (event) ->
+      if $(event.target).attr('id') == "js-console-form"
+        $(".console__output").addClass('console__output__loading')
+        @timeout = setTimeout ->
+          $(".console__output").removeClass('console__output__loading')
+        , 500
+        [data, status, xhr] = event.detail
+        html = []
+        html.push "<div class='c-explain' id='console-explain'>"
+        html.push "  <p>"
+        html.push "    <span class='badge badge--danger'>#{xhr.status}</span>"
+        html.push "    Oops, something went wrong: \"#{status}\"."
+        html.push "  </p>"
+        html.push "</div>"
+        $('#console-output').html(html.join("\n"))
+        $('#console-tabs').html("")
 
     $("body").on 'console-submit-form', (event, data) =>
       @send_interpret_request(data)
@@ -124,16 +143,19 @@ class Console
   send_interpret_request: (data) ->
     now = if data.now? then 'Manual' else 'Auto'
     nowUpdater = { selector: '#console-btn-group-now-type', on: now }
-    languageUpdater = { selector: '#console-dropdown-locale', on: data.language }
-    spellcheckingUpdater = { selector: '#console-dropdown-spellchecking', on: data.spellchecking }
+    languageUpdater = { selector: '#js-nlp-dropdown-locale', on: data.language }
+    spellcheckingUpdater = { selector: '#js-nlp-dropdown-spellchecking', on: data.spellchecking }
     $('body').trigger('btn-group:click', nowUpdater)
     $('body').trigger('dropdown:click', languageUpdater)
     $('body').trigger('dropdown:click', spellcheckingUpdater)
 
     $('#js-console-input-sentence').val(data.sentence)
-    $('.js-language-input').val(data.language)
-    $('.js-spellchecking-input').val(data.spellchecking)
+    $('#js-nlp-language-input').val(data.language)
+    $('#js-nlp-spellchecking-input').val(data.spellchecking)
     $('#js-console-now-input-container input').val(data.now) if data.now?
+
+    # Set current focus on submit button
+    $('#console-send-sentence')[0].focus()
 
     @toogle_form_is_needed()
 

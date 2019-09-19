@@ -24,3 +24,5 @@ en:
           zero: "0 term"
           one: "1 term"
           other: "%{count} terms"
+        case_sensitive: Case sensitive
+        accent_sensitive: Accent sensitive

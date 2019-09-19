@@ -47,12 +47,42 @@ class Dropdown
     dropdown.find('.dropdown__content').removeClass('dropdown__content--hidden')
     dropdown.find('.dropdown__overlay').show()
     dropdown.find('.dropdown__content').removeClass('dropdown__content--on-top')
-    criteria = $('body').height() - dropdown.offset().top - dropdown.height() - dropdown.find(".dropdown__content").height()
-    dropdown.find('.dropdown__content').addClass('dropdown__content--on-top') if criteria < 0
+
+    dropdown_height =  dropdown.height() + dropdown.find(".dropdown__content").height() + 10
+    exceeds_at_the_bottom = ($('body').height() - dropdown.offset().top - dropdown_height) < 0
+    do_not_exceeds_at_the_top = dropdown.offset().top > dropdown_height
+    if exceeds_at_the_bottom && do_not_exceeds_at_the_top
+      dropdown.find('.dropdown__content').addClass('dropdown__content--on-top')
+
+    @position = -1
+    dropdown.off 'keydown'
+    dropdown.on 'keydown', (event) =>
+      @up(event, dropdown)   if event.which == 38
+      @down(event, dropdown) if event.which == 40
+      if event.which == 27
+        @close(dropdown)
+        dropdown.find('.dropdown__trigger .btn')[0].focus()
+
+  up: (event, dropdown) ->
+    items = dropdown.find('.dropdown__content > ul > li > a:visible')
+    if items.length > 0
+      event.preventDefault()
+      @position = @position - 1
+      @position = items.length - 1 if @position < 0
+      $(items.get(@position))[0].focus()
+
+  down: (event, dropdown) ->
+    items = dropdown.find('.dropdown__content > ul > li > a:visible')
+    if items.length > 0
+      event.preventDefault()
+      @position = @position + 1
+      @position = 0 if @position == items.length
+      $(items.get(@position))[0].focus()
 
   close: (dropdown) ->
     dropdown.find('.dropdown__content').addClass('dropdown__content--hidden')
     dropdown.find('.dropdown__overlay').hide()
+    dropdown.find('.dropdown__trigger .btn')[0].focus()
 
   setup_overlay: (dropdown)->
     if dropdown.find('.dropdown__overlay').length == 0

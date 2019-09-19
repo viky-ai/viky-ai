@@ -168,7 +168,9 @@ CREATE TABLE public.entities (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     "position" integer DEFAULT '-1'::integer,
-    searchable_terms text
+    searchable_terms text,
+    case_sensitive boolean DEFAULT false,
+    accent_sensitive boolean DEFAULT false
 );
 
 
@@ -1086,5 +1088,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190517140227'),
 ('20190619122021'),
 ('20190729112306');
+('20190729072037');
 
 

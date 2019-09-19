@@ -28,10 +28,7 @@ all:
 	$(MAKE) -f $(CURRENT_MAKEFILE) debug build
 
 fullclean: clean
-	-cd glib && $(MAKE) clean
-	-cd glib && git clean -dfx
-	rm -rf glib/Makefile
-	rm -rf glib/configure
+	rm -rf glib/meson-build
 
 clean:
 	rm -rf $(SRCPATH)/include/gio-unix-2.0/
@@ -41,39 +38,38 @@ clean:
 	rm -f  $(DBINPATH)/libgmodule-2.0.so*
 	rm -f  $(DBINPATH)/libgobject-2.0.so*
 	rm -f  $(DBINPATH)/libgthread-2.0.so*
+	rm -rf $(DBINPATH)/gio
 	rm -f  $(RBINPATH)/libglib-2.0.so*
 	rm -f  $(RBINPATH)/libgio-2.0.so*
 	rm -f  $(RBINPATH)/libgmodule-2.0.so*
 	rm -f  $(RBINPATH)/libgobject-2.0.so*
 	rm -f  $(RBINPATH)/libgthread-2.0.so*
-	rm -f  glib/gio/gvdb/.dirstamp
-	rm -f  glib/glib/deprecated/.dirstamp
+	rm -rf $(RBINPATH)/gio
 
-make: glib/Makefile
-	cd glib && $(MAKE)
-	mkdir -p $(DBINPATH)/gio
+make: glib/meson-build/build.ninja
+	cd glib && ninja -C meson-build
+
+install: make
 	mkdir -p $(SRCPATH)/include/
-	cd glib && $(MAKE) install
-	rm -f  glib/gio/gvdb/.dirstamp
-	rm -f  glib/glib/deprecated/.dirstamp
+	cd glib && ninja -C meson-build install
+	mkdir -p $(SRCPATH)/include/glib-2.0
+	mkdir -p $(SRCPATH)/include/gio-unix-2.0/
+	cp -arf $(DBUILDPATH)/include/glib-2.0/*     $(SRCPATH)/include/glib-2.0/
+	cp -arf $(DBUILDPATH)/include/gio-unix-2.0/* $(SRCPATH)/include/gio-unix-2.0/
 
-glib/configure:
-	cd glib && NOCONFIGURE=yes ./autogen.sh
+glib/meson-build/build.ninja: glib/meson.build
+	cd glib && meson meson-build --prefix="$(DBUILDPATH)" \
+													     --bindir="$(DBINPATH)" \
+													     --libdir="$(DLIBPATH)" \
+													     --buildtype debug \
+													     --optimization g\
+													     -Dfam=false \
+													     -Dselinux=disabled \
+													     -Dlibmount=false \
+													     -Dgtk_doc=false \
+													     -Dman=false 
 
-glib/Makefile: glib/configure
-	cd glib && ./configure  --prefix="$(DBUILDPATH)" \
-													--bindir="$(DBINPATH)" \
-													--libdir="$(DLIBPATH)" \
-													--includedir="$(SRCPATH)/include" \
-													--enable-debug \
-													--with-pcre=internal \
-													--disable-fam	 \
-													--disable-selinux \
-													--disable-libmount \
-													--disable-gtk-doc \
-													--disable-man
-
-$(DBINPATH)/libglib-2.0.so: make
+$(DBINPATH)/libglib-2.0.so: install
 
 $(RBINPATH)/libglib-2.0.so: $(DBINPATH)/libglib-2.0.so
 	cp -af $(DBINPATH)/libglib-2.0.so*     $(RBINPATH)/
@@ -82,8 +78,8 @@ $(RBINPATH)/libglib-2.0.so: $(DBINPATH)/libglib-2.0.so
 	cp -af $(DBINPATH)/libgobject-2.0.so*  $(RBINPATH)/
 	cp -af $(DBINPATH)/libgthread-2.0.so*  $(RBINPATH)/
 
-$(SRCPATH)/include/glib-2.0/glib.h: make
+$(SRCPATH)/include/glib-2.0/glib.h: install
 
-$(SRCPATH)/include/glib-2.0/glibconfig.h: make
+$(SRCPATH)/include/glib-2.0/glibconfig.h: install
 	mkdir -p $(SRCPATH)/include/glib-2.0
 	cp -af $(DBINPATH)/glib-2.0/include/glibconfig.h $(SRCPATH)/include/glib-2.0/

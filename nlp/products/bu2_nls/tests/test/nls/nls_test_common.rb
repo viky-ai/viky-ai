@@ -74,7 +74,9 @@ module Nls
         explain: false,
         now: nil,
         primary_package: nil,
+        primary_packages: nil,
         show_private: nil,
+        no_overlap: nil,
         spellchecking: nil
       }
       opts = default_opt.merge(opts)
@@ -104,6 +106,18 @@ module Nls
         primary_package_id = primary_package.id.to_s if primary_package.kind_of? Package
       end
 
+      primary_packages = opts[:primary_packages]
+      primary_package_ids = []
+      unless primary_packages.nil?
+        primary_packages.each do | p |
+          if p.kind_of? Package
+            primary_package_ids << p.id.to_s
+          else
+            primary_package_ids << p
+          end
+        end
+      end
+
       spellchecking = opts[:spellchecking]
       spellchecking_valid_values = [nil, :inactive, :low, :medium, :high]
       unless  spellchecking_valid_values.include?(spellchecking)
@@ -112,11 +126,13 @@ module Nls
 
       request['sentence'] = sentence
       request['primary-package'] = primary_package_id unless primary_package_id.nil?
+      request['primary-packages'] = primary_package_ids unless primary_package_ids.empty?
       request['spellchecking'] = spellchecking        unless spellchecking.nil?
       request['Accept-Language'] = opts[:locale]      unless opts[:locale].nil?
       request['now'] = opts[:now]                     unless opts[:now].nil?
       request['show-explanation'] = true              if     opts[:explain]
       request['show-private'] = true                  if     opts[:show_private]
+      request['no-overlap'] = true                    if     opts[:no_overlap]
 
       request
     end
@@ -228,6 +244,7 @@ module Nls
       pg_building_feature << i_sea_view
 
       i_swimming_pool = Interpretation.new("swimming-pool").new_textual(["swimming pool", "pool"], solution: "swimming pool" )
+      i_swimming_pool.new_textual(["error js piscine"], solution: "`{key: undef_variable}`" )
       pg_building_feature << i_swimming_pool
 
       i_building_feature = Interpretation.new("building-feature")
@@ -325,157 +342,6 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
     end
 
     def check_interpret(sentence, expected)
-      if !sentence.kind_of? Array
-        check_interpret_sentence(sentence, expected)
-      else
-        check_interpret_array(sentence, expected)
-      end
-    end
-
-    def check_interpret_array(sentence, expected)
-
-      raise "expected must be an Array"   if !expected.kind_of? Array
-      raise "expected must not be empty" if expected.empty?
-      raise "expected must have as many elements as sentence" if expected.length != sentence.length
-
-      # on initialise tous les champs en tableaux pour pouvoir ensuite les remplir
-
-      globaldebug = false
-      debug = []
-      now = []
-      packages = []
-      primary_package = []
-      show_private = []
-      request = []
-
-      0.upto(sentence.length-1) do |i|
-        debug[i] = expected[i][:debug]
-        globaldebug = globaldebug || debug[i]
-
-        now[i] = expected[i][:now]
-
-        packages[i] = "*"
-        packages[i] = expected[i][:packages] if expected[i].has_key?(:packages)
-        primary_package[i] = expected[i][:primary_package]
-
-        show_private[i] = false
-        show_private[i] = expected[i][:show_private] if expected[i].has_key?(:show_private)
-
-        explain = false
-        explain = expected[:explain] if expected.has_key?(:explain)
-
-        spellchecking = nil
-        spellchecking = expected[:spellchecking] if expected.has_key?(:spellchecking)
-
-        opts = {
-          locale: Interpretation.default_locale,
-          explain: explain,
-          now: now[i],
-          primary_package: primary_package[i],
-          show_private: show_private[i],
-          spellchecking: spellchecking
-        }
-
-        request << json_interpret_body(packages[i], sentence[i], opts)
-      end
-
-      ap expected if globaldebug
-      ap request if globaldebug
-      # execution de la requete
-      actual = Nls.interpret(request)
-      ap actual if globaldebug
-
-      assert_kind_of Array, actual, "Actual answer is not an Array : #{actual.inspect}"
-      actual.each do |actual_element|
-        assert_kind_of Hash, actual_element, "Actual answer element is not an hash : #{actual_element.inspect}"
-        assert_kind_of Array, actual_element['interpretations'], "Actual answer['interpretations'] is not an Array : #{actual_element['interpretations']}"
-      end
-
-      0.upto(expected.length-1) do |i|
-        if (expected[i].has_key?(:interpretations) && expected[i][:interpretations].kind_of?(Array) && expected[i][:interpretations].empty?) ||
-        (expected[i].has_key?(:interpretation)  && expected[i][:interpretation].nil?)
-          assert actual[i]['interpretations'].empty?, "Actual answer should not match on any interpretation"
-          # skip other assert
-          return actual[i]
-        end
-
-        assert !actual[i]['interpretations'].empty?, "Actual answer did not match on any interpretation"
-
-        match_intepretation = actual[i]['interpretations'].first
-
-        if expected[i].has_key?(:warnings)
-
-          assert_kind_of Array, actual[i]['warnings'], "Actual answer['warnings'] is not an Array : #{actual[i].inspect}"
-
-          expected_warnings = expected[i][:warnings]
-
-          expected_warning_found = false
-          actual[i]['warnings'].each do |warning|
-            if warning.include?(expected_warnings)
-              expected_warning_found = true
-              break
-            end
-          end
-
-          assert expected_warning_found, "Actual answer['warnings'] must contains \"#{expected_warnings}\": \n#{JSON.generate(actual[i]['warnings'])}"
-
-        else
-          if !actual[i]['warnings'].nil?
-            assert false, "Actual answer must be without warnings :\n#{actual[i]['warnings'].join("\n")}"
-          end
-        end
-
-
-        if expected[i].has_key?(:interpretations)
-          expected_interpretations = expected[i][:interpretations]
-
-          match_intepretations_slug = []
-          actual[i]['interpretations'].each do |match_intepretation_local|
-            match_intepretations_slug << match_intepretation_local['slug']
-          end
-
-          assert_equal expected_interpretations, match_intepretations_slug, "match on wrong interpretation"
-        end
-
-        if expected[i].has_key?(:interpretation)
-          expected_interpretation = expected[i][:interpretation]
-          slug_match = match_intepretation['slug'] == expected_interpretation || match_intepretation['id'] == expected_interpretation
-          assert slug_match, "match on wrong interpretation : \n  actual: slug:#{match_intepretation['slug']}, id:#{match_intepretation['id']}\n  expected: #{expected_interpretation}"
-        end
-
-        if expected[i].has_key?(:solution)
-          expected_solution = expected[i][:solution]
-          if expected_solution.kind_of?(Hash)
-            expected_solution.deep_stringify_keys!
-          elsif expected_solution.kind_of?(Array)
-            expected_solution.each do |h|
-              if h.kind_of?(Hash)
-                h.deep_stringify_keys!
-              end
-            end
-          end
-
-          if expected_solution.nil?
-            assert_nil match_intepretation['solution'], "Matched on unexpected solution (nil)"
-          else
-            assert_equal expected_solution, match_intepretation['solution'], "Matched on unexpected solution"
-          end
-        end
-
-        if expected[i].has_key?(:score)
-          expected_score = expected[i][:score]
-          assert_equal expected_score, match_intepretation['score'], "Matched on wrong score"
-        end
-
-      end
-
-
-
-      return actual
-
-    end
-
-    def check_interpret_sentence(sentence, expected)
 
       raise "expected must be an Hash"   if !expected.kind_of? Hash
       raise "expected must not be empty" if expected.empty?
@@ -490,9 +356,13 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
       packages = "*"
       packages = expected[:packages] if expected.has_key?(:packages)
       primary_package = expected[:primary_package]
+      primary_packages = expected[:primary_packages]
 
       show_private = false
       show_private = expected[:show_private] if expected.has_key?(:show_private)
+
+      no_overlap = false
+      no_overlap = expected[:no_overlap] if expected.has_key?(:no_overlap)
 
       explain = false
       explain = expected[:explain] if expected.has_key?(:explain)
@@ -505,7 +375,9 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
         explain: explain,
         now: now,
         primary_package: primary_package,
+        primary_packages: primary_packages,
         show_private: show_private,
+        no_overlap: no_overlap,
         spellchecking: spellchecking
       }
 

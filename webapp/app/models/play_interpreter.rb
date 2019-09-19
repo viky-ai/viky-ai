@@ -2,117 +2,59 @@ class PlayInterpreter
   include ActiveModel::Model
   include ActiveModel::Validations::Callbacks
 
+  attr_accessor :available_agents, :agent_ids, :text, :language, :spellchecking, :result, :current_user
+
   before_validation :set_defaults
+  before_validation :strip_text
 
-  attr_accessor :ownername, :agentname, :text, :agent, :agents, :results
-
-  validates_presence_of :ownername, :agentname, :text
+  validates_presence_of :text, :language, :spellchecking
   validates :text, byte_size: { maximum: 1024 * 8 }
+  validate :available_agents_and_agent_ids_consistency
 
   def proceed
-    self.results = {}
-    agents.each do |agent|
-      # request_params = {
-      #   format: "json",
-      #   ownername: agent.owner.username,
-      #   agentname: agent.agentname,
-      #   agent_token: agent.api_token,
-      #   verbose: 'false',
-      #   sentence: @text
-      # }
-      # interpreter = Nlp::Interpret.new(request_params)
-      # if interpreter.valid?
-      #   data = interpreter.proceed
-      #   @results[agent.id] = data[:body]
-      # end
-      self.results[agent.id] = fake_data
-    end
+    return if agents.blank?
+
+    request_params = {
+      format: 'json',
+      agents: agents,
+      language: language,
+      spellchecking: spellchecking,
+      verbose: 'false',
+      no_overlap: 'true',
+      sentence: text,
+      context: {
+        user_id: current_user.id,
+        client_type: 'play_ui'
+      }
+    }
+    body, status = Nlp::Interpret.new(request_params).proceed
+    @result = PlayInterpreterResult.new(status, body)
+  end
+
+  def query_default_state?
+    text.blank? && language == "*" && spellchecking == "low"
+  end
+
+  def agents
+    Agent.where(id: agent_ids).order(name: :asc)
   end
 
 
   private
 
-  def set_defaults
-    @agents  = [] if agents.nil?
-    @results = {} if results.nil?
-  end
+    def strip_text
+      self.text = text.strip if text.present?
+    end
 
-  def fake_data
-    {
-      "interpretations" => [
-        {
-          "id" => "6b675028-8683-43b1-a131-f61a4a91cfa6",
-          "slug" => "mathilde/villesfr/interpretations/cityfr_entities",
-          "name" => "cityfr_entities",
-          "score" => 1.0,
-          "start_position" => 2,
-          "end_position" => 7,
-          "solution" => {
-            "type" => "locations",
-            "name" => "LILLE",
-            "lat" => "50.633333",
-            "lng" => "3.066667"
-          }
-        },
-        {
-          "id" => "6b675028-8683-43b1-a131-f61a4a91cfa6",
-          "slug" => "mathilde/villesfr/interpretations/cityfr_entities",
-          "name" => "cityfr_entities",
-          "score" => 1.0,
-          "start_position" => 60,
-          "end_position" => 65,
-          "solution" => {
-            "type" => "locations",
-            "name" => "PARIS",
-            "lat" => "48.866667",
-            "lng" => "2.333333"
-          }
-        },
-        {
-          "id" => "6b675028-8683-43b1-a131-f61a4a91cfa6",
-          "slug" => "mathilde/villesfr/interpretations/cityfr_entities",
-          "name" => "cityfr_entities",
-          "score" => 1.0,
-          "start_position" => 108,
-          "end_position" => 112,
-          "solution" => {
-            "type" => "locations",
-            "name" => "NICE",
-            "lat" => "43.7",
-            "lng" => "7.25",
-          }
-        },
-        {
-          "id" => "6b675028-8683-43b1-a131-f61a4a91cfa6",
-          "slug" => "mathilde/villesfr/interpretations/cityfr_entities",
-          "name" => "cityfr_entities",
-          "score" => 1.0,
-          "start_position" => 156,
-          "end_position" => 166,
-          "solution" => {
-            "type" => "locations",
-            "name" => "STRASBOURG",
-            "lat": "48.583333",
-            "lng": "7.75"
-          }
-        },
-        {
-          "id" => "6b675028-8683-43b1-a131-f61a4a91cfa6",
-          "slug" => "mathilde/villesfr/interpretations/cityfr_entities",
-          "name" => "cityfr_entities",
-          "score" => 1.0,
-          "start_position" => 230,
-          "end_position" => 241,
-          "solution" => {
-            "type" => "locations",
-            "name" => "MONTPELLIER",
-            "lat" => "43.6",
-            "lng" => "3.883333",
-          }
-        }
-      ]
-    }
-  end
+    def set_defaults
+      @spellchecking = 'low'  if spellchecking.blank?
+      @language = "*"         if language.blank?
+      @available_agents = []  if available_agents.nil?
+      @agent_ids = []         if agent_ids.nil?
+    end
 
-
+    def available_agents_and_agent_ids_consistency
+      ids = agent_ids & available_agents.collect(&:id)
+      @agent_ids = Agent.where(id: ids).pluck(:id)
+    end
 end

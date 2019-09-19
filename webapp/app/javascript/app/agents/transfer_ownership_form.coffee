@@ -2,14 +2,11 @@ $ = require('jquery');
 
 class TransferOwnershipForm
   constructor: ->
-    $('body').on 'modal:load', (event) =>
-      @setup() if $("#modal_container .js-user-search").length == 1
+    $('body').on 'modal:load', (event) => @setup()
 
   setup: ->
-    if $('.field_with_errors input').length == 0
-      App.FocusInput.atEnd('#input-user-search-selectized')
-    else
-      App.FocusInput.atEnd('.field_with_errors input')
+    if $("#modal_container .js-transfert-ownership-form").length == 1
+      App.FocusInput.atEnd('#js-new-owner')
 
 Setup = ->
   if $('body').data('controller-name') == "agents"

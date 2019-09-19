@@ -5,25 +5,23 @@ class AgentRegressionCheck < ApplicationRecord
   belongs_to :agent
 
   enum spellchecking: [:inactive, :low, :medium, :high]
+  enum state: [:unknown, :success, :failure, :error, :running]
+
+  before_validation :clean_sentence
 
   validates :sentence, length: { maximum: 200 }, presence: true
   validates :expected, presence: true
   validates :spellchecking, presence: true, inclusion: { in: spellcheckings.keys }
   validates :expected_as_str, length: { maximum: 10_000 }
 
-  enum state: [:unknown, :success, :failure, :error, :running]
-
   before_destroy :check_running_state
-  before_validation :clean_sentence
 
   def run
     self.state = 'running'
     save
 
     parameters = {
-      ownername: agent.owner.username,
-      agentname: agent.agentname,
-      agent_token: agent.api_token,
+      agents: [agent],
       format: 'json',
       sentence: sentence,
       language: language,
@@ -51,6 +49,7 @@ class AgentRegressionCheck < ApplicationRecord
     else
       self.got = ''
       self.state = 'error'
+      agent.nlp_updated_at = nil if [500, 503].include? status
     end
     save
   end

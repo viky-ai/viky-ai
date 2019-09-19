@@ -218,6 +218,8 @@ struct expression_compile
   og_bool keep_order;
   enum nlp_glue_strength glue_strength;
   int glue_distance;
+  og_bool case_sensitive;
+  og_bool accent_sensitive;
   int alias_start, aliases_nb;
   int locale;
   int input_part_start, input_parts_nb;
@@ -241,6 +243,9 @@ struct expression
   og_bool keep_order;
   enum nlp_glue_strength glue_strength;
   int glue_distance;
+
+  og_bool case_sensitive;
+  og_bool accent_sensitive;
 
   int locale;
 
@@ -566,6 +571,7 @@ struct request_expression
   og_bool recursive_without_any_chosen;
 
   og_bool keep_as_result;
+  og_bool overlapped;
   int nb_anys;
   int nb_anys_attached;
   /** 0: invalidated, 1: unknown, 2: validated **/
@@ -673,6 +679,9 @@ struct og_ctrl_nlp_js
   /** random number used to protect variable internal name (moment lib). */
   guint32 random_number;
 
+  /** in case of js error : linenumber where the error is located*/
+  int last_error_linenumber;
+
 };
 
 /** non matching expression that will be search upon the "why-not-matching" object of an interpret request */
@@ -773,6 +782,7 @@ struct og_ctrl_nlp_threaded
   /** common request */
   json_t *json_answer;
   json_t *json_answer_unit;
+  json_t *json_answer_error;
   json_t *json_warnings;
   int nb_warnings;
 
@@ -787,10 +797,12 @@ struct og_ctrl_nlp_threaded
 
   /** interpret request */
 
-  /** Primary package can be null for backward compatibilities */
-  og_string primary_package_id;
-  package_t primary_package;
+  /** HashTable key: ptr (interpretation from primary package) , value: int (NULL) */
+  GHashTable *primary_package_hash;
+  /** Number of primary packages can be zero for backward compatibilities */
+  int nb_primary_packages;
   og_bool show_private;
+  og_bool no_overlap;
 
   og_heap hinterpret_package;
   og_string request_sentence;
@@ -804,7 +816,6 @@ struct og_ctrl_nlp_threaded
   og_heap hrequest_word;
   og_heap hba;
   enum nlp_spellchecking_level spellchecking_level;
-  og_bool enable_list;
 
   /** Heap of struct request_input_part */
   og_heap hrequest_input_part;
@@ -994,6 +1005,7 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th);
 
 /* nlpmatch_word.c */
 og_status NlpMatchWords(og_nlp_th ctrl_nlp_th);
+og_bool NlpMatchCaseAccent(og_nlp_th ctrl_nlp_th, struct request_word *request_word, struct input_part *input_part);
 
 og_status NlpMatchWordChainRequestWords(og_nlp_th ctrl_nlp_th);
 og_status NlpMatchWordChainUpdateWordCount(og_nlp_th ctrl_nlp_th);
@@ -1254,10 +1266,18 @@ og_status NlpMatchCurrentEntity(struct nlp_match_entities_ctrl *me_ctrl);
 og_status NlpMatchEntitiesChangeToAlternativeString(struct nlp_match_entities_ctrl *me_ctrl,
     int length_normalized_string_word, unsigned char *normalized_string_word);
 
-/* nlpenablelist*/
-/* nlpglue.c */
+/* nlpenablelist.c*/
 og_status NlpEnableListInit(og_nlp_th ctrl_nlp_th);
 og_status NlpEnableListFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpEnableListReset(og_nlp_th ctrl_nlp_th);
 og_status NlpEnableList(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions);
+og_status NlpEnableListCheckOverlapAfterAnyCalculation(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions);
+
+/* nlpprimarypackage.c*/
+og_status NlpPrimaryPackageInit(og_nlp_th ctrl_nlp_th);
+og_status NlpPrimaryPackageFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpPrimaryPackageReset(og_nlp_th ctrl_nlp_th);
+og_status NlpAddPrimaryPackage(og_nlp_th ctrl_nlp_th, package_t primary_package);
+og_status NlpIsPrimaryPackage(og_nlp_th ctrl_nlp_th, package_t primary_package);
+
 

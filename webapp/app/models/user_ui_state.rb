@@ -66,13 +66,25 @@ class UserUiState
   end
 
   def play_agents_selection=(selection)
-    @state.merge!(
-      play_agents_selection: selection
-    )
+    @state.merge!( play_agents_selection: selection )
   end
 
   def play_agents_selection
-    @state['play_agents_selection'] || []
+    if @state['play_agents_selection'].nil?
+      []
+    else
+      Agent.where(id: @state['play_agents_selection'])
+           .select{|agent| @user.can? :show, agent}
+           .collect(&:id)
+    end
+  end
+
+  def play_search=(search)
+    @state.merge!( play_search: search )
+  end
+
+  def play_search
+    @state['play_search'] || {}
   end
 
   def save

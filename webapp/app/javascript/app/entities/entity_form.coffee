@@ -20,10 +20,10 @@ class EntityForm
   updateSolutionState: () ->
     if @findCheckbox().is(':checked')
       @findSolution().CodeMirror.setOption('readOnly', "nocursor");
-      $(@findSolution()).addClass('readonly');
+      $(@findSolution()).addClass('CodeMirror--read-only');
     else
       @findSolution().CodeMirror.setOption('readOnly', false);
-      $(@findSolution()).removeClass('readonly');
+      $(@findSolution()).removeClass('CodeMirror--read-only');
 
   syncSolutionWithTerms: () ->
     if @findCheckbox().is(':checked')

@@ -86,6 +86,7 @@ test_webapp:
 
 test_nlp:
   stage: test
+  needs: ["build_nlp"]
   image: ${DOCKER_IMAGE_NLP}_test:${CI_COMMIT_REF_SLUG}
   services:
     - redis:3.2-alpine
@@ -108,6 +109,7 @@ tag_webapp:
 
 tag_nlp:
   stage: docker_tag
+  needs: ["build_nlp", "test_nlp"]
   only:
     - develop
   variables:

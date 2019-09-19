@@ -1,34 +1,47 @@
-  <h2>
-    <%= t('views.play.aside.title') %>
-    <a href="<%= edit_play_selection_path %>"
-       class="btn btn--small btn--primary"
-       data-action="open-remote-modal">
-      <%= t('views.play.aside.btn_edit') %>
-    </a>
-  </h2>
-  <ul>
-    <% interpreter.agents.each do |available_agent| %>
-      <li <% if available_agent.id == interpreter.agent.id %>class="current"<% end %>>
-        <a href="/play/" data-turbolinks="false"
-           data-action="play-switch-agent"
-           data-ownername="<%= available_agent.owner.username %>"
-           data-agentname="<%= available_agent.agentname %>">
+<h2>
+  <span><%= t('views.play.aside.title') %></span>
+  <a href="<%= edit_play_selection_path %>"
+     class="btn btn--small btn--primary"
+     data-action="open-remote-modal">
+    <%= t('views.play.aside.btn_edit') %>
+  </a>
+</h2>
 
-          <div class="agent-compact">
-            <% cache [available_agent, current_user] do %>
-              <%= render partial: "/play/shared/agent_compact", locals: { agent: available_agent } %>
-            <% end %>
-            <% unless interpreter.results.nil? %>
-              <% if interpreter.results[available_agent.id].present? %>
-                <div class="agent-compact__actions">
-                  <span class="badge <% if available_agent.id == interpreter.agent.id %>badge--primary<% end %>">
-                    <%= interpreter.results[available_agent.id]['interpretations'].size %>
-                  </span>
-                </div>
+<% if interpreter.available_agents.size > 2 %>
+  <div class="play-selection-options">
+    <button class="btn btn--plain btn--small" data-action="play-select-all">
+      <%= t('views.play.aside.select_all') %>
+    </button>
+    <button class="btn btn--plain btn--small" data-action="play-select-none">
+      <%= t('views.play.aside.select_none') %>
+    </button>
+  </div>
+<% end %>
+
+<% r = interpreter.result %>
+
+<ul>
+  <% interpreter.available_agents.each do |agent| %>
+    <li>
+      <div class="agent-compact" data-action="play-toggle-agent" id="agent-compact-<%= agent.id %>">
+        <% cache [agent, current_user, true] do %>
+          <%= render partial: "/play/shared/agent_compact", locals: { agent: agent, display_agent_link: true } %>
+        <% end %>
+          <button class="btn btn--toggle <% if interpreter.agents.collect(&:id).include? agent.id %>btn--toggle-on<% end %>">
+            <span>
+              <% if interpreter.agents.collect(&:id).include?(agent.id) && r.present? && r.succeed? %>
+                <%= r.interpretations_count_for_agent(agent.id) %>
               <% end %>
-            <% end %>
-          </div>
-        </a>
-      </li>
-    <% end %>
-  </ul>
+            </span>
+          </button>
+          <input form="play-form"
+            style="display: none;"
+            type="checkbox"
+            name="play_interpreter[agent_ids][]"
+            value="<%= agent.id %>"
+            <% if interpreter.agents.collect(&:id).include? agent.id %>checked<% end %> />
+        </div>
+      </div>
+    </li>
+  <% end %>
+</ul>

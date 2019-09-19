@@ -21,6 +21,17 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     })
   end
 
+  test 'validation on ownername and agentname' do
+    assert_raise ActiveRecord::RecordNotFound do
+      get '/api/v1/agents/missing_user/missing_agent/interpret.json',
+        params: { sentence: 'test' }
+    end
+
+    assert_raise ActiveRecord::RecordNotFound do
+      get '/api/v1/agents/admin/missing_agent/interpret.json',
+        params: { sentence: 'test' }
+    end
+  end
 
   test "Agent access not permitted if token not good" do
     get "/api/v1/agents/admin/weather/interpret.json",
@@ -165,7 +176,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 'abc', found[:context]['session_id']
     assert_equal '1.1-a58b', found[:context]['bot_version']
-    assert_equal agent.updated_at, found[:context]['agent_version']
+    assert_equal [agent.updated_at], found[:context]['agent_version']
   end
 
 
@@ -258,13 +269,12 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     agent = agents(:weather)
     Nlp::Interpret.any_instance.stubs('send_nlp_request').raises(RuntimeError, 'Big big error')
 
-    assert_raise RuntimeError do
-      get '/api/v1/agents/admin/weather/interpret.json',
-          params: {
-            sentence: sentence,
-            agent_token: agent.api_token
-          }
-    end
+    get '/api/v1/agents/admin/weather/interpret.json',
+        params: {
+          sentence: sentence,
+          agent_token: agent.api_token
+        }
+    assert_response 500
 
     client = IndexManager.client
     result = client.search(
@@ -275,7 +285,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     )
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 500, found[:status]
-    assert_equal ['NLS temporarily unavailable', '#<RuntimeError: Big big error>'], found[:body]['errors']
+    assert_equal ['Unexpected error while requesting NLS', '#<RuntimeError: Big big error>'], found[:body]['errors']
   end
 
 end

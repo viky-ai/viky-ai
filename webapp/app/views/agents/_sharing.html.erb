@@ -31,8 +31,10 @@
             <%= agent.owner.name_or_username %>
             <span class="badge badge--primary">
               <%= t('views.agents.show.owner') %>
-            </span><br />
-            <small><%= agent.owner.email %></small>
+            </span>
+            <% if current_user.owner?(agent) || agent.collaborator?(current_user) %>
+              <br /><small><%= agent.owner.email %></small>
+            <% end %>
           </div>
         </div>
       </li>
@@ -56,13 +58,13 @@
                   <% end %>
                 </span>
               </span>
-              <br />
-              <small><%= collaborator.email %></small>
+              <% if current_user.owner?(agent) || agent.collaborator?(current_user) %>
+                <br /><small><%= collaborator.email %></small>
+              <% end %>
             </div>
           </div>
         </li>
       <% end %>
     </ul>
   </div>
-
 </div>

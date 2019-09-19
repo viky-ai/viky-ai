@@ -107,9 +107,9 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal ["*", "en", "fr", "es"], elist.agent.locales
 
     io = StringIO.new
-    io << "Terms,Auto solution,Solution\n"
-    io << "snow,false,\"{'w': 'snow'}\"\n"
-    io << "cloudy|غائم:ar,False,\"{'weather': 'cloudy'}\"\n"
+    io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
+    io << "snow,false,\"{'w': 'snow'}\",false,true\n"
+    io << "cloudy|غائم:ar,False,\"{'weather': 'cloudy'}\",true,false\n"
 
     entities_import = get_entities_import(elist, io)
 
@@ -123,6 +123,8 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal snow_terms, snow.terms
     assert_equal false, snow.auto_solution_enabled
     assert_equal "{'w': 'snow'}", snow.solution
+    assert_equal false, snow.case_sensitive
+    assert_equal true, snow.accent_sensitive
     assert_equal 3, snow.position
 
     cloudy = elist.entities.find_by_solution("{'weather': 'cloudy'}")
@@ -130,8 +132,10 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal cloudy_terms, cloudy.terms
     assert_equal false, cloudy.auto_solution_enabled
     assert_equal "{'weather': 'cloudy'}", cloudy.solution
+    assert_equal true, cloudy.case_sensitive
+    assert_equal false, cloudy.accent_sensitive
     assert_equal 2, cloudy.position
-    assert_equal 6, Entity.all.count
+    assert_equal 10, Entity.all.count
     assert_equal ["*", "en", "fr", "es", "ar"], elist.agent.locales
   end
 
@@ -140,9 +144,9 @@ class EntitiesImportTest < ActiveSupport::TestCase
     elist = entities_lists(:weather_conditions)
 
     io = StringIO.new
-    io << "Terms,Auto solution,Solution\n"
-    io << "snow,false,\"{'w': 'snow'}\"\n"
-    io << "cloudy|غائم:ar,False,\"{'weather': 'cloudy'}\"\n"
+    io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
+    io << "snow,false,\"{'w': 'snow'}\",false,false\n"
+    io << "cloudy|غائم:ar,False,\"{'weather': 'cloudy'}\",false,false\n"
 
     entities_import = get_entities_import(elist, io)
     assert_equal 2, elist.entities.count
@@ -158,8 +162,8 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
   test 'Import entities missing header' do
     io = StringIO.new
-    io << "snow,false,\"{'w': 'snow'}\"\n"
-    io << "cloudy|nuageux:fr,True,\"{'weather': 'cloudy'}\"\n"
+    io << "snow,false,\"{'w': 'snow'}\",false,false\n"
+    io << "cloudy|nuageux:fr,True,\"{'weather': 'cloudy'}\",false,false\n"
 
     elist = entities_lists(:weather_conditions)
     entities_import = get_entities_import(elist, io)
@@ -174,9 +178,9 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
   test 'Import entities empty terms' do
     io = StringIO.new
-    io << "Terms,Auto solution,Solution\n"
-    io << "\"\",false,hail\n"
-    io << "cloudy|nuageux:fr,True,\"{'weather': 'cloudy'}\"\n"
+    io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
+    io << "\"\",false,hail,false,false\n"
+    io << "cloudy|nuageux:fr,True,\"{'weather': 'cloudy'}\",false,false\n"
 
     elist = entities_lists(:weather_conditions)
     entities_import = get_entities_import(elist, io)
@@ -191,9 +195,9 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
   test 'Import entities unexpected auto solution' do
     io = StringIO.new
-    io << "Terms,Auto solution,Solution\n"
-    io << "snow,blablabla,snow\n"
-    io << "cloudy|nuageux:fr,True,\"{'weather': 'cloudy'}\"\n"
+    io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
+    io << "snow,blablabla,snow,false,false\n"
+    io << "cloudy|nuageux:fr,True,\"{'weather': 'cloudy'}\",false,false\n"
     elist = entities_lists(:weather_conditions)
     entities_import = get_entities_import(elist, io, 'replace')
 
@@ -207,8 +211,8 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
   test 'Import entities autosolution true with solution' do
     io = StringIO.new
-    io << "terms,auto solution,solution\n"
-    io << "cloudy,True,\"{'weather': 'cloudy'}\"\n"
+    io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
+    io << "cloudy,true,\"{'weather': 'cloudy'}\",false,false\n"
     elist = entities_lists(:weather_conditions)
     entities_import = get_entities_import(elist, io, 'replace')
 
@@ -224,8 +228,8 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
   test 'Import entities autosolution true without solution' do
     io = StringIO.new
-    io << "terms,auto solution,solution\n"
-    io << "cloudy,True\n"
+    io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
+    io << "cloudy,True,,false,false\n"
     elist = entities_lists(:weather_conditions)
     entities_import = get_entities_import(elist, io, 'replace')
 
@@ -241,8 +245,8 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
   test 'Import entities autosolution false with solution' do
     io = StringIO.new
-    io << "terms,auto solution,solution\n"
-    io << "cloudy,false,\"{'weather': 'cloudy'}\"\n"
+    io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
+    io << "cloudy,false,\"{'weather': 'cloudy'}\",false,false\n"
     elist = entities_lists(:weather_conditions)
     entities_import = get_entities_import(elist, io, 'replace')
 
@@ -258,8 +262,8 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
   test 'Import entities autosolution false without solution' do
     io = StringIO.new
-    io << "terms,auto solution,solution\n"
-    io << "cloudy,false\n"
+    io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
+    io << "cloudy,false,,false,false\n"
     elist = entities_lists(:weather_conditions)
     entities_import = get_entities_import(elist, io, 'replace')
 
@@ -271,8 +275,8 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
   test 'Import entities wrong separator' do
     io = StringIO.new
-    io << "Terms,Auto solution,Solution\n"
-    io << "snow;false;snow\n"
+    io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
+    io << "snow;false;snow;false;false\n"
     elist = entities_lists(:weather_conditions)
     entities_import = get_entities_import(elist, io)
 
@@ -286,8 +290,8 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
   test 'Import and replace entities' do
     io = StringIO.new
-    io << "Terms,Auto solution,Solution\n"
-    io << "snow,false,\"{'w': 'snow'}\"\n"
+    io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
+    io << "snow,false,\"{'w': 'snow'}\",false,false\n"
 
     elist = entities_lists(:weather_conditions)
     entities_import = get_entities_import(elist, io, 'replace')
@@ -302,7 +306,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal snow_terms, snow.terms
     assert_equal false, snow.auto_solution_enabled
     assert_equal "{'w': 'snow'}", snow.solution
-    assert_equal 3, Entity.all.count
+    assert_equal 7, Entity.all.count
   end
 
 
@@ -311,9 +315,9 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal ["*", "en", "fr", "es"], elist.agent.locales
 
     io = StringIO.new
-    io << "Terms,Auto solution,Solution\n"
-    io << "snow,false,\"{'w': 'snow'}\"\n"
-    io << "cloudy:en|nuageuse:rf,False,\"{'weather': 'cloudy'}\"\n"
+    io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
+    io << "snow,false,\"{'w': 'snow'}\",false,false\n"
+    io << "cloudy:en|nuageuse:rf,False,\"{'weather': 'cloudy'}\",false,false\n"
 
     entities_import = get_entities_import(elist, io)
 
@@ -337,8 +341,8 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal ["*", "en", "fr", "es"], elist.agent.locales
 
     io = StringIO.new
-    io << "Terms,Auto solution,Solution\n"
-    io << "snow,false,\"{'w': 'snow'}\"\n"
+    io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
+    io << "snow,false,\"{'w': 'snow'}\",false,false\n"
 
     entities_import = get_entities_import(elist, io)
 
@@ -367,9 +371,9 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal 0, elist.entities_count
 
     io = StringIO.new
-    io << "Terms,Auto solution,Solution\n"
-    io << "Sarah,true,''\n"
-    io << "John,true,''"
+    io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
+    io << "Sarah,true,'',false,false\n"
+    io << "John,true,'',false,false"
     entities_import = get_entities_import(elist, io)
 
     assert_not entities_import.save
@@ -394,8 +398,8 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal 2, elist.entities.count
 
     io = StringIO.new
-    io << "Terms,Auto solution,Solution\n"
-    io << "snow,false,\"{'w': 'snow'}\"\n"
+    io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
+    io << "snow,false,\"{'w': 'snow'}\",false,false\n"
     entities_import = get_entities_import(elist, io, 'replace')
 
     assert entities_import.save

@@ -1,64 +1,12 @@
 require 'test_helper'
+require 'model_test_helper'
 
 class InterpretTest < ActiveSupport::TestCase
-
-  test "validation on ownername & agentname" do
-    interpret = Nlp::Interpret.new(
-      ownername: 'missing user',
-      agentname: 'missing agent'
-    )
-    assert interpret.invalid?
-    assert interpret.errors.full_messages.include? "Ownername is incorrect, 'missing user' user doesn't exist"
-    assert interpret.errors.full_messages.include? "Agentname is incorrect, 'missing user' user doesn't own 'missing agent' agent"
-
-
-    interpret = Nlp::Interpret.new(
-      ownername: 'admin',
-      agentname: 'missing agent'
-    )
-    assert interpret.invalid?
-    assert interpret.errors.full_messages.include? "Agentname is incorrect, 'admin' user doesn't own 'missing agent' agent"
-
-
-    interpret = Nlp::Interpret.new(
-      ownername: 'admin',
-      agentname: 'weather'
-    )
-    assert interpret.invalid?
-    assert_equal 5, interpret.errors.full_messages.count
-  end
-
-
-  test "validation on agent token" do
-    interpret = Nlp::Interpret.new(
-      ownername: 'admin',
-      agentname: 'weather',
-      agent_token: 'bad token',
-      sentence: 'hello',
-      format: 'json',
-      now: '2017-12-05T10:17:25+01:00'
-    )
-    assert interpret.invalid?
-    assert_equal ["Agent token is not valid"], interpret.errors.full_messages
-
-    interpret = Nlp::Interpret.new(
-      ownername: 'admin',
-      agentname: 'weather',
-      agent_token: '52f6cb86b23d8d2a0df9c6808d73ce05',
-      sentence: 'hello',
-      format: 'json',
-      now: '2017-12-05T10:17:25+01:00'
-    )
-    assert interpret.valid?
-  end
-
 
   test "validation on now" do
     weather = agents(:weather)
     interpret = Nlp::Interpret.new(
-      ownername: weather.owner.username,
-      agentname: weather.agentname,
-      agent_token: weather.api_token,
+      agents: [weather],
       sentence: 'hello',
       format: 'json'
     )
@@ -77,9 +25,7 @@ class InterpretTest < ActiveSupport::TestCase
   test 'Validate endpoint' do
     weather = agents(:weather)
     interpret = Nlp::Interpret.new(
-      ownername: weather.owner.username,
-      agentname: weather.agentname,
-      agent_token: weather.api_token,
+      agents: [weather],
       sentence: 'hello',
       format: 'json'
     )
@@ -91,41 +37,82 @@ class InterpretTest < ActiveSupport::TestCase
   test 'Validate interpret URL' do
     weather = agents(:weather)
     interpret = Nlp::Interpret.new(
-      ownername: weather.owner.username,
-      agentname: weather.agentname,
-      agent_token: weather.api_token,
+      agents: [weather],
       sentence: 'hello',
       format: 'json'
     )
     assert_equal "#{interpret.endpoint}/interpret/", interpret.url
   end
 
-
   test 'Request on agent id and all its dependencies' do
     weather = agents(:weather)
     terminator = agents(:terminator)
     assert AgentArc.create(source: weather, target: terminator)
-
+    force_reset_model_cache(weather)
     interpret = Nlp::Interpret.new(
-      ownername: weather.owner.username,
-      agentname: weather.agentname,
-      agent_token: weather.api_token,
+      agents: [weather],
       sentence: 'hello',
       format: 'json'
     )
     assert_equal [weather.id, terminator.id], interpret.packages
   end
 
+
   test 'Test a long interpretation sentence' do
     weather = agents(:weather)
     interpret = Nlp::Interpret.new(
-      ownername: weather.owner.username,
-      agentname: weather.agentname,
-      agent_token: weather.api_token,
-      sentence: 'hello' * 2000,
+      agents: [weather],
+      sentence: 'a' * 1024 * 8 + 'oops',
       format: 'json'
     )
     assert interpret.invalid?
-    assert_equal ['Sentence (9.766 KB) is too long (maximum is 6.836 KB)'], interpret.errors.full_messages
+    assert_equal ["Sentence (8.004 KB) is too long (maximum is 8 KB)"], interpret.errors.full_messages
+  end
+
+
+  test 'with multiple agents' do
+    weather = agents(:weather)
+    terminator = agents(:terminator)
+    assert AgentArc.create(source: weather, target: terminator)
+
+    force_reset_model_cache(weather)
+    interpret = Nlp::Interpret.new(
+      agents: [weather, agents(:weather_confirmed)],
+      sentence: 'Hello',
+      format: 'json'
+    )
+    assert interpret.valid?
+
+    assert_equal 2, interpret.agents.size
+    assert interpret.agents.collect(&:id).include? weather.id
+    assert interpret.agents.collect(&:id).include? agents(:weather_confirmed).id
+
+    assert interpret.packages.include? weather.id
+    assert interpret.packages.include? terminator.id
+    assert interpret.packages.include? agents(:weather_confirmed).id
+    assert_equal 3, interpret.packages.size
+  end
+
+  test 'Agent regression checks ready to rerun when NLP crashed' do
+    weather = agents(:weather)
+    create_agent_regression_check_fixtures
+
+    weather.nlp_updated_at = '2000-01-01 01:01:01.000000'
+    assert weather.save
+    Nlp::Interpret.any_instance.stubs(:send_nlp_request).raises(EOFError)
+    weather.agent_regression_checks.first.run
+    assert_nil weather.nlp_updated_at
+
+    weather.nlp_updated_at = '2000-01-01 01:01:01.000000'
+    assert weather.save
+    Nlp::Interpret.any_instance.stubs(:send_nlp_request).raises(Errno::ECONNREFUSED)
+    weather.agent_regression_checks.first.run
+    assert_nil weather.nlp_updated_at
+
+    weather.nlp_updated_at = '2000-01-01 01:01:01.000000'
+    assert weather.save
+    Nlp::Interpret.any_instance.stubs(:send_nlp_request).raises(StandardError)
+    weather.agent_regression_checks.first.run
+    assert_nil weather.nlp_updated_at
   end
 end

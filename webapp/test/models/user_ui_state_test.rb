@@ -52,12 +52,29 @@ class UserUiStateTest < ActiveSupport::TestCase
     user_state = UserUiState.new(user)
     assert_equal [], user_state.play_agents_selection
 
-    # Set existing locale for agent weather
-    user_state.play_agents_selection = ["a", "b"]
+    # Set play_agents_selection
+    user_state.play_agents_selection = [agents(:terminator).id, agents(:weather).id]
     assert user_state.save
 
     user_state = UserUiState.new(user)
-    assert_equal ["a", "b"], user_state.play_agents_selection
+    assert_equal [agents(:terminator).id, agents(:weather).id].sort, user_state.play_agents_selection.sort
+  end
+
+
+  test "play_search" do
+    # Initial state
+    user = users(:edit_on_agent_weather)
+    user_state = UserUiState.new(user)
+    expected = {}
+    assert_equal expected, user_state.play_search
+
+    # Set play_search
+    user_state.play_search = { "text" => "Hello" }
+    assert user_state.save
+
+    user_state = UserUiState.new(user)
+    expected = { "text" => "Hello" }
+    assert_equal expected, user_state.play_search
   end
 
 end

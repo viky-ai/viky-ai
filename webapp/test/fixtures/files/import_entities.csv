@@ -1,6 +1,6 @@
-Terms,Auto solution,Solution
+Terms,Auto solution,Solution,Case sensitive,Accent sensitive
 nuageux:fr|cloudy:en,false,"{
   'city': 'Londres'
-}"
-snow,false,''
-sun spell:en|éclaircie,false,''
+}", false, false
+snow,false,'',false,false
+sun spell:en|éclaircie,false,'',false,false

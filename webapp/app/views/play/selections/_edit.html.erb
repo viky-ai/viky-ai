@@ -1,4 +1,4 @@
-<div class="modal" style="display: none;">
+<div class="modal modal--fixed-on-top" style="display: none;">
   <div class="modal__overlay" data-action='close-modal'></div>
   <div class="modal__main">
     <h5 class="modal__main__title">
@@ -8,25 +8,98 @@
       </button>
     </h5>
 
-    <div class="modal__main__chooser">
-      <ul class="agent-compact-list">
-        <% @agents.each do |agent| %>
-          <li>
-            <div class="agent-compact agent-compact--play-chooser" data-action="play-select-agent" data-id="<%= agent.id %>">
-              <% cache [agent, current_user] do %>
-                <%= render partial: "/play/shared/agent_compact", locals: { agent: agent } %>
-              <% end %>
-              <div class="agent-compact__actions">
-                <% if @selected_agent_ids.include? agent.id %>
-                  <button class="btn btn--toggle btn--toggle-on"></button>
-                <% else %>
-                  <button class="btn btn--toggle btn--toggle-off"></button>
-                <% end %>
-              </div>
-            </div>
-          </li>
+    <%= form_with(
+        url: search_play_selection_path,
+        method: :get,
+        scope: 'search',
+        class: "js-play-modal-search-form"
+      ) do |f| %>
+
+      <div class="field">
+        <div class="control control--merged">
+          <%= f.text_field :query, placeholder: t('views.play.chooser.search.placeholder'), accesskey: "s" %>
+          <%= f.button "<span class='icon icon--small'>#{icon_search}</span>".html_safe,
+                class: "btn btn--primary", id: 'search-button',
+                data: {
+                  disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>".html_safe
+                } %>
+        </div>
+      </div>
+
+      <input type="hidden" name="search[selected]" value="<%= @search.selected %>"
+             id="js-play-search-selected" />
+      <input type="hidden" name="search[filter_owner]" value="<%= @search.filter_owner %>"
+             id="js-play-search-filter-owner" />
+
+      <div class="field field--inline">
+
+        <div class="control control--selected">
+          <div class="btn-group">
+            <button class="btn btn--small btn--primary" type="button"
+                    data-behavior="populate-input,submit-form"
+                    data-input-selector="#js-play-search-selected"
+                    data-form-selector=".js-play-modal-search-form"
+                    data-input-value="all">
+              <%= t('views.play.chooser.search.selected.all') %>
+            </button>
+            <button class="btn btn--small" type="button"
+                    data-behavior="populate-input,submit-form"
+                    data-input-selector="#js-play-search-selected"
+                    data-form-selector=".js-play-modal-search-form"
+                    data-input-value="true">
+              <%= t('views.play.chooser.search.selected.true') %>
+            </button>
+            <button class="btn btn--small" type="button"
+                    data-behavior="populate-input,submit-form"
+                    data-input-selector="#js-play-search-selected"
+                    data-form-selector=".js-play-modal-search-form"
+                    data-input-value="false">
+              <%= t('views.play.chooser.search.selected.false') %>
+            </button>
+          </div>
+        </div>
+
+        <div class="control control--filter-owner">
+          <div class="btn-group">
+            <button class="btn btn--small btn--primary" type="button"
+                    data-behavior="populate-input,submit-form"
+                    data-input-selector="#js-play-search-filter-owner"
+                    data-form-selector=".js-play-modal-search-form"
+                    data-input-value="all">
+              <%= t('views.play.chooser.search.filter_owner.all') %>
+            </button>
+            <button class="btn btn--small" type="button"
+                    data-behavior="populate-input,submit-form"
+                    data-input-selector="#js-play-search-filter-owner"
+                    data-form-selector=".js-play-modal-search-form"
+                    data-input-value="owned">
+              <%= t('views.play.chooser.search.filter_owner.owned') %>
+            </button>
+            <button class="btn btn--small" type="button"
+                    data-behavior="populate-input,submit-form"
+                    data-input-selector="#js-play-search-filter-owner"
+                    data-form-selector=".js-play-modal-search-form"
+                    data-input-value="favorites">
+              <%= t('views.play.chooser.search.filter_owner.favorites') %>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <input type="hidden" name="search[selected_ids][]" />
+      <div id="play-chooser-search-selected-agents">
+        <% @selected_agent_ids.each do |id| %>
+          <input type="hidden" name="search[selected_ids][]" value="<%= id %>" id="search__input__<%= id %>" />
         <% end %>
-      </ul>
+      </div>
+    <% end %>
+
+    <div class="modal__main__chooser">
+      <%= render partial: "list", locals: {
+            agents: @agents,
+            selected_agent_ids: @selected_agent_ids
+          } %>
     </div>
 
     <%= form_with(url: play_selection_path, method: :patch, class: "play__modal-footer") do |form| %>
@@ -35,7 +108,7 @@
           <%= t('views.play.chooser.btn_submit') %>
         </button>
         <button data-action='close-modal' class="btn btn--plain">
-          <%= t('views.cancel') %>
+          <%= t('cancel') %>
         </button>
         <input type="hidden" name="selection[agent_ids][]" />
         <div id="play-chooser-selected-agents">

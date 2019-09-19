@@ -490,6 +490,8 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   json_t *json_keep_order = NULL;
   json_t *json_glue_strength = NULL;
   json_t *json_glue_distance = NULL;
+  json_t *json_case_sensitive = NULL;
+  json_t *json_accent_sensitive = NULL;
   json_t *json_aliases = NULL;
   json_t *json_locale = NULL;
   json_t *json_solution = NULL;
@@ -518,6 +520,14 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     else if (Ogstricmp(key, "glue-distance") == 0)
     {
       json_glue_distance = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "case-sensitive") == 0)
+    {
+      json_case_sensitive = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "accent-sensitive") == 0)
+    {
+      json_accent_sensitive = json_object_iter_value(iter);
     }
     else if (Ogstricmp(key, "aliases") == 0)
     {
@@ -658,6 +668,44 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   else
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: glue_distance is not an integer");
+    DPcErr;
+  }
+
+  expression->case_sensitive = FALSE;
+  if (json_case_sensitive == NULL)
+  {
+    expression->case_sensitive = FALSE;
+  }
+  else if (json_is_boolean(json_case_sensitive))
+  {
+    expression->case_sensitive = json_boolean_value(json_case_sensitive);
+  }
+  else if (json_is_null(json_case_sensitive))
+  {
+    expression->case_sensitive = FALSE;
+  }
+  else
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: respect-case is not a boolean");
+    DPcErr;
+  }
+
+  expression->accent_sensitive = FALSE;
+  if (json_accent_sensitive == NULL)
+  {
+    expression->accent_sensitive = FALSE;
+  }
+  else if (json_is_boolean(json_accent_sensitive))
+  {
+    expression->accent_sensitive = json_boolean_value(json_accent_sensitive);
+  }
+  else if (json_is_null(json_accent_sensitive))
+  {
+    expression->accent_sensitive = FALSE;
+  }
+  else
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: respect-accent is not a boolean");
     DPcErr;
   }
 

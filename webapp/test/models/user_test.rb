@@ -215,12 +215,12 @@ class UserTest < ActiveSupport::TestCase
   test "Can destroy if user is only a collaborator" do
     collaborator = users(:show_on_agent_weather)
 
-    assert_equal 3, Agent.all.count
+    assert_equal 4, Agent.all.count
     assert_equal 5, Membership.all.count
 
     assert collaborator.destroy
 
-    assert_equal 3, Agent.all.count
+    assert_equal 4, Agent.all.count
     assert_equal 4, Membership.all.count
   end
 

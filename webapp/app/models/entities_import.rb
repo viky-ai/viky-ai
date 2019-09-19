@@ -14,7 +14,7 @@ class EntitiesImport < ApplicationRecord
   def proceed
     count = 0
     entities_list_id = entities_list.id
-    columns = [:terms, :auto_solution_enabled, :solution, :position, :entities_list_id, :searchable_terms]
+    columns = [:terms, :auto_solution_enabled, :solution, :case_sensitive, :accent_sensitive, :position, :entities_list_id, :searchable_terms]
     entities = []
     ActiveRecord::Base.transaction do
       if mode == 'replace'
@@ -38,9 +38,11 @@ class EntitiesImport < ApplicationRecord
             terms = csv_terms_to_terms(row)
             auto_solution = (row['Auto solution'].downcase == 'true')
             solution = csv_solution_to_solution(row, terms, auto_solution)
+            case_sensitive = (row['Case sensitive'].downcase == 'true')
+            accent_sensitive = (row['Accent sensitive'].downcase == 'true')
             position = max_position + lines_count - count
             searchable_terms = Entity.extract_searchable_terms(terms)
-            entities << [terms, auto_solution, solution, position, entities_list_id, searchable_terms]
+            entities << [terms, auto_solution, solution, case_sensitive, accent_sensitive, position, entities_list_id, searchable_terms]
             if (index % 1000).zero?
               batch_import(columns, entities, errors, max_position, lines_count)
               entities = []
@@ -118,7 +120,9 @@ class EntitiesImport < ApplicationRecord
         headers: [
           I18n.t('activerecord.attributes.entity.terms'),
           I18n.t('activerecord.attributes.entity.auto_solution_enabled'),
-          I18n.t('activerecord.attributes.entity.solution')
+          I18n.t('activerecord.attributes.entity.solution'),
+          I18n.t('activerecord.attributes.entity.case_sensitive'),
+          I18n.t('activerecord.attributes.entity.accent_sensitive')
         ],
         skip_blanks: true,
         encoding: 'UTF-8'
@@ -141,9 +145,16 @@ class EntitiesImport < ApplicationRecord
     end
 
     def validate_csv_header!(header_row)
-      if header_row['Terms'].downcase != 'terms' ||
+      if header_row['Terms'].nil? ||
+         header_row['Terms'].downcase != 'terms' ||
+         header_row['Auto solution'].nil? ||
          header_row['Auto solution'].downcase != 'auto solution' ||
-         header_row['Solution'].downcase != 'solution'
+         header_row['Solution'].nil? ||
+         header_row['Solution'].downcase != 'solution' ||
+         header_row['Case sensitive'].nil? ||
+         header_row['Case sensitive'].downcase != 'case sensitive' ||
+         header_row['Accent sensitive'].nil? ||
+         header_row['Accent sensitive'].downcase != 'accent sensitive'
         msg = I18n.t('errors.entities_import.missing_header')
         raise CSV::MalformedCSVError.new(msg, 0)
       end
@@ -167,6 +178,14 @@ class EntitiesImport < ApplicationRecord
           msg = I18n.t('errors.entities_import.unexpected_autosolution')
           raise CSV::MalformedCSVError.new(msg, row_number)
         end
+      end
+      if row['Case sensitive'].nil?
+        msg = I18n.t('errors.entities_import.missing_column')
+        raise CSV::MalformedCSVError.new(msg, row_number)
+      end
+      if row['Accent sensitive'].nil?
+        msg = I18n.t('errors.entities_import.missing_column')
+        raise CSV::MalformedCSVError.new(msg, row_number)
       end
     end
 
