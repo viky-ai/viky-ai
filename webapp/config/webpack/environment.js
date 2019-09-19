@@ -1,3 +1,4 @@
+const webpack = require('webpack')
 const { environment } = require('@rails/webpacker')
 const coffee =  require('./loaders/coffee')
 const { VueLoaderPlugin } = require('vue-loader')
@@ -7,6 +8,10 @@ const vue = require('./loaders/vue')
 environment.loaders.get('sass').use.splice(-1, 0, {
   loader: 'resolve-url-loader'
 });
+
+environment.plugins.append('Provide', new webpack.ProvidePlugin({
+  Rails: ['@rails/ujs']
+}));
 
 environment.plugins.prepend('VueLoaderPlugin', new VueLoaderPlugin())
 environment.loaders.prepend('vue', vue)

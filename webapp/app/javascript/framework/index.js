@@ -1,3 +1,5 @@
+window.App = {}
+
 // CSS reset
 import 'normalize.css'
 
