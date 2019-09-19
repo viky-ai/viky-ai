@@ -315,41 +315,81 @@ class EntitiesTest < ApplicationSystemTestCase
   end
 
 
-  test "Import entities" do
+  test "Import entities falling" do
     admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
     assert_equal 2, all("#entities-list > li").count
     click_link "Import"
 
-    within(".modal") do
-      assert_text "Import entities"
-      file = File.join(Rails.root, "test", "fixtures", "files", "import_entities.csv")
+    perform_enqueued_jobs do
+      within(".modal") do
+        assert_text "Import entities"
+        file = File.join(Rails.root, "test", "fixtures", "files", "import_entities_ko.csv")
 
-      # Display import file imput in order to allow capybara attach_file
-      execute_script("$('#import_file').css('opacity','1')");
-      attach_file("import_file", file)
-      click_button "Import"
-      assert has_text? "Uploading file, please wait..."
+        # Display import file imput in order to allow capybara attach_file
+        execute_script("$('#import_file').css('opacity','1')");
+        attach_file("import_file", file)
+        click_button "Import"
+      end
+
+      assert has_text? "Import failed"
     end
   end
 
 
-  # test "Import replace entities" do
-  #   admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
-  #   assert_equal 2, all("#entities-list > li").count
-  #   click_link "Import"
-  #   within(".modal") do
-  #     assert_text "Import entities"
-  #     file = File.join(Rails.root, "test", "fixtures", "files", "import_entities.csv")
-  #
-  #     # Display import file imput in order to allow capybara attach_file
-  #     execute_script("$('#import_file').css('opacity','1');")
-  #     attach_file("import_file", file)
-  #
-  #     choose "Replace current entities"
-  #     click_button "Import"
-  #     assert has_text? "Uploading file, please wait..."
-  #   end
-  # end
+  test "Import append entities with success" do
+    admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+    assert_equal 2, all("#entities-list > li").count
+    click_link "Import"
+
+    perform_enqueued_jobs do
+      within(".modal") do
+        assert_text "Import entities"
+        file = File.join(Rails.root, "test", "fixtures", "files", "import_entities_ok.csv")
+
+        # Display import file imput in order to allow capybara attach_file
+        execute_script("$('#import_file').css('opacity','1')");
+        attach_file("import_file", file)
+        click_button "Import"
+      end
+
+      assert has_text? "Processing import"
+      assert has_text? "3 entities imported successfully"
+    end
+
+    # Wait redirection
+    sleep 6
+
+    assert_equal 5, all("#entities-list > li").count
+  end
+
+
+  test "Import replace entities  with success" do
+    admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+    assert_equal 2, all("#entities-list > li").count
+    click_link "Import"
+
+    perform_enqueued_jobs do
+      within(".modal") do
+        assert_text "Import entities"
+        file = File.join(Rails.root, "test", "fixtures", "files", "import_entities_ok.csv")
+
+        # Display import file imput in order to allow capybara attach_file
+        execute_script("$('#import_file').css('opacity','1');")
+        attach_file("import_file", file)
+
+        choose "Replace current entities"
+        click_button "Import"
+      end
+
+      assert has_text? "Processing import"
+      assert has_text? "3 entities imported successfully"
+    end
+
+    # Wait redirection
+    sleep 6
+
+    assert_equal 3, all("#entities-list > li").count
+  end
 
 
   private
