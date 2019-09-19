@@ -35,6 +35,7 @@ en:
         graph:
           title: Formulations and Entities
           help: You are allowed a total of %{limit} formulations and entities for your agents
+          none: 0 used out of %{quota}
         list:
           title: Formulations and Entities per agent
       requests:

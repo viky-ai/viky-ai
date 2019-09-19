@@ -26,8 +26,8 @@ import 'apexcharts'
 import './nav/nav.coffee';
 
 import './profile/main.scss';
-import './profile/requests.coffee';
-import './profile/expressions.coffee';
+import './profile/requests_graph.coffee';
+import './profile/expressions_graph.coffee';
 
 import './authentication/main.scss';
 

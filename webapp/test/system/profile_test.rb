@@ -174,4 +174,11 @@ class ProfileTest < ApplicationSystemTestCase
     assert page.has_content?('Your account has been successfully deleted. Bye bye.')
   end
 
+  test "Quota information" do
+    go_to_profile
+    assert page.has_text?('Your requests quota')
+    assert page.has_text?('Formulations and Entities')
+    assert page.has_text?('Formulations and Entities per agent')
+  end
+
 end

@@ -2,7 +2,6 @@ class ProfilesController < ApplicationController
   before_action :set_profile
 
   def show
-    p "controller params: #{params}"
     @to = DateTime.now
     @from = (DateTime.now - 30.days).beginning_of_day
     @processed_requests = InterpretRequestLog.requests_over_time(@from, @to, @profile.id, 200)

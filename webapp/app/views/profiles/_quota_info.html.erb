@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card quota-info">
   <h2>
     <%= t('views.profile.quota.title') %>
     <small title="<%= t('views.profile.quota.help') %>">
@@ -7,7 +7,7 @@
       </span>
     </small>
   </h2>
-  <div class="card-content quota-info">
+  <div class="card-content">
     <p><%= t('views.profile.quota.limit_html', limit: Rack::Throttle.day_limit, time: 'day') %></p>
     <p><%= t('views.profile.quota.limit_html', limit: Rack::Throttle.hour_limit, time: 'hour') %></p>
     <p><%= t('views.profile.quota.limit_html', limit: Rack::Throttle.minute_limit, time: 'minute') %></p>

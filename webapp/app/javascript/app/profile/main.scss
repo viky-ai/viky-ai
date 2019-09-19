@@ -29,74 +29,74 @@
   }
 }
 
-.quota-info{
-  display: grid;
-  grid-row-gap: 1em;
-  grid-column-gap: 2em;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  p{
-    text-align: center;
-    strong{
-      display: block;
-      font-size: 1.75em;
-    }
-  }
-}
-
-#meter{
-  .apexcharts-datalabel-label{
-    font-size: 1.5em;
-    fill: #888;
-    top: 170;
-  }
-  .apexcharts-datalabel-value{
-    font-size: 3em;
-    fill: #0086ea;
-  }
-}
-
 .profile-row{
   display: grid;
   grid-column-gap: 2em;
-  &.profile-row-graph{
-    grid-template-columns: 1fr;
-    @media (min-width: 800px){
-      grid-template-columns: 1fr 2fr;
-    }
-    .profile-column{
-      display: grid;
-      grid-row-gap: 1em;
-    }
+  grid-template-columns: 1fr;
+  @media(min-width: 800px)  {
+    grid-template-columns: repeat(auto-fit, minmax(800px, 1fr))
   }
-  &.profile-row-table{
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    table{
-      font-size: .9em;
-      td{
-        padding: 0.5em 0em;
-        a, strong, small{
+
+  .profile-column{
+    display:grid;
+    grid-column-gap: 2em;
+    grid-row-gap: 1em;
+    grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+  }
+
+  .quota-info{
+    .card-content{
+      display: grid;
+      grid-row-gap: 2em;
+      grid-column-gap: 2em;
+      grid-template-columns: 1fr 1fr;
+      p{
+        text-align: center;
+        strong{
           display: block;
-          text-decoration: none;
+          font-size: 1.75em;
         }
       }
     }
-    .table-pagination{
-      margin: 1.5em 0 0 0;
-      font-size: .9em;
-      .pagination{
-        margin: 0 0 0 0;
-      }
-      .pagination-info{
-        text-align: center;
-        font-size: .8em;
-        margin: .5em 0 0 0;
-        color: #aaa;
+  }
+
+  .blankslate{
+    justify-content: center;
+    height: inherit;
+  }
+
+  table{
+    font-size: .9em;
+    td{
+      padding: 0.5em 0em;
+      a, strong, small{
+        display: block;
+        text-decoration: none;
       }
     }
+    tr td:not(:first-child), tr th:not(:first-child){
+      text-align: right;
+    }
   }
+  .table-pagination{
+    margin: 1.5em 0 0 0;
+    font-size: .9em;
+    .pagination{
+      margin: 0 0 0 0;
+    }
+    .pagination-info{
+      text-align: center;
+      font-size: .8em;
+      margin: .5em 0 0 0;
+      color: #aaa;
+    }
+  }
+  
   .card{
     padding: 1em;
-    overflow: hidden;
+    .card-content{
+      padding: 2em 2em 0;
+    }
     h2{
       padding: 1em;
       margin: -1em -1em 0em -1em;
