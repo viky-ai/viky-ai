@@ -254,18 +254,17 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     agent = agents(:weather)
     Nlp::Interpret.any_instance.stubs('send_nlp_request').raises(RuntimeError, 'Big big error')
 
-    assert_raise RuntimeError do
-      get '/api/v1/agents/admin/weather/interpret.json',
-          params: {
-            sentence: sentence,
-            agent_token: agent.api_token
-          }
-    end
+    get '/api/v1/agents/admin/weather/interpret.json',
+        params: {
+          sentence: sentence,
+          agent_token: agent.api_token
+        }
+    assert_response 500
 
     client = InterpretRequestLogTestClient.new
     result = client.search_documents({ match: { sentence: sentence } },1)
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 500, found[:status]
-    assert_equal ['NLS temporarily unavailable', '#<RuntimeError: Big big error>'], found[:body]['errors']
+    assert_equal ['Unexpected error while requesting NLS', '#<RuntimeError: Big big error>'], found[:body]['errors']
   end
 end
