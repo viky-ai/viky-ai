@@ -79,7 +79,7 @@ class InterpretRequestLog
             ],
           "must_not": {
             "terms": {
-              "context.client_type": ["console", "regression_test"]
+              "context.client_type": ["console", "regression_test", "play_ui"]
             }
           }
         }

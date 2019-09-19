@@ -287,7 +287,7 @@ class EntityTest < ActiveSupport::TestCase
 
   
   test 'Entities limit' do
-    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '11'
+    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '15'
 
     entity = Entity.new(
       terms: [
@@ -307,7 +307,7 @@ class EntityTest < ActiveSupport::TestCase
     assert_not entity_2.save
 
     expected = {
-      quota: ['exceeded (maximum is 11 formulations and entities), actual: 11']
+      quota: ['exceeded (maximum is 15 formulations and entities), actual: 15']
     }
     assert_equal expected, entity_2.errors.messages
     

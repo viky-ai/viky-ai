@@ -335,7 +335,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
   
   test 'Import entities limit' do
     
-    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '10'
+    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '14'
 
     elist = entities_lists(:weather_conditions)
     assert_equal ["*", "en", "fr", "es"], elist.agent.locales
@@ -352,7 +352,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal 2, elist.entities.count
 
     expected = [
-      "Bad entity format: Quota exceeded (maximum is 10 formulations and entities), actual: 10 in line 1."
+      "Bad entity format: Quota exceeded (maximum is 14 formulations and entities), actual: 14 in line 1."
     ]
     assert_equal expected, entities_import.errors[:file]
     
@@ -361,10 +361,10 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
   test 'Quota remaining is less than total import' do
 
-    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '11'
+    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '15'
     
     user = users(:admin)
-    assert_equal 10, user.expressions_count
+    assert_equal 14, user.expressions_count
 
     elist = entities_lists(:terminator_targets)
     assert_equal user, elist.agent.owner
@@ -379,7 +379,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_not entities_import.save
 
     expected = [
-      "Quota exceeded (maximum is 11 formulations and entities), actual: 10 and you are trying to import 2 more entities"
+      "Quota exceeded (maximum is 15 formulations and entities), actual: 14 and you are trying to import 2 more entities"
     ]
     assert_equal expected, entities_import.errors.full_messages
     
@@ -388,10 +388,10 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
   test 'User can replace even when quota is full' do
 
-    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '10'
+    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '14'
     
     user = users(:admin)
-    assert_equal 10, user.expressions_count
+    assert_equal 14, user.expressions_count
 
     elist = entities_lists(:weather_conditions)
     assert_equal user, elist.agent.owner
@@ -405,7 +405,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert entities_import.save
     assert_equal 1, entities_import.proceed
     assert_equal 1, elist.entities.count
-    assert_equal 9, user.expressions_count
+    assert_equal 13, user.expressions_count
     
     ENV['VIKYAPP_EXPRESSION_QUOTA'] = nil
   end

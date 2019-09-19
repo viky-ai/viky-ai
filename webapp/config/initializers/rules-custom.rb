@@ -38,7 +38,7 @@ module Rack
           if agent 
             log = InterpretRequestLog.new(
               timestamp: Time.now.iso8601(3),
-              agent: agent
+              agents: [agent]
             )
             log.with_response(503, { }).save
           end

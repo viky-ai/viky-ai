@@ -414,9 +414,9 @@ class InterpretationTest < ActiveSupport::TestCase
   end
   
   test 'Quota for interpretation and entities' do
-    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '11'
+    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '15'
     user = users(:admin)
-    assert_equal 10, user.expressions_count
+    assert_equal 14, user.expressions_count
 
     interpretation = Interpretation.new(
       expression: 'Sunny tomorrow morning',
@@ -432,7 +432,7 @@ class InterpretationTest < ActiveSupport::TestCase
     interpretation_next.intent = intents(:weather_forecast)
     assert_not interpretation_next.save
     expected = {
-      quota: ['exceeded (maximum is 11 formulations and entities), actual: 11']
+      quota: ['exceeded (maximum is 15 formulations and entities), actual: 15']
     }
     assert_equal expected, interpretation_next.errors.messages
     
