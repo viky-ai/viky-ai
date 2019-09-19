@@ -8,9 +8,9 @@
     </small>
   </h2>
   <div class="card-content">
-    <p><%= t('views.profile.quota.limit_html', limit: Rack::Throttle.day_limit, time: 'day') %></p>
-    <p><%= t('views.profile.quota.limit_html', limit: Rack::Throttle.hour_limit, time: 'hour') %></p>
-    <p><%= t('views.profile.quota.limit_html', limit: Rack::Throttle.minute_limit, time: 'minute') %></p>
-    <p><%= t('views.profile.quota.limit_html', limit: Rack::Throttle.second_limit, time: 'second') %></p>
+    <p><%= t('views.profile.quota.limit_html', limit: number_with_delimiter(Rack::Throttle.day_limit), time: 'day') %></p>
+    <p><%= t('views.profile.quota.limit_html', limit: number_with_delimiter(Rack::Throttle.hour_limit), time: 'hour') %></p>
+    <p><%= t('views.profile.quota.limit_html', limit: number_with_delimiter(Rack::Throttle.minute_limit), time: 'minute') %></p>
+    <p><%= t('views.profile.quota.limit_html', limit: number_with_delimiter(Rack::Throttle.second_limit), time: 'second') %></p>
   </div>
 </div>

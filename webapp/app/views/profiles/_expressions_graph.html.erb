@@ -8,16 +8,16 @@
       </small>
     </h2>
     <% if @profile.expressions_count.zero? %>
-    <div class="blankslate">
-      <div class="blankslate__illustration">
-        <img src='<%= image_path "robot-idle.png" %>'
-              srcset='<%= image_path "robot-idle.png" %> 1x,
-                      <%= image_path "robot-idle@2x.png" %> 2x' />
+      <div class="blankslate">
+        <div class="blankslate__illustration">
+          <img src='<%= image_path "robot-idle.png" %>'
+                srcset='<%= image_path "robot-idle.png" %> 1x,
+                        <%= image_path "robot-idle@2x.png" %> 2x' />
+        </div>
+        <div class="blankslate__content">
+          <%= t('views.profile.expressions.none', quota: number_with_delimiter(Rack::Throttle.expressions_limit)) %>
+        </div>
       </div>
-      <div class="blankslate__content">
-        <%= t('views.profile.expressions.graph.none', quota: number_with_delimiter(Rack::Throttle.expressions_limit)) %>
-      </div>
-    </div>
     <% else %>
       <div id="expressions_graph"></div>
     <% end %>

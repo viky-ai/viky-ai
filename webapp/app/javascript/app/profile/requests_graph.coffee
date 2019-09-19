@@ -8,6 +8,7 @@ class RequestsGraph
         chart:
           type: 'area'
           stacked: true
+          height: 600
         zoom:
           type: 'xy'
           autoScaleYaxis: true

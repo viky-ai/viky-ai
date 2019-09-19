@@ -9,10 +9,12 @@
   </div>
 </header>
 <div class="profile-row">
-  <div class="profile-column">
-    <%= render 'quota_info' %>
-    <%= render 'expressions_graph' %>
-  </div>
+  <% unless @profile.ignore_quota %>
+    <div class="profile-column">
+      <%= render 'quota_info' %>
+      <%= render 'expressions_graph' %>
+    </div>
+  <% end %>
   <%= render 'requests_graph' %>
 </div>
 <div class="profile-row">
