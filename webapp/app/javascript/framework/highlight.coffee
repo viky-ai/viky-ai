@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 Setup = ->
   for pre in $(".markdown pre")
     lang = $(pre).attr('lang')
@@ -9,6 +7,5 @@ Setup = ->
   Prism.highlightAll()
   $("body").on 'code:highlight', (event) =>
     Prism.highlightAll()
-
 
 $(document).on('turbolinks:load', Setup)

@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class EntitiesImport
   constructor: ->
     $(document).on "turbolinks:before-visit", =>

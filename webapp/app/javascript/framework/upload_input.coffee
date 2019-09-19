@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class UploadInput
   constructor: ->
     $('.field--upload input[type="file"]').mouseenter (event) ->

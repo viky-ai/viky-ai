@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class TransferOwnershipForm
   constructor: ->
     $('body').on 'modal:load', (event) => @setup()

@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class IntentForm
   constructor: ->
     $('body').on 'modal:load', (event) =>

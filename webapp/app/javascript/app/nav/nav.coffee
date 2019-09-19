@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class Nav
   constructor: ->
     if $('.h-nav').length == 1

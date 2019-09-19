@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class CodeEditor
   @buildJavaScriptEditor: (textarea, readonly=false, lineNumbers=true)->
     return if $(textarea).length == 0
