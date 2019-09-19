@@ -1,7 +1,7 @@
 # If you want Postgres in a container
 # db:       docker kill viky-db-dev; docker run --rm -p "5432:5432" --mount 'type=volume,src=vikyapp_db01_dev,dst=/var/lib/postgresql/data' --name viky-db-dev -e POSTGRES_USER=viky -e POSTGRES_PASSWORD_FILE=.pgpass postgres:11-alpine
 redis:    docker kill viky-redis-dev; docker run -p "6379:6379" --rm --name viky-redis-dev --init redis:5.0-alpine
-workers:  bundle exec sidekiq -C config/sidekiq.yml -L ./log/sidekiq.log
+workers:  bundle exec sidekiq -C config/sidekiq.yml
 webpack:  ./bin/webpack-dev-server
 web:      bundle exec rails s -p 3000 -b 0.0.0.0
 nls:      ./bin/foreman_nls.sh $MY_CURRENT_GIT_BRANCH
