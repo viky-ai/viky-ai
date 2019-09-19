@@ -109,10 +109,14 @@ class User < ApplicationRecord
     quota.nil? ? false : (expressions_count >= quota)
   end
 
-  def expressions_count
+  def expressions_count(details = false)
     entities_count = EntitiesList.joins(:agent).where('agents.owner_id = ?', id).sum(:entities_count)
     interpretations_count = Interpretation.joins(intent: :agent).where('agents.owner_id = ?', id).count
-    entities_count + interpretations_count
+    if details
+      { entities: entities_count, formulations: interpretations_count }
+    else
+      entities_count + interpretations_count
+    end
   end
 
   def expressions_per_agent

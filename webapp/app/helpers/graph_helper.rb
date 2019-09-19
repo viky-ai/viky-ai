@@ -21,11 +21,14 @@ module GraphHelper
   end
 
   def prepare_expressions_data(user)
-    expressions = user.expressions_count
+    expressions = user.expressions_count(true)
     quota = Rack::Throttle.expressions_limit
-    JSON.generate({
-      consumed: quota.nil? ? 0 : (expressions * 100 / quota.to_f).to_i,
-      label: "#{expressions} used out of #{quota}"
-    }).html_safe
+    total = expressions[:entities] + expressions[:formulations]
+    JSON.generate(
+      data: [expressions[:formulations], expressions[:entities], quota - total],
+      label: ['Formulations', 'Entities', 'Remaining'],
+      total: total,
+      quota: quota
+    ).html_safe
   end
 end
