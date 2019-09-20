@@ -212,7 +212,7 @@ deploy_dev:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
   script:
-    -
+    # gtilab auto autodeploy setup
     - setup_release_name
     - helm init --client-only
     - auto-deploy ensure_namespace
