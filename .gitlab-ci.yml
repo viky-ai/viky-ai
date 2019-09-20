@@ -55,10 +55,12 @@ elastic_keystore:
     ES_IGNORE_SECRET_GENERATION: "true"
   script:
     - cd deployment/kubernetes/
-    - bin/generateS3Keystore.sh ./viky-platform/custom-values
+    - bin/generateS3Keystore.sh /tmp/viky-platform
+    - cp -a  /tmp/viky-platform/elasticsearch.keystore ./viky-platform/custom-values/
+    - rm -rf /tmp/viky-platform/
   artifacts:
     paths:
-      - deployment/kubernetes/viky-platform/custom-valueselasticsearch.keystore
+      - deployment/kubernetes/viky-platform/custom-values/elasticsearch.keystore
     # expire_in: 1 hour
 
 build_webapp:
