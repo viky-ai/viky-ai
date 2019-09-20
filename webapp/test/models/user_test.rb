@@ -239,12 +239,13 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test 'Quota exceeded' do
+    Feature.enable_rack_throttle
     ENV['VIKYAPP_EXPRESSION_QUOTA'] = '10'
     
     assert users(:admin).quota_exceeded?
     assert_not users(:confirmed).quota_exceeded?
 
-    ENV['VIKYAPP_EXPRESSION_QUOTA'] = nil
+    Feature.disable_rack_throttle
   end
 
   test 'Expressions per agent' do
@@ -262,5 +263,18 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 1, agent_expressions.count
     assert_equal agents(:weather_confirmed).id, agent_expressions.first.id
     assert_equal 0, agent_expressions.first.total
+  end
+
+  test 'Quota ignored for user' do
+    Feature.enable_rack_throttle
+    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '10'
+    
+    admin = users(:admin)
+    admin.ignore_quota = true
+    assert admin.save
+    assert_equal 10, admin.expressions_count
+    assert_not users(:admin).quota_exceeded?
+
+    Feature.disable_rack_throttle
   end
 end

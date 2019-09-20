@@ -65,8 +65,8 @@ module Rack
     end
 
     def self.expressions_limit
-      limit = ENV.fetch('VIKYAPP_EXPRESSION_QUOTA'){ nil }
-      limit.nil? ? limit : limit.to_i
+      limit = ENV.fetch('VIKYAPP_EXPRESSION_QUOTA'){ 500_000 }
+      limit.to_i
     end
 
     # Limitations rules

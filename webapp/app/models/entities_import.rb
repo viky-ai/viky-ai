@@ -217,17 +217,15 @@ class EntitiesImport < ApplicationRecord
     end
 
     def check_owner_quota
-      return if entities_list.agent.owner.ignore_quota
+      return if entities_list.agent.owner.ignore_quota || !Feature.rack_throttle_enabled?
 
       quota = Rack::Throttle.expressions_limit
-      unless quota.nil?
-        total = entities_list.agent.owner.expressions_count
-        if mode == 'replace'
-          total = total - entities_list.entities_count
-        end
-        if total + csv_count_lines > quota
-          errors.add(:base, I18n.t('errors.entities_import.quota', maximum: quota, actual: total, to_import: csv_count_lines))
-        end
+      total = entities_list.agent.owner.expressions_count
+      if mode == 'replace'
+        total = total - entities_list.entities_count
+      end
+      if total + csv_count_lines > quota
+        errors.add(:base, I18n.t('errors.entities_import.quota', maximum: quota, actual: total, to_import: csv_count_lines))
       end
     end
 end

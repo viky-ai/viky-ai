@@ -414,7 +414,9 @@ class InterpretationTest < ActiveSupport::TestCase
   end
   
   test 'Quota for interpretation and entities' do
+    Feature.enable_rack_throttle
     ENV['VIKYAPP_EXPRESSION_QUOTA'] = '11'
+
     user = users(:admin)
     assert_equal 10, user.expressions_count
 
@@ -436,6 +438,6 @@ class InterpretationTest < ActiveSupport::TestCase
     }
     assert_equal expected, interpretation_next.errors.messages
     
-    ENV['VIKYAPP_EXPRESSION_QUOTA'] = nil
+    Feature.disable_rack_throttle
   end
 end

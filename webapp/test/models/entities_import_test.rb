@@ -334,7 +334,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
   
   test 'Import entities limit' do
-    
+    Feature.enable_rack_throttle
     ENV['VIKYAPP_EXPRESSION_QUOTA'] = '10'
 
     elist = entities_lists(:weather_conditions)
@@ -356,11 +356,11 @@ class EntitiesImportTest < ActiveSupport::TestCase
     ]
     assert_equal expected, entities_import.errors[:file]
     
-    ENV['VIKYAPP_EXPRESSION_QUOTA'] = nil
+    Feature.disable_rack_throttle
   end
 
   test 'Quota remaining is less than total import' do
-
+    Feature.enable_rack_throttle
     ENV['VIKYAPP_EXPRESSION_QUOTA'] = '11'
     
     user = users(:admin)
@@ -383,11 +383,11 @@ class EntitiesImportTest < ActiveSupport::TestCase
     ]
     assert_equal expected, entities_import.errors.full_messages
     
-    ENV['VIKYAPP_EXPRESSION_QUOTA'] = nil
+    Feature.disable_rack_throttle
   end
 
   test 'User can replace even when quota is full' do
-
+    Feature.enable_rack_throttle
     ENV['VIKYAPP_EXPRESSION_QUOTA'] = '10'
     
     user = users(:admin)
@@ -407,7 +407,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal 1, elist.entities.count
     assert_equal 9, user.expressions_count
     
-    ENV['VIKYAPP_EXPRESSION_QUOTA'] = nil
+    Feature.disable_rack_throttle
   end
 
 

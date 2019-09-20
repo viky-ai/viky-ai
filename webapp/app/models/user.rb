@@ -103,10 +103,10 @@ class User < ApplicationRecord
   end
 
   def quota_exceeded?
-    return false if ignore_quota
+    return false if ignore_quota || !Feature.rack_throttle_enabled?
 
     quota = Rack::Throttle.expressions_limit
-    quota.nil? ? false : (expressions_count >= quota)
+    expressions_count >= quota
   end
 
   def expressions_count(details = false)

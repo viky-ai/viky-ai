@@ -286,6 +286,7 @@ class EntityTest < ActiveSupport::TestCase
   end
 
   test 'Entities limit' do
+    Feature.enable_rack_throttle
     ENV['VIKYAPP_EXPRESSION_QUOTA'] = '11'
 
     entity = Entity.new(
@@ -310,6 +311,6 @@ class EntityTest < ActiveSupport::TestCase
     }
     assert_equal expected, entity_2.errors.messages
     
-    ENV['VIKYAPP_EXPRESSION_QUOTA'] = nil
+    Feature.disable_rack_throttle
   end
 end

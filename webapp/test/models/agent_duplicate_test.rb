@@ -299,6 +299,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
   end
 
   test 'Should not be able to duplicate an agent when quota is full' do
+    Feature.enable_rack_throttle
     ENV['VIKYAPP_EXPRESSION_QUOTA'] = '10'
 
     agent = agents(:weather)
@@ -307,6 +308,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     assert current_user.quota_exceeded?
     new_agent = AgentDuplicator.new(agent, current_user).duplicate
     assert_not new_agent.persisted?
-    ENV['VIKYAPP_EXPRESSION_QUOTA'] = nil
+
+    Feature.disable_rack_throttle
   end
 end
