@@ -23,9 +23,6 @@ variables:
   DOCKER_IMAGE_TOOLS_NLP: $CI_REGISTRY_IMAGE/tools_nlp_base
   DOCKER_IMAGE_TOOLS_RUBY: $CI_REGISTRY_IMAGE/tools_ruby_base
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
-  # Needed for Gitlab Managed
-  TILLER_NAMESPACE: ${KUBE_NAMESPACE}
-  HELM_HOST: "localhost:44134"
 
 # Build docker image
 
@@ -51,8 +48,6 @@ build_backup:
 elastic_keystore:
   <<: *kubernetes_runner
   stage: prerequist
-  variables:
-    ES_IGNORE_SECRET_GENERATION: "true"
   script:
     - cd deployment/kubernetes/
     - bin/generateS3Keystore.sh ./viky-platform/custom-values/
@@ -216,8 +211,8 @@ deploy_dev:
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
-  before_script:
-    - export HELM_HOST="localhost:44134"
+  script:
+    -
     - setup_release_name
     - helm init --client-only
     - auto-deploy ensure_namespace
@@ -227,7 +222,6 @@ deploy_dev:
     - cd deployment/kubernetes/
     - echo "Generate Override values"
     - bin/generateOverrideValuesFile.sh
-  script:
     - cat custom-values.yml
     # Deploy Viky Platform
     - helm upgrade --force --wait --timeout 600 --values custom-values.yml,viky-platform/custom-values/production.yaml --install "${RELEASE_NAME}" --namespace "${KUBE_NAMESPACE}" viky-platform/
@@ -385,6 +379,10 @@ before_script:
   - |
     # Auto DevOps variables and functions
     [[ "${TRACE:-0}" == "1" ]] && set -x
+
+    # Needed for Gitlab Managed
+    export TILLER_NAMESPACE=${KUBE_NAMESPACE}
+    export HELM_HOST="localhost:44134"
 
     function docker_build ()
     {
