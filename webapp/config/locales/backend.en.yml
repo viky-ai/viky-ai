@@ -55,6 +55,11 @@ en:
         destroy:
           success_message: "User with the email: %{email} has successfully been deleted."
           errors_message: "Deletion failed: %{errors}"
+        quota:
+          success:
+            ignored: "Quota limitations ignored for user with email: %{email}"
+            activated: "Quota limitations activated for user with email: %{email}"
+          error: "Quota activation/deactivation failed: %{errors}"
       breadcrumb:
         base: Backend
         user_management: User management

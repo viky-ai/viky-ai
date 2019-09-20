@@ -38,9 +38,13 @@ class Backend::UsersController < Backend::ApplicationController
 
   def ignore_quota
     @user = User.friendly.find(params[:id])
-    @user.ignore_quota = !@user.ignore_quota;
-    @user.save
-    redirect_to backend_users_path
+    @user.ignore_quota = !@user.ignore_quota
+    if @user.save
+      message = @user.ignore_quota ? 'ignored' : 'activated'
+      redirect_to backend_users_path, notice: t("views.backend.users.quota.success.#{message}", email: @user.email)
+    else
+      redirect_to backend_users_path, errors: t('views.backend.users.quota.error', errors: @user.errors.full_messages.join(', '))
+    end
   end
 
 end
