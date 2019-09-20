@@ -145,10 +145,10 @@ class BackendUsersTest < ApplicationSystemTestCase
 
     all("a.btn--destructive")[2].click
     assert has_content?("Are you sure?")
-    assert has_content?("You're about to delete user with the email: locked@viky.ai.")
+    assert has_content?("You're about to delete user with the email: invited@viky.ai.")
     fill_in "validation", with: "DELETE"
     click_button("Delete")
-    assert has_content?("User with the email: locked@viky.ai has successfully been deleted.")
+    assert has_content?("User with the email: invited@viky.ai has successfully been deleted.")
     assert_equal "/backend/users", current_path
     assert_equal before_count - 1, User.count
   end

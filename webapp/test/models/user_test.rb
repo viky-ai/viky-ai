@@ -202,7 +202,7 @@ class UserTest < ActiveSupport::TestCase
   test "Can not destroy if user own agent" do
     admin_user = users(:admin)
 
-    assert_equal 5, Membership.all.count
+    assert_equal 6, Membership.all.count
     assert_not admin_user.destroy
 
     expected = ["You must delete all the agents you own"]
@@ -216,12 +216,12 @@ class UserTest < ActiveSupport::TestCase
     collaborator = users(:show_on_agent_weather)
 
     assert_equal 4, Agent.all.count
-    assert_equal 5, Membership.all.count
+    assert_equal 6, Membership.all.count
 
     assert collaborator.destroy
 
     assert_equal 4, Agent.all.count
-    assert_equal 4, Membership.all.count
+    assert_equal 5, Membership.all.count
   end
 
 
@@ -232,7 +232,7 @@ class UserTest < ActiveSupport::TestCase
 
   test 'Users expression count' do
     admin = users(:admin)
-    assert_equal 14, admin.expressions_count
+    assert_equal 10, admin.expressions_count
 
     user = users(:confirmed)
     assert_equal 0, user.expressions_count
@@ -250,12 +250,9 @@ class UserTest < ActiveSupport::TestCase
   test 'Expressions per agent' do
     admin = users(:admin)
     agent_expressions = admin.expressions_per_agent
-    assert_equal 3, agent_expressions.count
+    assert_equal 2, agent_expressions.count
     assert_equal agents(:weather).id, agent_expressions.first.id
     assert_equal 7, agent_expressions.first.total
-
-    assert_equal agents(:cities).id, agent_expressions.second.id
-    assert_equal 4, agent_expressions.second.total
 
     assert_equal agents(:terminator).id, agent_expressions.last.id
     assert_equal 3, agent_expressions.last.total

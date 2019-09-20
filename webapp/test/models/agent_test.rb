@@ -432,18 +432,18 @@ class AgentTest < ActiveSupport::TestCase
 
   test "Destroy validation when collaborators are presents" do
     agent = agents(:weather)
-    assert_equal 5, Membership.all.count
+    assert_equal 6, Membership.all.count
     assert !agent.destroy
     expected = ["You must remove all collaborators before delete an agent"]
     assert_equal expected, agent.errors.full_messages
-    assert_equal 5, Membership.all.count
+    assert_equal 6, Membership.all.count
 
     agent.memberships.where.not(rights: 'all').each do |m|
       assert m.destroy
     end
-    assert_equal 3, Membership.all.count
+    assert_equal 4, Membership.all.count
     assert agent.destroy
-    assert_equal 2, Membership.all.count
+    assert_equal 3, Membership.all.count
   end
 
 
