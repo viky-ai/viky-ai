@@ -54,12 +54,11 @@ elastic_keystore:
   variables:
     ES_IGNORE_SECRET_GENERATION: "true"
   script:
-    - chmod +x ./deployment/kubernetes/bin/generateS3Keystore.sh
-    - deployment/kubernetes/bin/generateS3Keystore.sh
-    - ls -l
+    - cd deployment/kubernetes/
+    - bin/generateS3Keystore.sh ./viky-platform/custom-values
   artifacts:
     paths:
-      - elasticsearch.keystore
+      - deployment/kubernetes/elasticsearch.keystore
     # expire_in: 1 hour
 
 build_webapp:
@@ -195,7 +194,7 @@ tag_backup:
   script:
     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_BACKUP}
 
-# Deploy any branches on rancher dev
+# Deploy any branches on dev
 deploy_dev:
   <<: *kubernetes_runner
   stage: deploy
@@ -215,17 +214,13 @@ deploy_dev:
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
-    VIKY_DOMAIN: viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
-    NAMESPACE: $KUBE_NAMESPACE
   before_script:
     - export HELM_HOST="localhost:44134"
-    - export RELEASE_NAME=viky-$(echo '${KUBE_NAMESPACE}' | sha1sum | awk '{print $1}' | cut -c -10)
+    - setup_release_name
     - helm init --client-only
     - auto-deploy ensure_namespace
     - auto-deploy initialize_tiller
     - auto-deploy create_secret
-    - echo "Create ES Keystore secret"
-    - kubectl create secret generic es-keystore-secret --namespace "${KUBE_NAMESPACE}" --from-file "elasticsearch.keystore"  || true
     # Go to Kubernetes directory
     - cd deployment/kubernetes/
     - echo "Generate Override values"
@@ -235,7 +230,7 @@ deploy_dev:
     # Deploy Viky Platform
     - helm upgrade --force --wait --timeout 600 --values custom-values.yml,viky-platform/custom-values/production.yaml --install "${RELEASE_NAME}" --namespace "${KUBE_NAMESPACE}" viky-platform/
 
-# Deploy master on rancher preprod
+# Deploy master on preprod
 deploy_preprod:
   <<: *kubernetes_runner
   stage: deploy
@@ -256,25 +251,9 @@ deploy_preprod:
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
-    NAMESPACE: beta
-    VIKY_DOMAIN: viky-beta-kube.viky.ai
   script:
-    - echo "Init helm ..."
-    - helm init --client-only --wait
-    - echo "Create namespace"
-    - kubectl create namespace "${NAMESPACE}" || true
-    - echo "Create old secrets"
-    - kubectl delete secret es-keystore-secret --namespace "viky-${CI_ENVIRONMENT_SLUG}" || true
-    - kubectl delete secret pertimm-registry --namespace "viky-${CI_ENVIRONMENT_SLUG}" || true
-    - echo "Create Pertimm Registry Secret"
-    - kubectl create secret docker-registry pertimm-registry --namespace "${NAMESPACE}" --docker-server="${PERTIMM_REGISTRY_URL}" --docker-username="${PERTIMM_REGISTRY_USERNAME}" --docker-password="${PERTIMM_REGISTRY_PASSWORD}" --docker-email="${PERTIMM_REGISTRY_EMAIL}" || true
-    - echo "Create ES Keystore secret"
-    - kubectl create secret generic es-keystore-secret --namespace="${NAMESPACE}" --from-file "elasticsearch.keystore"  || true
-    - echo "Generate Override values"
-    - deployment/kubernetes/bin/generateOverrideValuesFile.sh
-    - cat custom-values.yml
-    - echo "Deploy Viky Platform"
-    - helm upgrade --force --wait --values custom-values.yml,deployment/kubernetes/viky-platform/custom-values/production.yaml --install "${NAMESPACE}-platform" --namespace "${NAMESPACE}" deployment/kubernetes/viky-platform/
+    #TODO
+    - "false"
 
 # remove environment
 delete_env:
@@ -288,11 +267,9 @@ delete_env:
     name: ${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
     action: stop
-  variables:
-    NAMESPACE: $KUBE_NAMESPACE
   script:
     - export HELM_HOST="localhost:44134"
-    - export RELEASE_NAME=viky-$(echo '${KUBE_NAMESPACE}' | sha1sum | awk '{print $1}' | cut -c -10)
+    - setup_release_name
     - helm init --client-only
     - auto-deploy ensure_namespace
     - auto-deploy initialize_tiller
@@ -313,13 +290,10 @@ invite_admin_dev:
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
   variables:
     GIT_STRATEGY: none
-    NAMESPACE: viky-${CI_ENVIRONMENT_SLUG}
   script:
-    - export KUBECONFIG=$KUBECONFIG
-    - echo "Init helm ..."
-    - helm init --client-only --wait
-    - PODNAME=$(kubectl get pods --namespace=$NAMESPACE -l app=webapp --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
-    - kubectl --namespace=$NAMESPACE exec $PODNAME ./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]
+    - setup_release_name
+    - PODNAME=$(kubectl get pods --namespace=${KUBE_NAMESPACE} -l app=webapp --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
+    - kubectl --namespace=${KUBE_NAMESPACE} exec $PODNAME ./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]
   when: manual
   allow_failure: true
 
@@ -335,11 +309,9 @@ invite_admin_preprod:
     url: https://viky-beta-kube.viky.ai
   variables:
     GIT_STRATEGY: none
-    NAMESPACE: beta
   script:
-    - export KUBECONFIG=$KUBECONFIG
-    - PODNAME=$(kubectl get pods --namespace=$NAMESPACE -l app=webapp --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
-    - kubectl --namespace=$NAMESPACE exec $PODNAME ./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]
+    - PODNAME=$(kubectl get pods --namespace=${KUBE_NAMESPACE} -l app=webapp --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
+    - kubectl --namespace=${KUBE_NAMESPACE} exec $PODNAME ./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]
   when: manual
   allow_failure: true
 
@@ -357,11 +329,9 @@ backup_dev:
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
   variables:
     GIT_STRATEGY: none
-    NAMESPACE: viky-${CI_ENVIRONMENT_SLUG}
   script:
-    - export KUBECONFIG=$KUBECONFIG
-    - PODNAME=$(kubectl get pods --namespace=$NAMESPACE -l app=webapp-backup --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
-    - kubectl exec --namespace=$NAMESPACE $PODNAME  bash /backup/backup.sh "${NAMESPACE}"
+    - PODNAME=$(kubectl get pods --namespace=${KUBE_NAMESPACE} -l app=viky-webapp-backup --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
+    - kubectl exec --namespace=${KUBE_NAMESPACE} ${PODNAME}  bash /backup/backup.sh "${KUBE_NAMESPACE}"
   when: manual
   allow_failure: true
 
@@ -378,11 +348,9 @@ backup_preprod:
     url: https://viky-beta-kube.viky.ai
   variables:
     GIT_STRATEGY: none
-    NAMESPACE: beta
   script:
-    - export KUBECONFIG=$KUBECONFIG
-    - PODNAME=$(kubectl get pods --namespace=$NAMESPACE -l app=webapp-backup --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
-    - kubectl exec --namespace=$NAMESPACE $PODNAME  bash /backup/backup.sh "${NAMESPACE}"
+    - PODNAME=$(kubectl get pods --namespace=${KUBE_NAMESPACE} -l app=viky-webapp-backup --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
+    - kubectl exec --namespace=${KUBE_NAMESPACE} ${PODNAME}  bash /backup/backup.sh "${KUBE_NAMESPACE}"
   when: manual
   allow_failure: true
 
@@ -400,15 +368,14 @@ backup_restore_dev:
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
   variables:
     GIT_STRATEGY: none
-    NAMESPACE: viky-${CI_ENVIRONMENT_SLUG}
   script:
-    - export KUBECONFIG=$KUBECONFIG
-    - PODNAME_REDIS=$(kubectl get pods --namespace=$NAMESPACE -l app=redis --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
-    - kubectl exec --namespace=$NAMESPACE $PODNAME_REDIS redis-cli flushall
-    - PODNAME=$(kubectl get pods --namespace=$NAMESPACE -l app=webapp-backup --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
-    - kubectl exec --namespace=$NAMESPACE $PODNAME  bash /backup/backup.sh "${NAMESPACE}"
-    - kubectl exec --namespace=$NAMESPACE $PODNAME  bash /backup/restore.sh "${NAMESPACE}"
-    - helm upgrade --force --wait --values custom-values.yml,deployment/kubernetes/viky-platform/custom-values/production.yaml --install "${NAMESPACE}-platform" --namespace "${NAMESPACE}" deployment/kubernetes/viky-platform/
+    - PODNAME=$(kubectl get pods --namespace=${KUBE_NAMESPACE} -l app=viky-webapp-backup --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
+    - kubectl exec --namespace=${KUBE_NAMESPACE} $PODNAME  bash /backup/backup.sh  "${KUBE_NAMESPACE}" || true
+    - kubectl exec --namespace=${KUBE_NAMESPACE} $PODNAME  bash /backup/restore.sh "${KUBE_NAMESPACE}"
+    # - PODNAME_REDIS=$(kubectl get pods --namespace=${KUBE_NAMESPACE} -l app=redis --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
+    # - kubectl exec --namespace=${KUBE_NAMESPACE} $PODNAME_REDIS redis-cli flushall
+    # delete pods to restart wiky apps deployment
+    - kubectl delete pods --namespace=${KUBE_NAMESPACE} -l 'app in (viky-webapp-worker, viky-webapp, viky-nlp)'
   when: manual
   allow_failure: true
 
@@ -416,18 +383,6 @@ before_script:
   - |
     # Auto DevOps variables and functions
     [[ "${TRACE:-0}" == "1" ]] && set -x
-
-    function viky_backup ()
-    {
-      echo "Backing up data ..."
-      rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh "${NAMESPACE}"
-
-      if [ $? -ne 0 ]; then
-        (>&2 echo "Backing up data FAILED")
-      fi
-      echo ""
-      return 0
-    }
 
     function docker_build ()
     {
@@ -486,13 +441,7 @@ before_script:
       fi
     }
 
-    function rancher_exec ()
+    function setup_release_name ()
     {
-      local RANCHER_ENV=$1
-
-      # simulate a tty with script command https://github.com/rancher/rancher/issues/7971#issuecomment-286856228
-      local CURRENT_COMMAND="rancher --wait --environment ${RANCHER_ENV} exec -t ${@:2}"
-      echo "Exec : ${CURRENT_COMMAND}"
-      script --return --flush --quiet --command "${CURRENT_COMMAND}" /dev/null
-      return $?
+      export RELEASE_NAME=viky-$(echo '${KUBE_NAMESPACE}' | sha1sum | awk '{print $1}' | cut -c -10)
     }
