@@ -55,7 +55,7 @@ elastic_keystore:
     ES_IGNORE_SECRET_GENERATION: "true"
   script:
     - cd deployment/kubernetes/
-    - bin/generateS3Keystore.sh ./viky-platform/custom-values
+    - bash bin/generateS3Keystore.sh ./viky-platform/custom-values
   artifacts:
     paths:
       - deployment/kubernetes/elasticsearch.keystore
@@ -93,7 +93,7 @@ build_nlp:
     POSTGRES_PASSWORD: sup_3rman
     POSTGRES_DB: vikyapp_test
   services:
-    - postgres:11-alpine
+    - postgres:11.5-alpine
     - redis:5.0-alpine
     - name: docker.elastic.co/elasticsearch/elasticsearch:7.3.2
       # Important other wise, port 9200 will never be exposed

@@ -3,5 +3,5 @@ $("body").trigger('play:form-updated');
 $(".play-main__result").html("<%= escape_javascript(@result) %>");
 new App.PlayResult();
 <% if @interpreter.result.present? %>
-  new App.PlayAside.succeed(<%= @interpreter.result.interpretations_count_per_agent.to_json.html_safe %>);
+  App.PlayAside.succeed(<%= @interpreter.result.interpretations_count_per_agent.to_json.html_safe %>);
 <% end %>

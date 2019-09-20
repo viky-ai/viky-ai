@@ -1,3 +1,5 @@
+window.App = {}
+
 // CSS reset
 import 'normalize.css'
 
@@ -15,10 +17,10 @@ import 'codemirror/mode/javascript/javascript'
 import 'codemirror/mode/gfm/gfm'
 import 'codemirror/lib/codemirror.css'
 
-// CSS framework
+// CSS framework part
 import './main.scss'
 
-// // Coffee
+// JS framework part
 import './password.coffee';
 import './dropdown.coffee';
 window.App.Modal = require('./modal')
@@ -30,9 +32,8 @@ window.App.FocusInput = require('./focus')
 import './button_group.coffee'
 import './upload_input.coffee'
 import './highlight_and_scroll_to.coffee';
+window.App.CodeEditor = require('./code_editor');
+window.App.CardListHelper = require('./card_list');
 
 // Expose jQuery
 window.$ = require('jquery');
-
-window.App.CodeEditor = require('./code_editor');
-window.App.CardListHelper = require('./card_list');

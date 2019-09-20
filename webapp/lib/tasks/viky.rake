@@ -12,6 +12,7 @@ namespace :viky do
       Rake::Task["db:setup"].invoke
     end
     Rake::Task["viky:clear_old_running_entities_imports"].invoke
+    Rake::Task["viky:clear_agent_regression_checks_run_state"].invoke
 
     # Statistics related
     Rake::Task["statistics:setup"].invoke
@@ -25,4 +26,15 @@ namespace :viky do
     end
   end
 
+  desc 'Run every regression checks on every agents'
+  task :run_agent_regression_checks => [:environment] do |_, _|
+    Agent.find_each do |agent|
+      agent.run_regression_checks
+    end
+  end
+
+  desc 'Reset every regression checks run state on every agents'
+  task :clear_agent_regression_checks_run_state => [:environment] do |_, _|
+    Agent.update_all(nlp_updated_at: nil)
+  end
 end

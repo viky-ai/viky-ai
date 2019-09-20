@@ -1,7 +1,8 @@
 require 'simplecov'
 SimpleCov.start 'rails'
 
-require File.expand_path('../../config/environment', __FILE__)
+ENV['RAILS_ENV'] ||= 'test'
+require_relative '../config/environment'
 require 'rails/test_help'
 
 require 'minitest/reporters'
@@ -17,6 +18,11 @@ Minitest::Reporters.use!(reporters)
 
 class ActiveSupport::TestCase
   make_my_diffs_pretty!
+
+  # Run tests in parallel with specified workers
+  # parallelize(workers: :number_of_processors)
+
+  # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
 end
 

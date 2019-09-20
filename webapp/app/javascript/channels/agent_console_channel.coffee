@@ -1,3 +1,5 @@
+import consumer from "./consumer"
+
 class AgentConsoleChannel
   @_current_instance: null
 
@@ -18,7 +20,7 @@ class AgentConsoleChannel
       @create()
 
   create: =>
-    @constructor._current_instance = App.cable.subscriptions.create @identifier,
+    @constructor._current_instance = consumer.subscriptions.create @identifier,
       received: (data) ->
         if data.timestamp > App.ConsoleTestSuite.timestamp
           App.ConsoleFooter.summary = data.payload.summary

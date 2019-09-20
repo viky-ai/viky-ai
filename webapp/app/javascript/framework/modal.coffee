@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class ModalRouter
   constructor: ->
     $("body").on 'ajax:error', (event) =>

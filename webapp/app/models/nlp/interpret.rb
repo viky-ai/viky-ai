@@ -27,7 +27,7 @@ class Nlp::Interpret
         status   = response[:status].to_i
         body     = response[:body]
         log_body = body
-      rescue EOFError => e
+      rescue EOFError => _e
         # NLP has crashed
         status   = 503
         body     = { errors: [I18n.t('nlp.unavailable')] }
@@ -40,8 +40,8 @@ class Nlp::Interpret
       rescue => e
         # unexpected error
         status   = 500
-        log_body = { errors: [I18n.t('nlp.unavailable'), e.inspect] }
-        raise
+        body     = { errors: [I18n.t('nlp.unexpected_error')] }
+        log_body = { errors: [I18n.t('nlp.unexpected_error'), e.inspect] }
       ensure
         save_request_in_elastic(status, log_body)
       end

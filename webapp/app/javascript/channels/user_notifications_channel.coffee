@@ -1,4 +1,6 @@
-App.cable.subscriptions.create "UserNotificationsChannel",
+import consumer from "./consumer"
+
+consumer.subscriptions.create "UserNotificationsChannel",
   connected: ->
     # Called when the subscription is ready for use on the server
 

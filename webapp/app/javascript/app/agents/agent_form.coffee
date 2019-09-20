@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class AutoAgentOrigin
   constructor: ->
     $("body").on "Agent:injectOrigin", (event) =>

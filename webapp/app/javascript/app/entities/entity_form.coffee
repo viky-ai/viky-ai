@@ -1,4 +1,3 @@
-$ = require('jquery');
 autosize = require('autosize');
 
 class EntityForm

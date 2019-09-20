@@ -50,11 +50,13 @@
               <%= f.text_field :email, autocomplete: "off" %>
               <%= display_errors(@profile, :email) %>
 
-              <% if @profile.pending_reconfirmation? %>
-                <div class="help help--success">
-                  <span class="icon icon--x-small"><%= icon_information %></span>
-                  <%= t('views.profile.edit.authentication.waiting_email_confirmation', email: @profile.unconfirmed_email) %>
-                </div>
+              <% if Feature.email_configured? %>
+                <% if @profile.pending_reconfirmation? %>
+                  <div class="help help--success">
+                    <span class="icon icon--x-small"><%= icon_information %></span>
+                    <%= t('views.profile.edit.authentication.waiting_email_confirmation', email: @profile.unconfirmed_email) %>
+                  </div>
+                <% end %>
               <% end %>
             </div>
           </div>

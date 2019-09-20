@@ -164,7 +164,7 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
     post create_import_user_agent_entities_list_entities_url(users(:admin), agents(:weather), entities_lists(:weather_conditions)),
          params: {
            import: {
-             file: fixture_file_upload('files/import_entities.csv', 'text/csv'),
+             file: fixture_file_upload('files/import_entities_ok.csv', 'text/csv'),
              mode: 'replace'
            },
            format: :json
@@ -177,7 +177,7 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
     post create_import_user_agent_entities_list_entities_url(users(:admin), agents(:weather), entities_lists(:weather_conditions)),
          params: {
            import: {
-             file: fixture_file_upload('files/import_entities.csv', 'text/csv')
+             file: fixture_file_upload('files/import_entities_ok.csv', 'text/csv')
            },
            format: :json
          }
@@ -189,7 +189,7 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
     post create_import_user_agent_entities_list_entities_url(users(:admin), agents(:weather), entities_lists(:weather_conditions)),
          params: {
            import: {
-             file: fixture_file_upload('files/import_entities.csv', 'text/csv'),
+             file: fixture_file_upload('files/import_entities_ok.csv', 'text/csv'),
              mode: 'replace'
            },
            format: :json

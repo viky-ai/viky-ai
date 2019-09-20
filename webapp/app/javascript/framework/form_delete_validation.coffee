@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class FormValidationDelete
   constructor: ->
     $('body').on 'modal:load', (event) =>

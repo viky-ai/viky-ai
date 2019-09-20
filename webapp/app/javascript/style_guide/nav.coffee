@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class StyleGuideMenu
   constructor: ->
     @build_nav()

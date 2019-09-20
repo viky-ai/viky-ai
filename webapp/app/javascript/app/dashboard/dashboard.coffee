@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class DashboardPreserveScroll
   scrollTop = 0
 

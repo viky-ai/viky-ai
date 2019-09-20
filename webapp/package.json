@@ -2,6 +2,8 @@
   "name": "webapp",
   "private": true,
   "dependencies": {
+    "@rails/actioncable": "^6.0.0",
+    "@rails/ujs": "^6.0.0",
     "@rails/webpacker": "^4.0.7",
     "autosize": "^4.0.2",
     "codemirror": "^5.32.0",
@@ -20,6 +22,7 @@
     "slick-carousel": "^1.8.1",
     "sortablejs": "^1.7.0",
     "trix": "^1.1.0",
+    "turbolinks": "^5.2.0",
     "uuid": "^3.1.0",
     "vue": "^2.6.10",
     "vue-loader": "^15.7.1",

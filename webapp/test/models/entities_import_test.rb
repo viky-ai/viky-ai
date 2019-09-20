@@ -6,7 +6,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     entities_list = entities_lists(:weather_conditions)
 
     Tempfile.open(['temp', '.csv']) do |file|
-      IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities.csv'), file)
+      IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities_ok.csv'), file)
       file.open # Flush + rewind
       entities_import = EntitiesImport.new({
         file: file,
@@ -58,7 +58,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     entities_list = entities_lists(:weather_conditions)
 
     Tempfile.open(['temp', '.csv']) do |file|
-      IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities.csv'), file)
+      IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities_ok.csv'), file)
       file.open # Flush + rewind
       entities_import = EntitiesImport.new({
         file: file,
@@ -70,7 +70,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     end
 
     Tempfile.open(['temp', '.csv']) do |file|
-      IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities.csv'), file)
+      IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities_ok.csv'), file)
       file.open # Flush + rewind
       entities_import = EntitiesImport.new({
         file: file,

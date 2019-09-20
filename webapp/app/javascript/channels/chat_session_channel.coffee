@@ -1,3 +1,5 @@
+import consumer from "./consumer"
+
 class ChatSessionChannel
   @_current_instance: null
 
@@ -14,7 +16,7 @@ class ChatSessionChannel
       @create()
 
   create: =>
-    @constructor._current_instance = App.cable.subscriptions.create @identifier,
+    @constructor._current_instance = consumer.subscriptions.create @identifier,
       received: (data) ->
         if $(".chatbot").data('session-id') == data['session_id']
 
