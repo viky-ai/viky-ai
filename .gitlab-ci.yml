@@ -227,7 +227,7 @@ deploy_dev:
     - bin/generateOverrideValuesFile.sh
     - cat custom-values.yml
     - echo "====================================================================="
-    - echo "${KUBE_NAMESPACE}
+    - echo "${KUBE_NAMESPACE}"
     - echo "${RELEASE_NAME}"
     - echo "====================================================================="
     - cat ${KUBECONFIG}
