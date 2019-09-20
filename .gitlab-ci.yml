@@ -15,7 +15,7 @@ image: docker:stable
 variables:
   SKIP_TEST: "true"
   CI_SERVICE_HOST: "127.0.0.1"
-  GIT_SUBMODULE_STRATEGY: recursive
+  GIT_SUBMODULE_STRATEGY: none
   DOCKER_HOST: "tcp://dood:2375"
   DOCKER_DRIVER: overlay2
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
@@ -79,6 +79,8 @@ build_nlp:
   <<: *kubernetes_runner
   stage: build
   needs: ["build_nlp_base"]
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   script:
     - docker_build ${DOCKER_IMAGE_NLP}      nlp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target run_image"
     - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target test_image"
