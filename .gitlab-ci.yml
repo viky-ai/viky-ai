@@ -79,7 +79,7 @@ test_webapp:
     VIKYAPP_ACTIVEJOB_REDIS_URL: "redis://redis:6379/2"
     VIKYAPP_STATISTICS_URL: "http://elasticsearch:9200"
   services:
-    - postgres:9.6-alpine
+    - postgres:11.5-alpine
     - redis:5.0-alpine
     - name: docker.elastic.co/elasticsearch/elasticsearch:7.3.2
       command:
