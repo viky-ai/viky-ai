@@ -24,6 +24,9 @@ variables:
   DOCKER_IMAGE_TOOLS_RUBY: $CI_REGISTRY_IMAGE/tools_ruby_base
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
 
+  GITLAB_AUTO_DEPLOY_IMAGE: registry.gitlab.com/brice.ruzand/auto-deploy-image/master:c7a3cd73b73d6c7d52612d10c30368a5753384f7
+
+
 # Build docker image
 
 build_ruby_base:
@@ -198,7 +201,7 @@ deploy_dev:
   except:
     - master
     - tags
-  image: "registry.gitlab.com/gitlab-org/cluster-integration/auto-deploy-image:v0.1.0"
+  image: ${GITLAB_AUTO_DEPLOY_IMAGE}
   dependencies:
     - elastic_keystore
     - build_webapp
@@ -258,7 +261,7 @@ delete_env:
   except:
     - master
     - tags
-  image: "registry.gitlab.com/gitlab-org/cluster-integration/auto-deploy-image:v0.1.0"
+  image: ${GITLAB_AUTO_DEPLOY_IMAGE}
   environment:
     name: ${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
