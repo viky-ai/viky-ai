@@ -281,4 +281,21 @@ class EntitiesListTest < ActiveSupport::TestCase
     end
     assert_equal 1, result
   end
+
+
+  test 'Adding an entity trigger an NLP sync' do
+    entities_list = entities_lists(:terminator_targets)
+    entities_list.agent.expects(:sync_nlp).once
+
+    entity = Entity.new(
+      auto_solution_enabled: true,
+      solution: 'target_0',
+      terms: [
+        { term: 'target_0', locale: '*' }
+      ],
+      position: 0,
+      entities_list: entities_list
+    )
+    assert entity.save
+  end
 end

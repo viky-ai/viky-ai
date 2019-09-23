@@ -38,7 +38,7 @@
     .CodeMirror-scroll {
       min-height: 6em;
     }
-    &.readonly {
+    &.CodeMirror--read-only{
       opacity: .6;
       background-color: #f5f5f5;
       filter: grayscale(25%);
@@ -103,7 +103,7 @@
   padding: 1.5em 3em 1em 1em;
   grid-template-columns: 1fr;
   @media (min-width: 600px) {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr calc(50% - 0.5em);
   }
 }
 

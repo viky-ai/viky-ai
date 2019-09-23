@@ -5,6 +5,7 @@ en:
       access_denied: "Access denied: wrong token."
   nlp:
     unavailable: 'NLS temporarily unavailable'
+    unexpected_error: 'Unexpected error while requesting NLS'
     interpret:
       invalid_agent_token: is not valid
       invalid_ownername: is incorrect, '%{ownername}' user doesn't exist

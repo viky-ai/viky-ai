@@ -199,7 +199,7 @@ class IntentTest < ActiveSupport::TestCase
     weather_loc_intent.agent = dependent_agent
     assert weather_loc_intent.save
 
-    interpretation = interpretation = Interpretation.new(
+    interpretation = Interpretation.new(
       expression: 'Where is it raining?'
     )
     interpretation.intent = weather_loc_intent
@@ -219,4 +219,16 @@ class IntentTest < ActiveSupport::TestCase
     assert_not_includes actual, weather_loc_intent
   end
 
+
+  test 'Adding an interpretation trigger an NLP sync' do
+    intent = intents(:weather_forecast)
+    intent.agent.expects(:sync_nlp).once
+
+    interpretation = Interpretation.new(
+      expression: 'Good morning John',
+      locale: 'en',
+      intent: intent
+    )
+    assert interpretation.save
+  end
 end
