@@ -215,12 +215,14 @@ deploy_dev:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
   script:
-    # gtilab auto autodeploy setup
-    - setup_release_name
-    - helm init --client-only
+    # gitlab auto autodeploy setup
     - auto-deploy ensure_namespace
-    - auto-deploy initialize_tiller
+    - export TILLER_NAMESPACE=${KUBE_NAMESPACE}
+    - export SERVICE_ACCOUNT="${KUBE_NAMESPACE}-service-account"
+    - helm init --upgrade --wait --history-max=3 --service-account ${SERVICE_ACCOUNT} --tiller-namespace "${KUBE_NAMESPACE}"
+    # auto-deploy initialize_tiller
     - auto-deploy create_secret
+    - setup_release_name
     # Go to Kubernetes directory
     - cd deployment/kubernetes/
     - echo "Generate Override values"
