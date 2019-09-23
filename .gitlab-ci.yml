@@ -220,8 +220,7 @@ deploy_dev:
     - export TILLER_NAMESPACE=${KUBE_NAMESPACE}
     - export SERVICE_ACCOUNT="${KUBE_NAMESPACE}-service-account"
     - echo $HELM_HOST
-    - export HELM_HOST='tiller-deploy:44134'
-    - helm init --upgrade --wait --history-max=3 --tiller-connection-timeout=30 --service-account ${SERVICE_ACCOUNT} --tiller-namespace "${KUBE_NAMESPACE}"
+    - helm init --upgrade --wait --history-max=3 --tiller-connection-timeout=30 --service-account ${SERVICE_ACCOUNT} --tiller-namespace "${KUBE_NAMESPACE}" --debug
     # auto-deploy initialize_tiller
     - auto-deploy create_secret
     - setup_release_name
