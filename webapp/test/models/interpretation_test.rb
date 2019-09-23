@@ -415,7 +415,7 @@ class InterpretationTest < ActiveSupport::TestCase
 
   test 'Quota for interpretation and entities' do
     Feature.enable_quota
-    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '11'
+    ENV['VIKYAPP_QUOTA_EXPRESSION'] = '11'
 
     user = users(:admin)
     assert_equal 10, user.expressions_count

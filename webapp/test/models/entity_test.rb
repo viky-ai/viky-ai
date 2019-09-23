@@ -287,7 +287,7 @@ class EntityTest < ActiveSupport::TestCase
 
   test 'Entities limit' do
     Feature.enable_quota
-    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '11'
+    ENV['VIKYAPP_QUOTA_EXPRESSION'] = '11'
 
     entity = Entity.new(
       terms: [

@@ -335,7 +335,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
   test 'Import entities limit' do
     Feature.enable_quota
-    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '10'
+    ENV['VIKYAPP_QUOTA_EXPRESSION'] = '10'
 
     elist = entities_lists(:weather_conditions)
     assert_equal ["*", "en", "fr", "es"], elist.agent.locales
@@ -362,7 +362,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
   test 'Quota remaining is less than total import' do
     Feature.enable_quota
-    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '11'
+    ENV['VIKYAPP_QUOTA_EXPRESSION'] = '11'
 
     user = users(:admin)
     assert_equal 10, user.expressions_count
@@ -390,7 +390,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
   test 'User can replace even when quota is full' do
     Feature.enable_quota
-    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '10'
+    ENV['VIKYAPP_QUOTA_EXPRESSION'] = '10'
 
     user = users(:admin)
     assert_equal 10, user.expressions_count

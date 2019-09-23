@@ -240,7 +240,7 @@ class UserTest < ActiveSupport::TestCase
 
   test 'Quota exceeded' do
     Feature.enable_quota
-    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '10'
+    ENV['VIKYAPP_QUOTA_EXPRESSION'] = '10'
 
     assert users(:admin).quota_exceeded?
     assert_not users(:confirmed).quota_exceeded?
@@ -267,7 +267,7 @@ class UserTest < ActiveSupport::TestCase
 
   test 'Quota ignored for user' do
     Feature.enable_quota
-    ENV['VIKYAPP_EXPRESSION_QUOTA'] = '10'
+    ENV['VIKYAPP_QUOTA_EXPRESSION'] = '10'
 
     admin = users(:admin)
     admin.ignore_quota = true
