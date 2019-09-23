@@ -235,7 +235,9 @@ deploy_dev:
     - cat ${KUBECONFIG}
     - echo "====================================================================="
     # Deploy Viky Platform
-    - helm upgrade --install --wait --timeout 600 --namespace "${KUBE_NAMESPACE}" --values custom-values.yml,viky-platform/custom-values/production.yaml "${RELEASE_NAME}"  ./viky-platform/
+    - helm history "${RELEASE_NAME}"
+    - helm status  "${RELEASE_NAME}"
+    - helm upgrade --install --namespace "${KUBE_NAMESPACE}" --values custom-values.yml,viky-platform/custom-values/production.yaml "${RELEASE_NAME}"  ./viky-platform/
 
 # Deploy master on preprod
 deploy_preprod:
