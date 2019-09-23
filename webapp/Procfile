@@ -1,4 +1,4 @@
 workers:  bundle exec sidekiq -C config/sidekiq.yml -L ./log/sidekiq.log
 webpack:  ./bin/webpack-dev-server
 web:      bundle exec rails s -p 3000 -b 0.0.0.0
-nls:      ./bin/foreman_nls.sh :develop
+nls:      ./bin/foreman_nls.sh $MY_CURRENT_GIT_BRANCH
