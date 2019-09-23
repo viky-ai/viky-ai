@@ -154,7 +154,7 @@ class Entity < ApplicationRecord
     end
 
     def check_owner_quota
-      quota = Rack::Throttle.expressions_limit
+      quota = Quota.expressions_limit
       unless entities_list.nil?
         owner = User.find(entities_list.agent.owner_id)
         if owner.quota_exceeded?

@@ -4,7 +4,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
 
   setup do
     IndexManager.reset_indices
-    Feature.disable_rack_throttle
+    Feature.disable_quota
   end
 
   test "Interpret route" do

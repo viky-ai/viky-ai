@@ -217,9 +217,9 @@ class EntitiesImport < ApplicationRecord
     end
 
     def check_owner_quota
-      return if entities_list.agent.owner.ignore_quota || !Feature.rack_throttle_enabled?
+      return if entities_list.agent.owner.ignore_quota || !Feature.quota_enabled?
 
-      quota = Rack::Throttle.expressions_limit
+      quota = Quota.expressions_limit
       total = entities_list.agent.owner.expressions_count
       if mode == 'replace'
         total = total - entities_list.entities_count

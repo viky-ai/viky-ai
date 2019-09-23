@@ -412,9 +412,9 @@ class InterpretationTest < ActiveSupport::TestCase
       assert interpretation.save
     end
   end
-  
+
   test 'Quota for interpretation and entities' do
-    Feature.enable_rack_throttle
+    Feature.enable_quota
     ENV['VIKYAPP_EXPRESSION_QUOTA'] = '11'
 
     user = users(:admin)
@@ -437,7 +437,7 @@ class InterpretationTest < ActiveSupport::TestCase
       quota: ['exceeded (maximum is 11 formulations and entities), actual: 11']
     }
     assert_equal expected, interpretation_next.errors.messages
-    
-    Feature.disable_rack_throttle
+
+    Feature.disable_quota
   end
 end

@@ -332,9 +332,9 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal expected, entities_import.errors[:file]
   end
 
-  
+
   test 'Import entities limit' do
-    Feature.enable_rack_throttle
+    Feature.enable_quota
     ENV['VIKYAPP_EXPRESSION_QUOTA'] = '10'
 
     elist = entities_lists(:weather_conditions)
@@ -355,14 +355,15 @@ class EntitiesImportTest < ActiveSupport::TestCase
       "Bad entity format: Quota exceeded (maximum is 10 formulations and entities), actual: 10 in line 1."
     ]
     assert_equal expected, entities_import.errors[:file]
-    
-    Feature.disable_rack_throttle
+
+    Feature.disable_quota
   end
 
+
   test 'Quota remaining is less than total import' do
-    Feature.enable_rack_throttle
+    Feature.enable_quota
     ENV['VIKYAPP_EXPRESSION_QUOTA'] = '11'
-    
+
     user = users(:admin)
     assert_equal 10, user.expressions_count
 
@@ -382,14 +383,15 @@ class EntitiesImportTest < ActiveSupport::TestCase
       "Quota exceeded (maximum is 11 formulations and entities), actual: 10 and you are trying to import 2 more entities"
     ]
     assert_equal expected, entities_import.errors.full_messages
-    
-    Feature.disable_rack_throttle
+
+    Feature.disable_quota
   end
 
+
   test 'User can replace even when quota is full' do
-    Feature.enable_rack_throttle
+    Feature.enable_quota
     ENV['VIKYAPP_EXPRESSION_QUOTA'] = '10'
-    
+
     user = users(:admin)
     assert_equal 10, user.expressions_count
 
@@ -406,8 +408,8 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal 1, entities_import.proceed
     assert_equal 1, elist.entities.count
     assert_equal 9, user.expressions_count
-    
-    Feature.disable_rack_throttle
+
+    Feature.disable_quota
   end
 
 

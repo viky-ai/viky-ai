@@ -114,27 +114,27 @@ VIKYAPP_NLP_URL='http://localhost:9345'
 # restore env password
 RSYNC_PASSWORD='#***REMOVED***26'
 
-# Rack Throttle
-
-# If you want to enabled the Quota add this
-VIKYAPP_RACK_THROTTLE_ENABLED=true
-
-# If you want to disable the Quota of a specific Limitation
-VIKYAPP_RACK_THROTTLE_LIMIT_DAY_DISABLED=true        # Day Limitation
-VIKYAPP_RACK_THROTTLE_LIMIT_HOUR_DISABLED=true       # Hour Limitation
-VIKYAPP_RACK_THROTTLE_LIMIT_MINUTE_DISABLED=true     # Minute Limitation
-VIKYAPP_RACK_THROTTLE_LIMIT_SECOND_DISABLED=true     # Second Limitation
-
-# If you want to change the Requests Limit
-VIKYAPP_RACK_THROTTLE_LIMIT_DAY=8            # 8 Requests per Day limit
-VIKYAPP_RACK_THROTTLE_LIMIT_HOUR=6           # 6 Requests per Hour limit
-VIKYAPP_RACK_THROTTLE_LIMIT_MINUTE=4         # 4 Requests per Minute limit
-VIKYAPP_RACK_THROTTLE_LIMIT_SECOND=2         # 2 Requests per Second limit
-
-# If you want to activate the expression limitation
-VIKYAPP_EXPRESSION_QUOTA=5000      # Limit the overall formulations and entities count to 5000
-
 ```
+
+## Base url
+
+<code>VIKYAPP_BASEURL</code> environment variable must be set.
+
+
+## Enable quota
+
+    # If you want to enabled quota
+    VIKYAPP_QUOTA_ENABLED=true
+
+    # If you want to change the interpret endpoint requests limit
+    VIKYAPP_QUOTA_INTERPRET_PER_DAY=8     # Max 8 requests to interpret endpoint per day
+    VIKYAPP_QUOTA_INTERPRET_PER_HOUR=6    # Max 6 requests to interpret endpoint per hour
+    VIKYAPP_QUOTA_INTERPRET_PER_MINUTE=4  # Max 4 requests to interpret endpoint per minute
+    VIKYAPP_QUOTA_INTERPRET_PER_SECOND=2  # Max 2 requests to interpret endpoint per second
+
+    # If you want to change the expression limitation
+    VIKYAPP_QUOTA_EXPRESSION=5000         # Limit the overall formulations and entities count to 5000
+
 
 ## Run in production environment
 
@@ -143,9 +143,6 @@ VIKYAPP_EXPRESSION_QUOTA=5000      # Limit the overall formulations and entities
     RAILS_ENV=production rails assets:precompile
     RAILS_ENV=production SECRET_KEY_BASE=xyz POSTMARK_TOKEN=wxyz RAILS_SERVE_STATIC_FILES=true rails s
 
-## Base url
-
-<code>VIKYAPP_BASEURL</code> environment variable must be set.
 
 ## Mail
 

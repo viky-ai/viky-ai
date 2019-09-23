@@ -8,7 +8,7 @@ class ActiveSupport::TestCase
   make_my_diffs_pretty!
   fixtures :all
 
-  Feature.disable_rack_throttle
+  Feature.disable_quota
 end
 
 class ActionDispatch::IntegrationTest

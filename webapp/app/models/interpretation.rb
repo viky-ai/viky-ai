@@ -109,7 +109,7 @@ class Interpretation < ApplicationRecord
     end
 
     def check_owner_quota
-      quota = Rack::Throttle.expressions_limit
+      quota = Quota.expressions_limit
       unless intent.nil?
         owner = User.find(intent.agent.owner_id)
         if owner.quota_exceeded?

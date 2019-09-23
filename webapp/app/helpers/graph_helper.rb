@@ -22,7 +22,7 @@ module GraphHelper
 
   def prepare_expressions_data(user)
     expressions = user.expressions_count(true)
-    quota = Rack::Throttle.expressions_limit
+    quota = Quota.expressions_limit
     total = expressions[:entities] + expressions[:formulations]
     JSON.generate(
       data: [expressions[:formulations], expressions[:entities], quota - total],

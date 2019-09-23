@@ -4,19 +4,10 @@ class RackThrottleTest < ActionDispatch::IntegrationTest
 
   setup do
     IndexManager.reset_indices
+    Quota.reset_cache
 
     # Enable Rack-Throttle
-    Feature.enable_rack_throttle
-
-    # remove all keys current Redis DB
-    redis = Redis.new(url: ENV.fetch('VIKYAPP_REDIS_RACK_THROTTLE') { "redis://localhost:6379/4" })
-    redis.flushdb
-
-    #Disable all limits
-    Feature.disable_rack_throttle_limit_second
-    Feature.disable_rack_throttle_limit_minute
-    Feature.disable_rack_throttle_limit_hour
-    Feature.disable_rack_throttle_limit_day
+    Feature.enable_quota
 
     #stub nlp response
     @intent = intents(:weather_forecast)
@@ -37,128 +28,65 @@ class RackThrottleTest < ActionDispatch::IntegrationTest
   end
 
   teardown do
-    Feature.disable_rack_throttle
+    Feature.disable_quota
   end
 
-  test 'Should be limited if more than 2 requests are made in one second' do
-    Feature.enable_rack_throttle_limit_second
-    
-    travel_to DateTime.current do
-      send_interpret_request
-      assert_equal '200', response.code
-      
-      send_interpret_request
-      assert_equal '200', response.code
 
-      send_interpret_request
-      assert_equal '403', response.code
-    end
+  test 'Should be limited if more than 2 requests are made in one second' do
+    assert_request_is_200("2019-09-13T14:07:00")
+    assert_request_is_200("2019-09-13T14:07:00")
+    assert_request_is_403("2019-09-13T14:07:00")
+    assert_request_is_200("2019-09-13T14:07:01")
   end
 
   test 'Should be limited if more than 4 requests are made in one minute' do
-    Feature.enable_rack_throttle_limit_minute
-
-    travel_to DateTime.parse('2019-09-12T14:07:00') do
-      send_interpret_request
-      assert_equal '200', response.code
-
-      send_interpret_request
-      assert_equal '200', response.code
-    end
-
-    travel_to DateTime.parse('2019-09-12T14:07:04') do
-      send_interpret_request
-      assert_equal '200', response.code
-    end
-    
-    travel_to DateTime.parse('2019-09-12T14:07:06') do
-      send_interpret_request
-      assert_equal '200', response.code
-    end
-    
-    travel_to DateTime.parse('2019-09-12T14:07:07') do
-      send_interpret_request
-      assert_equal '403', response.code
-    end
+    assert_request_is_200("2019-09-13T14:07:00")
+    assert_request_is_200("2019-09-13T14:07:00")
+    assert_request_is_200("2019-09-13T14:07:01")
+    assert_request_is_200("2019-09-13T14:07:45")
+    assert_request_is_403("2019-09-13T14:07:46")
   end
-  
+
   test 'Should be limited if more than 6 requests are made in one hour' do
-    Feature.enable_rack_throttle_limit_hour
-    
-    travel_to DateTime.parse('2019-09-12T14:00:00') do
-      send_interpret_request
-      assert_equal '200', response.code
-
-      send_interpret_request
-      assert_equal '200', response.code
-    end
-
-    travel_to DateTime.parse('2019-09-12T14:20:00') do
-      send_interpret_request
-      assert_equal '200', response.code
-
-      send_interpret_request
-      assert_equal '200', response.code
-
-      send_interpret_request
-      assert_equal '200', response.code
-    end
-
-    travel_to DateTime.parse('2019-09-12T14:45:00') do
-      send_interpret_request
-      assert_equal '200', response.code
-
-      send_interpret_request
-      assert_equal '403', response.code
-    end
-
-    travel_to DateTime.parse('2019-09-12T15:00:00') do
-      send_interpret_request
-      assert_equal '200', response.code
-    end
+    assert_request_is_200("2019-09-13T14:01:00")
+    assert_request_is_200("2019-09-13T14:02:00")
+    assert_request_is_200("2019-09-13T14:03:00")
+    assert_request_is_200("2019-09-13T14:04:00")
+    assert_request_is_200("2019-09-13T14:05:00")
+    assert_request_is_200("2019-09-13T14:06:00")
+    assert_request_is_403("2019-09-13T14:06:01")
+    assert_request_is_200("2019-09-13T15:00:00")
   end
-  
+
   test 'Should be limited if more than 8 requests are made in one day' do
-    Feature.enable_rack_throttle_limit_day
-    
-    travel_to DateTime.parse('2019-09-12T14:45:00') do
-      send_interpret_request
-      assert_equal '200', response.code
-
-      send_interpret_request
-      assert_equal '200', response.code
-
-      send_interpret_request
-      assert_equal '200', response.code
-
-      send_interpret_request
-      assert_equal '200', response.code
-    end
-
-    travel_to DateTime.parse('2019-09-12T20:00:00') do
-      send_interpret_request
-      assert_equal '200', response.code
-
-      send_interpret_request
-      assert_equal '200', response.code
-
-      send_interpret_request
-      assert_equal '200', response.code
-
-      send_interpret_request
-      assert_equal '200', response.code
-
-      send_interpret_request
-      assert_equal '403', response.code
-    end
-
-    travel_to DateTime.parse('2019-09-13T01:00:00') do
-      send_interpret_request
-      assert_equal '200', response.code
-    end
+    assert_request_is_200("2019-09-13T14:00:00")
+    assert_request_is_200("2019-09-13T14:01:00")
+    assert_request_is_200("2019-09-13T15:00:00")
+    assert_request_is_200("2019-09-13T16:00:00")
+    assert_request_is_200("2019-09-13T17:00:00")
+    assert_request_is_200("2019-09-13T18:00:00")
+    assert_request_is_200("2019-09-13T19:00:00")
+    assert_request_is_200("2019-09-13T20:00:00")
+    assert_request_is_403("2019-09-13T21:00:00")
+    assert_request_is_200("2019-09-14T20:00:00")
   end
+
 
   private
+
+  def assert_request_is_200(at)
+    travel_to DateTime.parse(at) do
+      send_interpret_request
+      assert_equal '200', response.code
+    end
+  end
+
+  def assert_request_is_403(at)
+    travel_to DateTime.parse(at) do
+      send_interpret_request
+      assert_equal '403', response.code
+    end
+  end
 
   def send_interpret_request
     get '/api/v1/agents/admin/weather/interpret.json',

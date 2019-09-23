@@ -54,25 +54,17 @@ module Webapp
     # Ping Pong Bot (Sinatra App)
     require "#{config.root}/lib/ping_pong_bot/app.rb"
 
-    # Adding throttling
-    require "#{config.root}/config/initializers/rules-custom.rb"
-    
-    redis = Redis.new(url: ENV.fetch('VIKYAPP_REDIS_RACK_THROTTLE') { "redis://localhost:6379/4/#{Rails.env}" })
-
-    config.middleware.use Rack::Throttle::RulesCustom, cache: redis, key_prefix: :throttle, rules: Rack::Throttle::day_rule, time_window: :day
-    config.middleware.use Rack::Throttle::RulesCustom, cache: redis, key_prefix: :throttle, rules: Rack::Throttle::hour_rule, time_window: :hour 
-    config.middleware.use Rack::Throttle::RulesCustom, cache: redis, key_prefix: :throttle, rules: Rack::Throttle::minute_rule, time_window: :minute
-    config.middleware.use Rack::Throttle::RulesCustom, cache: redis, key_prefix: :throttle, rules: Rack::Throttle::second_rule, time_window: :second, default: 5
-    
+    # Rack health_check middleware
     require "#{config.root}/app/middlewares/health_check.rb"
     config.middleware.insert_after Rails::Rack::Logger, HealthCheck
 
+    # Use Sidekiq
     config.active_job.queue_adapter     = :sidekiq
     config.active_job.queue_name_prefix = "webapp"
     config.active_job.queue_name_delimiter = "_"
 
+    # Others
     config.exceptions_app = self.routes
-
     config.active_record.schema_format = :sql
   end
 end

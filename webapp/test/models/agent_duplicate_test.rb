@@ -17,7 +17,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     )
     new_agent = AgentDuplicator.new(agent, users(:admin)).duplicate
     assert new_agent.persisted?
-    
+
     assert 0, new_agent.errors.size
     assert_equal "#{agent.name} [COPY]", new_agent.name
     assert_equal agent.description, new_agent.description
@@ -249,7 +249,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     agent = agents(:weather)
     assert agent.entities_lists.destroy_all
     assert agent.intents.destroy(intents(:weather_question))
-    
+
     intent = intents(:weather_forecast)
     assert intent.interpretations.destroy_all
 
@@ -299,7 +299,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
   end
 
   test 'Should not be able to duplicate an agent when quota is full' do
-    Feature.enable_rack_throttle
+    Feature.enable_quota
     ENV['VIKYAPP_EXPRESSION_QUOTA'] = '10'
 
     agent = agents(:weather)
@@ -309,6 +309,6 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     new_agent = AgentDuplicator.new(agent, current_user).duplicate
     assert_not new_agent.persisted?
 
-    Feature.disable_rack_throttle
+    Feature.disable_quota
   end
 end

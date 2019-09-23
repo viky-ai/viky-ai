@@ -286,7 +286,7 @@ class EntityTest < ActiveSupport::TestCase
   end
 
   test 'Entities limit' do
-    Feature.enable_rack_throttle
+    Feature.enable_quota
     ENV['VIKYAPP_EXPRESSION_QUOTA'] = '11'
 
     entity = Entity.new(
@@ -310,7 +310,7 @@ class EntityTest < ActiveSupport::TestCase
       quota: ['exceeded (maximum is 11 formulations and entities), actual: 11']
     }
     assert_equal expected, entity_2.errors.messages
-    
-    Feature.disable_rack_throttle
+
+    Feature.disable_quota
   end
 end

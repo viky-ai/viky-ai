@@ -103,9 +103,9 @@ class User < ApplicationRecord
   end
 
   def quota_exceeded?
-    return false if ignore_quota || !Feature.rack_throttle_enabled?
+    return false if ignore_quota || !Feature.quota_enabled?
 
-    quota = Rack::Throttle.expressions_limit
+    quota = Quota.expressions_limit
     expressions_count >= quota
   end
 
@@ -121,30 +121,30 @@ class User < ApplicationRecord
 
   def expressions_per_agent
     Agent.find_by_sql ["
-      SELECT 
+      SELECT
         agents.id, (i.total + e.total) AS total
-      FROM agents 
+      FROM agents
       JOIN
       (
-        SELECT  
-          agents.id as agent_id, coalesce(SUM(entities_lists.entities_count),0) as total 
-        FROM agents 
-        LEFT OUTER JOIN entities_lists 
-        ON entities_lists.agent_id = agents.id 
-        GROUP BY agents.id 
-      ) AS e 
-      ON agents.id = e.agent_id 
-      JOIN
-      (
-        SELECT  
-          agents.id as agent_id, COUNT(interpretations.id) as total 
-        FROM agents 
-        LEFT OUTER JOIN intents 
-        ON intents.agent_id = agents.id 
-        LEFT OUTER JOIN interpretations 
-        ON interpretations.intent_id = intents.id 
+        SELECT
+          agents.id as agent_id, coalesce(SUM(entities_lists.entities_count),0) as total
+        FROM agents
+        LEFT OUTER JOIN entities_lists
+        ON entities_lists.agent_id = agents.id
         GROUP BY agents.id
-      ) AS i 
+      ) AS e
+      ON agents.id = e.agent_id
+      JOIN
+      (
+        SELECT
+          agents.id as agent_id, COUNT(interpretations.id) as total
+        FROM agents
+        LEFT OUTER JOIN intents
+        ON intents.agent_id = agents.id
+        LEFT OUTER JOIN interpretations
+        ON interpretations.intent_id = intents.id
+        GROUP BY agents.id
+      ) AS i
     ON e.agent_id = i.agent_id
     WHERE agents.owner_id = ?
     ORDER BY total DESC
@@ -153,35 +153,35 @@ class User < ApplicationRecord
 
   def self.expressions_count
     Agent.find_by_sql ["
-      SELECT 
+      SELECT
         DISTINCT agents.owner_id, (i.total + e.total) AS total
-      FROM agents 
+      FROM agents
       INNER JOIN
       (
-        SELECT  
-          agents.owner_id as id, coalesce(SUM(entities_lists.entities_count),0) as total 
-        FROM agents 
-        LEFT OUTER JOIN entities_lists 
-        ON entities_lists.agent_id = agents.id 
-        GROUP BY agents.owner_id 
-      ) AS e 
-      ON agents.owner_id = e.id 
+        SELECT
+          agents.owner_id as id, coalesce(SUM(entities_lists.entities_count),0) as total
+        FROM agents
+        LEFT OUTER JOIN entities_lists
+        ON entities_lists.agent_id = agents.id
+        GROUP BY agents.owner_id
+      ) AS e
+      ON agents.owner_id = e.id
       JOIN
       (
-        SELECT  
-          agents.owner_id as id, COUNT(interpretations.id) as total 
-        FROM agents 
-        LEFT OUTER JOIN intents 
-        ON intents.agent_id = agents.id 
-        LEFT OUTER JOIN interpretations 
-        ON interpretations.intent_id = intents.id 
+        SELECT
+          agents.owner_id as id, COUNT(interpretations.id) as total
+        FROM agents
+        LEFT OUTER JOIN intents
+        ON intents.agent_id = agents.id
+        LEFT OUTER JOIN interpretations
+        ON interpretations.intent_id = intents.id
         GROUP BY agents.owner_id
-      ) AS i 
+      ) AS i
       ON e.id = i.id
       ORDER BY total DESC
     "]
   end
-  
+
 
   private
 
