@@ -238,8 +238,8 @@ deploy_dev:
     - echo "====================================================================="
     # Deploy Viky Platform
     - unset HELM_HOST
-    - helm history "${RELEASE_NAME}"
-    - helm status  "${RELEASE_NAME}"
+    - helm history "${RELEASE_NAME}" || true
+    - helm status  "${RELEASE_NAME}" || true
     - helm upgrade --install --namespace "${KUBE_NAMESPACE}" --values custom-values.yml,viky-platform/custom-values/production.yaml "${RELEASE_NAME}"  ./viky-platform/
 
 # Deploy master on preprod
