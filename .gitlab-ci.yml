@@ -221,10 +221,6 @@ deploy_dev:
     - export SERVICE_ACCOUNT="${KUBE_NAMESPACE}-service-account"
     - echo "CIDU ${CI_DEPLOY_USER}"
     - echo "CIDP ${CI_DEPLOY_PASSWORD}"
-    - export CI_DEPLOY_USER="${CI_REGISTRY_USER}"
-    - export CI_DEPLOY_PASSWORD="${CI_DEPLOY_PASSWORD}"
-    - echo "CIDU ${CI_DEPLOY_USER}"
-    - echo "CIDP ${CI_DEPLOY_PASSWORD}"
     - unset HELM_HOST
     - helm init --upgrade --wait --history-max=3 --tiller-connection-timeout=30 --service-account ${SERVICE_ACCOUNT} --tiller-namespace "${KUBE_NAMESPACE}" --debug
     # auto-deploy initialize_tiller
