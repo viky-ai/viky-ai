@@ -220,6 +220,7 @@ deploy_dev:
     - export TILLER_NAMESPACE=${KUBE_NAMESPACE}
     - export SERVICE_ACCOUNT="${KUBE_NAMESPACE}-service-account"
     - echo $HELM_HOST
+    - unset HELM_HOST
     - helm init --upgrade --wait --history-max=3 --tiller-connection-timeout=30 --service-account ${SERVICE_ACCOUNT} --tiller-namespace "${KUBE_NAMESPACE}" --debug
     # auto-deploy initialize_tiller
     - auto-deploy create_secret
@@ -236,6 +237,7 @@ deploy_dev:
     - cat ${KUBECONFIG}
     - echo "====================================================================="
     # Deploy Viky Platform
+    - unset HELM_HOST
     - helm history "${RELEASE_NAME}"
     - helm status  "${RELEASE_NAME}"
     - helm upgrade --install --namespace "${KUBE_NAMESPACE}" --values custom-values.yml,viky-platform/custom-values/production.yaml "${RELEASE_NAME}"  ./viky-platform/
