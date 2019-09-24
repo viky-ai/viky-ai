@@ -290,7 +290,7 @@ class EntityTest < ActiveSupport::TestCase
       )
       assert_not entity_2.save
 
-      expected = ['Quota exceeded (maximum is 11 formulations and entities), actual: 11']
+      expected = ['Quota exceeded (maximum is 11 formulations and entities)']
       assert_equal expected, entity_2.errors.full_messages
     end
   end

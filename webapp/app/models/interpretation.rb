@@ -13,9 +13,9 @@ class Interpretation < ApplicationRecord
   validates :expression, presence: true, byte_size: { maximum: 2048 }
   validates :solution, byte_size: { maximum: 8192 }
   validates :locale, inclusion: { in: Locales::ALL }, presence: true
-  validate :check_aliases_any_and_list_options
-  validate :check_expression_nlp_length
-  validate :check_owner_quota, on: :create
+  validate :validate_aliases_any_and_list_options
+  validate :validate_expression_nlp_length
+  validate :validate_owner_quota, on: :create, if: -> { Feature.quota_enabled? }
   before_save :cleanup
 
   def is_minimal
@@ -54,7 +54,7 @@ class Interpretation < ApplicationRecord
 
   private
 
-    def check_aliases_any_and_list_options
+    def validate_aliases_any_and_list_options
       aliases = interpretation_aliases.reject(&:marked_for_destruction?)
       if aliases.size == 1
         if aliases.first.any_enabled
@@ -70,7 +70,7 @@ class Interpretation < ApplicationRecord
       end
     end
 
-    def check_expression_nlp_length
+    def validate_expression_nlp_length
       nlp_max_length = 36
       exp = expression_with_aliases
               .gsub(/@{[a-zA-Z$_][a-zA-Z0-9$_]*}/, 'alias')
@@ -99,22 +99,21 @@ class Interpretation < ApplicationRecord
       errors.add(:expression, I18n.t('errors.interpretation.expression_nlp_length', count: nlp_max_length, actual_count: actual_count)) if actual_count > nlp_max_length
     end
 
+    def validate_owner_quota
+      unless intent.nil?
+        owner = User.find(intent.agent.owner_id)
+        if owner.quota_exceeded?
+          errors.add(:quota, I18n.t('errors.interpretation.quota', maximum: Quota.expressions_limit))
+        end
+      end
+    end
+
     def cleanup
       self.expression = ActionController::Base.helpers.strip_tags(expression.strip) unless expression.nil?
       if auto_solution_enabled
         self.solution = nil
       elsif solution.blank?
         self.solution = ''
-      end
-    end
-
-    def check_owner_quota
-      quota = Quota.expressions_limit
-      unless intent.nil?
-        owner = User.find(intent.agent.owner_id)
-        if owner.quota_exceeded?
-          errors.add(:quota, I18n.t('errors.interpretation.quota', maximum: quota, actual: owner.expressions_count))
-        end
       end
     end
 end

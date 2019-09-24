@@ -13,6 +13,7 @@ class ChatSessionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'fr-FR', chat_sessions(:one).reload.locale
   end
 
+
   test 'Bot failed to update locale' do
     assert_equal 'en-US', chat_sessions(:one).locale
     put "/api/v1/chat_sessions/#{chat_sessions(:one).id}.json", params: {

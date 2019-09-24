@@ -9,11 +9,11 @@ class Entity < ApplicationRecord
   validates :solution, length: { maximum: 2000 }
   validates :solution, presence: true, if: -> { self.auto_solution_enabled }
   validates :terms, length: { maximum: 5000 }, presence: true
-  validate :validate_owner_quota, on: :create
   validate :validate_locales_exists
   validate :validate_terms_present
   validate :validate_terms_length_in_bytes
   validate :validate_expression_nlp_length
+  validate :validate_owner_quota, on: :create, if: -> { Feature.quota_enabled? }
 
   before_validation :parse_terms
   before_validation :build_solution
@@ -151,10 +151,7 @@ class Entity < ApplicationRecord
       unless entities_list.nil?
         owner = User.find(entities_list.agent.owner_id)
         if owner.quota_exceeded?
-          errors.add(:quota, I18n.t('errors.entity.quota',
-            maximum: Quota.expressions_limit,
-            actual: owner.expressions_count)
-          )
+          errors.add(:quota, I18n.t('errors.entity.quota', maximum: Quota.expressions_limit))
         end
       end
     end

@@ -414,30 +414,27 @@ class InterpretationTest < ActiveSupport::TestCase
   end
 
   test 'Quota for interpretation and entities' do
-    Feature.enable_quota
-    ENV['VIKYAPP_QUOTA_EXPRESSION'] = '11'
+    Feature.with_quota_enabled do
+      Quota.stubs(:expressions_limit).returns(11)
 
-    user = users(:admin)
-    assert_equal 10, user.expressions_count
+      user = users(:admin)
+      assert_equal 10, user.expressions_count
 
-    interpretation = Interpretation.new(
-      expression: 'Sunny tomorrow morning',
-      locale: 'en'
-    )
-    interpretation.intent = intents(:weather_forecast)
-    assert interpretation.save
+      interpretation = Interpretation.new(
+        expression: 'Sunny tomorrow morning',
+        locale: 'en'
+      )
+      interpretation.intent = intents(:weather_forecast)
+      assert interpretation.save
 
-    interpretation_next = Interpretation.new(
-      expression: 'Rainy tomorrow afternoon',
-      locale: 'en'
-    )
-    interpretation_next.intent = intents(:weather_forecast)
-    assert_not interpretation_next.save
-    expected = {
-      quota: ['exceeded (maximum is 11 formulations and entities), actual: 11']
-    }
-    assert_equal expected, interpretation_next.errors.messages
-
-    Feature.disable_quota
+      interpretation_next = Interpretation.new(
+        expression: 'Rainy tomorrow afternoon',
+        locale: 'en'
+      )
+      interpretation_next.intent = intents(:weather_forecast)
+      assert_not interpretation_next.save
+      expected = ['Quota exceeded (maximum is 11 formulations and entities)']
+      assert_equal expected, interpretation_next.errors.full_messages
+    end
   end
 end

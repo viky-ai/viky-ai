@@ -230,6 +230,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 'admin', admin.slug
   end
 
+
   test 'Users expression count' do
     admin = users(:admin)
     assert_equal 10, admin.expressions_count
@@ -238,15 +239,15 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 0, user.expressions_count
   end
 
+
   test 'Quota exceeded' do
-    Feature.enable_quota
-    ENV['VIKYAPP_QUOTA_EXPRESSION'] = '10'
-
-    assert users(:admin).quota_exceeded?
-    assert_not users(:confirmed).quota_exceeded?
-
-    Feature.disable_quota
+    Feature.with_quota_enabled do
+      Quota.stubs(:expressions_limit).returns(10)
+      assert users(:admin).quota_exceeded?
+      assert_not users(:confirmed).quota_exceeded?
+    end
   end
+
 
   test 'Expressions per agent' do
     admin = users(:admin)
@@ -265,16 +266,15 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 0, agent_expressions.first.total
   end
 
+
   test 'Quota ignored for user' do
-    Feature.enable_quota
-    ENV['VIKYAPP_QUOTA_EXPRESSION'] = '10'
-
-    admin = users(:admin)
-    admin.ignore_quota = true
-    assert admin.save
-    assert_equal 10, admin.expressions_count
-    assert_not users(:admin).quota_exceeded?
-
-    Feature.disable_quota
+    Feature.with_quota_enabled do
+      Quota.stubs(:expressions_limit).returns(10)
+      admin = users(:admin)
+      admin.ignore_quota = true
+      assert admin.save
+      assert_equal 10, admin.expressions_count
+      assert_not users(:admin).quota_exceeded?
+    end
   end
 end

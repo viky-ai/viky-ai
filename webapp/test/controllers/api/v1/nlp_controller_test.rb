@@ -4,8 +4,8 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
 
   setup do
     IndexManager.reset_indices
-    Feature.disable_quota
   end
+
 
   test "Interpret route" do
     assert_routing({
@@ -21,6 +21,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     })
   end
 
+
   test 'validation on ownername and agentname' do
     assert_raise ActiveRecord::RecordNotFound do
       get '/api/v1/agents/missing_user/missing_agent/interpret.json',
@@ -32,6 +33,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
         params: { sentence: 'test' }
     end
   end
+
 
   test "Agent access not permitted if token not good" do
     get "/api/v1/agents/admin/weather/interpret.json",

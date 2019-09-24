@@ -37,6 +37,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     assert_equal "#{agent.agentname}-copy-1", another_agent.agentname
   end
 
+
   test 'Duplicate public agent' do
     agent = agents(:terminator)
     current_user = users(:show_on_agent_weather)
@@ -52,6 +53,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
   test 'Duplicate keeps track of source agent' do
     agent = agents(:terminator)
     current_user = users(:show_on_agent_weather)
+
     new_agent = AgentDuplicator.new(agent, current_user).duplicate
     assert new_agent.persisted?
 
@@ -187,6 +189,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     end
   end
 
+
   test 'Duplicate agent with regression tests' do
     create_agent_regression_check_fixtures
     agent = agents(:weather)
@@ -245,6 +248,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     assert_equal @regression_weather_condition.position, duplicated_tests.third.position
   end
 
+
   test 'The order of agent associations with property position should be maintained' do
     agent = agents(:weather)
     assert agent.entities_lists.destroy_all
@@ -298,17 +302,18 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     end
   end
 
+
   test 'Should not be able to duplicate an agent when quota is full' do
-    Feature.enable_quota
-    ENV['VIKYAPP_QUOTA_EXPRESSION'] = '10'
+    Feature.with_quota_enabled do
+      Quota.stubs(:expressions_limit).returns(10)
 
-    agent = agents(:weather)
-    current_user = users(:admin)
+      agent = agents(:weather)
+      current_user = users(:admin)
 
-    assert current_user.quota_exceeded?
-    new_agent = AgentDuplicator.new(agent, current_user).duplicate
-    assert_not new_agent.persisted?
-
-    Feature.disable_quota
+      assert current_user.quota_exceeded?
+      new_agent = AgentDuplicator.new(agent, current_user).duplicate
+      assert_not new_agent.persisted?
+    end
   end
+
 end

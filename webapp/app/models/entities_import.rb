@@ -6,7 +6,7 @@ class EntitiesImport < ApplicationRecord
   validates_presence_of :file, message: I18n.t('errors.entities_import.no_file'), on: :create
   validate :validate_absence_of_concurrent_import, on: :create
   validates :mode, presence: true
-  validate :validate_owner_quota, on: :create
+  validate :validate_owner_quota, on: :create, if: -> { Feature.quota_enabled? }
 
   enum mode: [:append, :replace]
   enum status: [ :running, :success, :failure ]
@@ -221,7 +221,6 @@ class EntitiesImport < ApplicationRecord
     end
 
     def validate_owner_quota
-      return unless Feature.quota_enabled?
       return if entities_list.agent.owner.ignore_quota
 
       final = entities_list.agent.owner.expressions_count + csv_count_lines
