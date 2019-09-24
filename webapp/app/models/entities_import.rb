@@ -59,7 +59,7 @@ class EntitiesImport < ApplicationRecord
         count = 0
         raise ActiveRecord::Rollback
       rescue CSV::MalformedCSVError => e
-        errors[:file] << "Bad CSV format: #{e.message}"
+        errors[:file] << "with bad CSV format: #{e.message}"
         count = 0
         raise ActiveRecord::Rollback
       end
@@ -99,7 +99,7 @@ class EntitiesImport < ApplicationRecord
           if import.failed_instances.any? && errors.size < 100
             import.failed_instances.each do |failed_instance|
               line = max_position + lines_count - failed_instance.position + 1
-              msg = "Bad entity format: "
+              msg = "with bad entity format: "
               msg << failed_instance.errors.full_messages.join(', ')
               msg << " in line #{line}."
               errors[:file] << msg
@@ -165,7 +165,7 @@ class EntitiesImport < ApplicationRecord
       else
         if ['true', 'false'].include? row['Auto solution'].downcase
           if row['Auto solution'].downcase == 'false' && row['Solution'].blank?
-            msg = I18n.t('errors.entities_import.missing_column')
+            msg = I18n.t('errors.entities_import.solution_missing')
             raise CSV::MalformedCSVError.new(msg, row_number)
           end
         else
@@ -223,7 +223,10 @@ class EntitiesImport < ApplicationRecord
       final = entities_list.agent.owner.expressions_count + csv_count_lines
       final = final - entities_list.entities_count if mode == 'replace'
       if final > Quota.expressions_limit
-        errors.add(:base, I18n.t('errors.entities_import.quota_exceeded', maximum: Quota.expressions_limit, final: final))
+        errors.add(:base, I18n.t('errors.entities_import.quota_exceeded',
+          maximum: Quota.expressions_limit,
+          final: final)
+        )
       end
     end
 end

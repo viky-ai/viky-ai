@@ -32,7 +32,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
       user: users(:admin)
     })
     assert entities_import.invalid?
-    assert_equal ["must be present"], entities_import.errors[:file]
+    assert_equal ["File must be present"], entities_import.errors.full_messages
   end
 
 
@@ -49,7 +49,25 @@ class EntitiesImportTest < ActiveSupport::TestCase
         user: users(:admin)
       })
       assert entities_import.invalid?
-      assert_equal ["CSV format expected"], entities_import.errors[:file]
+      assert_equal ["File with CSV mime type is expected"], entities_import.errors.full_messages
+    end
+  end
+
+
+  test 'file should have a valid csv extension' do
+    entities_list = entities_lists(:weather_conditions)
+
+    Tempfile.open(['temp', '.png']) do |file|
+      IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'avatar_upload.png'), file)
+      file.open # Flush + rewind
+      entities_import = EntitiesImport.new({
+        file: file,
+        mode: 'replace',
+        entities_list: entities_list,
+        user: users(:admin)
+      })
+      assert entities_import.invalid?
+      assert_equal ["File with CSV mime type is expected", "File with .csv or .xls extension is expected"], entities_import.errors.full_messages
     end
   end
 
@@ -84,24 +102,6 @@ class EntitiesImportTest < ActiveSupport::TestCase
   end
 
 
-  test 'file should have a valid csv extension' do
-    entities_list = entities_lists(:weather_conditions)
-
-    Tempfile.open(['temp', '.png']) do |file|
-      IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'avatar_upload.png'), file)
-      file.open # Flush + rewind
-      entities_import = EntitiesImport.new({
-        file: file,
-        mode: 'replace',
-        entities_list: entities_list,
-        user: users(:admin)
-      })
-      assert entities_import.invalid?
-      assert_equal ["CSV format expected", "CSV extension expected"], entities_import.errors[:file]
-    end
-  end
-
-
   test 'Import entities from CSV' do
     elist = entities_lists(:weather_conditions)
     assert_equal ["*", "en", "fr", "es"], elist.agent.locales
@@ -111,7 +111,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     io << "snow,false,\"{'w': 'snow'}\",false,true\n"
     io << "cloudy|غائم:ar,False,\"{'weather': 'cloudy'}\",true,false\n"
 
-    entities_import = get_entities_import(elist, io)
+    entities_import = build_entities_import(elist, io)
 
     assert_equal 2, elist.entities.count
     assert entities_import.save
@@ -148,7 +148,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     io << "snow,false,\"{'w': 'snow'}\",false,false\n"
     io << "cloudy|غائم:ar,False,\"{'weather': 'cloudy'}\",false,false\n"
 
-    entities_import = get_entities_import(elist, io)
+    entities_import = build_entities_import(elist, io)
     assert_equal 2, elist.entities.count
     assert_equal 2, elist.entities_count
     assert entities_import.save
@@ -166,13 +166,16 @@ class EntitiesImportTest < ActiveSupport::TestCase
     io << "cloudy|nuageux:fr,True,\"{'weather': 'cloudy'}\",false,false\n"
 
     elist = entities_lists(:weather_conditions)
-    entities_import = get_entities_import(elist, io)
+    entities_import = build_entities_import(elist, io)
 
     assert_equal 2, elist.entities.count
     assert entities_import.save
     assert_equal 0, entities_import.proceed
     assert_equal 2, elist.entities.count
-    assert_equal ['Bad CSV format: Missing header in line 0.'], entities_import.errors[:file]
+
+    msg =  'File with bad CSV format: Missing or malformed header '
+    msg << '("Terms,Auto solution,Solution,Case sensitive,Accent sensitive" is expected) in line 0.'
+    assert_equal [msg], entities_import.errors.full_messages
   end
 
 
@@ -183,13 +186,15 @@ class EntitiesImportTest < ActiveSupport::TestCase
     io << "cloudy|nuageux:fr,True,\"{'weather': 'cloudy'}\",false,false\n"
 
     elist = entities_lists(:weather_conditions)
-    entities_import = get_entities_import(elist, io)
+    entities_import = build_entities_import(elist, io)
 
     assert_equal 2, elist.entities.count
     assert entities_import.save
     assert_equal 0, entities_import.proceed
     assert_equal 2, elist.entities.count
-    assert_equal ["Bad entity format: Terms can't be blank in line 1."], entities_import.errors[:file]
+
+    msg = "File with bad entity format: Terms can't be blank in line 1."
+    assert_equal [msg], entities_import.errors.full_messages
   end
 
 
@@ -199,13 +204,15 @@ class EntitiesImportTest < ActiveSupport::TestCase
     io << "snow,blablabla,snow,false,false\n"
     io << "cloudy|nuageux:fr,True,\"{'weather': 'cloudy'}\",false,false\n"
     elist = entities_lists(:weather_conditions)
-    entities_import = get_entities_import(elist, io, 'replace')
+    entities_import = build_entities_import(elist, io, 'replace')
 
     assert_equal 2, elist.entities.count
     assert entities_import.save
     assert_equal 0, entities_import.proceed
     assert_equal 2, elist.entities.count
-    assert_equal ["Bad CSV format: Auto solution must be true or false in line 1."], entities_import.errors[:file]
+
+    msg = "File with bad CSV format: Auto solution must be true or false in line 1."
+    assert_equal [msg], entities_import.errors.full_messages
   end
 
 
@@ -214,7 +221,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
     io << "cloudy,true,\"{'weather': 'cloudy'}\",false,false\n"
     elist = entities_lists(:weather_conditions)
-    entities_import = get_entities_import(elist, io, 'replace')
+    entities_import = build_entities_import(elist, io, 'replace')
 
     assert entities_import.save
     assert_equal 1, entities_import.proceed
@@ -231,7 +238,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
     io << "cloudy,True,,false,false\n"
     elist = entities_lists(:weather_conditions)
-    entities_import = get_entities_import(elist, io, 'replace')
+    entities_import = build_entities_import(elist, io, 'replace')
 
     assert entities_import.save
     assert_equal 1, entities_import.proceed
@@ -248,7 +255,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
     io << "cloudy,false,\"{'weather': 'cloudy'}\",false,false\n"
     elist = entities_lists(:weather_conditions)
-    entities_import = get_entities_import(elist, io, 'replace')
+    entities_import = build_entities_import(elist, io, 'replace')
 
     assert entities_import.save
     assert_equal 1, entities_import.proceed
@@ -265,11 +272,12 @@ class EntitiesImportTest < ActiveSupport::TestCase
     io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
     io << "cloudy,false,,false,false\n"
     elist = entities_lists(:weather_conditions)
-    entities_import = get_entities_import(elist, io, 'replace')
+    entities_import = build_entities_import(elist, io, 'replace')
 
     assert entities_import.save
     assert_equal 0, entities_import.proceed
-    assert_equal ['Bad CSV format: Missing column in line 1.'], entities_import.errors[:file]
+    msg = "File with bad CSV format: Solution missing in line 1."
+    assert_equal [msg], entities_import.errors.full_messages
   end
 
 
@@ -278,13 +286,14 @@ class EntitiesImportTest < ActiveSupport::TestCase
     io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
     io << "snow;false;snow;false;false\n"
     elist = entities_lists(:weather_conditions)
-    entities_import = get_entities_import(elist, io)
+    entities_import = build_entities_import(elist, io)
 
     assert_equal 2, elist.entities.count
     assert entities_import.save
     assert_equal 0, entities_import.proceed
     assert_equal 2, elist.entities.count
-    assert_equal ['Bad CSV format: Missing column in line 1.'], entities_import.errors[:file]
+    msg = "File with bad CSV format: Missing column in line 1."
+    assert_equal [msg], entities_import.errors.full_messages
   end
 
 
@@ -294,7 +303,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     io << "snow,false,\"{'w': 'snow'}\",false,false\n"
 
     elist = entities_lists(:weather_conditions)
-    entities_import = get_entities_import(elist, io, 'replace')
+    entities_import = build_entities_import(elist, io, 'replace')
 
     assert_equal 2, elist.entities.count
     assert entities_import.save
@@ -319,17 +328,15 @@ class EntitiesImportTest < ActiveSupport::TestCase
     io << "snow,false,\"{'w': 'snow'}\",false,false\n"
     io << "cloudy:en|nuageuse:rf,False,\"{'weather': 'cloudy'}\",false,false\n"
 
-    entities_import = get_entities_import(elist, io)
+    entities_import = build_entities_import(elist, io)
 
     assert_equal 2, elist.entities.count
     assert entities_import.save
     assert_equal 0, entities_import.proceed
     assert_equal 2, elist.entities.count
 
-    expected = [
-      "Bad entity format: Terms uses an unauthorized locale 'rf' for this agent in line 2."
-    ]
-    assert_equal expected, entities_import.errors[:file]
+    msg = "File with bad entity format: Terms uses an unauthorized locale 'rf' for this agent in line 2."
+    assert_equal [msg], entities_import.errors.full_messages
   end
 
 
@@ -350,7 +357,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
       io << "Sarah J. Connor,true,'',false,false\n"
       io << "Kyle Reese,false,'',false,false\n"
       io << "Terminator T-800,false,'',false,false\n"
-      entities_import = get_entities_import(elist, io)
+      entities_import = build_entities_import(elist, io)
 
       assert_not entities_import.save
 
@@ -396,7 +403,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
       io << "snow,false,'',false,false\n"
       io << "rain,false,'',false,false\n"
       io << "fog,false,'',false,false\n"
-      entities_import = get_entities_import(elist, io, 'replace')
+      entities_import = build_entities_import(elist, io, 'replace')
 
       assert_not entities_import.save
 
@@ -419,7 +426,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
   private
 
-    def get_entities_import(elist, io, mode = 'append')
+    def build_entities_import(elist, io, mode = 'append')
       io.rewind
       file = Tempfile.open(['temp', '.csv'])
       IO.copy_stream(io, file)
