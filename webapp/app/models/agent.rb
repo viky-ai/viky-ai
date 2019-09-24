@@ -190,6 +190,13 @@ class Agent < ApplicationRecord
     "#{User.find(owner_id).username}/#{agentname}"
   end
 
+  def expressions_count
+    entities_count = entities_lists.sum(:entities_count)
+    interpretations_count = Interpretation.joins(intent: :agent).where('agents.id = ?', id).count
+
+    entities_count + interpretations_count
+  end
+
   def reachable_intents(current_intent)
     result = [] + intents
                     .where.not(id: current_intent)

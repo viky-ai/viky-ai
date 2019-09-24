@@ -324,6 +324,14 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
+  test "Test agent expressions_count" do
+    assert_equal 7, agents(:weather).expressions_count
+    assert_equal 3, agents(:terminator).expressions_count
+    assert_equal 0, agents(:weather_confirmed).expressions_count
+    assert_equal 4, agents(:cities).expressions_count
+  end
+
+
   test "Clean agentname" do
     agent = Agent.new(
       name: "Agent 2",

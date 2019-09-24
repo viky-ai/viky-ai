@@ -5,6 +5,12 @@ class AgentDuplicator
     @new_owner = new_owner
   end
 
+  def respects_quota?
+    return true unless Feature.quota_enabled?
+    final = @new_owner.expressions_count + @agent.expressions_count
+    final <= Quota.expressions_limit
+  end
+
   def duplicate
     new_agent = Clowne::Cloner.call(@agent, new_owner: @new_owner) do
       include_association :memberships, Proc.new { where(rights: 'all') }

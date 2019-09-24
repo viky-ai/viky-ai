@@ -303,16 +303,27 @@ class AgentDuplicateTest < ActiveSupport::TestCase
   end
 
 
-  test 'Should not be able to duplicate an agent when quota is full' do
+  test 'Should not be able to duplicate an agent according to quota' do
     Feature.with_quota_enabled do
+      weather_agent = agents(:weather)
+      admin_user = users(:admin)
+
+      assert_equal 10, admin_user.expressions_count
+      assert_equal 7, weather_agent.expressions_count
+
+      duplicator = AgentDuplicator.new(weather_agent, admin_user)
+
       Quota.stubs(:expressions_limit).returns(10)
+      assert_not duplicator.respects_quota?
 
-      agent = agents(:weather)
-      current_user = users(:admin)
+      Quota.stubs(:expressions_limit).returns(15)
+      assert_not duplicator.respects_quota?
 
-      assert current_user.quota_exceeded?
-      new_agent = AgentDuplicator.new(agent, current_user).duplicate
-      assert_not new_agent.persisted?
+      Quota.stubs(:expressions_limit).returns(17)
+      assert duplicator.respects_quota?
+
+      Quota.stubs(:expressions_limit).returns(20)
+      assert duplicator.respects_quota?
     end
   end
 
