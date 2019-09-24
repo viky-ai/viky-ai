@@ -9,11 +9,11 @@ class Entity < ApplicationRecord
   validates :solution, length: { maximum: 2000 }
   validates :solution, presence: true, if: -> { self.auto_solution_enabled }
   validates :terms, length: { maximum: 5000 }, presence: true
-  validate :check_owner_quota, on: :create
+  validate :validate_owner_quota, on: :create
   validate :validate_locales_exists
   validate :validate_terms_present
   validate :validate_terms_length_in_bytes
-  validate :check_expression_nlp_length
+  validate :validate_expression_nlp_length
 
   before_validation :parse_terms
   before_validation :build_solution
@@ -110,7 +110,7 @@ class Entity < ApplicationRecord
       end
     end
 
-    def check_expression_nlp_length
+    def validate_expression_nlp_length
       return if terms.nil?
       nlp_max_length = 36
       if terms.instance_of?(Array)
@@ -147,19 +147,21 @@ class Entity < ApplicationRecord
       end
     end
 
+    def validate_owner_quota
+      unless entities_list.nil?
+        owner = User.find(entities_list.agent.owner_id)
+        if owner.quota_exceeded?
+          errors.add(:quota, I18n.t('errors.entity.quota',
+            maximum: Quota.expressions_limit,
+            actual: owner.expressions_count)
+          )
+        end
+      end
+    end
+
     def touch_entities_list
       # belongs_to :entities_list, touch: true, counter_cache: true
       # Touch option fails on entity creation and deletion.
       entities_list.touch
-    end
-
-    def check_owner_quota
-      quota = Quota.expressions_limit
-      unless entities_list.nil?
-        owner = User.find(entities_list.agent.owner_id)
-        if owner.quota_exceeded?
-          errors.add(:quota, I18n.t('errors.entity.quota', maximum: quota, actual: owner.expressions_count))
-        end
-      end
     end
 end

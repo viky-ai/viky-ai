@@ -26,4 +26,10 @@ module Feature
     ENV['VIKYAPP_QUOTA_ENABLED'] = 'false'
   end
 
+  def self.with_quota_enabled
+    enable_quota
+    yield
+    disable_quota
+  end
+
 end
