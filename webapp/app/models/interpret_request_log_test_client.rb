@@ -1,13 +1,5 @@
 class InterpretRequestLogTestClient < InterpretRequestLogClient
 
-  def self.long_waiting_client
-    InterpretRequestLogTestClient.new(
-      transport_options: {
-        request: { timeout: 5.minutes }
-      }
-    )
-  end
-
   def initialize(options = {})
     super(options)
     @expected_cluster_status = 'yellow'
@@ -19,19 +11,22 @@ class InterpretRequestLogTestClient < InterpretRequestLogClient
   end
 
   def index_alias_name
-    "index-#{InterpretRequestLogTestClient.index_name}"
+    "#{InterpretRequestLogTestClient.index_name}-active-#{Process.pid}"
   end
 
   def search_alias_name
-    "search-#{InterpretRequestLogTestClient.index_name}"
+    index_alias_name
   end
 
-  def reset_indices
-    active_template = StatisticsIndexTestTemplate.new
-    full_pattern = active_template.index_patterns.gsub('active-*', '*')
-    delete_index full_pattern
-    new_index = create_active_index active_template
-    @client.indices.flush index: new_index.name
-    new_index
+  def create_test_index
+    @client.indices.create index: index_alias_name
+  end
+
+  def drop_test_index
+    delete_index index_alias_name
+  end
+
+  def clear_test_index
+    @client.delete_by_query index: index_alias_name, body: { query: { match_all: {} } }, refresh: true, wait_for_completion: true
   end
 end

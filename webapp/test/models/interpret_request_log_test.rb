@@ -2,11 +2,6 @@ require 'test_helper'
 
 class InterpretRequestLogTest < ActiveSupport::TestCase
 
-  setup do
-    client = InterpretRequestLogTestClient.new
-    client.reset_indices
-  end
-
   test 'Save a basic interpretation log' do
     weather_agent = agents(:weather)
     intent_weather = intents(:weather_question)

@@ -23,8 +23,6 @@ namespace :statistics do
       active_test_template = StatisticsIndexTestTemplate.new
       client.save_template active_test_template
       Task::Print.success("Index templates #{active_test_template.name} saved.")
-      test_client = InterpretRequestLogTestClient.new
-      setup_active_index(test_client, active_test_template)
     end
     configure_dashboards unless Rails.env == 'test'
   end

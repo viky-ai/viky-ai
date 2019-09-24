@@ -2,11 +2,6 @@ require 'test_helper'
 
 class NlsControllerTest < ActionDispatch::IntegrationTest
 
-  setup do
-    client = InterpretRequestLogTestClient.new
-    client.reset_indices
-  end
-
   test "Interpret route" do
     assert_routing({
       method: 'get',
