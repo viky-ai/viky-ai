@@ -159,12 +159,13 @@ class EntitiesImport < ApplicationRecord
         msg = I18n.t('errors.entities_import.missing_column')
         raise CSV::MalformedCSVError.new(msg, row_number)
       end
+
       if row['Auto solution'].nil?
         msg = I18n.t('errors.entities_import.missing_column')
         raise CSV::MalformedCSVError.new(msg, row_number)
       else
         if ['true', 'false'].include? row['Auto solution'].downcase
-          if row['Auto solution'].downcase == 'false' && row['Solution'].blank?
+          if row['Auto solution'].downcase == 'false' && row['Solution'].nil?
             msg = I18n.t('errors.entities_import.solution_missing')
             raise CSV::MalformedCSVError.new(msg, row_number)
           end
@@ -173,14 +174,17 @@ class EntitiesImport < ApplicationRecord
           raise CSV::MalformedCSVError.new(msg, row_number)
         end
       end
+
       if row['Case sensitive'].nil?
         msg = I18n.t('errors.entities_import.missing_column')
         raise CSV::MalformedCSVError.new(msg, row_number)
       end
+
       if row['Accent sensitive'].nil?
         msg = I18n.t('errors.entities_import.missing_column')
         raise CSV::MalformedCSVError.new(msg, row_number)
       end
+
     end
 
     def csv_terms_to_terms(row)
