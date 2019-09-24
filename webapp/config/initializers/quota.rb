@@ -1,3 +1,4 @@
+require 'rack/throttle'
 require "#{Rails.root}/lib/rack/throttle/custom_rules.rb"
 
 module Quota
