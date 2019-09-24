@@ -4,9 +4,9 @@ class EntitiesImport < ApplicationRecord
 
   include EntitiesImportFileUploader::Attachment.new(:file)
   validates_presence_of :file, message: I18n.t('errors.entities_import.no_file'), on: :create
-  validate :absence_of_concurrent_import, on: :create
+  validate :validate_absence_of_concurrent_import, on: :create
   validates :mode, presence: true
-  validate :check_owner_quota, on: :create
+  validate :validate_owner_quota, on: :create
 
   enum mode: [:append, :replace]
   enum status: [ :running, :success, :failure ]
@@ -95,7 +95,7 @@ class EntitiesImport < ApplicationRecord
     def batch_import(columns, entities, errors, max_position, lines_count)
       unless entities.empty?
         Rails.logger.silence(Logger::INFO) do
-          import = Entity.import(columns, entities)
+          import = Entity.import(columns, entities, validate_with_context: :import)
           if import.failed_instances.any? && errors.size < 100
             import.failed_instances.each do |failed_instance|
               line = max_position + lines_count - failed_instance.position + 1
@@ -106,12 +106,6 @@ class EntitiesImport < ApplicationRecord
             end
           end
         end
-      end
-    end
-
-    def absence_of_concurrent_import
-      if entities_list.entities_imports.running.any?
-        errors.add(:base, I18n.t('errors.entities_import.concurrent_import'))
       end
     end
 
@@ -216,16 +210,20 @@ class EntitiesImport < ApplicationRecord
       entities_list.touch
     end
 
-    def check_owner_quota
-      return if entities_list.agent.owner.ignore_quota || !Feature.quota_enabled?
-
-      quota = Quota.expressions_limit
-      total = entities_list.agent.owner.expressions_count
-      if mode == 'replace'
-        total = total - entities_list.entities_count
+    def validate_absence_of_concurrent_import
+      if entities_list.entities_imports.running.any?
+        errors.add(:base, I18n.t('errors.entities_import.concurrent_import'))
       end
-      if total + csv_count_lines > quota
-        errors.add(:base, I18n.t('errors.entities_import.quota', maximum: quota, actual: total, to_import: csv_count_lines))
+    end
+
+    def validate_owner_quota
+      return unless Feature.quota_enabled?
+      return if entities_list.agent.owner.ignore_quota
+
+      final = entities_list.agent.owner.expressions_count + csv_count_lines
+      final = final - entities_list.entities_count if mode == 'replace'
+      if final > Quota.expressions_limit
+        errors.add(:base, I18n.t('errors.entities_import.quota_exceeded', maximum: Quota.expressions_limit, final: final))
       end
     end
 end

@@ -333,83 +333,87 @@ class EntitiesImportTest < ActiveSupport::TestCase
   end
 
 
-  test 'Import entities limit' do
-    Feature.enable_quota
-    ENV['VIKYAPP_QUOTA_EXPRESSION'] = '10'
+  test 'Import entities, quota enabled (append mode)' do
+    Feature.with_quota_enabled do
+      Quota.stubs(:expressions_limit).returns(10)
 
-    elist = entities_lists(:weather_conditions)
-    assert_equal ["*", "en", "fr", "es"], elist.agent.locales
+      # Limit 10, current 10, append 3 -> Fail
+      admin = users(:admin)
+      assert_equal 10, admin.expressions_count
 
-    io = StringIO.new
-    io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
-    io << "snow,false,\"{'w': 'snow'}\",false,false\n"
+      elist = entities_lists(:terminator_targets)
+      assert_equal admin, elist.agent.owner
+      assert_equal 0, elist.entities.count
 
-    entities_import = get_entities_import(elist, io)
+      io = StringIO.new
+      io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
+      io << "Sarah J. Connor,true,'',false,false\n"
+      io << "Kyle Reese,false,'',false,false\n"
+      io << "Terminator T-800,false,'',false,false\n"
+      entities_import = get_entities_import(elist, io)
 
-    assert_equal 2, elist.entities.count
-    assert_not entities_import.save
-    assert_equal 0, entities_import.proceed
-    assert_equal 2, elist.entities.count
+      assert_not entities_import.save
 
-    expected = [
-      "Bad entity format: Quota exceeded (maximum is 10 formulations and entities), actual: 10 in line 1."
-    ]
-    assert_equal expected, entities_import.errors[:file]
+      expected = ["Quota exceeded (maximum is 10 formulations and entities), you will reach 13 entries"]
+      assert_equal expected, entities_import.errors.full_messages
 
-    Feature.disable_quota
+      # Limit 12, current 10, append 3 -> Fail
+      Quota.stubs(:expressions_limit).returns(12)
+      assert_not entities_import.save
+
+      expected = ["Quota exceeded (maximum is 12 formulations and entities), you will reach 13 entries"]
+      assert_equal expected, entities_import.errors.full_messages
+
+
+      # Limit 13, current 10, append 3 -> Success
+      Quota.stubs(:expressions_limit).returns(13)
+      assert entities_import.save
+
+      # Unitary quota validation must not be called
+      Entity.any_instance.expects(:validate_owner_quota).never
+      assert_equal 3, entities_import.proceed
+
+      assert_equal 3, elist.entities.count
+      assert_equal 13, admin.expressions_count
+    end
   end
 
 
-  test 'Quota remaining is less than total import' do
-    Feature.enable_quota
-    ENV['VIKYAPP_QUOTA_EXPRESSION'] = '11'
+  test 'Import entities, quota enabled (append replace)' do
+    Feature.with_quota_enabled do
+      Quota.stubs(:expressions_limit).returns(10)
 
-    user = users(:admin)
-    assert_equal 10, user.expressions_count
+      admin = users(:admin)
+      assert_equal 10, admin.expressions_count
 
-    elist = entities_lists(:terminator_targets)
-    assert_equal user, elist.agent.owner
-    assert_equal 0, elist.entities_count
+      elist = entities_lists(:weather_conditions)
+      assert_equal admin, elist.agent.owner
+      assert_equal 2, elist.entities.count
 
-    io = StringIO.new
-    io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
-    io << "Sarah,true,'',false,false\n"
-    io << "John,true,'',false,false"
-    entities_import = get_entities_import(elist, io)
+      # Limit 10, current 10, remove 2, add 3 -> Fail
+      io = StringIO.new
+      io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
+      io << "snow,false,'',false,false\n"
+      io << "rain,false,'',false,false\n"
+      io << "fog,false,'',false,false\n"
+      entities_import = get_entities_import(elist, io, 'replace')
 
-    assert_not entities_import.save
+      assert_not entities_import.save
 
-    expected = [
-      "Quota exceeded (maximum is 11 formulations and entities), actual: 10 and you are trying to import 2 more entities"
-    ]
-    assert_equal expected, entities_import.errors.full_messages
-
-    Feature.disable_quota
-  end
+      expected = ["Quota exceeded (maximum is 10 formulations and entities), you will reach 11 entries"]
+      assert_equal expected, entities_import.errors.full_messages
 
 
-  test 'User can replace even when quota is full' do
-    Feature.enable_quota
-    ENV['VIKYAPP_QUOTA_EXPRESSION'] = '10'
+      # Limit 11, current 10, remove 2, add 3 -> Success
+      Quota.stubs(:expressions_limit).returns(11)
+      assert entities_import.save
 
-    user = users(:admin)
-    assert_equal 10, user.expressions_count
-
-    elist = entities_lists(:weather_conditions)
-    assert_equal user, elist.agent.owner
-    assert_equal 2, elist.entities.count
-
-    io = StringIO.new
-    io << "Terms,Auto solution,Solution,Case sensitive,Accent sensitive\n"
-    io << "snow,false,\"{'w': 'snow'}\",false,false\n"
-    entities_import = get_entities_import(elist, io, 'replace')
-
-    assert entities_import.save
-    assert_equal 1, entities_import.proceed
-    assert_equal 1, elist.entities.count
-    assert_equal 9, user.expressions_count
-
-    Feature.disable_quota
+      # Unitary quota validation must not be called
+      Entity.any_instance.expects(:validate_owner_quota).never
+      assert_equal 3, entities_import.proceed
+      assert_equal 3, elist.entities.count
+      assert_equal 11, admin.expressions_count
+    end
   end
 
 
