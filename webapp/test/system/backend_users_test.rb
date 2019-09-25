@@ -20,7 +20,7 @@ class BackendUsersTest < ApplicationSystemTestCase
   end
 
 
-  test "Successful log in" do
+  test "Successful login" do
     admin_login
 
     visit backend_users_path
@@ -52,7 +52,7 @@ class BackendUsersTest < ApplicationSystemTestCase
     find("nav.h-nav .dropdown__trigger").click
     click_link("Users management")
 
-    find(".dropdown__trigger", text: "Sort by last log in").click
+    find(".dropdown__trigger", text: "Sort by last login").click
     find(".dropdown__content", text: "Sort by email").click
     expected = [
       "admin",
@@ -240,13 +240,10 @@ class BackendUsersTest < ApplicationSystemTestCase
     assert has_content?('7 users')
 
     assert_equal 7, all('.btn--toggle.btn--toggle-on').size
-
     within('table') do
       first('.btn--toggle').click
     end
-
     sleep(0.5)
-
     assert_equal 6, all('.btn--toggle.btn--toggle-on').size
   end
 

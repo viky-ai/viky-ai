@@ -12,6 +12,12 @@ class Backend::UsersController < Backend::ApplicationController
     redirect_to backend_users_path, notice: t('controllers.backend.users.invitation_resent', resource_email: user.email)
   end
 
+  def toggle_quota_enabled
+    @user = User.friendly.find(params[:id])
+    @user.quota_enabled = !@user.quota_enabled
+    @user.save
+  end
+
   def confirm_destroy
     @user = User.friendly.find(params[:id])
     render partial: 'confirm_destroy', locals: { user: @user }
@@ -34,13 +40,6 @@ class Backend::UsersController < Backend::ApplicationController
     impersonate_user(user)
     cookies.signed[:impersonated_user_id] = user.id # Needed for ActionCable
     redirect_to agents_path, notice: t('views.backend.users.index.switch.success_message', email: user.email)
-  end
-
-  def toggle_quota_enabled
-    user = User.friendly.find(params[:id])
-    user.quota_enabled = !user.quota_enabled
-    user.save
-    redirect_to backend_users_path
   end
 
 end

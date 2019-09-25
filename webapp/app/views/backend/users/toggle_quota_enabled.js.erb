@@ -1,0 +1,9 @@
+var btn = $("#js-toogle-quota-<%= @user.id %>");
+if (btn.hasClass('btn--toggle-on')){
+  btn.removeClass('btn--toggle-on');
+  btn.addClass('btn--toggle-off');
+}
+else{
+  btn.addClass('btn--toggle-on');
+  btn.removeClass('btn--toggle-off');
+}
