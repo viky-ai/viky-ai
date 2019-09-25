@@ -31,7 +31,9 @@
             <th>Agents</th>
             <th>Status</th>
             <th>Last login & login count</th>
-            <th class="actions">Quota</th>
+            <% if Feature.quota_enabled? %>
+              <th class="actions">Quota</th>
+            <% end %>
             <th class="actions"></th>
           </tr>
         </thead>
@@ -128,13 +130,15 @@
                 <% end %>
               </td>
 
-              <td class="actions">
-                <%= form_with(url: toggle_quota_enabled_backend_user_path(user)) do |f| %>
-                  <button
-                    class="btn btn--toggle btn--toggle-<% if user.quota_enabled %>on<% else %>off<% end %>"
-                    id="js-toogle-quota-<%= user.id %>"></button>
-                <% end %>
-              </td>
+              <% if Feature.quota_enabled? %>
+                <td class="actions">
+                  <%= form_with(url: toggle_quota_enabled_backend_user_path(user)) do |f| %>
+                    <button
+                      class="btn btn--toggle btn--toggle-<% if user.quota_enabled %>on<% else %>off<% end %>"
+                      id="js-toogle-quota-<%= user.id %>"></button>
+                  <% end %>
+                </td>
+              <% end %>
 
               <td class="actions">
                 <% unless user.confirmed? %>

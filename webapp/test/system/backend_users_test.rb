@@ -233,18 +233,20 @@ class BackendUsersTest < ApplicationSystemTestCase
 
 
   test "Quota toggle" do
-    admin_login
+    Feature.with_quota_enabled do
+      admin_login
 
-    find("nav.h-nav .dropdown__trigger").click
-    click_link("Users management")
-    assert has_content?('7 users')
+      find("nav.h-nav .dropdown__trigger").click
+      click_link("Users management")
+      assert has_content?('7 users')
 
-    assert_equal 7, all('.btn--toggle.btn--toggle-on').size
-    within('table') do
-      first('.btn--toggle').click
+      assert_equal 7, all('.btn--toggle.btn--toggle-on').size
+      within('table') do
+        first('.btn--toggle').click
+      end
+      sleep(0.5)
+      assert_equal 6, all('.btn--toggle.btn--toggle-on').size
     end
-    sleep(0.5)
-    assert_equal 6, all('.btn--toggle.btn--toggle-on').size
   end
 
 end
