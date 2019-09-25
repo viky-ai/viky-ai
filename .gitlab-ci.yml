@@ -16,7 +16,6 @@ variables:
   SKIP_TEST: "true"
   CI_SERVICE_HOST: "127.0.0.1"
   GIT_SUBMODULE_STRATEGY: none
-  GIT_STRATEGY: none
   DOCKER_HOST: "tcp://dood:2375"
   DOCKER_DRIVER: overlay2
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
@@ -138,6 +137,8 @@ test_nlp:
   image: ${DOCKER_IMAGE_NLP}_test:${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
   services:
     - redis:5.0-alpine
+  variables:
+    GIT_STRATEGY: none
   script:
     - export VIKYAPP_REDIS_PACKAGE_NOTIFIER="redis://${CI_SERVICE_HOST:-redis}:6379/3"
     - if [ "${SKIP_TEST:-false}" != "true" ]; then /docker_run_test.sh ; fi
@@ -153,6 +154,8 @@ tag_webapp:
   stage: docker_tag
   only:
     - develop
+  variables:
+    GIT_STRATEGY: none
   script:
     - docker_tag_latest ${DOCKER_IMAGE_APP}
     - docker_tag_latest ${DOCKER_IMAGE_APP}_test
@@ -163,6 +166,8 @@ tag_nlp:
   needs: ["build_nlp", "test_nlp"]
   only:
     - develop
+  variables:
+    GIT_STRATEGY: none
   script:
     - docker_tag_latest ${DOCKER_IMAGE_NLP}
 
@@ -171,6 +176,8 @@ tag_ruby_base:
   stage: docker_tag
   only:
     - develop
+  variables:
+    GIT_STRATEGY: none
   script:
     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}
     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}_test
@@ -180,6 +187,8 @@ tag_backup:
   stage: docker_tag
   only:
     - develop
+  variables:
+    GIT_STRATEGY: none
   script:
     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_BACKUP}
 
@@ -290,6 +299,8 @@ invite_admin_dev:
   environment:
     name: ${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
+  variables:
+    GIT_STRATEGY: none
   script:
     - setup_release_name
     - PODNAME=$(kubectl get pods --namespace=${KUBE_NAMESPACE} -l app=webapp --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
@@ -307,6 +318,8 @@ invite_admin_preprod:
   environment:
     name: viky-preprod
     url: https://viky-beta-kube.viky.ai
+  variables:
+    GIT_STRATEGY: none
   script:
     - PODNAME=$(kubectl get pods --namespace=${KUBE_NAMESPACE} -l app=webapp --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
     - kubectl --namespace=${KUBE_NAMESPACE} exec $PODNAME ./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]
@@ -325,6 +338,8 @@ backup_dev:
   environment:
     name: ${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
+  variables:
+    GIT_STRATEGY: none
   script:
     - PODNAME=$(kubectl get pods --namespace=${KUBE_NAMESPACE} -l app=viky-webapp-backup --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
     - kubectl exec --namespace=${KUBE_NAMESPACE} ${PODNAME}  bash /backup/backup.sh "${KUBE_NAMESPACE}"
@@ -342,6 +357,8 @@ backup_preprod:
   environment:
     name: viky-preprod
     url: https://viky-beta-kube.viky.ai
+  variables:
+    GIT_STRATEGY: none
   script:
     - PODNAME=$(kubectl get pods --namespace=${KUBE_NAMESPACE} -l app=viky-webapp-backup --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
     - kubectl exec --namespace=${KUBE_NAMESPACE} ${PODNAME}  bash /backup/backup.sh "${KUBE_NAMESPACE}"
@@ -360,6 +377,8 @@ backup_restore_dev:
   environment:
     name: ${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
+  variables:
+    GIT_STRATEGY: none
   script:
     - PODNAME=$(kubectl get pods --namespace=${KUBE_NAMESPACE} -l app=viky-webapp-backup --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
     - kubectl exec --namespace=${KUBE_NAMESPACE} $PODNAME  bash /backup/backup.sh  "${KUBE_NAMESPACE}" || true
