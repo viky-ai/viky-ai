@@ -231,17 +231,23 @@ class BackendUsersTest < ApplicationSystemTestCase
     end
   end
 
-  test "Quota ignore" do
+
+  test "Quota toggle" do
     admin_login
 
     find("nav.h-nav .dropdown__trigger").click
     click_link("Users management")
     assert has_content?('7 users')
 
+    assert_equal 7, all('.btn--toggle.btn--toggle-on').size
+
     within('table') do
       first('.btn--toggle').click
     end
-    assert has_content?("Quota limitations ignored for user")
+
+    sleep(0.5)
+
+    assert_equal 6, all('.btn--toggle.btn--toggle-on').size
   end
 
 end

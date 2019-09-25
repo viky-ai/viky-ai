@@ -270,11 +270,18 @@ class UserTest < ActiveSupport::TestCase
   test 'Quota ignored for user' do
     Feature.with_quota_enabled do
       Quota.stubs(:expressions_limit).returns(10)
+
       admin = users(:admin)
-      admin.ignore_quota = true
+      admin.quota_enabled = false
+
       assert admin.save
       assert_equal 10, admin.expressions_count
       assert_not users(:admin).quota_exceeded?
+
+      admin.quota_enabled = true
+      assert admin.save
+      assert users(:admin).quota_exceeded?
     end
+
   end
 end

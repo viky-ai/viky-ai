@@ -36,15 +36,11 @@ class Backend::UsersController < Backend::ApplicationController
     redirect_to agents_path, notice: t('views.backend.users.index.switch.success_message', email: user.email)
   end
 
-  def ignore_quota
-    @user = User.friendly.find(params[:id])
-    @user.ignore_quota = !@user.ignore_quota
-    if @user.save
-      message = @user.ignore_quota ? 'ignored' : 'activated'
-      redirect_to backend_users_path, notice: t("views.backend.users.quota.success.#{message}", email: @user.email)
-    else
-      redirect_to backend_users_path, errors: t('views.backend.users.quota.error', errors: @user.errors.full_messages.join(', '))
-    end
+  def toggle_quota_enabled
+    user = User.friendly.find(params[:id])
+    user.quota_enabled = !user.quota_enabled
+    user.save
+    redirect_to backend_users_path
   end
 
 end

@@ -103,7 +103,8 @@ class User < ApplicationRecord
   end
 
   def quota_exceeded?
-    return false if ignore_quota || !Feature.quota_enabled?
+    return false unless Feature.quota_enabled?
+    return false unless quota_enabled
 
     quota = Quota.expressions_limit
     expressions_count >= quota

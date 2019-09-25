@@ -25,7 +25,7 @@ module Rack
           user = User.find(agent.owner_id) unless agent.nil?
         end
 
-        if user&.ignore_quota
+        if (!user.nil? && !user.quota_enabled)
           allowed = true
         else
           allowed = super(request)

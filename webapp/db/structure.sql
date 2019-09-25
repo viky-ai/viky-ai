@@ -406,7 +406,7 @@ CREATE TABLE public.users (
     bio text,
     image_data text,
     ui_state jsonb DEFAULT '{}'::jsonb,
-    ignore_quota boolean DEFAULT false
+    quota_enabled boolean DEFAULT true
 );
 
 

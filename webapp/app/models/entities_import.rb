@@ -221,7 +221,7 @@ class EntitiesImport < ApplicationRecord
     end
 
     def validate_owner_quota
-      return if entities_list.agent.owner.ignore_quota
+      return unless entities_list.agent.owner.quota_enabled
 
       final = entities_list.agent.owner.expressions_count + csv_count_lines
       final = final - entities_list.entities_count if mode == 'replace'

@@ -9,7 +9,7 @@
   </div>
 </header>
 <div class="profile-row">
-  <% unless @profile.ignore_quota %>
+  <% if @profile.quota_enabled %>
     <div class="profile-column">
       <%= render 'quota_info' %>
       <%= render 'expressions_graph' %>
