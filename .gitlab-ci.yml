@@ -8,7 +8,7 @@ stages:
 
 image: docker:stable
 
-.kubernetes_runner: &kubernetes_runner
+.kubernetes_runner:
   tags:
     - kubernetes
 
@@ -16,6 +16,7 @@ variables:
   SKIP_TEST: "true"
   CI_SERVICE_HOST: "127.0.0.1"
   GIT_SUBMODULE_STRATEGY: none
+  GIT_STRATEGY: none
   DOCKER_HOST: "tcp://dood:2375"
   DOCKER_DRIVER: overlay2
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
@@ -26,30 +27,29 @@ variables:
 
   GITLAB_AUTO_DEPLOY_IMAGE: registry.gitlab.com/brice.ruzand/auto-deploy-image/master:c7a3cd73b73d6c7d52612d10c30368a5753384f7
 
-
 # Build docker image
 
 build_ruby_base:
-  <<: *kubernetes_runner
+  extends: .kubernetes_runner
   stage: prerequist
   script:
     - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}      deployment/docker_tools/ruby_base "--target image_ruby_base"
     - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}_test deployment/docker_tools/ruby_base "--target image_ruby_base_test"
 
 build_nlp_base:
-  <<: *kubernetes_runner
+  extends: .kubernetes_runner
   stage: prerequist
   script:
     - docker_build ${DOCKER_IMAGE_TOOLS_NLP} nlp/tools/docker
 
 build_backup:
-  <<: *kubernetes_runner
+  extends: .kubernetes_runner
   stage: prerequist
   script:
     - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup "--build-arg VIKYAPP_BACKUP_PASSWORD=${VIKYAPP_BACKUP_PASSWORD}"
 
 elastic_keystore:
-  <<: *kubernetes_runner
+  extends: .kubernetes_runner
   stage: prerequist
   script:
     - cd deployment/kubernetes/
@@ -60,21 +60,21 @@ elastic_keystore:
     # expire_in: 1 hour
 
 build_webapp:
-  <<: *kubernetes_runner
+  extends: .kubernetes_runner
   needs: ["build_ruby_base"]
   stage: build
   script:
     - docker_build ${DOCKER_IMAGE_APP}      webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_run"
 
 build_webapp_test:
-  <<: *kubernetes_runner
+  extends: .kubernetes_runner
   needs: ["build_ruby_base"]
   stage: build
   script:
     - docker_build ${DOCKER_IMAGE_APP}_test webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_test"
 
 build_nlp:
-  <<: *kubernetes_runner
+  extends: .kubernetes_runner
   stage: build
   needs: ["build_nlp_base"]
   variables:
@@ -84,7 +84,8 @@ build_nlp:
     - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target test_image"
 
 # Test
-.test_webapp: &test_webapp
+.test_webapp:
+  extends: .kubernetes_runner
   stage: test
   image: ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
   needs: ["build_webapp_test"]
@@ -119,28 +120,24 @@ build_nlp:
       junit: "reports/TEST-*.xml"
 
 test_webapp_unit:
-  <<: *kubernetes_runner
-  <<: *test_webapp
+  extends: .test_webapp
   script:
     - cd /webapp
     - if [ "${SKIP_TEST:-false}" != "true" ]; then ./bin/docker_run_test.sh unit ; fi
 
 # Test
 test_webapp_system:
-  <<: *kubernetes_runner
-  <<: *test_webapp
+  extends: .test_webapp
   script:
     - if [ "${SKIP_TEST:-false}" != "true" ]; then ./bin/docker_run_test.sh system ; fi
 
 test_nlp:
-  <<: *kubernetes_runner
+  extends: .kubernetes_runner
   stage: test
   needs: ["build_nlp"]
   image: ${DOCKER_IMAGE_NLP}_test:${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
   services:
     - redis:5.0-alpine
-  variables:
-    GIT_STRATEGY: none
   script:
     - export VIKYAPP_REDIS_PACKAGE_NOTIFIER="redis://${CI_SERVICE_HOST:-redis}:6379/3"
     - if [ "${SKIP_TEST:-false}" != "true" ]; then /docker_run_test.sh ; fi
@@ -152,51 +149,43 @@ test_nlp:
 
 # Tag docker image to lasted
 tag_webapp:
-  <<: *kubernetes_runner
+  extends: .kubernetes_runner
   stage: docker_tag
   only:
     - develop
-  variables:
-    GIT_STRATEGY: none
   script:
     - docker_tag_latest ${DOCKER_IMAGE_APP}
     - docker_tag_latest ${DOCKER_IMAGE_APP}_test
 
 tag_nlp:
-  <<: *kubernetes_runner
+  extends: .kubernetes_runner
   stage: docker_tag
   needs: ["build_nlp", "test_nlp"]
   only:
     - develop
-  variables:
-    GIT_STRATEGY: none
   script:
     - docker_tag_latest ${DOCKER_IMAGE_NLP}
 
 tag_ruby_base:
-  <<: *kubernetes_runner
+  extends: .kubernetes_runner
   stage: docker_tag
   only:
     - develop
-  variables:
-    GIT_STRATEGY: none
   script:
     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}
     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}_test
 
 tag_backup:
-  <<: *kubernetes_runner
+  extends: .kubernetes_runner
   stage: docker_tag
   only:
     - develop
-  variables:
-    GIT_STRATEGY: none
   script:
     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_BACKUP}
 
 # Deploy any branches on dev
 deploy_dev:
-  <<: *kubernetes_runner
+  extends: .kubernetes_runner
   stage: deploy
   except:
     - master
@@ -245,7 +234,7 @@ deploy_dev:
 
 # Deploy master on preprod
 deploy_preprod:
-  <<: *kubernetes_runner
+  extends: .kubernetes_runner
   stage: deploy
   only:
     - master
@@ -270,7 +259,7 @@ deploy_preprod:
 
 # remove environment
 delete_env:
-  <<: *kubernetes_runner
+  extends: .kubernetes_runner
   stage: admin
   except:
     - master
@@ -292,7 +281,7 @@ delete_env:
 
 # invite admin user
 invite_admin_dev:
-  <<: *kubernetes_runner
+  extends: .kubernetes_runner
   stage: admin
   image: dtzar/helm-kubectl:2.13.1
   except:
@@ -301,8 +290,6 @@ invite_admin_dev:
   environment:
     name: ${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
-  variables:
-    GIT_STRATEGY: none
   script:
     - setup_release_name
     - PODNAME=$(kubectl get pods --namespace=${KUBE_NAMESPACE} -l app=webapp --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
@@ -312,7 +299,7 @@ invite_admin_dev:
 
 # invite admin user
 invite_admin_preprod:
-  <<: *kubernetes_runner
+  extends: .kubernetes_runner
   stage: admin
   image: dtzar/helm-kubectl:2.13.1
   only:
@@ -320,8 +307,6 @@ invite_admin_preprod:
   environment:
     name: viky-preprod
     url: https://viky-beta-kube.viky.ai
-  variables:
-    GIT_STRATEGY: none
   script:
     - PODNAME=$(kubectl get pods --namespace=${KUBE_NAMESPACE} -l app=webapp --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
     - kubectl --namespace=${KUBE_NAMESPACE} exec $PODNAME ./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]
@@ -330,7 +315,7 @@ invite_admin_preprod:
 
 # backup
 backup_dev:
-  <<: *kubernetes_runner
+  extends: .kubernetes_runner
   stage: admin
   image: dtzar/helm-kubectl:2.13.1
   dependencies: []
@@ -340,8 +325,6 @@ backup_dev:
   environment:
     name: ${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
-  variables:
-    GIT_STRATEGY: none
   script:
     - PODNAME=$(kubectl get pods --namespace=${KUBE_NAMESPACE} -l app=viky-webapp-backup --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
     - kubectl exec --namespace=${KUBE_NAMESPACE} ${PODNAME}  bash /backup/backup.sh "${KUBE_NAMESPACE}"
@@ -350,7 +333,7 @@ backup_dev:
 
 # backup
 backup_preprod:
-  <<: *kubernetes_runner
+  extends: .kubernetes_runner
   stage: admin
   image: dtzar/helm-kubectl:2.13.1
   dependencies: []
@@ -359,8 +342,6 @@ backup_preprod:
   environment:
     name: viky-preprod
     url: https://viky-beta-kube.viky.ai
-  variables:
-    GIT_STRATEGY: none
   script:
     - PODNAME=$(kubectl get pods --namespace=${KUBE_NAMESPACE} -l app=viky-webapp-backup --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
     - kubectl exec --namespace=${KUBE_NAMESPACE} ${PODNAME}  bash /backup/backup.sh "${KUBE_NAMESPACE}"
@@ -369,7 +350,7 @@ backup_preprod:
 
 # backup restore
 backup_restore_dev:
-  <<: *kubernetes_runner
+  extends: .kubernetes_runner
   stage: admin
   image: dtzar/helm-kubectl:2.13.1
   dependencies: []
@@ -379,8 +360,6 @@ backup_restore_dev:
   environment:
     name: ${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
-  variables:
-    GIT_STRATEGY: none
   script:
     - PODNAME=$(kubectl get pods --namespace=${KUBE_NAMESPACE} -l app=viky-webapp-backup --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1)
     - kubectl exec --namespace=${KUBE_NAMESPACE} $PODNAME  bash /backup/backup.sh  "${KUBE_NAMESPACE}" || true
