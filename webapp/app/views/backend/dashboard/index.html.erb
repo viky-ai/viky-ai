@@ -41,16 +41,31 @@
     </div>
   </div>
 
-</div>
-<div class="dashboard-tops">
   <div class="card">
     <div class="card__top">
-      <%= render 'top_requests_users' %>
+      <%= render 'top_expressions_per_owners' %>
     </div>
   </div>
-  <div class="card">
-    <div class="card__top">
-      <%= render 'top_expressions_users' %>
+
+  <% if Feature.quota_enabled? %>
+    <div class="card">
+      <div class="card__top">
+        <h2><%= t("views.backend.dashboard.top_api_requests_under_quota_html") %></h2>
+        <%= render partial: 'top_api_requests_per_owners', locals: { data: @top_api_requests_under_quota } %>
+      </div>
     </div>
-  </div>
+    <div class="card">
+      <div class="card__top">
+        <h2><%= t("views.backend.dashboard.top_api_requests_over_quota_html") %></h2>
+        <%= render partial: 'top_api_requests_per_owners', locals: { data: @top_api_requests_over_quota } %>
+      </div>
+    </div>
+  <% else %>
+    <div class="card">
+      <div class="card__top">
+        <h2><%= t("views.backend.dashboard.top_api_requests_html") %></h2>
+        <%= render partial: 'top_api_requests_per_owners', locals: { data: @top_api_requests_under_quota } %>
+      </div>
+    </div>
+  <% end %>
 </div>

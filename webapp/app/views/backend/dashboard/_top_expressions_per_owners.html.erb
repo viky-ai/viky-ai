@@ -1,5 +1,5 @@
 <h2>
-  <%= t("views.backend.dashboard.top_expressions_users") %>
+  <%= t("views.backend.dashboard.top_expressions_per_owners") %>
 </h2>
 
 <table>
@@ -14,14 +14,11 @@
             </div>
             <div class="user__info">
               <%= user.name_or_username %>
-              <% if user.admin? %>
-                <span class="badge badge--primary"><%= t('views.backend.users.index.admin_badge') %></span>
-              <% end %>
               <small><%= user.email %></small>
             </div>
           </div>
         </td>
-        <td><%= data['total'] %></td>
+        <td><%= number_with_delimiter(data['total']) %></td>
       </tr>
     <% end %>
   </tbody>

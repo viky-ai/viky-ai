@@ -30,9 +30,22 @@ class Backend::DashboardController < Backend::ApplicationController
       .order('count DESC, agents.name')
       .page(params[:tests_page]).per(10)
 
+    @top_expressions_users = Kaminari
+      .paginate_array(User.expressions_count)
+      .page(params[:expressions_page]).per(10)
+
     to = DateTime.now
     from = DateTime.now - 30.days
-    @top_requests_users = Kaminari.paginate_array(InterpretRequestLog.requests_over_users(from, to)).page(params[:requests_page]).per(10)
-    @top_expressions_users = Kaminari.paginate_array(User.expressions_count).page(params[:expressions_page]).per(10)
+
+    @top_api_requests_under_quota = Kaminari
+      .paginate_array(InterpretRequestLog.requests_per_owners(from, to, [200, 500, 422]))
+      .page(params[:requests_page]).per(10)
+
+    if Feature.quota_enabled?
+      @top_api_requests_over_quota = Kaminari
+        .paginate_array(InterpretRequestLog.requests_per_owners(from, to, [503]))
+        .page(params[:requests_page]).per(10)
+    end
+
   end
 end

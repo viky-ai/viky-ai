@@ -117,10 +117,7 @@ en:
         top_tests_failures: Agents with most tests in failure
         detail_test_failure: "Agent last update: %{agent_last_update}\nTests last run: %{test_last_run}"
         no_top_tests_failure: All tests pass
-        top_requests_users:
-          title: Users with most requests in the last 30 days
-          header:
-            user: User
-            processed: Processed requests
-            rejected: Rejected requests
-        top_expressions_users: Users with most formulations and entities
+        top_api_requests_html: Owners with most API requests <small>(last 30 days)</small>
+        top_api_requests_under_quota_html: Owners with most API requests <span class='badge badge--success'>Under Quota</span> <small>(last 30 days)</small>
+        top_api_requests_over_quota_html: Owners with most API requests <span class='badge badge--danger'>Over Quota</span> <small>(last 30 days)</small>
+        top_expressions_per_owners: Owners with most formulations and entities

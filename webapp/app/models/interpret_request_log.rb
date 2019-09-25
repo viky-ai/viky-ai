@@ -76,7 +76,7 @@ class InterpretRequestLog
                 }
               }
             }
-            ],
+          ],
           "must_not": {
             "terms": {
               "context.client_type": ["console", "regression_test", "play_ui"]
@@ -148,45 +148,43 @@ class InterpretRequestLog
     results['aggregations']['requests_over_agents']['buckets']
   end
 
-  def self.requests_over_users(from, to)
+  def self.requests_per_owners(from, to, http_status_codes)
     client = IndexManager.client
     query = {
       "size": 0,
       "query": {
         "bool": {
-          "must": {
-            "range":{
-              "timestamp":{
-                "gte": from.to_s,
-                "lte": to.to_s,
-                "time_zone": from.zone
+          "must": [
+            {
+              "terms": { "status": http_status_codes }
+            },
+            {
+              "range":{
+                "timestamp":{
+                  "gte": from.to_s,
+                  "lte": to.to_s,
+                  "time_zone": from.zone
+                }
               }
             }
-          },
+          ],
           "must_not": {
             "terms": {
-              "context.client_type": ["console", "regression_test"]
+              "context.client_type": ["console", "regression_test", "play_ui"]
             }
           }
         }
       },
       "aggs": {
-        "requests_over_users": {
-          "terms": { "field": "owner_id" },
-          "aggs": {
-            "processed": {
-              "filter": { "match": { "status": 200 } }
-            },
-            "rejected":{
-              "filter": { "match": { "status": 503 } }
-            }
-          }
+        "requests_per_owners": {
+          "terms": { "field": "owner_id" }
         }
-      } 
+      }
     }
     results = client.search index: SEARCH_ALIAS_NAME, body: query
-    results['aggregations']['requests_over_users']['buckets']
+    results['aggregations']['requests_per_owners']['buckets']
   end
+
 
   private
 
