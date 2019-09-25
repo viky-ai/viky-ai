@@ -56,11 +56,12 @@ class EntitiesTest < ApplicationSystemTestCase
     # - Entities are draggable
     assert_selector(".card-list__item__draggable", count: 2)
 
-    (1..100).each do |i|
+    (2..101).each do |i|
       Entity.create!({
         terms: "term_#{i}",
         auto_solution_enabled: true,
-        entities_list: entities_list
+        entities_list: entities_list,
+        position: i
       })
     end
 
@@ -94,11 +95,12 @@ class EntitiesTest < ApplicationSystemTestCase
     # - No search
     assert_selector(".entities-search-and-page-entries form", count: 0)
 
-    (1..100).each do |i|
+    (2..101).each do |i|
       Entity.create!({
         terms: "term_#{i}",
         auto_solution_enabled: true,
-        entities_list: entities_list
+        entities_list: entities_list,
+        position: i
       })
     end
 
