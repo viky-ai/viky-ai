@@ -274,7 +274,7 @@ delete_env:
     - helm history "${RELEASE_NAME}" || true
     - helm status  "${RELEASE_NAME}" || true
     - helm delete --purge --no-hooks "${RELEASE_NAME}"
-    - kubectl delete all,cm,pvc,ev,pdb --all --namespace "${KUBE_NAMESPACE}"
+    - kubectl delete all,cm,pvc,pdb --all --namespace "${KUBE_NAMESPACE}"
   when: manual
   allow_failure: true
 
