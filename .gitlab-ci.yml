@@ -194,7 +194,6 @@ deploy_dev:
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
     on_stop: delete_env
   variables:
-    GIT_STRATEGY: none
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
@@ -232,7 +231,6 @@ deploy_preprod:
     name: viky-preprod
     url: https://viky-beta-kube.viky.ai
   variables:
-    GIT_STRATEGY: none
     VIKYAPP_AUTO_BACKUP: "true"
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
