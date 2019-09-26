@@ -264,6 +264,8 @@ delete_env:
     name: ${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
     action: stop
+  variables:
+      GIT_STRATEGY: none
   script:
     - auto-deploy ensure_namespace
     - export TILLER_NAMESPACE=${KUBE_NAMESPACE}
