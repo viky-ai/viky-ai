@@ -255,7 +255,8 @@ deploy_preprod:
 # remove environment
 delete_env:
   extends: .kubernetes_runner
-  stage: deploy
+  stage: admin
+  needs: [ "build_backup" ]
   except:
     - master
     - tags
@@ -270,10 +271,10 @@ delete_env:
     - auto-deploy create_secret
     - setup_release_name
     - unset HELM_HOST
-    - helm init --upgrade --wait --history-max=5 --tiller-connection-timeout=30 --service-account ${SERVICE_ACCOUNT} --tiller-namespace "${KUBE_NAMESPACE}"
+    - helm init --upgrade --wait --history-max=5 --tiller-connection-timeout=30 --service-account ${SERVICE_ACCOUNT} --tiller-namespace "${KUBE_NAMESPACE}" || true
     - helm history "${RELEASE_NAME}" || true
     - helm status  "${RELEASE_NAME}" || true
-    - helm delete --purge --no-hooks "${RELEASE_NAME}"
+    - helm delete --purge --no-hooks "${RELEASE_NAME}" || true
     - kubectl delete all,cm,pvc,pdb --all --namespace "${KUBE_NAMESPACE}"
   when: manual
   allow_failure: true
