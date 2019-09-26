@@ -214,13 +214,14 @@ deploy_dev:
     S3_SECRET_KEY: ${S3_SECRET_KEY}
   script:
     # gitlab auto autodeploy setup
+    # TODO customize generic part in docker image
     - auto-deploy ensure_namespace
     - export TILLER_NAMESPACE=${KUBE_NAMESPACE}
-    - echo $HELM_HOST
-    - auto-deploy initialize_tiller
+    - export SERVICE_ACCOUNT="${KUBE_NAMESPACE}-service-account"
     - auto-deploy create_secret
     - setup_release_name
-    - helm init --client-only
+    - unset HELM_HOST
+    - helm init --upgrade --wait --history-max=3 --tiller-connection-timeout=30 --service-account ${SERVICE_ACCOUNT} --tiller-namespace "${KUBE_NAMESPACE}" --debug
     - helm history "${RELEASE_NAME}" || true
     - helm status  "${RELEASE_NAME}" || true
     # Go to Kubernetes directory
@@ -228,7 +229,8 @@ deploy_dev:
     - echo "Generate Override values"
     - bin/generateOverrideValuesFile.sh
     # Deploy Viky Platform
-    - helm upgrade --install --namespace "${KUBE_NAMESPACE}" --values custom-values.yml,viky-platform/custom-values/production.yaml "${RELEASE_NAME}"  ./viky-platform/
+    - unset HELM_HOST
+    - helm upgrade --wait --install --namespace "${KUBE_NAMESPACE}" --values custom-values.yml,viky-platform/custom-values/production.yaml "${RELEASE_NAME}"  ./viky-platform/
 # Deploy master on preprod
 deploy_preprod:
   extends: .kubernetes_runner
@@ -251,23 +253,8 @@ deploy_preprod:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
   script:
-    # gitlab auto autodeploy setup
-    - export HELM_HOST="localhost:44134"
-    - export TILLER_NAMESPACE="${KUBE_NAMESPACE}"
-    - auto-deploy ensure_namespace
-    - echo $HELM_HOST
-    - auto-deploy initialize_tiller
-    - auto-deploy create_secret
-    - setup_release_name
-    - helm init --client-only
-    - helm history "${RELEASE_NAME}" || true
-    - helm status  "${RELEASE_NAME}" || true
-    # Go to Kubernetes directory
-    - cd deployment/kubernetes/
-    - echo "Generate Override values"
-    - bin/generateOverrideValuesFile.sh
-    # Deploy Viky Platform
-    - helm upgrade --install --namespace "${KUBE_NAMESPACE}" --values custom-values.yml,viky-platform/custom-values/production.yaml "${RELEASE_NAME}"  ./viky-platform/
+    # TODO
+    - "false"
 
 # remove environment
 delete_env:
@@ -282,12 +269,12 @@ delete_env:
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
     action: stop
   script:
-    - export HELM_HOST="localhost:44134"
-    - export TILLER_NAMESPACE="${KUBE_NAMESPACE}"
-    - setup_release_name
-    - helm init --client-only
     - auto-deploy ensure_namespace
-    - auto-deploy initialize_tiller
+    - export TILLER_NAMESPACE=${KUBE_NAMESPACE}
+    - export SERVICE_ACCOUNT="${KUBE_NAMESPACE}-service-account"
+    - auto-deploy create_secret
+    - setup_release_name
+    - unset HELM_HOST
     - helm delete --purge "${RELEASE_NAME}"
   when: manual
   allow_failure: true
