@@ -434,5 +434,5 @@ before_script:
     function get_pods ()
     {
       local KUBE_SELECTOR="$1"
-      kubectl get pods --namespace="${KUBE_NAMESPACE}" -l '$KUBE_SELECTOR' --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | head -n1
+      kubectl get pods --namespace="${KUBE_NAMESPACE}" -l "${KUBE_SELECTOR}" --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}'
     }
