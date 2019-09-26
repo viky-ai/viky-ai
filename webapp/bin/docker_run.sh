@@ -24,27 +24,34 @@ trap "sigterm_handler; exit" SIGTERM
 rm -f ./tmp/pids/server.pid
 rm -f ./tmp/pids/sidekiq.pid
 
-# Check data migration
-if [[ "$1" == "config" ]] || [[ "$1" == "master" ]]; then
+# init container Check data migration
+if [[ "$1" == "init" ]]; then
 
-    # Parse postgres and redis urls from Env Variables
-    # docker-compose.yml -> x-app -> environment
-    DB_POSTGRES=$(parse_url "$VIKYAPP_DB_HOST")
-    DB_REDIS=$(parse_url "$VIKYAPP_CACHE_REDIS_URL")
-    ES=$(parse_url "$VIKYAPP_STATISTICS_URL")
-    KIBANA=$(parse_url "$VIKYAPP_STATISTICS_VISUALIZER_URL")
-    
-    echo "Waiting for postgres on $DB_POSTGRES"
-    echo "Waiting for redis on $DB_REDIS"
-    echo "Waiting for ES on $ES"
-    /usr/local/bin/dockerize -wait tcp://$DB_POSTGRES:5432 -wait tcp://$DB_REDIS -wait tcp://$ES -wait tcp://$KIBANA  -timeout 180s
-    
-    echo "Database and statistics setup"
-    ./bin/rails viky:setup
-    echo "Database and statistics setup completed."
-fi
+    INDEX="${HOSTNAME##*-}"
+    if [[ "$INDEX" == "0" ]] ; then
 
-if [[ "$1" != "config" ]]; then
+      # Parse postgres and redis urls from Env Variables
+      # docker-compose.yml -> x-app -> environment
+      DB_POSTGRES=$(parse_url "$VIKYAPP_DB_HOST")
+      DB_REDIS=$(parse_url "$VIKYAPP_CACHE_REDIS_URL")
+      ES=$(parse_url "$VIKYAPP_STATISTICS_URL")
+      KIBANA=$(parse_url "$VIKYAPP_STATISTICS_VISUALIZER_URL")
+
+      echo "Waiting for postgres on $DB_POSTGRES"
+      echo "Waiting for redis on $DB_REDIS"
+      echo "Waiting for ES on $ES"
+      /usr/local/bin/dockerize -wait tcp://$DB_POSTGRES:5432 -wait tcp://$DB_REDIS -wait tcp://$ES -wait tcp://$KIBANA  -timeout 180s
+
+      echo "Database and statistics setup"
+      ./bin/rails viky:setup
+      echo "Database and statistics setup completed."
+
+    else
+
+      echo "Setup is only done on first container."
+
+    fi
+else
 
   case "$1" in
   worker)

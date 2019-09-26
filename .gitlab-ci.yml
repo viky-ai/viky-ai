@@ -275,7 +275,8 @@ delete_env:
     - helm history "${RELEASE_NAME}" || true
     - helm status  "${RELEASE_NAME}" || true
     - helm delete --purge --no-hooks "${RELEASE_NAME}" || true
-    - kubectl delete all,cm,pvc,pdb --all --namespace "${KUBE_NAMESPACE}"
+    - kubectl delete all,cm,pvc,pdb --ignore-not-found --namespace "${KUBE_NAMESPACE}" --all || true
+    - kubectl delete secret         --ignore-not-found --namespace "${KUBE_NAMESPACE}" gitlab-registry
   when: manual
   allow_failure: true
 
