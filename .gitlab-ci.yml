@@ -270,7 +270,12 @@ delete_env:
     - auto-deploy create_secret
     - setup_release_name
     - unset HELM_HOST
-    - helm delete --purge "${RELEASE_NAME}"
+    - helm init --upgrade --wait --history-max=5 --tiller-connection-timeout=30 --service-account ${SERVICE_ACCOUNT} --tiller-namespace "${KUBE_NAMESPACE}"
+    - helm history "${RELEASE_NAME}" || true
+    - helm status  "${RELEASE_NAME}" || true
+    - helm delete --purge --no-hooks "${RELEASE_NAME}"
+    - kubectl delete all --namespace "${KUBE_NAMESPACE}"
+    - kubectl delete namespace "${KUBE_NAMESPACE}"
   when: manual
   allow_failure: true
 
