@@ -4,7 +4,7 @@
 
 <table>
   <tbody>
-    <% @top_expressions_users.each do |data| %>
+    <% @top_expressions_per_owners.each do |data| %>
       <% user = User.find(data['owner_id']) %>
       <tr>
         <td>
@@ -25,6 +25,6 @@
 </table>
 
 <div class="top-pagination">
-  <%= paginate @top_expressions_users, window: 1, param_name: :expressions_page %>
-  <p class="pagination-info"><%= page_entries_info @top_expressions_users %></p>
+  <%= paginate @top_expressions_per_owners, window: 1, param_name: :expressions_page %>
+  <p class="pagination-info"><%= page_entries_info @top_expressions_per_owners %></p>
 </div>

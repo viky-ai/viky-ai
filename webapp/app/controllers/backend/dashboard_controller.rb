@@ -30,8 +30,8 @@ class Backend::DashboardController < Backend::ApplicationController
       .order('count DESC, agents.name')
       .page(params[:tests_page]).per(10)
 
-    @top_expressions_users = Kaminari
-      .paginate_array(User.expressions_count)
+    @top_expressions_per_owners = User
+      .expressions_count_per_owners
       .page(params[:expressions_page]).per(10)
 
     to = DateTime.now
