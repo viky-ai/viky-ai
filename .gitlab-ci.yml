@@ -255,7 +255,7 @@ deploy_preprod:
 # remove environment
 delete_env:
   extends: .kubernetes_runner
-  stage: admin
+  stage: deploy
   except:
     - master
     - tags
