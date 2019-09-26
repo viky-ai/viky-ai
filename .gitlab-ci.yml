@@ -6,7 +6,7 @@ stages:
   - deploy
   - admin
 
-image: docker:stable
+image: registry.gitlab.com/brice.ruzand/auto-deploy-image/master:a4aec2bfb7d168e93cdb8548c8d7a39c39adae05
 
 .kubernetes_runner:
   tags:
@@ -23,8 +23,6 @@ variables:
   DOCKER_IMAGE_TOOLS_NLP: $CI_REGISTRY_IMAGE/tools_nlp_base
   DOCKER_IMAGE_TOOLS_RUBY: $CI_REGISTRY_IMAGE/tools_ruby_base
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
-
-  GITLAB_AUTO_DEPLOY_IMAGE: registry.gitlab.com/brice.ruzand/auto-deploy-image/master:c7a3cd73b73d6c7d52612d10c30368a5753384f7
 
 # Build docker image
 
@@ -199,7 +197,6 @@ deploy_dev:
   except:
     - master
     - tags
-  image: ${GITLAB_AUTO_DEPLOY_IMAGE}
   dependencies:
     - elastic_keystore
     - build_webapp
@@ -221,7 +218,7 @@ deploy_dev:
     - auto-deploy create_secret
     - setup_release_name
     - unset HELM_HOST
-    - helm init --upgrade --wait --history-max=3 --tiller-connection-timeout=30 --service-account ${SERVICE_ACCOUNT} --tiller-namespace "${KUBE_NAMESPACE}" --debug
+    - helm init --upgrade --wait --history-max=5 --tiller-connection-timeout=30 --service-account ${SERVICE_ACCOUNT} --tiller-namespace "${KUBE_NAMESPACE}"
     - helm history "${RELEASE_NAME}" || true
     - helm status  "${RELEASE_NAME}" || true
     # Go to Kubernetes directory
@@ -230,7 +227,7 @@ deploy_dev:
     - bin/generateOverrideValuesFile.sh
     # Deploy Viky Platform
     - unset HELM_HOST
-    - helm upgrade --wait --install --namespace "${KUBE_NAMESPACE}" --values custom-values.yml,viky-platform/custom-values/production.yaml "${RELEASE_NAME}"  ./viky-platform/
+    - helm upgrade --wait --timeout 600 --install --namespace "${KUBE_NAMESPACE}" --values custom-values.yml,viky-platform/custom-values/production.yaml "${RELEASE_NAME}"  ./viky-platform/
 # Deploy master on preprod
 deploy_preprod:
   extends: .kubernetes_runner
@@ -239,7 +236,6 @@ deploy_preprod:
     - master
   except:
     - tags
-  image: ${GITLAB_AUTO_DEPLOY_IMAGE}
   dependencies:
     - elastic_keystore
     - build_webapp
@@ -263,7 +259,6 @@ delete_env:
   except:
     - master
     - tags
-  image: ${GITLAB_AUTO_DEPLOY_IMAGE}
   environment:
     name: ${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
@@ -283,7 +278,6 @@ delete_env:
 invite_admin_dev:
   extends: .kubernetes_runner
   stage: admin
-  image: ${GITLAB_AUTO_DEPLOY_IMAGE}
   except:
     - master
     - tags
@@ -302,7 +296,6 @@ invite_admin_dev:
 invite_admin_preprod:
   extends: .kubernetes_runner
   stage: admin
-  image: ${GITLAB_AUTO_DEPLOY_IMAGE}
   only:
     - master
   environment:
@@ -320,7 +313,6 @@ invite_admin_preprod:
 backup_dev:
   extends: .kubernetes_runner
   stage: admin
-  image: ${GITLAB_AUTO_DEPLOY_IMAGE}
   dependencies: []
   except:
     - master
@@ -340,7 +332,6 @@ backup_dev:
 backup_preprod:
   extends: .kubernetes_runner
   stage: admin
-  image: ${GITLAB_AUTO_DEPLOY_IMAGE}
   dependencies: []
   only:
     - master
@@ -359,7 +350,6 @@ backup_preprod:
 backup_restore_dev:
   extends: .kubernetes_runner
   stage: admin
-  image: ${GITLAB_AUTO_DEPLOY_IMAGE}
   dependencies: []
   except:
     - master
