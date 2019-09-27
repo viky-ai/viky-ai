@@ -28,4 +28,4 @@ echo "ES $ES"
 ./bin/rails test
 
 # Run system tests
-./bin/rails test:system
+./bin/rails test:system --verbose --backtrace
