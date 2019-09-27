@@ -79,7 +79,6 @@ test_webapp:
     VIKYAPP_ACTIVEJOB_REDIS_URL: "redis://redis:6379/2"
     VIKYAPP_STATISTICS_URL: "http://elasticsearch:9200"
     ES_JAVA_OPTS: "-Xms128m -Xmx392m"
-    PARALLEL_WORKERS: 4
   services:
     - postgres:11.5-alpine
     - redis:5.0-alpine
