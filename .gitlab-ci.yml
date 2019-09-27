@@ -264,8 +264,9 @@ delete_env:
     - helm history "${RELEASE_NAME}" || true
     - helm status  "${RELEASE_NAME}" || true
     - helm delete --purge --no-hooks "${RELEASE_NAME}" || true
+    - sleep 10
     - kubectl delete all,cm,pvc,pdb --ignore-not-found --namespace "${KUBE_NAMESPACE}" --all || true
-    - kubectl delete secret         --ignore-not-found --namespace "${KUBE_NAMESPACE}" gitlab-registry
+    - kubectl delete secret         --ignore-not-found --namespace "${KUBE_NAMESPACE}" gitlab-registry viky-infra-es-keystore-secret
   when: manual
   allow_failure: true
 
