@@ -6,7 +6,7 @@ stages:
   - deploy
   - admin
 
-image: registry.gitlab.com/brice.ruzand/auto-deploy-image/master:a4aec2bfb7d168e93cdb8548c8d7a39c39adae05
+image: vikyai/tools-gitlab-auto-deploy-image:latest
 
 .kubernetes_runner:
   tags:
@@ -194,28 +194,25 @@ deploy_dev:
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
     on_stop: delete_env
   variables:
+    HELM_RELEASE_NAME: "viky_dev"
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
   script:
-    # gitlab auto autodeploy setup
-    # TODO customize generic part in docker image
-    - auto-deploy ensure_namespace
-    - export TILLER_NAMESPACE=${KUBE_NAMESPACE}
-    - export SERVICE_ACCOUNT="${KUBE_NAMESPACE}-service-account"
-    - auto-deploy create_secret
-    - setup_release_name
-    - unset HELM_HOST
-    - helm init --upgrade --wait --history-max=5 --tiller-connection-timeout=30 --service-account ${SERVICE_ACCOUNT} --tiller-namespace "${KUBE_NAMESPACE}"
+    - kube_setup
     - helm history "${RELEASE_NAME}" || true
     - helm status  "${RELEASE_NAME}" || true
     # Go to Kubernetes directory
     - cd deployment/kubernetes/
     - echo "Generate Override values"
     - bin/generateOverrideValuesFile.sh
-    # Deploy Viky Platform
-    - unset HELM_HOST
-    - helm upgrade --wait --timeout 600 --install --namespace "${KUBE_NAMESPACE}" --values custom-values.yml,viky-platform/custom-values/production.yaml "${RELEASE_NAME}"  ./viky-platform/
+    - |
+      # Deploy Viky Platform
+      helm upgrade --wait --timeout 600 --install \
+        --namespace "${KUBE_NAMESPACE}" \
+        --values custom-values.yml,viky-platform/custom-values/production.yaml \
+        "${RELEASE_NAME}" \
+        ./viky-platform/
 # Deploy master on preprod
 deploy_preprod:
   extends: .kubernetes_runner
@@ -231,13 +228,26 @@ deploy_preprod:
     name: viky-preprod
     url: https://viky-beta-kube.viky.ai
   variables:
+    HELM_RELEASE_NAME: "viky_preprod"
     VIKYAPP_AUTO_BACKUP: "true"
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
   script:
-    # TODO
-    - "false"
+    - kube_setup
+    - helm history "${RELEASE_NAME}" || true
+    - helm status  "${RELEASE_NAME}" || true
+    # Go to Kubernetes directory
+    - cd deployment/kubernetes/
+    - echo "Generate Override values"
+    - bin/generateOverrideValuesFile.sh
+    - |
+      # Deploy Viky Platform
+      helm upgrade --wait --timeout 600 --install \
+        --namespace "${KUBE_NAMESPACE}" \
+        --values custom-values.yml,viky-platform/custom-values/production.yaml \
+        "${RELEASE_NAME}" \
+        ./viky-platform/
 
 # remove environment
 delete_env:
@@ -253,20 +263,13 @@ delete_env:
     action: stop
   variables:
       GIT_STRATEGY: none
+      HELM_RELEASE_NAME: "viky_dev"
   script:
-    - auto-deploy ensure_namespace
-    - export TILLER_NAMESPACE=${KUBE_NAMESPACE}
-    - export SERVICE_ACCOUNT="${KUBE_NAMESPACE}-service-account"
-    - auto-deploy create_secret
-    - setup_release_name
-    - unset HELM_HOST
-    - helm init --upgrade --wait --history-max=5 --tiller-connection-timeout=30 --service-account ${SERVICE_ACCOUNT} --tiller-namespace "${KUBE_NAMESPACE}" || true
+    - kube_setup
     - helm history "${RELEASE_NAME}" || true
     - helm status  "${RELEASE_NAME}" || true
-    - helm delete --purge --no-hooks "${RELEASE_NAME}" || true
-    - sleep 10
-    - kubectl delete all,cm,pvc,pdb --ignore-not-found --namespace "${KUBE_NAMESPACE}" --all || true
-    - kubectl delete secret         --ignore-not-found --namespace "${KUBE_NAMESPACE}" gitlab-registry viky-infra-es-keystore-secret viky-backup-secret
+    - kubectl delete secret --ignore-not-found viky-infra-es-keystore-secret viky-backup-secret
+    - kube_cleanup
   when: manual
   allow_failure: true
 
@@ -283,8 +286,8 @@ invite_admin_dev:
   variables:
     GIT_STRATEGY: none
   script:
-    - PODNAME=$(get_pods "app=viky-webapp")
-    - kubectl --namespace=${KUBE_NAMESPACE} exec $PODNAME ./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]
+    - PODNAME=$(kube_get_pods "app=viky-webapp")
+    - kubectl exec $PODNAME ./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]
   when: manual
   allow_failure: true
 
@@ -300,8 +303,8 @@ invite_admin_preprod:
   variables:
     GIT_STRATEGY: none
   script:
-    - PODNAME=$(get_pods "app=viky-webapp")
-    - kubectl --namespace=${KUBE_NAMESPACE} exec $PODNAME ./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]
+    - PODNAME=$(kube_get_pods "app=viky-webapp")
+    - kubectl exec $PODNAME ./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]
   when: manual
   allow_failure: true
 
@@ -319,8 +322,8 @@ backup_dev:
   variables:
     GIT_STRATEGY: none
   script:
-    - PODNAME=$(get_pods "app=viky-webapp-backup")
-    - kubectl exec --namespace=${KUBE_NAMESPACE} ${PODNAME}  bash /backup/backup.sh
+    - PODNAME=$(kube_get_pods "app=viky-webapp-backup")
+    - kubectl exec ${PODNAME}  bash /backup/backup.sh
   when: manual
   allow_failure: true
 
@@ -337,8 +340,8 @@ backup_preprod:
   variables:
     GIT_STRATEGY: none
   script:
-    - PODNAME=$(get_pods "app=viky-webapp-backup")
-    - kubectl exec --namespace=${KUBE_NAMESPACE} ${PODNAME}  bash /backup/backup.sh
+    - PODNAME=$(kube_get_pods "app=viky-webapp-backup")
+    - kubectl exec ${PODNAME}  bash /backup/backup.sh
   when: manual
   allow_failure: true
 
@@ -356,79 +359,13 @@ backup_restore_dev:
   variables:
     GIT_STRATEGY: none
   script:
-    - PODNAME=$(get_pods "app=viky-webapp-backup")
+    - PODNAME=$(kube_get_pods "app=viky-webapp-backup")
     # backup current env
-    - kubectl exec --namespace=${KUBE_NAMESPACE} $PODNAME  bash /backup/backup.sh || true
+    - kubectl exec $PODNAME  bash /backup/backup.sh || true
     # restore base on viky-beta
-    - kubectl exec --namespace=${KUBE_NAMESPACE} $PODNAME  bash /backup/restore.sh "viky-beta"
-    # delete pods to restart wiky apps deployment
-    - kubectl delete pods --namespace=${KUBE_NAMESPACE} -l 'app in (viky-webapp-worker, viky-webapp, viky-nlp)'
+    - kubectl exec $PODNAME  bash /backup/restore.sh "viky-beta"
+    # delete pods to restart viky apps deployment
+    - kubectl delete pods -l 'app in (viky-webapp-worker, viky-webapp, viky-nlp)'
   when: manual
   allow_failure: true
 
-before_script:
-  - |
-    # Auto DevOps variables and functions
-    [[ "${TRACE:-0}" == "1" ]] && set -x
-
-    # Needed for Gitlab Managed
-    export TILLER_NAMESPACE="${KUBE_NAMESPACE}"
-    export HELM_HOST="localhost:44134"
-
-    function docker_build ()
-    {
-      # login to private registry
-      docker_login
-
-      local CI_DOCKER_IMAGE="$1"
-      local CI_DOCKER_DIR="$2"
-      local CI_DOCKER_IMAGE_BUILD_OPT="$3"
-
-      echo ""
-      echo "Build docker image ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} from dir ${CI_DOCKER_DIR} ..."
-      docker build --pull ${CI_DOCKER_IMAGE_BUILD_OPT} -t ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${CI_DOCKER_DIR}
-
-      echo ""
-      echo "Pushing ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} to GitLab Container Registry ..."
-      docker push ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
-
-      echo ""
-    }
-
-    function docker_tag_latest ()
-    {
-      # login to private registry
-      docker_login
-
-      local CI_DOCKER_IMAGE="$1"
-
-      echo "Pulling ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}"
-      docker pull ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
-
-      echo "Taggging ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} to ${CI_DOCKER_IMAGE}:latest"
-      docker tag ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${CI_DOCKER_IMAGE}:latest
-
-      echo "Pushing ${CI_DOCKER_IMAGE}:latest to GitLab Container Registry ..."
-      docker push ${CI_DOCKER_IMAGE}:latest
-      echo ""
-    }
-
-    function docker_login ()
-    {
-      if [[ -n "$CI_REGISTRY_USER" ]]; then
-        echo "Logging to GitLab Container Registry with CI credentials ..."
-        echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin "${CI_REGISTRY}"
-        echo ""
-      fi
-    }
-
-    function setup_release_name ()
-    {
-      export RELEASE_NAME=viky-$(echo "${KUBE_NAMESPACE}" | sha1sum | awk '{print $1}' | cut -c -10)
-    }
-
-    function get_pods ()
-    {
-      local KUBE_SELECTOR="$1"
-      kubectl get pods --namespace="${KUBE_NAMESPACE}" -l "${KUBE_SELECTOR}" --no-headers --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}'
-    }
