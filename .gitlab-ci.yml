@@ -231,7 +231,7 @@ tag_backup:
   variables:
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
     HELM_TIMEOUT: "900"
-    HELM_WAIT_FORCED: "--wait"
+    HELM_EXTRA_OPTIONS: "--wait"
   script:
     - kube_setup
     - helm history "${RELEASE_NAME}" || true
@@ -240,7 +240,7 @@ tag_backup:
     - cd deployment/kubernetes/
     - bin/generateOverrideValuesFile.sh
     # Deploy Viky Platform
-    - HELM_OPTIONS="--install ${HELM_WAIT_FORCED} --timeout ${HELM_TIMEOUT}  --values ${HELM_VALUES}"
+    - HELM_OPTIONS="--install ${HELM_EXTRA_OPTIONS} --timeout ${HELM_TIMEOUT}  --values ${HELM_VALUES}"
     - helm upgrade ${HELM_OPTIONS} "${RELEASE_NAME}" ./viky-platform/
 
 # Deploy any branches on dev
@@ -259,7 +259,7 @@ deploy_dev_forced:
     on_stop: delete_env
   when: manual
   variables:
-    HELM_WAIT_FORCED: "--force"
+    HELM_EXTRA_OPTIONS: "--force"
 
 
 # Deploy master on preprod
@@ -272,7 +272,7 @@ deploy_preprod_forced:
   extends: deploy_preprod
   when: manual
   variables:
-    HELM_WAIT_FORCED: "--force"
+    HELM_EXTRA_OPTIONS: "--force"
 
 # remove environment only for dev
 delete_env:
