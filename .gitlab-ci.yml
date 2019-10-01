@@ -47,14 +47,16 @@ build_backup:
 
 build_webapp:
   extends: .kubernetes_runner
-  needs: ["build_ruby_base"]
+  needs:
+    - "build_ruby_base"
   stage: build
   script:
     - docker_build ${DOCKER_IMAGE_APP}      webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_run"
 
 build_webapp_test:
   extends: .kubernetes_runner
-  needs: ["build_ruby_base"]
+  needs:
+    - "build_ruby_base"
   stage: build
   script:
     - docker_build ${DOCKER_IMAGE_APP}_test webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_test"
@@ -62,7 +64,8 @@ build_webapp_test:
 build_nlp:
   extends: .kubernetes_runner
   stage: build
-  needs: ["build_nlp_base"]
+  needs:
+    - "build_nlp_base"
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   script:
@@ -74,7 +77,8 @@ build_nlp:
   extends: .kubernetes_runner
   stage: test
   image: ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG}
-  needs: ["build_webapp_test"]
+  needs:
+    - "build_webapp_test"
   variables:
     POSTGRES_USER: superman
     POSTGRES_PASSWORD: sup_3rman
@@ -120,7 +124,8 @@ test_webapp_system:
 test_nlp:
   extends: .kubernetes_runner
   stage: test
-  needs: ["build_nlp"]
+  needs:
+    - "build_nlp"
   image: ${DOCKER_IMAGE_NLP}_test:${CI_COMMIT_REF_SLUG}
   services:
     - redis:5.0-alpine
@@ -150,7 +155,9 @@ tag_webapp:
 tag_nlp:
   extends: .kubernetes_runner
   stage: docker_tag
-  needs: ["build_nlp", "test_nlp"]
+  needs:
+    - "build_nlp"
+    - "test_nlp"
   only:
     - develop
   variables:
@@ -216,8 +223,6 @@ tag_backup:
   extends: .kubernetes_runner
   stage: deploy
   needs:
-    - build_webapp
-    - build_nlp
     - build_backup
     - test_webapp_unit
     - test_webapp_system
@@ -280,7 +285,8 @@ delete_env:
     name: ${CI_COMMIT_REF_NAME}
     action: stop
   stage: admin
-  needs: [ "build_backup" ]
+  needs:
+    - "build_backup"
   variables:
     GIT_STRATEGY: none
   script:
@@ -326,7 +332,9 @@ backup_dev:
     - .kubernetes_runner
     - .deploy_dev
   stage: admin
-  needs: [ "build_backup", "deploy_dev" ]
+  needs:
+    - "build_backup"
+    - "deploy_dev"
   variables:
     GIT_STRATEGY: none
   script:
@@ -341,7 +349,9 @@ backup_preprod:
     - .kubernetes_runner
     - .deploy_preprod
   stage: admin
-  needs: [ "build_backup", "deploy_preprod" ]
+  needs:
+    - "build_backup"
+    - "deploy_preprod"
   variables:
     GIT_STRATEGY: none
   script:
@@ -356,7 +366,9 @@ backup_restore:
     - .kubernetes_runner
     - .deploy_dev
   stage: admin
-  needs: [ "build_backup", "deploy_dev" ]
+  needs:
+    - "build_backup"
+    - "deploy_dev"
   variables:
     GIT_STRATEGY: none
   script:
