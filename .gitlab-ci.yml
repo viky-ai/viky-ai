@@ -189,8 +189,9 @@ tag_backup:
 
 # Deploy generic job
 
-.deploy_dev:
+.deploy_branches:
   except:
+    - develop
     - master
     - tags
   environment:
@@ -199,8 +200,22 @@ tag_backup:
   variables:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
-    HELM_RELEASE_NAME: "viky-dev"
+    HELM_RELEASE_NAME: "viky-branches"
     HELM_VALUES: "custom-values.yml,viky-platform/custom-values/dev.yaml"
+
+.deploy_develop:
+  only:
+    - develop
+  except:
+    - tags
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
+  variables:
+    S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+    S3_SECRET_KEY: ${S3_SECRET_KEY}
+    HELM_RELEASE_NAME: "viky-develop"
+    HELM_VALUES: "custom-values.yml,viky-platform/custom-values/production.yaml"
 
 .deploy_preprod:
   only:
@@ -244,16 +259,16 @@ tag_backup:
     - helm upgrade ${HELM_OPTIONS} "${RELEASE_NAME}" ./viky-platform/
 
 # Deploy any branches on dev
-deploy_dev:
+deploy_branches:
   environment:
     name: ${CI_COMMIT_REF_NAME}
     on_stop: delete_env
   extends:
     - .deploy
-    - .deploy_dev
+    - .deploy_branches
 
-deploy_dev_forced:
-  extends: deploy_dev
+deploy_branches_forced:
+  extends: deploy_branches
   environment:
     name: ${CI_COMMIT_REF_NAME}
     on_stop: delete_env
@@ -261,6 +276,23 @@ deploy_dev_forced:
   variables:
     HELM_EXTRA_OPTIONS: "--force"
 
+# Deploy any branches on dev
+deploy_develop:
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    on_stop: delete_env
+  extends:
+    - .deploy
+    - .deploy_develop
+
+deploy_develop_forced:
+  extends: deploy_develop
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    on_stop: delete_env
+  when: manual
+  variables:
+    HELM_EXTRA_OPTIONS: "--force"
 
 # Deploy master on preprod
 deploy_preprod:
@@ -291,7 +323,7 @@ delete_env:
     - kube_setup
     - helm history "${RELEASE_NAME}" || true
     - helm status  "${RELEASE_NAME}" || true
-    - kubectl delete secret --ignore-not-found viky-infra-es-keystore-secret viky-backup-secret
+    - kubectl delete secret --ignore-not-found viky-infra-es-keystore-secret
     - kube_cleanup
   when: manual
   allow_failure: true
@@ -300,7 +332,7 @@ delete_env:
 invite_admin_dev:
   extends:
     - .kubernetes_runner
-    - .deploy_dev
+    - .deploy_branches
   stage: admin
   variables:
     GIT_STRATEGY: none
@@ -328,7 +360,7 @@ invite_admin_preprod:
 backup_dev:
   extends:
     - .kubernetes_runner
-    - .deploy_dev
+    - .deploy_branches
   stage: admin
   needs:
     - "build_backup"
@@ -362,7 +394,7 @@ backup_preprod:
 backup_restore:
   extends:
     - .kubernetes_runner
-    - .deploy_dev
+    - .deploy_branches
   stage: admin
   needs:
     - "build_backup"
