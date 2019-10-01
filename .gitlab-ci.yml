@@ -362,9 +362,6 @@ backup_dev:
     - .kubernetes_runner
     - .deploy_branches
   stage: admin
-  needs:
-    - "build_backup"
-    - "deploy_dev"
   variables:
     GIT_STRATEGY: none
   script:
@@ -379,9 +376,6 @@ backup_preprod:
     - .kubernetes_runner
     - .deploy_preprod
   stage: admin
-  needs:
-    - "build_backup"
-    - "deploy_preprod"
   variables:
     GIT_STRATEGY: none
   script:
@@ -396,9 +390,6 @@ backup_restore:
     - .kubernetes_runner
     - .deploy_branches
   stage: admin
-  needs:
-    - "build_backup"
-    - "deploy_dev"
   variables:
     GIT_STRATEGY: none
   script:
