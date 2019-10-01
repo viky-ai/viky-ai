@@ -240,7 +240,7 @@ tag_backup:
     - cd deployment/kubernetes/
     - bin/generateOverrideValuesFile.sh
     # Deploy Viky Platform
-    - HELM_OPTIONS="--install --wait --timeout ${HELM_TIMEOUT} ${HELM_FORCED} --values ${HELM_VALUES}
+    - HELM_OPTIONS="--install --wait --timeout ${HELM_TIMEOUT} ${HELM_FORCED} --values ${HELM_VALUES}"
     - helm upgrade ${HELM_OPTIONS} "${RELEASE_NAME}" ./viky-platform/
 
 # Deploy any branches on dev
