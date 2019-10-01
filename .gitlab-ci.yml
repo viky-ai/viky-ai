@@ -230,7 +230,6 @@ tag_backup:
     - test_nlp
   variables:
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
-    HELM_FORCED: ""
     HELM_TIMEOUT: "900"
   script:
     - kube_setup
@@ -306,7 +305,7 @@ invite_admin_dev:
     GIT_STRATEGY: none
   script:
     - PODNAME=$(kube_get_pods "app=viky-webapp")
-    - kubectl exec $PODNAME ./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]
+    - kubectl exec ${PODNAME} ./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]
   when: manual
   allow_failure: true
 
@@ -320,7 +319,7 @@ invite_admin_preprod:
     GIT_STRATEGY: none
   script:
     - PODNAME=$(kube_get_pods "app=viky-webapp")
-    - kubectl exec $PODNAME ./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]
+    - kubectl exec ${PODNAME} ./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]
   when: manual
   allow_failure: true
 
@@ -372,9 +371,9 @@ backup_restore:
   script:
     - PODNAME=$(kube_get_pods "app=viky-webapp-backup")
     # backup current env
-    - kubectl exec $PODNAME  bash /backup/backup.sh || true
+    - kubectl exec ${PODNAME}  bash /backup/backup.sh || true
     # restore base on viky-beta
-    - kubectl exec $PODNAME  bash /backup/restore.sh "viky-beta"
+    - kubectl exec ${PODNAME}  bash /backup/restore.sh "viky-beta"
     # delete pods to restart viky apps deployment
     - kubectl delete pods -l 'app in (viky-webapp-worker, viky-webapp, viky-nlp)'
   when: manual
