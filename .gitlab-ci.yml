@@ -310,7 +310,7 @@ deploy_preprod_forced:
 delete_env:
   extends:
     - .kubernetes_runner
-    - .deploy_dev
+    - .deploy_branches
   environment:
     name: ${CI_COMMIT_REF_NAME}
     action: stop
