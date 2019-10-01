@@ -17,7 +17,8 @@ variables:
 
 image: vikyai/tools-gitlab-auto-deploy-image:latest
 before_script:
-  - . /auto-deploy.sh
+  # load auto-deploy if exits (not in test)
+  - if [ -f /auto-deploy.sh ]; then . /auto-deploy.sh ; fi
 
 .kubernetes_runner:
   tags:
