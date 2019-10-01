@@ -199,8 +199,8 @@ tag_backup:
   variables:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
-    HELM_RELEASE_NAME: "viky_dev"
-    HELM_VALUES: "custom-values.yml,viky-platform/custom-values/production.yaml"
+    HELM_RELEASE_NAME: "viky-dev"
+    HELM_VALUES: "custom-values.yml,viky-platform/custom-values/dev.yaml"
 
 .deploy_preprod:
   only:
@@ -217,7 +217,7 @@ tag_backup:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
     VIKYAPP_AUTO_BACKUP: "true"
-    HELM_RELEASE_NAME: "viky_preprod"
+    HELM_RELEASE_NAME: "viky-preprod"
     HELM_VALUES: "custom-values.yml,viky-platform/custom-values/production.yaml"
 
 .deploy:
@@ -231,6 +231,7 @@ tag_backup:
   variables:
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
     HELM_FORCED: ""
+    HELM_TIMEOUT: "900"
   script:
     - kube_setup
     - helm history "${RELEASE_NAME}" || true
@@ -241,7 +242,7 @@ tag_backup:
     - bin/generateOverrideValuesFile.sh
     - |
       # Deploy Viky Platform
-      helm upgrade ${HELM_FORCED} --wait --timeout 600 --install \
+      helm upgrade ${HELM_FORCED} --wait --timeout ${HELM_TIMEOUT} --install \
         --values "${HELM_VALUES}" \
         "${RELEASE_NAME}" \
         ./viky-platform/
@@ -281,7 +282,7 @@ deploy_preprod_forced:
 delete_env:
   extends:
     - .kubernetes_runner
-    - .deploy_preprod
+    - .deploy_dev
   environment:
     name: ${CI_COMMIT_REF_NAME}
     action: stop
