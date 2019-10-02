@@ -17,8 +17,6 @@ module Quota
     interpret_path = "/api/v1/agents/.*/interpret.json"
     rules = {
       second: [{ method: "GET", path: interpret_path, limit: self.max_interpret_requests_per_second }],
-      minute: [{ method: "GET", path: interpret_path, limit: self.max_interpret_requests_per_minute }],
-      hour:   [{ method: "GET", path: interpret_path, limit: self.max_interpret_requests_per_hour }],
       day:    [{ method: "GET", path: interpret_path, limit: self.max_interpret_requests_per_day }]
     }
     rules[period]
@@ -26,14 +24,6 @@ module Quota
 
   def self.max_interpret_requests_per_second
     ENV.fetch("VIKYAPP_QUOTA_INTERPRET_PER_SECOND") { 10 }.to_i
-  end
-
-  def self.max_interpret_requests_per_minute
-    ENV.fetch("VIKYAPP_QUOTA_INTERPRET_PER_MINUTE") { 20 }.to_i
-  end
-
-  def self.max_interpret_requests_per_hour
-    ENV.fetch("VIKYAPP_QUOTA_INTERPRET_PER_HOUR") { 1_000 }.to_i
   end
 
   def self.max_interpret_requests_per_day
@@ -45,7 +35,7 @@ module Quota
   end
 end
 
-[:day, :hour, :minute, :second].each do |period|
+[:second, :day].each do |period|
   Rails.configuration.middleware.use(
     Rack::Throttle::CustomRules,
     cache: Quota.cache,

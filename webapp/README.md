@@ -127,13 +127,11 @@ RSYNC_PASSWORD='#***REMOVED***26'
     VIKYAPP_QUOTA_ENABLED=true
 
     # If you want to change the interpret endpoint requests limit
-    VIKYAPP_QUOTA_INTERPRET_PER_DAY=8     # Max 8 requests to interpret endpoint per day
-    VIKYAPP_QUOTA_INTERPRET_PER_HOUR=6    # Max 6 requests to interpret endpoint per hour
-    VIKYAPP_QUOTA_INTERPRET_PER_MINUTE=4  # Max 4 requests to interpret endpoint per minute
-    VIKYAPP_QUOTA_INTERPRET_PER_SECOND=2  # Max 2 requests to interpret endpoint per second
+    VIKYAPP_QUOTA_INTERPRET_PER_DAY=1000   # Max 1000 requests to interpret endpoint per day
+    VIKYAPP_QUOTA_INTERPRET_PER_SECOND=10  # Max 10 requests to interpret endpoint per second
 
     # If you want to change the expression limitation
-    VIKYAPP_QUOTA_EXPRESSION=5000         # Limit the overall formulations and entities count to 5000
+    VIKYAPP_QUOTA_EXPRESSION=50000         # Limit the overall formulations and entities count to 50 000
 
 
 ## Run in production environment
