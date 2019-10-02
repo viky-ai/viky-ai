@@ -13,7 +13,7 @@ class InterpretRequestReporterTest < ActiveSupport::TestCase
 
     create_fixture(agent, '2019-01-01T12:00:00.000+02:00', '200')
     create_fixture(agent, '2019-01-02T12:00:00.000+02:00', '200')
-    create_fixture(agent, '2019-01-03T12:00:00.000+02:00', '503')
+    create_fixture(agent, '2019-01-03T12:00:00.000+02:00', '429')
 
     from = DateTime.parse('2019-01-01T00:00:00.000+02:00')
     to   = DateTime.parse('2019-01-04T00:00:00.000+02:00')
@@ -54,7 +54,7 @@ class InterpretRequestReporterTest < ActiveSupport::TestCase
 
     create_fixture(agent, '2019-01-01T00:00:00.000+02:00', '200')
     create_fixture(agent, '2019-01-01T00:00:01.000+02:00', '200')
-    create_fixture(agent, '2019-01-01T00:00:03.000+02:00', '503')
+    create_fixture(agent, '2019-01-01T00:00:03.000+02:00', '429')
     create_fixture(agent, '2019-01-01T01:00:00.100+02:00', '200')
     create_fixture(agent, '2019-01-01T01:01:00.100+02:00', '200')
     create_fixture(agent, '2019-01-01T01:02:00.100+02:00', '200')
@@ -117,7 +117,7 @@ class InterpretRequestReporterTest < ActiveSupport::TestCase
 
     create_fixture(weather, '2019-01-01T00:00:00.000+02:00', '200')
     create_fixture(weather, '2019-01-01T00:00:01.000+02:00', '200')
-    create_fixture(weather, '2019-01-02T00:00:00.000+02:00', '503')
+    create_fixture(weather, '2019-01-02T00:00:00.000+02:00', '429')
     create_fixture(terminator, '2019-01-03T01:00:00.000+02:00', '200')
 
     from = DateTime.parse('2019-01-01T00:00:00.000+02:00')

@@ -37,7 +37,7 @@ module Rack
               timestamp: Time.now.iso8601(3),
               agents: [agent]
             )
-            log.with_response(503, { }).save
+            log.with_response(429, { }).save
           end
         end
 

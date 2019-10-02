@@ -28,7 +28,7 @@ class NlsControllerQuotaTest < ActionDispatch::IntegrationTest
     Feature.with_quota_enabled do
       assert_request_is_200("2019-09-13T14:07:00")
       assert_request_is_200("2019-09-13T14:07:00")
-      assert_request_is_403("2019-09-13T14:07:00")
+      assert_request_is_429("2019-09-13T14:07:00")
       assert_request_is_200("2019-09-13T14:07:01")
     end
   end
@@ -44,7 +44,7 @@ class NlsControllerQuotaTest < ActionDispatch::IntegrationTest
       assert_request_is_200("2019-09-13T18:00:00")
       assert_request_is_200("2019-09-13T19:00:00")
       assert_request_is_200("2019-09-13T20:00:00")
-      assert_request_is_403("2019-09-13T21:00:00")
+      assert_request_is_429("2019-09-13T21:00:00")
       assert_request_is_200("2019-09-14T20:00:00")
     end
   end
@@ -59,10 +59,10 @@ class NlsControllerQuotaTest < ActionDispatch::IntegrationTest
     end
   end
 
-  def assert_request_is_403(at)
+  def assert_request_is_429(at)
     travel_to DateTime.parse(at) do
       send_interpret_request
-      assert_equal '403', response.code
+      assert_equal '429', response.code
     end
   end
 

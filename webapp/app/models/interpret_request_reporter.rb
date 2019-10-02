@@ -12,13 +12,13 @@ class InterpretRequestReporter
 
   def under_quota
     from_api
-    @query[:query][:bool][:must] << { terms: { status: [200, 500, 422] } }
+    @query[:query][:bool][:must] << { terms: { status: [200, 422, 500, 503] } }
     self
   end
 
   def over_quota
     from_api
-    @query[:query][:bool][:must] << { terms: { status: [503] } }
+    @query[:query][:bool][:must] << { terms: { status: [429] } }
     self
   end
 

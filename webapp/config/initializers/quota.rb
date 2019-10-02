@@ -41,6 +41,7 @@ end
     cache: Quota.cache,
     key_prefix: :throttle,
     rules: Quota.throttle_rules_for(period),
-    time_window: period
+    time_window: period,
+    code: 429
   )
 end
