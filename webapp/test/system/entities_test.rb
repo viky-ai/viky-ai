@@ -326,13 +326,9 @@ class EntitiesTest < ApplicationSystemTestCase
       within(".modal") do
         assert_text "Import entities"
         file = File.join(Rails.root, "test", "fixtures", "files", "import_entities_ko.csv")
-
-        # Display import file imput in order to allow capybara attach_file
-        execute_script("$('#import_file').css('opacity','1')");
-        attach_file("import_file", file)
+        attach_file("import_file", file, make_visible: true)
         click_button "Import"
       end
-
       assert has_text? "Import failed"
     end
   end
@@ -347,20 +343,14 @@ class EntitiesTest < ApplicationSystemTestCase
       within(".modal") do
         assert_text "Import entities"
         file = File.join(Rails.root, "test", "fixtures", "files", "import_entities_ok.csv")
-
-        # Display import file imput in order to allow capybara attach_file
-        execute_script("$('#import_file').css('opacity','1')");
-        attach_file("import_file", file)
+        attach_file("import_file", file, make_visible: true)
         click_button "Import"
       end
-
       assert has_text? "Processing import"
       assert has_text? "3 entities imported successfully"
     end
-
     # Wait redirection
     sleep 6
-
     assert_equal 5, all("#entities-list > li").count
   end
 
@@ -374,22 +364,15 @@ class EntitiesTest < ApplicationSystemTestCase
       within(".modal") do
         assert_text "Import entities"
         file = File.join(Rails.root, "test", "fixtures", "files", "import_entities_ok.csv")
-
-        # Display import file imput in order to allow capybara attach_file
-        execute_script("$('#import_file').css('opacity','1');")
-        attach_file("import_file", file)
-
+        attach_file("import_file", file, make_visible: true)
         choose "Replace current entities"
         click_button "Import"
       end
-
       assert has_text? "Processing import"
       assert has_text? "3 entities imported successfully"
     end
-
     # Wait redirection
     sleep 6
-
     assert_equal 3, all("#entities-list > li").count
   end
 

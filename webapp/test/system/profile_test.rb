@@ -56,14 +56,8 @@ class ProfileTest < ApplicationSystemTestCase
     end
 
     file = File.join(Rails.root, "test", "fixtures", "files", "avatar_upload.png")
-
-    # Display import file imput in order to allow capybara attach_file
-    execute_script("$('#upload_image').css('opacity','1')");
-
-    attach_file("upload_image", file)
-
+    attach_file("upload_image", file, make_visible: true)
     click_button "Update profile"
-
     within("main") do
       assert find(".avatar img")["src"].include? "square"
     end
@@ -87,20 +81,12 @@ class ProfileTest < ApplicationSystemTestCase
     within("main") do
       assert find(".avatar img")["src"].include? "default"
     end
-
     file = File.join(Rails.root, "test", "fixtures", "files", "avatar_upload.txt")
-
-    # Display import file imput in order to allow capybara attach_file
-    execute_script("$('#upload_image').css('opacity','1')");
-
-    attach_file("upload_image", file)
-
+    attach_file("upload_image", file, make_visible: true)
     click_button "Update profile"
-
     within("main") do
       assert find(".avatar img")["src"].include? "default"
     end
-
     assert has_content?("Avatar type must be one of: image/jpeg, image/png, image/gif")
   end
 
