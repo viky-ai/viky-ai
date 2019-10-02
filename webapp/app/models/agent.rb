@@ -193,7 +193,6 @@ class Agent < ApplicationRecord
   def expressions_count
     entities_count = entities_lists.sum(:entities_count)
     interpretations_count = Interpretation.joins(intent: :agent).where('agents.id = ?', id).count
-
     entities_count + interpretations_count
   end
 

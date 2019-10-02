@@ -47,6 +47,12 @@ class AgentTransfer
     def validate_new_owner
       if @new_owner.nil?
         @errors << I18n.t('errors.agent.transfer_ownership.invalid_username')
+      else
+        if Feature.quota_enabled? && new_owner.quota_enabled
+          if new_owner.expressions_count + agent.expressions_count > Quota.expressions_limit
+            @errors << I18n.t('errors.agent.transfer_ownership.owner_quota_will_exceed')
+          end
+        end
       end
     end
 

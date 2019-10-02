@@ -397,6 +397,29 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
+  test "Transfer agent ownership whereas new owner doesn't have enougth quota" do
+    current_owner = users(:admin)
+    next_owner    = users(:locked)
+    terminator_agent = agents(:terminator)
+
+    Feature.with_quota_enabled do
+      assert_equal current_owner.id, terminator_agent.owner_id
+      assert_equal 4, next_owner.expressions_count
+      assert_equal 3, terminator_agent.expressions_count
+
+      Quota.stubs(:expressions_limit).returns(6)
+      result = terminator_agent.transfer_ownership_to(next_owner.email)
+      assert_not result[:success]
+      expected = ["This user does not have enough quota to accept this transfer"]
+      assert_equal expected, result[:errors]
+
+      Quota.stubs(:expressions_limit).returns(7)
+      result = terminator_agent.transfer_ownership_to(next_owner.email)
+      assert result[:success]
+    end
+  end
+
+
   test "A new agent always has a token" do
     agent = Agent.new(
       name: "Agent A",
