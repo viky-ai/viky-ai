@@ -20,20 +20,21 @@ class IntentTest < ActiveSupport::TestCase
     assert_equal 3, agents(:weather).intents.count
     assert Intent::AVAILABLE_COLORS.one? { |color| color == intent.color }
     assert_equal 'is_private', intent.visibility
-    assert !intent.is_public?
+    assert_not intent.is_public?
     assert intent.is_private?
   end
 
 
   test 'intentname, agent and locales are mandatory' do
     intent = Intent.new(description: 'Hello random citizen !')
-    assert !intent.save
+    assert_not intent.save
 
-    expected = {
-      agent: ['must exist'],
-      intentname: ['is too short (minimum is 3 characters)', 'can\'t be blank']
-    }
-    assert_equal expected, intent.errors.messages
+    expected = [
+      "Agent must exist",
+      "ID is too short (minimum is 3 characters)",
+      "ID can't be blank"
+    ]
+    assert_equal expected, intent.errors.full_messages
   end
 
 
@@ -50,12 +51,10 @@ class IntentTest < ActiveSupport::TestCase
       description: 'Another way to greet you...'
     )
     other_intent.agent = agents(:weather)
-    assert !other_intent.save
+    assert_not other_intent.save
 
-    expected = {
-      intentname: ['has already been taken']
-    }
-    assert_equal expected, other_intent.errors.messages
+    expected = ['ID has already been taken']
+    assert_equal expected, other_intent.errors.full_messages
   end
 
 
@@ -65,12 +64,10 @@ class IntentTest < ActiveSupport::TestCase
       description: 'Hello random citizen !'
     )
     intent.agent = agents(:weather)
-    assert !intent.save
+    assert_not intent.save
 
-    expected = {
-      intentname: ['is too short (minimum is 3 characters)']
-    }
-    assert_equal expected, intent.errors.messages
+    expected = ['ID is too short (minimum is 3 characters)']
+    assert_equal expected, intent.errors.full_messages
   end
 
 
@@ -163,12 +160,32 @@ class IntentTest < ActiveSupport::TestCase
   test 'Move intent to an unknown agent' do
     weather = intents(:weather_forecast)
     assert_not weather.move_to_agent(nil)
-    expected = {
-      agent: ['does not exist']
-    }
-    assert_equal expected, weather.errors.messages
+    expected = ['Agent does not exist anymore']
+
+    assert_equal expected, weather.errors.full_messages
     assert_equal weather.agent.id, agents(:weather).id
   end
+
+
+  test 'Move intent without enough quota' do
+    Feature.with_quota_enabled do
+      intent = intents(:weather_forecast)
+      destination_agent = agents(:terminator)
+
+      assert_equal 2, intent.interpretations.count
+      assert_equal 10, destination_agent.owner.expressions_count
+
+      Quota.stubs(:expressions_limit).returns(11)
+      assert_not intent.move_to_agent(destination_agent)
+
+      expected = ["Agent owner does not have enough quota to accept this move"]
+      assert_equal expected, intent.errors.full_messages
+
+      Quota.stubs(:expressions_limit).returns(12)
+      assert intent.move_to_agent(destination_agent)
+    end
+  end
+
 
   test 'Get intents that are using the current intent (aliased_intents)' do
     current_intent = intents(:simple_where)
@@ -177,12 +194,14 @@ class IntentTest < ActiveSupport::TestCase
     assert_equal expected, actual
   end
 
+
   test 'No intents that are using the current intent (aliased_intents)' do
     current_intent = intents(:weather_forecast)
     expected = []
     actual = current_intent.aliased_intents
     assert_equal expected, actual
   end
+
 
   test 'Get intents of another agent that are using the current intent' do
     current_intent = intents(:simple_where)

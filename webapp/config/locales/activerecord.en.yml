@@ -114,7 +114,8 @@ en:
       cycle_detected: detected, agent addition would cause a cycle in dependency graph
     intents:
       unknown_locale: "unknown '%{current_locale}'"
-      unknown_agent: "does not exist"
+      move_to_unknown_agent: "does not exist anymore"
+      move_to_agent_without_enough_quota: "owner does not have enough quota to accept this move"
     interpretation:
       invalid_json: "invalid json"
       interpretation_aliases_overlap: position overlap
@@ -124,7 +125,8 @@ en:
       expression_nlp_length: "is too long (maximum is %{count} elements), found: %{actual_count}"
       quota: "exceeded (maximum is %{maximum} formulations and entities)"
     entities_lists:
-      unknown_agent: "does not exist"
+      move_to_unknown_agent: "does not exist anymore"
+      move_to_agent_without_enough_quota: "owner does not have enough quota to accept this move"
     entity:
       unknown_locale: "uses an unauthorized locale '%{current_locale}' for this agent"
       term_abscent: "can't contains only locale information"
