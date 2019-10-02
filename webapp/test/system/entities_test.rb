@@ -325,7 +325,7 @@ class EntitiesTest < ApplicationSystemTestCase
     perform_enqueued_jobs do
       within(".modal") do
         assert_text "Import entities"
-        file = File.join(Rails.root, "test", "fixtures", "files", "import_entities_ko.csv")
+        file = build_fixture_files_path('import_entities_ko.csv')
         attach_file("import_file", file, make_visible: true)
         click_button "Import"
       end
@@ -342,7 +342,7 @@ class EntitiesTest < ApplicationSystemTestCase
     perform_enqueued_jobs do
       within(".modal") do
         assert_text "Import entities"
-        file = File.join(Rails.root, "test", "fixtures", "files", "import_entities_ok.csv")
+        file = build_fixture_files_path('import_entities_ok.csv')
         attach_file("import_file", file, make_visible: true)
         click_button "Import"
       end
@@ -363,7 +363,7 @@ class EntitiesTest < ApplicationSystemTestCase
     perform_enqueued_jobs do
       within(".modal") do
         assert_text "Import entities"
-        file = File.join(Rails.root, "test", "fixtures", "files", "import_entities_ok.csv")
+        file = build_fixture_files_path('import_entities_ok.csv')
         attach_file("import_file", file, make_visible: true)
         choose "Replace current entities"
         click_button "Import"

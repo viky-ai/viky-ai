@@ -55,7 +55,7 @@ class ProfileTest < ApplicationSystemTestCase
       assert find(".avatar img")["src"].include? "default"
     end
 
-    file = File.join(Rails.root, "test", "fixtures", "files", "avatar_upload.png")
+    file = build_fixture_files_path('avatar_upload.png')
     attach_file("upload_image", file, make_visible: true)
     click_button "Update profile"
     within("main") do
@@ -81,7 +81,7 @@ class ProfileTest < ApplicationSystemTestCase
     within("main") do
       assert find(".avatar img")["src"].include? "default"
     end
-    file = File.join(Rails.root, "test", "fixtures", "files", "avatar_upload.txt")
+    file = build_fixture_files_path('avatar_upload.txt')
     attach_file("upload_image", file, make_visible: true)
     click_button "Update profile"
     within("main") do

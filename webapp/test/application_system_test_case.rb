@@ -106,4 +106,13 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   def assert_modal_is_close
     assert page.has_no_css?('.modal')
   end
+
+  def build_fixture_files_path(filename)
+    if ENV.key?('CI_PROJECT_DIR')
+      fixture_files_path = File.join(ENV.fetch('CI_PROJECT_DIR'), 'webapp')
+    else
+      fixture_files_path = File.join(Rails.root, 'test', 'fixtures', 'files')
+    end
+    File.join(fixture_files_path, filename)
+  end
 end
