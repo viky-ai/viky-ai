@@ -24,6 +24,7 @@
       svg{
         fill: #bbb;
       }
+      &:focus,
       &:hover{
         color: $primary-color;
         border-color: $primary-color;
