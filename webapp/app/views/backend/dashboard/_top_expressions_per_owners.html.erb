@@ -5,7 +5,7 @@
 <table>
   <tbody>
     <% @top_expressions_per_owners.each do |data| %>
-      <% user = User.find(data['owner_id']) %>
+      <% user = User.find(data['id']) %>
       <tr>
         <td>
           <div class="user">

@@ -10,23 +10,17 @@ class ProfileTest < ApplicationSystemTestCase
     assert has_text?("Your profile")
   end
 
-  test "Edit profile access" do
+
+  test "Profile change name, username, bio" do
     go_to_profile
     click_link "Edit your profile"
 
-    assert has_content?("Authentication parameters")
-  end
-
-
-  test "Profile change Name, username, bio" do
-    go_to_profile
-    click_link "Edit your profile"
-
-    fill_in "Name", with: "Batman and Robin"
-    fill_in "Username", with: "batman"
-    fill_in "Bio", with: "blah blah blah"
-
-    click_button "Update profile"
+    within ".test-profile-edit-global" do
+      fill_in "Name", with: "Batman and Robin"
+      fill_in "Username", with: "batman"
+      fill_in "Bio", with: "blah blah blah"
+      click_button "Update"
+    end
 
     assert has_field?("Name", with: "Batman and Robin")
     assert has_field?("Username", with: "batman")
@@ -38,30 +32,25 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
 
-    assert has_content?("General informations")
+    assert has_content?("Your avatar")
 
-    within("main") do
+    within(".test-profile-edit-avatar") do
       assert find(".avatar img")["src"].include? "default"
-    end
 
-    file = File.join(Rails.root, "test", "fixtures", "files", "avatar_upload.png")
+      file = File.join(Rails.root, "test", "fixtures", "files", "avatar_upload.png")
 
-    # Display import file imput in order to allow capybara attach_file
-    execute_script("$('#upload_image').css('opacity','1')");
+      # Display import file imput in order to allow capybara attach_file
+      execute_script("$('#upload_image').css('opacity','1')");
 
-    attach_file("upload_image", file)
+      attach_file("upload_image", file)
 
-    click_button "Update profile"
+      click_button "Update"
 
-    within("main") do
       assert find(".avatar img")["src"].include? "square"
-    end
+      assert has_field?("profile[remove_image]")
+      check("Remove")
+      click_button "Update"
 
-    assert has_field?("profile[remove_image]")
-
-    check("Remove avatar")
-    click_button "Update profile"
-    within("main") do
       assert find(".avatar img")["src"].include? "default"
     end
   end
@@ -71,26 +60,24 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
 
-    assert has_content?("General informations")
+    assert has_content?("Your avatar")
 
-    within("main") do
+    within(".test-profile-edit-avatar") do
       assert find(".avatar img")["src"].include? "default"
-    end
 
-    file = File.join(Rails.root, "test", "fixtures", "files", "avatar_upload.txt")
+      file = File.join(Rails.root, "test", "fixtures", "files", "avatar_upload.txt")
 
-    # Display import file imput in order to allow capybara attach_file
-    execute_script("$('#upload_image').css('opacity','1')");
+      # Display import file imput in order to allow capybara attach_file
+      execute_script("$('#upload_image').css('opacity','1')");
 
-    attach_file("upload_image", file)
+      attach_file("upload_image", file)
 
-    click_button "Update profile"
+      click_button "Update"
 
-    within("main") do
       assert find(".avatar img")["src"].include? "default"
-    end
 
-    assert has_content?("Avatar type must be one of: image/jpeg, image/png, image/gif")
+      assert has_content?("Avatar type must be one of: image/jpeg, image/png, image/gif")
+    end
   end
 
 
@@ -98,10 +85,12 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
 
-    fill_in "Password", with: ""
-    click_button "Update profile"
-    assert has_content?("Authentication parameters")
-    assert !has_content?("Password is too short (minimum is 6 characters)")
+    within(".test-profile-edit-auth") do
+      fill_in "Password", with: ""
+      click_button "Update"
+      assert has_no_content?("Password is too short (minimum is 6 characters)")
+    end
+
   end
 
 
@@ -109,17 +98,20 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
 
-    fill_in "Password", with: "short"
-    click_button "Update profile"
-    assert has_content?("Authentication parameters")
-    assert has_content?("Password is too short (minimum is 6 characters)")
+    within(".test-profile-edit-auth") do
+      fill_in "Password", with: "short"
+      click_button "Update"
 
-    fill_in "Password", with: "shortshort"
-    click_button "Update profile"
-    assert has_content?("Authentication parameters")
-    assert !has_content?("Password is too short (minimum is 6 characters)")
+      assert has_content?("Password is too short (minimum is 6 characters)")
+
+      fill_in "Password", with: "shortshort"
+      click_button "Update"
+
+      assert has_no_content?("Password is too short (minimum is 6 characters)")
+    end
 
     logout
+
     fill_in "Email", with: "admin@viky.ai"
     fill_in "Password", with: "shortshort"
     click_button "Log in"
@@ -132,17 +124,20 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
 
-    fill_in "Email", with: "admin_new@viky.ai"
-    click_button "Update profile"
-
-    assert has_content?("Currently waiting confirmation for: admin_new@viky.ai")
+    within(".test-profile-edit-auth") do
+      fill_in "Email", with: "admin_new@viky.ai"
+      click_button "Update"
+      assert has_content?("Currently waiting confirmation for: admin_new@viky.ai")
+    end
   end
 
 
   test "Delete my account not available" do
     go_to_profile
     click_link "Edit your profile"
-    assert has_content?("You must delete all agents you own in order to delete your account.")
+    within(".test-profile-edit-destroy") do
+      assert has_content?("You must delete all agents you own in order to delete your account.")
+    end
   end
 
 
@@ -169,7 +164,9 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
 
-    click_link "I want to delete my account"
+    within(".test-profile-edit-destroy") do
+      click_link "I want to delete my account"
+    end
 
     assert has_content?("Are you sure?")
 
@@ -177,18 +174,10 @@ class ProfileTest < ApplicationSystemTestCase
     click_button("Delete my account")
     assert has_content?("Please enter the text exactly as it is displayed to confirm.")
 
-
     fill_in "validation", with: "DELETE"
     click_button("Delete my account")
 
     assert has_content?("Your account has been successfully deleted. Bye bye.")
-  end
-
-  test "Quota information" do
-    go_to_profile
-    assert page.has_text?('Your requests quota')
-    assert page.has_text?('Formulations and Entities')
-    assert page.has_text?('Formulations and Entities per agent')
   end
 
 end

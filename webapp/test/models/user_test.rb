@@ -249,9 +249,9 @@ class UserTest < ActiveSupport::TestCase
   end
 
 
-  test 'Expressions per agent' do
+  test 'Agents by expressions count' do
     admin = users(:admin)
-    agent_expressions = admin.expressions_per_agent
+    agent_expressions = admin.agents_by_expressions_count
     assert_equal 2, agent_expressions.count
     assert_equal agents(:weather).id, agent_expressions.first.id
     assert_equal 7, agent_expressions.first.total
@@ -260,10 +260,32 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 3, agent_expressions.last.total
 
     user = users(:confirmed)
-    agent_expressions = user.expressions_per_agent
+    agent_expressions = user.agents_by_expressions_count
     assert_equal 1, agent_expressions.count
     assert_equal agents(:weather_confirmed).id, agent_expressions.first.id
     assert_equal 0, agent_expressions.first.total
+  end
+
+
+  test 'Expressions count per owners' do
+    result = User.expressions_count_per_owners
+    assert_equal 3, result.count
+
+    assert_equal result.first.id, users(:admin).id
+    assert_equal 10, result.first.total
+
+    assert_equal result.second.id, users(:locked).id
+    assert_equal 4, result.second.total
+
+    assert_equal result.last.id, users(:confirmed).id
+    assert_equal 0, result.last.total
+  end
+
+
+  test 'entities, interpretations, expressions count' do
+    assert_equal 4, users(:admin).entities_count
+    assert_equal 6, users(:admin).interpretations_count
+    assert_equal 10, users(:admin).expressions_count
   end
 
 

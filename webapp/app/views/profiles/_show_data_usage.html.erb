@@ -1,0 +1,85 @@
+<%
+expressions_count = @profile.expressions_count
+entities_count = @profile.entities_count
+interpretations_count = @profile.interpretations_count
+if Feature.quota_enabled? && @profile.quota_enabled
+  expressions_quota = Quota.expressions_limit
+  percentage = (expressions_count.to_f * 100 / expressions_quota).round(1)
+end
+%>
+
+<div class="profile-dashboard">
+  <div>
+
+    <div class="profile-radial">
+      <div>
+        <% if Feature.quota_enabled? && @profile.quota_enabled %>
+          <div class="graph-radial"
+               data-series="<%= [percentage].to_json %>"
+               data-labels="<%= [t('views.profile.show_data_use.radial_graph_label')].to_json %>"
+               data-colors="<%= ['#3bb8d7'].to_json %>">
+          </div>
+        <% else %>
+          <div class="graph-radial-unlimited">
+            <div>
+              <span class="icon icon--large icon--grey">
+                <%= icon_information %>
+              </span>
+              <br />
+              <%= t('views.profile.show_data_use.unlimited_html') %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div>
+        <div class="profile-radial-data">
+          <div class="indicator profile-radial-data__primary">
+            <span class="indicator-number">
+              <strong><%= number_with_delimiter(expressions_count) %></strong>
+              <% if Feature.quota_enabled? && @profile.quota_enabled %>
+              <small>/<%= number_with_delimiter(expressions_quota) %></small>
+              <% end %>
+            </span>
+            <%= t('views.profile.show_data_use.expressions_label') %>
+          </div>
+          <div class="indicator indicator--secondary profile-radial-data__secondary-1">
+            <span class="indicator-number">
+              <strong><%= number_with_delimiter(entities_count) %></strong>
+            </span>
+            <%= t('views.profile.show_data_use.entities_label') %>
+          </div>
+          <div class="indicator indicator--secondary profile-radial-data__secondary-2">
+            <span class="indicator-number">
+              <strong><%= number_with_delimiter(interpretations_count) %></strong>
+            </span>
+            <%= t('views.profile.show_data_use.formulations_label') %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <% if @top_agents_by_expressions_count.size > 0 %>
+    <div class="profile-dashboard__on-right profile-expressions-top-agents">
+      <h5>
+        <%= t('views.profile.show_data_use.top.title') %>
+        <%= link_to_previous_page @top_agents_by_expressions_count, t('views.profile.show_data_use.top.previous'), param_name: :expressions_page, class: 'btn btn--small btn--outline' %>
+        <%= link_to_next_page @top_agents_by_expressions_count, t('views.profile.show_data_use.top.next'), param_name: :expressions_page, class: 'btn btn--small btn--outline' %>
+      </h5>
+      <ol <% if @top_agents_by_expressions_count.size > 5 %>class="two-columns"<% end %>>
+        <% @top_agents_by_expressions_count.each do |e|%>
+          <% agent = Agent.find(e.id) %>
+          <li>
+            <span><%= number_with_delimiter e.total %></span>
+            <a href="<%= user_agent_path(agent.owner, agent)%>">
+              <%= agent.name %>
+            </a>
+          </li>
+        <% end %>
+      </ol>
+    </div>
+  <% end %>
+
+</div>
+

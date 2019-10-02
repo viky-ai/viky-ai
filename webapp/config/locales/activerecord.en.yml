@@ -47,6 +47,10 @@ en:
     attributes:
       user:
         image: Avatar
+        name: Name
+        username: Username
+        email: Email
+        bio: Bio
       agent:
         name: Name
         agentname: ID

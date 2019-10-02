@@ -1,28 +1,21 @@
-<header class="header">
-  <div class="header__breadcrumb">
-    <%= t('views.profile.breadcrumb') %>
-  </div>
-  <div class="header__tools">
-    <a href="<%= edit_profile_path %>" class="btn btn--outline">
-      <span class="icon icon--small"><%= icon_edit %></span> Edit your profile
-    </a>
-  </div>
-</header>
-<div class="profile-row">
-  <% if @profile.quota_enabled %>
-    <div class="profile-column">
-      <%= render 'quota_info' %>
-      <%= render 'expressions_graph' %>
+<div class="profile">
+
+  <h4><%= t('views.profile.show_user.title') %></h4>
+  <div class="card">
+    <div class="card-content">
+      <%= render 'show_user' %>
     </div>
-  <% end %>
-  <%= render 'requests_graph' %>
-</div>
-<div class="profile-row">
-  <%= render 'requests_list' %>
-  <%= render 'expressions_list' %>
+  </div>
+
+  <h4><%= t('views.profile.show_data_use.title') %></h4>
+  <div class="card">
+    <div class="card-content card-content--profile">
+      <%= render 'show_data_usage' %>
+    </div>
+  </div>
+
+  <h4><%= t('views.profile.show_api_use.title') %></h4>
+  <%= render 'show_api_usage' %>
 </div>
 
-<script>
-  requests_data = <%= prepare_requests_data(@processed_requests, @rejected_requests, @from, @to)%>;
-  expressions_data = <%= prepare_expressions_data(@profile) %>;
-</script>
+

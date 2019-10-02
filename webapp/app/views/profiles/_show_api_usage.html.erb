@@ -1,0 +1,142 @@
+<%
+if Feature.quota_enabled? && @profile.quota_enabled
+  quota = Quota.max_interpret_requests_per_day * 30
+  percentage = (@requests_count * 100 / quota)
+end
+%>
+
+<div class="card" style="z-index: 1;position: relative;">
+  <div class="card-content card-content--profile">
+
+    <div class="profile-dashboard">
+
+      <div class="profile-radial">
+        <div>
+          <% if Feature.quota_enabled? && @profile.quota_enabled %>
+            <div class="graph-radial"
+                 data-series="<%= [percentage].to_json %>"
+                 data-labels="<%= [t('views.profile.show_api_use.radial_graph_label')].to_json %>"
+                 data-colors="<%= ['#3bb8d7'].to_json %>">
+            </div>
+          <% else %>
+            <div class="graph-radial-unlimited">
+              <div>
+                <span class="icon icon--large icon--grey">
+                  <%= icon_information %>
+                </span>
+                <br />
+                <%= t('views.profile.show_api_use.unlimited_html') %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <div>
+          <div class="profile-radial-data">
+
+            <div class="indicator profile-radial-data__primary">
+              <span class="indicator-number">
+                <strong><%= number_with_delimiter(@requests_count) %></strong>
+                <% if Feature.quota_enabled? && @profile.quota_enabled %>
+                  <small>/<%= number_with_delimiter(quota) %></small>
+                <% end %>
+              </span>
+              <%= t('views.profile.show_api_use.all_requests') %>
+            </div>
+
+            <% if Feature.quota_enabled? && @profile.quota_enabled %>
+              <div class="indicator indicator--secondary profile-radial-data__secondary-1">
+                <span class="indicator-number">
+                  <strong><%= number_with_delimiter(@requests_under_count) %></strong>
+                </span>
+                <%= t('views.profile.show_api_use.under_quota_requests') %>
+              </div>
+              <div class="indicator indicator--secondary profile-radial-data__secondary-2">
+                <span class="indicator-number">
+                  <strong><%= number_with_delimiter(@requests_over_count) %></strong>
+                </span>
+                <%= t('views.profile.show_api_use.over_quota_requests') %>
+              </div>
+            <% end %>
+
+          </div>
+        </div>
+
+      </div>
+
+
+      <% if Feature.quota_enabled? && @profile.quota_enabled %>
+        <div class="profile-dashboard__on-right">
+          <h5><%= t('views.profile.show_api_use.quota.title') %></h5>
+          <p class="profile-dashboard-note">
+            <span class="icon icon--small icon--grey">
+              <%= icon_information %>
+            </span>
+            <%= t('views.profile.show_api_use.quota.help') %>
+          </p>
+          <div class="profile-api-quota">
+            <div class="indicator indicator--secondary">
+              <span class="indicator-number">
+                <strong><%= number_with_delimiter(Quota.max_interpret_requests_per_day) %></strong>
+              </span>
+              <%= t('views.profile.show_api_use.quota.per_day') %>
+            </div>
+            <div class="indicator indicator--secondary">
+              <span class="indicator-number">
+                <strong><%= number_with_delimiter(Quota.max_interpret_requests_per_second) %></strong>
+              </span>
+              <%= t('views.profile.show_api_use.quota.per_second') %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+    </div>
+
+  </div>
+</div>
+
+
+<% if @requests_count > 0 %>
+  <div class="profile-api-detail">
+
+    <div>
+      <h5><%= t('views.profile.show_api_usage.request_distribution.title') %></h5>
+      <% if Feature.quota_enabled? && @profile.quota_enabled %>
+        <div class="graph-area"
+             data-series='<%= build_area_graph_data_with_quota(
+               @processed_requests_over_time,
+               @rejected_requests_over_time,
+             ).to_json %>'></div>
+      <% else %>
+        <div class="graph-area"
+             data-series='<%= build_area_graph_data_without_quota(
+               @api_requests_over_time
+             ).to_json %>'></div>
+      <% end %>
+    </div>
+
+    <div>
+      <% if Feature.quota_enabled? && @profile.quota_enabled %>
+        <h5><%= t('views.profile.show_api_usage.heapmap_under.title') %></h5>
+        <div class="graph-heatmap"
+             data-series="<%= build_heatmap_data(@heapmap_under).to_json %>"
+             data-color="#3bb8d7"></div>
+
+        <% over_quota_distribution = build_heatmap_data(@heapmap_over) %>
+        <% if over_quota_distribution.size > 0 %>
+          <h5><%= t('views.profile.show_api_usage.heapmap_over.title') %></h5>
+          <div class="graph-heatmap"
+               data-series="<%= over_quota_distribution.to_json %>"
+               data-color="#ff3860"></div>
+        <% end %>
+      <% else %>
+        <h5><%= t('views.profile.show_api_usage.heapmap_under.title_without_quota') %></h5>
+        <div class="graph-heatmap"
+             data-series="<%= build_heatmap_data(@api_heapmap).to_json %>"
+             data-color="#3bb8d7"></div>
+      <% end %>
+    </div>
+
+  </div>
+<% end %>

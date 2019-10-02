@@ -2,27 +2,70 @@ class ProfilesController < ApplicationController
   before_action :set_profile
 
   def show
+    @top_agents_by_expressions_count = @profile
+      .agents_by_expressions_count
+      .page(params[:expressions_page])
+      .per(10)
+
     @to = DateTime.now
     @from = (DateTime.now - 30.days).beginning_of_day
-    @processed_requests = InterpretRequestLog.requests_over_time(@from, @to, @profile.id, 200)
-    @rejected_requests = InterpretRequestLog.requests_over_time(@from, @to, @profile.id, 503)
-    request_aggs = {
-      "30_days": {
-        from: @from,
-        to: @to
-      },
-      "10_days": {
-        from: (@to - 10.days).beginning_of_day,
-        to: @to
-      },
-      "today": {
-        from: @to.beginning_of_day,
-        to: @to
-      }
-    }
-    requests_per_agent = InterpretRequestLog.requests_over_agents(@from, @to, @profile.id, 503, request_aggs)
-    @agent_requests = Kaminari.paginate_array(requests_per_agent).page(params[:requests_page]).per(10)
-    @expressions_count = Kaminari.paginate_array(@profile.expressions_per_agent).page(params[:expressions_page]).per(10)
+
+    @requests_count =  InterpretRequestReporter.new
+      .with_owner(@profile.id)
+      .between(@from, @to)
+      .from_api
+      .count
+
+    if Feature.quota_enabled? && @profile.quota_enabled
+      @requests_under_count =  InterpretRequestReporter.new
+        .with_owner(@profile.id)
+        .between(@from, @to)
+        .under_quota
+        .count
+
+      @requests_over_count =  InterpretRequestReporter.new
+        .with_owner(@profile.id)
+        .between(@from, @to)
+        .over_quota
+        .count
+
+      @processed_requests_over_time = InterpretRequestReporter.new
+        .with_owner(@profile.id)
+        .between(@from, @to)
+        .under_quota
+        .count_per_hours
+
+      @rejected_requests_over_time = InterpretRequestReporter.new
+        .with_owner(@profile.id)
+        .between(@from, @to)
+        .over_quota
+        .count_per_hours
+
+      @heapmap_under = InterpretRequestReporter.new
+        .with_owner(@profile.id)
+        .between(@from, @to)
+        .under_quota
+        .count_per_agent_and_per_day
+
+      @heapmap_over = InterpretRequestReporter.new
+        .with_owner(@profile.id)
+        .between(@from, @to)
+        .over_quota
+        .count_per_agent_and_per_day
+
+    else
+      @api_requests_over_time = InterpretRequestReporter.new
+        .with_owner(@profile.id)
+        .between(@from, @to)
+        .from_api
+        .count_per_hours
+
+      @api_heapmap = InterpretRequestReporter.new
+        .with_owner(@profile.id)
+        .between(@from, @to)
+        .from_api
+        .count_per_agent_and_per_day
+    end
   end
 
   def edit

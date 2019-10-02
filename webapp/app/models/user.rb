@@ -110,18 +110,21 @@ class User < ApplicationRecord
     expressions_count >= quota
   end
 
-  def expressions_count(details = false)
-    entities_count = EntitiesList.joins(:agent).where('agents.owner_id = ?', id).sum(:entities_count)
-    interpretations_count = Interpretation.joins(intent: :agent).where('agents.owner_id = ?', id).count
-    if details
-      { entities: entities_count, formulations: interpretations_count }
-    else
-      entities_count + interpretations_count
-    end
+  def entities_count
+    EntitiesList.joins(:agent).where('agents.owner_id = ?', id).sum(:entities_count)
   end
 
-  def expressions_per_agent
-    Agent.find_by_sql ["
+  def interpretations_count
+    Interpretation.joins(intent: :agent).where('agents.owner_id = ?', id).count
+  end
+
+  def expressions_count
+    entities_count + interpretations_count
+  end
+
+  def agents_by_expressions_count
+    selection = <<-SQL
+    (
       SELECT
         agents.id, (i.total + e.total) AS total
       FROM agents
@@ -147,9 +150,11 @@ class User < ApplicationRecord
         GROUP BY agents.id
       ) AS i
     ON e.agent_id = i.agent_id
-    WHERE agents.owner_id = ?
-    ORDER BY total DESC
-    ", id]
+    WHERE agents.owner_id = '#{id}'
+    ) as agents
+    SQL
+
+    Agent.from(selection).order("total DESC")
   end
 
 
@@ -157,7 +162,7 @@ class User < ApplicationRecord
     selection = <<-SQL
       (
         SELECT
-          DISTINCT agents.owner_id, (i.total + e.total) AS total
+          DISTINCT agents.owner_id as id, (i.total + e.total) AS total
         FROM agents
         JOIN
         (

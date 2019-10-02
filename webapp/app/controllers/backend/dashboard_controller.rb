@@ -38,12 +38,12 @@ class Backend::DashboardController < Backend::ApplicationController
     from = DateTime.now - 30.days
 
     @top_api_requests_under_quota = Kaminari
-      .paginate_array(InterpretRequestLog.requests_per_owners(from, to, [200, 500, 422]))
+      .paginate_array(InterpretRequestReporter.new.under_quota.between(from, to).count_per_owner)
       .page(params[:requests_page]).per(10)
 
     if Feature.quota_enabled?
       @top_api_requests_over_quota = Kaminari
-        .paginate_array(InterpretRequestLog.requests_per_owners(from, to, [503]))
+        .paginate_array(InterpretRequestReporter.new.over_quota.between(from, to).count_per_owner)
         .page(params[:requests_page]).per(10)
     end
 
