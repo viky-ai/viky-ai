@@ -101,7 +101,7 @@ end
   <div class="profile-api-detail">
 
     <div>
-      <h5><%= t('views.profile.show_api_usage.request_distribution.title') %></h5>
+      <h5><%= t('views.profile.show_api_use.request_distribution.title') %></h5>
       <% if Feature.quota_enabled? && @profile.quota_enabled %>
         <div class="graph-area"
              data-series='<%= build_area_graph_data_with_quota(
@@ -118,20 +118,20 @@ end
 
     <div>
       <% if Feature.quota_enabled? && @profile.quota_enabled %>
-        <h5><%= t('views.profile.show_api_usage.heapmap_under.title') %></h5>
+        <h5><%= t('views.profile.show_api_use.heapmap_under.title') %></h5>
         <div class="graph-heatmap"
              data-series="<%= build_heatmap_data(@heapmap_under).to_json %>"
              data-color="#3bb8d7"></div>
 
         <% over_quota_distribution = build_heatmap_data(@heapmap_over) %>
         <% if over_quota_distribution.size > 0 %>
-          <h5><%= t('views.profile.show_api_usage.heapmap_over.title') %></h5>
+          <h5><%= t('views.profile.show_api_use.heapmap_over.title') %></h5>
           <div class="graph-heatmap"
                data-series="<%= over_quota_distribution.to_json %>"
                data-color="#ff3860"></div>
         <% end %>
       <% else %>
-        <h5><%= t('views.profile.show_api_usage.heapmap_under.title_without_quota') %></h5>
+        <h5><%= t('views.profile.show_api_use.heapmap_under.title_without_quota') %></h5>
         <div class="graph-heatmap"
              data-series="<%= build_heatmap_data(@api_heapmap).to_json %>"
              data-color="#3bb8d7"></div>

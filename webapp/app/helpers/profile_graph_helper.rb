@@ -3,13 +3,13 @@ module ProfileGraphHelper
   def build_area_graph_data_with_quota(processed_requests, rejected_requests)
     [
       {
-        name: t('views.profile.show_api_usage.request_distribution.under_quota_requests'),
+        name: t('views.profile.show_api_use.request_distribution.under_quota_requests'),
         data: processed_requests.map do |requests|
           [requests['key'], requests['doc_count']]
         end
       },
       {
-        name: t('views.profile.show_api_usage.request_distribution.over_quota_requests'),
+        name: t('views.profile.show_api_use.request_distribution.over_quota_requests'),
         data: rejected_requests.map do |requests|
           [requests['key'], requests['doc_count']]
         end
@@ -20,7 +20,7 @@ module ProfileGraphHelper
   def build_area_graph_data_without_quota(api_requests)
     [
       {
-        name: t('views.profile.show_api_usage.request_distribution.all_requests'),
+        name: t('views.profile.show_api_use.request_distribution.all_requests'),
         data: api_requests.map do |requests|
           [requests['key'], requests['doc_count']]
         end
