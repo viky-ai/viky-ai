@@ -22,8 +22,9 @@ class EntitiesList < ApplicationRecord
 
   before_validation :clean_listname
 
-  after_commit do
+  after_update_commit do
     agent.need_nlp_sync
+    agent.touch unless agent.destroyed?
   end
 
   def slug
