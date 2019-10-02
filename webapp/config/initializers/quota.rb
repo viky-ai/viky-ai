@@ -5,7 +5,7 @@ module Quota
 
   def self.cache
     Redis.new(
-      url: ENV.fetch('VIKYAPP_REDIS_RACK_THROTTLE') { "redis://localhost:6379/4/#{Rails.env}" }
+      url: ENV.fetch('VIKYAPP_QUOTA_REDIS_URL') { "redis://localhost:6379/4/#{Rails.env}" }
     )
   end
 
