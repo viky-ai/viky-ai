@@ -4,6 +4,7 @@ require "model_test_helper"
 class AgentRegressionChecksTest < ApplicationSystemTestCase
 
   def setup
+    super
     create_agent_regression_check_fixtures
   end
 

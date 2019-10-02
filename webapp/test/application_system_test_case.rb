@@ -10,6 +10,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     options.add_argument 'disable-dev-shm-usage'
     options.headless!
     driver_options = { browser: :chrome, options: options }
+    driver_options[:url] = ENV['SELENIUM_REMOTE_URL'] if ENV['SELENIUM_REMOTE_URL']
 
     Capybara::Selenium::Driver.new(app, driver_options).tap do |driver|
       driver.browser.manage.window.size = Selenium::WebDriver::Dimension.new(1400, 900)
@@ -18,6 +19,16 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   driven_by :headless_chrome
   #driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400]
+
+  def setup
+    return unless ENV['SELENIUM_REMOTE_URL']
+
+    net = Socket.ip_address_list.detect(&:ipv4_private?)
+    ip = net.nil? ? 'localhost' : net.ip_address
+    Capybara.server_host = ip
+    Capybara.always_include_port = true
+    Capybara.app_host = "http://#{ip}"
+  end
 
   def login_as(login, password)
     visit new_user_session_path
@@ -95,6 +106,4 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   def assert_modal_is_close
     assert page.has_no_css?('.modal')
   end
-
-
 end
