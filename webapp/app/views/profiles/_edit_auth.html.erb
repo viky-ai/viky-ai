@@ -1,0 +1,45 @@
+<%= form_for(@profile, as: :profile, url: profile_path, html: { method: :put }) do |f| %>
+  <div class="field">
+    <div class="control">
+      <%= f.label :email %>
+      &nbsp;<span class="badge badge--small badge--outline"><%= t('required') %></span>
+      <br />
+      <%= f.text_field :email, autocomplete: "off" %>
+      <%= display_errors(@profile, :email) %>
+
+      <% if @profile.pending_reconfirmation? %>
+        <div class="help help--success">
+          <span class="icon icon--x-small"><%= icon_information %></span>
+          <%= t('views.profile.edit.authentication.waiting_email_confirmation', email: @profile.unconfirmed_email) %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="control">
+      <%= f.label :password %>
+      <span class="help">
+        <span class="icon icon--x-small"><%= icon_information %></span>
+        <%= t('views.profile.edit.authentication.password_constraint', min_length: User.password_length.min) %>
+      </span>
+
+      <br />
+      <%= f.password_field :password, autocomplete: "off" %>
+      <%= display_errors(@profile, :password) %>
+
+      <div class="help">
+        <span class="icon icon--x-small"><%= icon_information %></span>
+        <%= t('views.profile.edit.authentication.leave_blank') %>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <%= f.button t('views.profile.edit.authentication.submit_btn'), class: "btn btn--primary",
+        data: {
+          disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+        } %>
+    <a href="<%= profile_path %>" class="btn btn--plain">Cancel</a>
+  </div>
+<% end %>

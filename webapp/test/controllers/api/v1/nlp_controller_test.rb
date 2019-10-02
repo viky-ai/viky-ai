@@ -6,6 +6,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     IndexManager.reset_indices
   end
 
+
   test "Interpret route" do
     assert_routing({
       method: 'get',
@@ -20,6 +21,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     })
   end
 
+
   test 'validation on ownername and agentname' do
     assert_raise ActiveRecord::RecordNotFound do
       get '/api/v1/agents/missing_user/missing_agent/interpret.json',
@@ -31,6 +33,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
         params: { sentence: 'test' }
     end
   end
+
 
   test "Agent access not permitted if token not good" do
     get "/api/v1/agents/admin/weather/interpret.json",
@@ -286,4 +289,5 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 500, found[:status]
     assert_equal ['Unexpected error while requesting NLS', '#<RuntimeError: Big big error>'], found[:body]['errors']
   end
+
 end

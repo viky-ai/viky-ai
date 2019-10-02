@@ -1,0 +1,39 @@
+<%= form_for(@profile, as: :profile, url: profile_path, html: { method: :put }) do |f| %>
+  <div class="profile-edit-avatar">
+    <div>
+      <div class="avatar avatar--large">
+        <img src="<%= @profile.image_url(:square) %>">
+      </div>
+      <% unless @profile.image.nil? %>
+        <%= f.check_box :remove_image %>
+        <label for="profile_remove_image">Remove</label>
+      <% end %>
+    </div>
+    <div>
+      <p class="field__title">Upload new avatar</p>
+      <div class="field field--upload">
+        <%= f.hidden_field :image, value: @profile.cached_image_data %>
+        <label for="upload_image">
+          <div>
+            <p>
+              <%= t('file_upload_label') %>
+            </p>
+            <div class="help">
+              <span class="icon icon--x-small"><%= icon_information %></span>
+               The maximum file size allowed is 2Mo.
+            </div>
+            <%= display_errors(@profile, :image) %>
+          </div>
+        </label>
+        <%= f.file_field :image, id: 'upload_image' %>
+      </div>
+    </div>
+  </div>
+  <div class="actions">
+    <%= f.button t('views.profile.edit.global.submit_btn'), class: "btn btn--primary",
+        data: {
+          disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+        } %>
+    <a href="<%= profile_path %>" class="btn btn--plain">Cancel</a>
+  </div>
+<% end %>

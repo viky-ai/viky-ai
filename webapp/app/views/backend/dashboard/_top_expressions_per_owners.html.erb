@@ -1,0 +1,30 @@
+<h2>
+  <%= t("views.backend.dashboard.top_expressions_per_owners") %>
+</h2>
+
+<table>
+  <tbody>
+    <% @top_expressions_per_owners.each do |data| %>
+      <% user = User.find(data['id']) %>
+      <tr>
+        <td>
+          <div class="user">
+            <div class="user__avatar">
+              <img src="<%= user.image_url(:square) %>" />
+            </div>
+            <div class="user__info">
+              <%= user.name_or_username %>
+              <small><%= user.email %></small>
+            </div>
+          </div>
+        </td>
+        <td><%= number_with_delimiter(data['total']) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div class="top-pagination">
+  <%= paginate @top_expressions_per_owners, window: 1, param_name: :expressions_page %>
+  <p class="pagination-info"><%= page_entries_info @top_expressions_per_owners %></p>
+</div>

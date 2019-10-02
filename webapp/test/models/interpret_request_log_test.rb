@@ -28,6 +28,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
     assert_equal 1, InterpretRequestLog.count
   end
 
+
   test 'Find an interpretation log by id' do
     weather_agent = agents(:weather)
     intent_weather = intents(:weather_question)
@@ -57,6 +58,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
     assert_equal log.status, found.status
     assert_equal log.body, found.body
   end
+
 
   test 'Count how much interpret request in a specific time frame' do
     weather_agent = agents(:weather)
@@ -147,6 +149,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
     assert log.save
   end
 
+
   test 'Log an interpretation with a context info' do
     log = InterpretRequestLog.new(
         timestamp: '2018-11-21T16:00:00.000+02:00',
@@ -168,6 +171,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
     assert log.save
     assert log.persisted?
   end
+
 
   test 'Limit context size' do
     log = InterpretRequestLog.new(
@@ -191,4 +195,5 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
     expected = [:context_to_s, "is too long (maximum is 1000 characters)"]
     assert_equal expected, log.errors.first
   end
+
 end

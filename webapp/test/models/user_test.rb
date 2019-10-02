@@ -202,7 +202,7 @@ class UserTest < ActiveSupport::TestCase
   test "Can not destroy if user own agent" do
     admin_user = users(:admin)
 
-    assert_equal 5, Membership.all.count
+    assert_equal 6, Membership.all.count
     assert_not admin_user.destroy
 
     expected = ["You must delete all the agents you own"]
@@ -216,17 +216,94 @@ class UserTest < ActiveSupport::TestCase
     collaborator = users(:show_on_agent_weather)
 
     assert_equal 4, Agent.all.count
-    assert_equal 5, Membership.all.count
+    assert_equal 6, Membership.all.count
 
     assert collaborator.destroy
 
     assert_equal 4, Agent.all.count
-    assert_equal 4, Membership.all.count
+    assert_equal 5, Membership.all.count
   end
 
 
   test 'Test user slug generation' do
     admin = users(:admin)
     assert_equal 'admin', admin.slug
+  end
+
+
+  test 'Users expression count' do
+    admin = users(:admin)
+    assert_equal 10, admin.expressions_count
+
+    user = users(:confirmed)
+    assert_equal 0, user.expressions_count
+  end
+
+
+  test 'Quota exceeded' do
+    Feature.with_quota_enabled do
+      Quota.stubs(:expressions_limit).returns(10)
+      assert users(:admin).quota_exceeded?
+      assert_not users(:confirmed).quota_exceeded?
+    end
+  end
+
+
+  test 'Agents by expressions count' do
+    admin = users(:admin)
+    agent_expressions = admin.agents_by_expressions_count
+    assert_equal 2, agent_expressions.count
+    assert_equal agents(:weather).id, agent_expressions.first.id
+    assert_equal 7, agent_expressions.first.total
+
+    assert_equal agents(:terminator).id, agent_expressions.last.id
+    assert_equal 3, agent_expressions.last.total
+
+    user = users(:confirmed)
+    agent_expressions = user.agents_by_expressions_count
+    assert_equal 1, agent_expressions.count
+    assert_equal agents(:weather_confirmed).id, agent_expressions.first.id
+    assert_equal 0, agent_expressions.first.total
+  end
+
+
+  test 'Expressions count per owners' do
+    result = User.expressions_count_per_owners
+    assert_equal 3, result.count
+
+    assert_equal result.first.id, users(:admin).id
+    assert_equal 10, result.first.total
+
+    assert_equal result.second.id, users(:locked).id
+    assert_equal 4, result.second.total
+
+    assert_equal result.last.id, users(:confirmed).id
+    assert_equal 0, result.last.total
+  end
+
+
+  test 'entities, interpretations, expressions count' do
+    assert_equal 4, users(:admin).entities_count
+    assert_equal 6, users(:admin).interpretations_count
+    assert_equal 10, users(:admin).expressions_count
+  end
+
+
+  test 'Quota ignored for user' do
+    Feature.with_quota_enabled do
+      Quota.stubs(:expressions_limit).returns(10)
+
+      admin = users(:admin)
+      admin.quota_enabled = false
+
+      assert admin.save
+      assert_equal 10, admin.expressions_count
+      assert_not users(:admin).quota_exceeded?
+
+      admin.quota_enabled = true
+      assert admin.save
+      assert users(:admin).quota_exceeded?
+    end
+
   end
 end

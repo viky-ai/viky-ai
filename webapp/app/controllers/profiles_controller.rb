@@ -2,8 +2,70 @@ class ProfilesController < ApplicationController
   before_action :set_profile
 
   def show
-    @agents = current_user.agents.order(name: :asc)
-                .page(params[:page]).per(12)
+    @top_agents_by_expressions_count = @profile
+      .agents_by_expressions_count
+      .page(params[:expressions_page])
+      .per(10)
+
+    @to = DateTime.now
+    @from = (DateTime.now - 30.days).beginning_of_day
+
+    @requests_count =  InterpretRequestReporter.new
+      .with_owner(@profile.id)
+      .between(@from, @to)
+      .from_api
+      .count
+
+    if Feature.quota_enabled? && @profile.quota_enabled
+      @requests_under_count =  InterpretRequestReporter.new
+        .with_owner(@profile.id)
+        .between(@from, @to)
+        .under_quota
+        .count
+
+      @requests_over_count =  InterpretRequestReporter.new
+        .with_owner(@profile.id)
+        .between(@from, @to)
+        .over_quota
+        .count
+
+      @processed_requests_over_time = InterpretRequestReporter.new
+        .with_owner(@profile.id)
+        .between(@from, @to)
+        .under_quota
+        .count_per_hours
+
+      @rejected_requests_over_time = InterpretRequestReporter.new
+        .with_owner(@profile.id)
+        .between(@from, @to)
+        .over_quota
+        .count_per_hours
+
+      @heapmap_under = InterpretRequestReporter.new
+        .with_owner(@profile.id)
+        .between(@from, @to)
+        .under_quota
+        .count_per_agent_and_per_day
+
+      @heapmap_over = InterpretRequestReporter.new
+        .with_owner(@profile.id)
+        .between(@from, @to)
+        .over_quota
+        .count_per_agent_and_per_day
+
+    else
+      @api_requests_over_time = InterpretRequestReporter.new
+        .with_owner(@profile.id)
+        .between(@from, @to)
+        .from_api
+        .count_per_hours
+
+      @api_heapmap = InterpretRequestReporter.new
+        .with_owner(@profile.id)
+        .between(@from, @to)
+        .from_api
+        .count_per_agent_and_per_day
+    end
   end
 
   def edit
@@ -63,5 +125,4 @@ class ProfilesController < ApplicationController
     def user_without_password_params
       params.require(:profile).permit(:email, :name, :username, :bio, :image, :remove_image)
     end
-
 end

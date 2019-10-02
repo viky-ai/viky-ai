@@ -24,7 +24,7 @@ en:
       users:
         index:
           sort_by:
-            last_action: Sort by last log in
+            last_action: Sort by last login
             email: Sort by email
           status:
             label: Status
@@ -117,3 +117,7 @@ en:
         top_tests_failures: Agents with most tests in failure
         detail_test_failure: "Agent last update: %{agent_last_update}\nTests last run: %{test_last_run}"
         no_top_tests_failure: All tests pass
+        top_api_requests_html: Owners with most API requests <small>(last 30 days)</small>
+        top_api_requests_under_quota_html: Owners with most API requests <span class='badge badge--success'>Under Quota</span> <small>(last 30 days)</small>
+        top_api_requests_over_quota_html: Owners with most API requests <span class='badge badge--danger'>Over Quota</span> <small>(last 30 days)</small>
+        top_expressions_per_owners: Owners with most formulations and entities

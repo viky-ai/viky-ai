@@ -3,6 +3,7 @@
   "private": true,
   "dependencies": {
     "@rails/webpacker": "3.5",
+    "apexcharts": "^3.8.5",
     "autosize": "^4.0.2",
     "codemirror": "^5.32.0",
     "coffee-loader": "^0.9.0",

@@ -1167,11 +1167,11 @@ class PackageTest < ActiveSupport::TestCase
 
     expected = {
       "id"=>"30d3b81b-52f4-5fb3-a6f7-b2f025dece97",
-      "slug"=>"admin/cities",
+      "slug"=>"locked/cities",
       "interpretations"=> [
         {
           "id"=>"30d3b81b-52f4-5fb3-a6f7-b2f025dece97",
-          "slug"=>"admin/cities/entities_lists/cities",
+          "slug"=>"locked/cities/entities_lists/cities",
           "scope"=>"private",
           "expressions"=> [
             {
