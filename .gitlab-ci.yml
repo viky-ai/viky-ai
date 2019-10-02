@@ -201,7 +201,7 @@ tag_backup:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
     HELM_RELEASE_NAME: "viky-branches"
-    HELM_VALUES: "custom-values.yml,viky-platform/custom-values/dev.yaml"
+    HELM_VALUES: "custom-values.yml,viky/custom-values/dev.yaml"
 
 .deploy_develop:
   only:
@@ -215,7 +215,7 @@ tag_backup:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
     HELM_RELEASE_NAME: "viky-develop"
-    HELM_VALUES: "custom-values.yml,viky-platform/custom-values/production.yaml"
+    HELM_VALUES: "custom-values.yml,viky/custom-values/preproduction.yaml"
 
 .deploy_preprod:
   only:
@@ -233,7 +233,7 @@ tag_backup:
     S3_SECRET_KEY: ${S3_SECRET_KEY}
     VIKYAPP_AUTO_BACKUP: "true"
     HELM_RELEASE_NAME: "viky-preprod"
-    HELM_VALUES: "custom-values.yml,viky-platform/custom-values/production.yaml"
+    HELM_VALUES: "custom-values.yml,viky/custom-values/preproduction.yaml"
 
 .deploy:
   extends: .kubernetes_runner
@@ -256,7 +256,7 @@ tag_backup:
     - bin/generateOverrideValuesFile.sh
     # Deploy Viky Platform
     - HELM_OPTIONS="--install ${HELM_EXTRA_OPTIONS} --timeout ${HELM_TIMEOUT}  --values ${HELM_VALUES}"
-    - helm upgrade ${HELM_OPTIONS} "${RELEASE_NAME}" ./viky-platform/
+    - helm upgrade ${HELM_OPTIONS} "${RELEASE_NAME}" ./viky/
 
 # Deploy any branches on dev
 deploy_branches:
