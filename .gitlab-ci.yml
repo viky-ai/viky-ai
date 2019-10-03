@@ -329,60 +329,55 @@ delete_env:
   allow_failure: true
 
 # invite admin user
-invite_admin_dev:
-  extends:
-    - .kubernetes_runner
-    - .deploy_branches
+.invite_admin:
   stage: admin
   variables:
     GIT_STRATEGY: none
   script:
+    - kube_setup
     - PODNAME=$(kube_get_pods "app=viky-webapp")
     - kubectl exec ${PODNAME} ./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]
   when: manual
   allow_failure: true
+
+invite_admin_dev:
+  extends:
+    - .kubernetes_runner
+    - .deploy_branches
+    - .invite_admin
 
 # invite admin user
 invite_admin_preprod:
   extends:
     - .kubernetes_runner
     - .deploy_preprod
+    - .invite_admin
+
+
+# backup
+.backup:
   stage: admin
   variables:
     GIT_STRATEGY: none
   script:
-    - PODNAME=$(kube_get_pods "app=viky-webapp")
-    - kubectl exec ${PODNAME} ./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]
+    - kube_setup
+    - PODNAME=$(kube_get_pods "app=viky-webapp-backup")
+    - kubectl exec ${PODNAME}  bash /backup/backup.sh
   when: manual
   allow_failure: true
 
-# backup
 backup_dev:
   extends:
     - .kubernetes_runner
     - .deploy_branches
-  stage: admin
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - PODNAME=$(kube_get_pods "app=viky-webapp-backup")
-    - kubectl exec ${PODNAME}  bash /backup/backup.sh
-  when: manual
-  allow_failure: true
+    - .backup
 
-# backup
 backup_preprod:
   extends:
     - .kubernetes_runner
     - .deploy_preprod
-  stage: admin
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - PODNAME=$(kube_get_pods "app=viky-webapp-backup")
-    - kubectl exec ${PODNAME}  bash /backup/backup.sh
-  when: manual
-  allow_failure: true
+    - .backup
+
 
 # backup restore only for dev
 backup_restore:
@@ -393,6 +388,7 @@ backup_restore:
   variables:
     GIT_STRATEGY: none
   script:
+    - kube_setup
     - PODNAME=$(kube_get_pods "app=viky-webapp-backup")
     # backup current env
     - kubectl exec ${PODNAME}  bash /backup/backup.sh || true
@@ -403,15 +399,52 @@ backup_restore:
   when: manual
   allow_failure: true
 
+
 # update homepage and doc to latest image
-doc_update:
-  extends:
-    - .kubernetes_runner
+.update_doc:
   stage: admin
   variables:
     GIT_STRATEGY: none
   script:
     # delete pods to restart viky apps deployment
+    - kube_setup
     - kubectl delete pods -l 'app in (viky-doc)'
   when: manual
   allow_failure: true
+
+update_doc_dev:
+  extends:
+    - .kubernetes_runner
+    - .deploy_branches
+    - .update_doc
+
+update_doc_preprod:
+  extends:
+    - .kubernetes_runner
+    - .deploy_preprod
+    - .update_doc
+
+
+# Get deployment status
+.deploy_status:
+  stage: admin
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - kube_setup
+    - helm history "${RELEASE_NAME}" || true
+    - helm status  "${RELEASE_NAME}"
+  when: manual
+  allow_failure: true
+
+deploy_status_dev:
+  extends:
+    - .kubernetes_runner
+    - .deploy_branches
+    - .deploy_status
+
+deploy_status_preprod:
+  extends:
+    - .kubernetes_runner
+    - .deploy_preprod
+    - .deploy_status
