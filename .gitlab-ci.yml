@@ -316,6 +316,7 @@ delete_env:
     action: stop
   stage: admin
   needs:
+    # dummy needs to allow it directly
     - "build_backup"
   variables:
     GIT_STRATEGY: none
@@ -405,6 +406,9 @@ backup_restore:
   stage: admin
   variables:
     GIT_STRATEGY: none
+  needs:
+    # dummy needs to allow it directly
+    - "build_backup"
   script:
     # delete pods to restart viky apps deployment
     - kube_setup
@@ -430,6 +434,9 @@ update_doc_preprod:
   stage: admin
   variables:
     GIT_STRATEGY: none
+  needs:
+    # dummy needs to allow it directly
+    - "build_backup"
   script:
     - kube_setup
     - helm history "${RELEASE_NAME}" || true
