@@ -14,6 +14,8 @@ class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
 
+  Feature.disable_quota
+
   parallelize_setup do
     @index_client = InterpretRequestLogTestClient.new
     @index_client.create_test_index

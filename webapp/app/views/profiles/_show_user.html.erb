@@ -1,0 +1,63 @@
+<div class="profile-show">
+
+  <div class="avatar avatar--large">
+    <img src="<%= @profile.image_url(:square) %>">
+  </div>
+
+  <div>
+    <div class="profile-show__data">
+      <div>
+        <p>
+          <span class="profile-show__label">
+            <%= t('activerecord.attributes.user.name') %>
+          </span>
+          <% if @profile.name.blank? %>
+            <span class="profile-show__missing">
+              <%= t('views.profile.show_user.missing_info') %>
+            </span>
+          <% else %>
+            <%= @profile.name %>
+          <% end %>
+        </p>
+        <p>
+          <span class="profile-show__label">
+            <%= t('activerecord.attributes.user.username') %>
+          </span>
+          <% if @profile.username.blank? %>
+            <span class="profile-show__missing">
+              <%= t('views.profile.show_user.missing_info') %>
+            </span>
+          <% else %>
+            <%= @profile.username %>
+          <% end %>
+        </p>
+      </div>
+      <div>
+        <p>
+          <span class="profile-show__label">
+            <%= t('activerecord.attributes.user.email') %>
+          </span>
+          <%= @profile.email %>
+        </p>
+        <p>
+          <span class="profile-show__label">
+            <%= t('activerecord.attributes.user.bio') %>
+          </span>
+          <% if @profile.bio.blank? %>
+            <span class="profile-show__missing">
+              <%= t('views.profile.show_user.missing_info') %>
+            </span>
+          <% else %>
+            <%= @profile.bio %>
+          <% end %>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <a href="<%= edit_profile_path %>" class="btn btn--small btn--primary">
+      <span class="icon icon--x-small"><%= icon_edit %></span> <%= t('views.profile.show_user.edit_btn') %>
+    </a>
+  </div>
+</div>

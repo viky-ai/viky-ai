@@ -27,6 +27,11 @@ class InterpretRequestLogTestClient < InterpretRequestLogClient
   end
 
   def clear_test_index
-    @client.delete_by_query index: index_alias_name, body: { query: { match_all: {} } }, refresh: true, wait_for_completion: true
+    @client.delete_by_query(
+      index: index_alias_name,
+      body: { query: { match_all: {} } },
+      refresh: true,
+      wait_for_completion: true
+    )
   end
 end

@@ -34,8 +34,10 @@
             <% if Feature.email_configured? %>
               <th>Status</th>
             <% end %>
-            <th>Last log in</th>
-            <th class="number">Log in count</th>
+            <th>Last login & login count</th>
+            <% if Feature.quota_enabled? %>
+              <th class="actions">Quota</th>
+            <% end %>
             <th class="actions"></th>
           </tr>
         </thead>
@@ -128,16 +130,22 @@
               <td>
                 <% if !Feature.email_configured? || user.confirmed? %>
                   <% unless user.current_sign_in_at.nil? %>
-                    <%= l(user.current_sign_in_at, format: :long) %>
+                    <%= l(user.current_sign_in_at, format: :long) %><br />
                   <% end %>
+                  <%= pluralize(user.sign_in_count, "login") %>
                 <% end %>
               </td>
 
-              <td class="number">
-                <% if !Feature.email_configured? || user.confirmed? %>
-                  <%= user.sign_in_count %>
-                <% end %>
-              </td>
+              <% if Feature.quota_enabled? %>
+                <td class="actions">
+                  <%= form_with(url: toggle_quota_enabled_backend_user_path(user)) do |f| %>
+                    <button
+                      class="btn btn--toggle btn--toggle-<% if user.quota_enabled %>on<% else %>off<% end %>"
+                      id="js-toogle-quota-<%= user.id %>"></button>
+                  <% end %>
+                </td>
+              <% end %>
+
               <td class="actions">
                 <% unless !Feature.email_configured? || user.confirmed? %>
                   <a href="<%= reinvite_backend_user_path(user) %>"

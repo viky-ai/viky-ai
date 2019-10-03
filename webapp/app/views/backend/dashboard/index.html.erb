@@ -40,4 +40,32 @@
       <%= render 'top_tests_failures' %>
     </div>
   </div>
+
+  <div class="card">
+    <div class="card__top">
+      <%= render 'top_expressions_per_owners' %>
+    </div>
+  </div>
+
+  <% if Feature.quota_enabled? %>
+    <div class="card">
+      <div class="card__top">
+        <h2><%= t("views.backend.dashboard.top_api_requests_under_quota_html") %></h2>
+        <%= render partial: 'top_api_requests_per_owners', locals: { data: @top_api_requests_under_quota } %>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card__top">
+        <h2><%= t("views.backend.dashboard.top_api_requests_over_quota_html") %></h2>
+        <%= render partial: 'top_api_requests_per_owners', locals: { data: @top_api_requests_over_quota } %>
+      </div>
+    </div>
+  <% else %>
+    <div class="card">
+      <div class="card__top">
+        <h2><%= t("views.backend.dashboard.top_api_requests_html") %></h2>
+        <%= render partial: 'top_api_requests_per_owners', locals: { data: @top_api_requests_under_quota } %>
+      </div>
+    </div>
+  <% end %>
 </div>

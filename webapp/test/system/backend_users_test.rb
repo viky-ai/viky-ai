@@ -20,7 +20,7 @@ class BackendUsersTest < ApplicationSystemTestCase
   end
 
 
-  test "Successful log in" do
+  test "Successful login" do
     admin_login
 
     visit backend_users_path
@@ -50,7 +50,7 @@ class BackendUsersTest < ApplicationSystemTestCase
 
     click_link("Users management")
 
-    find(".dropdown__trigger", text: "Sort by last log in").click
+    find(".dropdown__trigger", text: "Sort by last login").click
     find(".dropdown__content", text: "Sort by email").click
     expected = [
       "admin",
@@ -139,10 +139,10 @@ class BackendUsersTest < ApplicationSystemTestCase
 
     all("a.btn--destructive")[2].click
     assert has_content?("Are you sure?")
-    assert has_content?("You're about to delete user with the email: locked@viky.ai.")
+    assert has_content?("You're about to delete user with the email: invited@viky.ai.")
     fill_in "validation", with: "DELETE"
     click_button("Delete")
-    assert has_content?("User with the email: locked@viky.ai has successfully been deleted.")
+    assert has_content?("User with the email: invited@viky.ai has successfully been deleted.")
     assert_equal "/backend/users", current_path
     assert_equal before_count - 1, User.count
   end
@@ -222,4 +222,22 @@ class BackendUsersTest < ApplicationSystemTestCase
       assert has_text?("admin")
     end
   end
+
+
+  test "Quota toggle" do
+    Feature.with_quota_enabled do
+      admin_login
+
+      click_link("Users management")
+      assert has_content?('7 users')
+
+      assert_equal 7, all('.btn--toggle.btn--toggle-on').size
+      within('table') do
+        first('.btn--toggle').click
+      end
+      sleep(0.5)
+      assert_equal 6, all('.btn--toggle.btn--toggle-on').size
+    end
+  end
+
 end

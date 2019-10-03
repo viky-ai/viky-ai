@@ -8,6 +8,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     create_agent_regression_check_fixtures
   end
 
+
   test "Add new test" do
     user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
@@ -46,6 +47,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     end
   end
 
+
   test "Add a new test for entities list" do
     user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
@@ -63,10 +65,11 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     )
 
     within(".console") do
-      fill_in "interpret[sentence]", with: "sun"
-      click_button "console-send-sentence"
       assert has_content?("3 tests")
       assert has_content?("1 running, 1 success, 1 failure")
+
+      fill_in "interpret[sentence]", with: "sun"
+      click_button "console-send-sentence"
 
       click_button "Add to tests suite"
       assert has_content?("Not run yet...")
@@ -80,8 +83,8 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       assert has_content?("4 tests")
       assert 4, find("ul.cts__list").all("li").count
     end
-
   end
+
 
   test "Add new test with language, now and spellchecking" do
     user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
@@ -102,6 +105,9 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     )
 
     within(".console") do
+      assert has_content?("3 tests")
+      assert has_content?("1 running, 1 success, 1 failure")
+
       fill_in "interpret[sentence]", with: "hello"
       all(".dropdown__trigger > .btn")[0].click
       click_link "en"
@@ -110,11 +116,8 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       click_button "Manual"
       fill_in "interpret[now]", with: "2017-12-05T15:14:01+01:00"
       click_button "console-send-sentence"
-      assert has_content?("3 tests")
-      assert has_content?("1 running, 1 success, 1 failure")
 
       click_button "Add to tests suite"
-      assert has_content?("Not run yet...")
 
       assert has_content?("4 tests")
       find("#console-footer").click
@@ -140,6 +143,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       end
     end
   end
+
 
   test "Try to add a new test but sentence is too long" do
     user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))

@@ -1,152 +1,48 @@
-<header class="header">
-  <div class="header__breadcrumb">
-    <%= link_to t('views.profile.breadcrumb'), profile_path %> /
-    <strong><%= t('views.profile.edit.breadcrumb') %></strong>
-  </div>
-</header>
+<div class="profile">
 
-<%= form_for(@profile, as: :profile, url: profile_path(), html: { method: :put }) do |f| %>
-  <div class="card">
-    <div class="card-content">
+  <header class="header">
+    <div class="header__breadcrumb">
+      <%= link_to t('views.profile.breadcrumb'), profile_path %> /
+      <strong><%= t('views.profile.edit.breadcrumb') %></strong>
+    </div>
+  </header>
 
-      <h3><%= t('views.profile.edit.global.title') %></h3>
-
-      <div class="grid">
-
-        <div class="grid__half">
-
-          <div class="field">
-            <div class="control">
-              <%= f.label :name %><br />
-              <%= f.text_field :name, placeholder: "John Smith" %>
-              <%= display_errors(@profile, :name) %>
-            </div>
-          </div>
-
-          <div class="field">
-            <div class="control">
-              <%= f.label :username %>
-              &nbsp;<span class="badge badge--small badge--outline"><%= t('required') %></span>
-              <br />
-              <%= f.text_field :username, placeholder: "jsmith" %>
-              <%= display_errors(@profile, :username) %>
-            </div>
-          </div>
-
-          <div class="field">
-            <div class="control">
-              <%= f.label :bio %><br />
-              <%= f.text_area :bio, placeholder: "Tell us a little about yourself" %>
-              <%= display_errors(@profile, :bio) %>
-            </div>
-          </div>
-
-          <h3><%= t('views.profile.edit.authentication.title') %></h3>
-          <div class="field">
-            <div class="control">
-              <%= f.label :email %>
-              &nbsp;<span class="badge badge--small badge--outline"><%= t('required') %></span>
-              <br />
-              <%= f.text_field :email, autocomplete: "off" %>
-              <%= display_errors(@profile, :email) %>
-
-              <% if Feature.email_configured? %>
-                <% if @profile.pending_reconfirmation? %>
-                  <div class="help help--success">
-                    <span class="icon icon--x-small"><%= icon_information %></span>
-                    <%= t('views.profile.edit.authentication.waiting_email_confirmation', email: @profile.unconfirmed_email) %>
-                  </div>
-                <% end %>
-              <% end %>
-            </div>
-          </div>
-
-          <div class="field">
-            <div class="control">
-              <%= f.label :password %>
-              <span class="help">
-                <span class="icon icon--x-small"><%= icon_information %></span>
-                <%= t('views.profile.edit.authentication.password_constraint', min_length: User.password_length.min) %>
-              </span>
-
-              <br />
-              <%= f.password_field :password, autocomplete: "off" %>
-              <%= display_errors(@profile, :password) %>
-
-              <div class="help">
-                <span class="icon icon--x-small"><%= icon_information %></span>
-                <%= t('views.profile.edit.authentication.leave_blank') %>
-              </div>
-            </div>
-          </div>
-
+  <div class="profile-edit-global-avatar">
+    <div>
+      <h4><%= t('views.profile.edit.global.title') %></h4>
+      <div class="card">
+        <div class="card-content test-profile-edit-global">
+          <%= render 'edit_global' %>
         </div>
-
-
-
-        <div class="grid__half">
-          <div class="avatar-edit">
-            <h3><%= t('views.profile.edit.avatar.title') %></h3>
-
-            <div class="avatar-edit__image-container">
-              <div class="avatar avatar--large">
-                <img src="<%= @profile.image_url(:square) %>">
-              </div>
-
-              <% unless @profile.image.nil? %>
-                <label><%= f.check_box :remove_image %> Remove avatar </label>
-              <% end %>
-            </div>
-
-            <p class="field__title">
-              Upload new avatar
-            </p>
-            <div class="field field--upload">
-              <%= f.hidden_field :image, value: @profile.cached_image_data %>
-              <label for="upload_image">
-                <div>
-                  <p>
-                    <%= t('file_upload_label') %>
-                  </p>
-                  <div class="help">
-                    <span class="icon icon--x-small"><%= icon_information %></span>
-                     The maximum file size allowed is 2Mo.
-                  </div>
-                  <%= display_errors(@profile, :image) %>
-                </div>
-              </label>
-              <%= f.file_field :image, id: 'upload_image' %>
-            </div>
-          </div>
+      </div>
+    </div>
+    <div>
+      <h4><%= t('views.profile.edit.avatar.title') %></h4>
+      <div class="card">
+        <div class="card-content test-profile-edit-avatar">
+          <%= render 'edit_avatar' %>
         </div>
-
       </div>
-
-      <br />
-      <div class="actions">
-        <%= f.button t('views.profile.edit.authentication.btn'), class: "btn btn--primary",
-            data: {
-              disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
-            } %>
-      </div>
-
     </div>
   </div>
-<% end %>
 
-<div class="card">
-  <div class="card-content">
-    <h2><%= t('views.profile.edit.destroy.title') %></h2>
-    <% if current_user.can_be_destroyed? %>
-      <p><%= t('views.profile.edit.destroy.message') %></p>
-      <p>
-        <a href="<%= confirm_destroy_profile_path %>" class="btn btn--destructive" data-action="open-remote-modal">
-          <%= t('views.profile.edit.destroy.btn') %>
-        </a>
-      </p>
-    <% else %>
-      <p><%= t('views.profile.edit.destroy.not_possible_message') %></p>
-    <% end %>
+  <div class="profile-edit-auth-destroy">
+    <div>
+      <h4><%= t('views.profile.edit.authentication.title') %></h4>
+      <div class="card">
+        <div class="card-content test-profile-edit-auth">
+          <%= render 'edit_auth' %>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h4><%= t('views.profile.edit.destroy.title') %></h4>
+      <div class="card">
+        <div class="card-content test-profile-edit-destroy">
+          <%= render 'edit_destroy' %>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 
+</div>

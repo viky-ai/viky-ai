@@ -45,6 +45,13 @@ class InterpretRequestLogClient
     )
   end
 
+  def search(body)
+    @client.search(
+      index: search_alias_name,
+      body: body
+    )
+  end
+
   def cluster_ready?
     retry_count = 0
     max_retries = 3

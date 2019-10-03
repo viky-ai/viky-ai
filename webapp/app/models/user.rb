@@ -103,6 +103,97 @@ class User < ApplicationRecord
     username
   end
 
+  def quota_exceeded?
+    return false unless Feature.quota_enabled?
+    return false unless quota_enabled
+
+    quota = Quota.expressions_limit
+    expressions_count >= quota
+  end
+
+  def entities_count
+    EntitiesList.joins(:agent).where('agents.owner_id = ?', id).sum(:entities_count)
+  end
+
+  def interpretations_count
+    Interpretation.joins(intent: :agent).where('agents.owner_id = ?', id).count
+  end
+
+  def expressions_count
+    entities_count + interpretations_count
+  end
+
+  def agents_by_expressions_count
+    selection = <<-SQL
+    (
+      SELECT
+        agents.id, (i.total + e.total) AS total
+      FROM agents
+      JOIN
+      (
+        SELECT
+          agents.id as agent_id, coalesce(SUM(entities_lists.entities_count),0) as total
+        FROM agents
+        LEFT OUTER JOIN entities_lists
+        ON entities_lists.agent_id = agents.id
+        GROUP BY agents.id
+      ) AS e
+      ON agents.id = e.agent_id
+      JOIN
+      (
+        SELECT
+          agents.id as agent_id, COUNT(interpretations.id) as total
+        FROM agents
+        LEFT OUTER JOIN intents
+        ON intents.agent_id = agents.id
+        LEFT OUTER JOIN interpretations
+        ON interpretations.intent_id = intents.id
+        GROUP BY agents.id
+      ) AS i
+    ON e.agent_id = i.agent_id
+    WHERE agents.owner_id = '#{id}'
+    ) as agents
+    SQL
+
+    Agent.from(selection).order("total DESC")
+  end
+
+
+  def self.expressions_count_per_owners
+    selection = <<-SQL
+      (
+        SELECT
+          DISTINCT agents.owner_id as id, (i.total + e.total) AS total
+        FROM agents
+        JOIN
+        (
+          SELECT
+            agents.owner_id as id, coalesce(SUM(entities_lists.entities_count),0) as total
+          FROM agents
+          LEFT OUTER JOIN entities_lists
+          ON entities_lists.agent_id = agents.id
+          GROUP BY agents.owner_id
+        ) AS e
+        ON agents.owner_id = e.id
+        JOIN
+        (
+          SELECT
+            agents.owner_id as id, COUNT(interpretations.id) as total
+          FROM agents
+          LEFT OUTER JOIN intents
+          ON intents.agent_id = agents.id
+          LEFT OUTER JOIN interpretations
+          ON interpretations.intent_id = intents.id
+          GROUP BY agents.owner_id
+        ) AS i
+        ON e.id = i.id
+      ) as users
+    SQL
+
+    User.from(selection).order("total DESC")
+  end
+
+
   private
 
     def clean_username

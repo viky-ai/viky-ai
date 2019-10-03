@@ -405,7 +405,8 @@ CREATE TABLE public.users (
     name character varying,
     bio text,
     image_data text,
-    ui_state jsonb DEFAULT '{}'::jsonb
+    ui_state jsonb DEFAULT '{}'::jsonb,
+    quota_enabled boolean DEFAULT true
 );
 
 
@@ -1086,6 +1087,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190503151110'),
 ('20190517140227'),
 ('20190619122021'),
-('20190729072037');
+('20190729072037'),
+('20190729112306'),
+('20190925090036');
 
 
