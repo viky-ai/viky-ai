@@ -112,7 +112,6 @@ group :test do
   gem 'selenium-webdriver'
   gem 'mocha'
   gem 'shrine-memory'
-  gem 'simplecov', require: false
 end
 
 # Skylight: profiler for Ruby on Rails applications.
