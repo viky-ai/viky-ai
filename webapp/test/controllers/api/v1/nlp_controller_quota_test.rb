@@ -24,19 +24,14 @@ class NlsControllerQuotaTest < ActionDispatch::IntegrationTest
   end
 
 
-  test 'Should be limited if more than 2 requests are made in one second' do
+  test 'Quota limitations' do
     Feature.with_quota_enabled do
       assert_equal 2, Quota.max_interpret_requests_per_second
       assert_request_is_200("2019-08-13T14:07:00")
       assert_request_is_200("2019-08-13T14:07:00")
       assert_request_is_429("2019-08-13T14:07:00")
       assert_request_is_200("2019-08-13T14:07:01")
-    end
-  end
 
-
-  test 'Should be limited if more than 8 requests are made in one day' do
-    Feature.with_quota_enabled do
       assert_equal 8, Quota.max_interpret_requests_per_day
       assert_request_is_200("2019-09-13T14:00:00")
       assert_request_is_200("2019-09-13T14:01:00")
