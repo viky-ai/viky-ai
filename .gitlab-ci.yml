@@ -253,7 +253,7 @@ tag_backup:
     - helm status  "${RELEASE_NAME}" || true
     # Go to Kubernetes directory
     - cd deployment/kubernetes/
-    - bin/generateOverrideValuesFile.sh
+    - bin/generate-ci-override-values.sh
     # Deploy Viky Platform
     - HELM_OPTIONS="--install ${HELM_EXTRA_OPTIONS} --timeout ${HELM_TIMEOUT}  --values ${HELM_VALUES}"
     - helm upgrade ${HELM_OPTIONS} "${RELEASE_NAME}" ./viky/
