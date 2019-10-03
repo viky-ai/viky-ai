@@ -90,6 +90,7 @@ en:
       duplication:
         failed_message: "Duplication failed: %{errors}."
         success_message: "Agent %{name} created."
+        quota_exceeded_message: This duplication is not possible because it would cause you to exceed the authorized quota.
       show:
         duplicate_btn: Duplicate
         add_favorite_btn: Add favorite

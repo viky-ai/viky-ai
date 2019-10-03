@@ -208,6 +208,9 @@ GEM
       rack
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
+    rack-throttle (0.7.0)
+      bundler (>= 1.0.0)
+      rack (>= 1.0.0)
     rails (5.1.7)
       actioncable (= 5.1.7)
       actionmailer (= 5.1.7)
@@ -397,6 +400,7 @@ DEPENDENCIES
   premailer-rails
   pretender
   puma (~> 3.7)
+  rack-throttle
   rails (~> 5.1.4)
   rainbow
   redis (~> 3.0)

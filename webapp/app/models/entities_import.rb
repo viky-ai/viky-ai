@@ -4,8 +4,9 @@ class EntitiesImport < ApplicationRecord
 
   include EntitiesImportFileUploader::Attachment.new(:file)
   validates_presence_of :file, message: I18n.t('errors.entities_import.no_file'), on: :create
-  validate :absence_of_concurrent_import, on: :create
+  validate :validate_absence_of_concurrent_import, on: :create
   validates :mode, presence: true
+  validate :validate_owner_quota, on: :create, if: -> { Feature.quota_enabled? }
 
   enum mode: [:append, :replace]
   enum status: [ :running, :success, :failure ]
@@ -34,7 +35,6 @@ class EntitiesImport < ApplicationRecord
             index += 1
           else
             validate_csv_row!(row, count + 1)
-
             terms = csv_terms_to_terms(row)
             auto_solution = (row['Auto solution'].downcase == 'true')
             solution = csv_solution_to_solution(row, terms, auto_solution)
@@ -59,7 +59,7 @@ class EntitiesImport < ApplicationRecord
         count = 0
         raise ActiveRecord::Rollback
       rescue CSV::MalformedCSVError => e
-        errors[:file] << "Bad CSV format: #{e.message}"
+        errors[:file] << "with bad CSV format: #{e.message}"
         count = 0
         raise ActiveRecord::Rollback
       end
@@ -95,23 +95,17 @@ class EntitiesImport < ApplicationRecord
     def batch_import(columns, entities, errors, max_position, lines_count)
       unless entities.empty?
         Rails.logger.silence(Logger::INFO) do
-          import = Entity.import(columns, entities)
+          import = Entity.import(columns, entities, validate_with_context: :import)
           if import.failed_instances.any? && errors.size < 100
             import.failed_instances.each do |failed_instance|
               line = max_position + lines_count - failed_instance.position + 1
-              msg = "Bad entity format: "
+              msg = "with bad entity format: "
               msg << failed_instance.errors.full_messages.join(', ')
               msg << " in line #{line}."
               errors[:file] << msg
             end
           end
         end
-      end
-    end
-
-    def absence_of_concurrent_import
-      if entities_list.entities_imports.running.any?
-        errors.add(:base, I18n.t('errors.entities_import.concurrent_import'))
       end
     end
 
@@ -165,13 +159,14 @@ class EntitiesImport < ApplicationRecord
         msg = I18n.t('errors.entities_import.missing_column')
         raise CSV::MalformedCSVError.new(msg, row_number)
       end
+
       if row['Auto solution'].nil?
         msg = I18n.t('errors.entities_import.missing_column')
         raise CSV::MalformedCSVError.new(msg, row_number)
       else
         if ['true', 'false'].include? row['Auto solution'].downcase
-          if row['Auto solution'].downcase == 'false' && row['Solution'].blank?
-            msg = I18n.t('errors.entities_import.missing_column')
+          if row['Auto solution'].downcase == 'false' && row['Solution'].nil?
+            msg = I18n.t('errors.entities_import.solution_missing')
             raise CSV::MalformedCSVError.new(msg, row_number)
           end
         else
@@ -179,14 +174,17 @@ class EntitiesImport < ApplicationRecord
           raise CSV::MalformedCSVError.new(msg, row_number)
         end
       end
+
       if row['Case sensitive'].nil?
         msg = I18n.t('errors.entities_import.missing_column')
         raise CSV::MalformedCSVError.new(msg, row_number)
       end
+
       if row['Accent sensitive'].nil?
         msg = I18n.t('errors.entities_import.missing_column')
         raise CSV::MalformedCSVError.new(msg, row_number)
       end
+
     end
 
     def csv_terms_to_terms(row)
@@ -216,4 +214,22 @@ class EntitiesImport < ApplicationRecord
       entities_list.touch
     end
 
+    def validate_absence_of_concurrent_import
+      if entities_list.entities_imports.running.any?
+        errors.add(:base, I18n.t('errors.entities_import.concurrent_import'))
+      end
+    end
+
+    def validate_owner_quota
+      return unless entities_list.agent.owner.quota_enabled
+
+      final = entities_list.agent.owner.expressions_count + csv_count_lines
+      final = final - entities_list.entities_count if mode == 'replace'
+      if final > Quota.expressions_limit
+        errors.add(:base, I18n.t('errors.entities_import.quota_exceeded',
+          maximum: Quota.expressions_limit,
+          final: final)
+        )
+      end
+    end
 end

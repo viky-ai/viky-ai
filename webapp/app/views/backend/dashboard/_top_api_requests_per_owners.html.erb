@@ -1,0 +1,26 @@
+<table>
+  <tbody>
+    <% data.each do |item| %>
+      <% user = User.find(item['key']) %>
+      <tr>
+        <td>
+          <div class="user">
+            <div class="user__avatar">
+              <img src="<%= user.image_url(:square) %>" />
+            </div>
+            <div class="user__info">
+              <%= user.name_or_username %>
+              <small><%= user.email %></small>
+            </div>
+          </div>
+        </td>
+        <td><%= number_with_delimiter(item['doc_count']) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div class="top-pagination">
+  <%= paginate data, window: 1, param_name: :requests_page %>
+  <p class="pagination-info"><%= page_entries_info data %></p>
+</div>

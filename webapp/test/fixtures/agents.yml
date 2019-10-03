@@ -33,5 +33,6 @@ cities:
   description: Some cities with case and accents
   agentname: cities
   locales: ['*']
-  owner_id: "930025d1-cfd0-5f27-8cb1-a0aecd1309fc" # users(:admin)
+  owner_id: "930025d1-cfd0-5f27-8cb1-a0aecd1309fd" # users(:locked)
   api_token: "dbf64999e7302bddd8385a373fbfc046"
+  visibility: 0

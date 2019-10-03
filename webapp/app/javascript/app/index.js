@@ -27,6 +27,7 @@ LocalTime.start()
 import './nav/nav.coffee';
 
 import './profile/main.scss';
+import './profile/graph.coffee';
 
 import './authentication/main.scss';
 

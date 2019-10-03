@@ -23,6 +23,7 @@ terminator_targets:
   position: 0
   color: orange
   visibility: 1
+  entities_count: 0
 
 weather_confirmed_dates:
   listname: weather_dates
@@ -31,6 +32,7 @@ weather_confirmed_dates:
   position: 0
   color: red
   visibility: 1
+  entities_count: 0
 
 cities:
   listname: cities
@@ -39,3 +41,5 @@ cities:
   position: 0
   color: red
   visibility: 1
+  entities_count: 4
+

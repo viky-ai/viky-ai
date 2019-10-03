@@ -47,6 +47,10 @@ en:
     attributes:
       user:
         image: Avatar
+        name: Name
+        username: Username
+        email: Email
+        bio: Bio
       agent:
         name: Name
         agentname: ID
@@ -103,13 +107,15 @@ en:
       transfer_ownership:
         duplicate_agentname: This user already have an agent with this ID
         invalid_username: Please enter a valid username or email of a viky.ai user
+        owner_quota_will_exceed: This user does not have enough quota to accept this transfer
       delete:
         collaborators_presence: You must remove all collaborators before delete an agent
     agent_arc:
       cycle_detected: detected, agent addition would cause a cycle in dependency graph
     intents:
       unknown_locale: "unknown '%{current_locale}'"
-      unknown_agent: "does not exist"
+      move_to_unknown_agent: "does not exist anymore"
+      move_to_agent_without_enough_quota: "owner does not have enough quota to accept this move"
     interpretation:
       invalid_json: "invalid json"
       interpretation_aliases_overlap: position overlap
@@ -117,21 +123,26 @@ en:
       one_alias_one_any: '"Any" option is not permitted with only one annotation.'
       only_one_list: Only one annotation with "List" option is permitted.
       expression_nlp_length: "is too long (maximum is %{count} elements), found: %{actual_count}"
+      quota: "exceeded (maximum is %{maximum} formulations and entities)"
     entities_lists:
-      unknown_agent: "does not exist"
+      move_to_unknown_agent: "does not exist anymore"
+      move_to_agent_without_enough_quota: "owner does not have enough quota to accept this move"
     entity:
       unknown_locale: "uses an unauthorized locale '%{current_locale}' for this agent"
       term_abscent: "can't contains only locale information"
       term_nlp_length: "is too long (maximum is %{count} elements), found: %{actual_count}"
+      quota: "exceeded (maximum is %{maximum} formulations and entities)"
     entities_import:
       concurrent_import: "An import is already running, please wait."
       no_file: "must be present"
-      wrong_format: "CSV format expected"
-      wrong_extension: "CSV extension expected"
+      wrong_format: "with CSV mime type is expected"
+      wrong_extension: "with .csv or .xls extension is expected"
       max_file_size: "size exceeds the max size"
       unexpected_autosolution: "Auto solution must be true or false"
+      solution_missing: "Solution missing"
       missing_column: "Missing column"
-      missing_header: "Missing header"
+      missing_header: "Missing or malformed header (\"Terms,Auto solution,Solution,Case sensitive,Accent sensitive\" is expected)"
+      quota_exceeded: "Quota exceeded (maximum is %{maximum} formulations and entities), you will reach %{final} entries"
     interpretation_alias:
       end_position_lower_than_start: "must be greater than position start"
       overlap: overlap

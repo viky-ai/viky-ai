@@ -1,44 +1,21 @@
-<header class="header">
-  <div class="header__breadcrumb">
-    <%= t('views.profile.breadcrumb') %>
-  </div>
-  <div class="header__tools">
-    <a href="<%= edit_profile_path %>" class="btn btn--outline">
-      <span class="icon icon--small"><%= icon_edit %></span> Edit your profile
-    </a>
-  </div>
-</header>
+<div class="profile">
 
-<div class="grid">
-
-  <div class="grid_sidebar">
-
-    <div class="card">
-      <div class="card-content">
-        <div class="profile">
-          <div class="avatar avatar--large">
-            <img src="<%= @profile.image_url(:square) %>">
-          </div>
-          <h2><%= @profile.name %></h2>
-          <h3 class="tagline"><%= @profile.username %></h3>
-          <p>
-            <%= @profile.bio %>
-          </p>
-        </div>
-      </div>
+  <h4><%= t('views.profile.show_user.title') %></h4>
+  <div class="card">
+    <div class="card-content">
+      <%= render 'show_user' %>
     </div>
-
   </div>
 
-  <div class="grid_main">
-
-    <div class="agents-box-grid agents-box-grid--with-sidebar">
-      <% @agents.each do |agent| %>
-        <%= render '/agents/agent_box', agent: agent, editable: false %>
-      <% end %>
+  <h4><%= t('views.profile.show_data_use.title') %></h4>
+  <div class="card">
+    <div class="card-content card-content--profile">
+      <%= render 'show_data_usage' %>
     </div>
-    <%= paginate @agents %>
-
   </div>
 
+  <h4><%= t('views.profile.show_api_use.title') %></h4>
+  <%= render 'show_api_usage' %>
 </div>
+
+

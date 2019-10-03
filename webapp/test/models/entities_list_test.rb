@@ -3,7 +3,6 @@ require 'model_test_helper'
 
 class EntitiesListTest < ActiveSupport::TestCase
 
-
   test 'Basic entities_list creation & agent association' do
     assert_equal 2, agents(:weather).entities_lists.count
 
@@ -25,20 +24,21 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert EntitiesList::AVAILABLE_COLORS.one? { |color| color == entities_list.color }
     assert_equal 'is_private', entities_list.visibility
     assert entities_list.proximity_glued?
-    assert !entities_list.is_public?
+    assert_not entities_list.is_public?
     assert entities_list.is_private?
   end
 
 
   test 'listname and agent are mandatory' do
     entities_list = EntitiesList.new(description: 'Hello random citizen !')
-    assert !entities_list.save
+    assert_not entities_list.save
 
-    expected = {
-      agent: ['must exist'],
-      listname: ['is too short (minimum is 3 characters)', 'can\'t be blank'],
-    }
-    assert_equal expected, entities_list.errors.messages
+    expected = [
+      "Agent must exist",
+      "ID is too short (minimum is 3 characters)",
+      "ID can't be blank"
+    ]
+    assert_equal expected, entities_list.errors.full_messages
   end
 
 
@@ -56,23 +56,19 @@ class EntitiesListTest < ActiveSupport::TestCase
     entities_list = EntitiesList.new(listname: 'hello', description: 'Hello random citizen !', agent: agents(:weather))
     assert entities_list.save
     other_entities_list = EntitiesList.new(listname: 'hello', description: 'Another way to greet you...', agent: agents(:weather))
-    assert !other_entities_list.save
+    assert_not other_entities_list.save
 
-    expected = {
-      listname: ['has already been taken']
-    }
-    assert_equal expected, other_entities_list.errors.messages
+    expected = ['ID has already been taken']
+    assert_equal expected, other_entities_list.errors.full_messages
   end
 
 
   test 'Check listname minimal length' do
     entities_list = EntitiesList.new(listname: 'h', description: 'Hello random citizen !', agent: agents(:weather))
-    assert !entities_list.save
+    assert_not entities_list.save
 
-    expected = {
-      listname: ['is too short (minimum is 3 characters)']
-    }
-    assert_equal expected, entities_list.errors.messages
+    expected = ['ID is too short (minimum is 3 characters)']
+    assert_equal expected, entities_list.errors.full_messages
   end
 
 
@@ -190,11 +186,28 @@ class EntitiesListTest < ActiveSupport::TestCase
   test 'Move entities list to an unknown agent' do
     weather = entities_lists(:weather_conditions)
     assert_not weather.move_to_agent(nil)
-    expected = {
-      agent: ['does not exist']
-    }
-    assert_equal expected, weather.errors.messages
+    expected = ['Agent does not exist anymore']
+    assert_equal expected, weather.errors.full_messages
     assert_equal weather.agent.id, agents(:weather).id
+  end
+
+
+  test 'Move entities list without enough quota' do
+    Feature.with_quota_enabled do
+      entities_list = entities_lists(:weather_conditions)
+      destination_agent = agents(:terminator)
+
+      assert_equal 2, entities_list.entities_count
+      assert_equal 10, destination_agent.owner.expressions_count
+
+      Quota.stubs(:expressions_limit).returns(11)
+      assert_not entities_list.move_to_agent(destination_agent)
+      expected = ["Agent owner does not have enough quota to accept this move"]
+      assert_equal expected, entities_list.errors.full_messages
+
+      Quota.stubs(:expressions_limit).returns(12)
+      assert entities_list.move_to_agent(destination_agent)
+    end
   end
 
 
@@ -258,6 +271,7 @@ class EntitiesListTest < ActiveSupport::TestCase
     end
   end
 
+
   test 'List entities in order when only one entity is in the list' do
     entities_list = entities_lists(:terminator_targets)
     single_entity = Entity.create!(
@@ -298,4 +312,5 @@ class EntitiesListTest < ActiveSupport::TestCase
     )
     assert entity.save
   end
+
 end

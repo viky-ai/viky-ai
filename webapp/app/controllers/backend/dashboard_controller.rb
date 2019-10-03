@@ -29,6 +29,23 @@ class Backend::DashboardController < Backend::ApplicationController
       .where(agent_regression_checks: { state: [:failure, :error] })
       .order('count DESC, agents.name')
       .page(params[:tests_page]).per(10)
-  end
 
+    @top_expressions_per_owners = User
+      .expressions_count_per_owners
+      .page(params[:expressions_page]).per(10)
+
+    to = DateTime.now
+    from = DateTime.now - 30.days
+
+    @top_api_requests_under_quota = Kaminari
+      .paginate_array(InterpretRequestReporter.new.under_quota.between(from, to).count_per_owner)
+      .page(params[:requests_page]).per(10)
+
+    if Feature.quota_enabled?
+      @top_api_requests_over_quota = Kaminari
+        .paginate_array(InterpretRequestReporter.new.over_quota.between(from, to).count_per_owner)
+        .page(params[:requests_page]).per(10)
+    end
+
+  end
 end

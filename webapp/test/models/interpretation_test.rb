@@ -412,4 +412,29 @@ class InterpretationTest < ActiveSupport::TestCase
       assert interpretation.save
     end
   end
+
+  test 'Quota for interpretation and entities' do
+    Feature.with_quota_enabled do
+      Quota.stubs(:expressions_limit).returns(11)
+
+      user = users(:admin)
+      assert_equal 10, user.expressions_count
+
+      interpretation = Interpretation.new(
+        expression: 'Sunny tomorrow morning',
+        locale: 'en'
+      )
+      interpretation.intent = intents(:weather_forecast)
+      assert interpretation.save
+
+      interpretation_next = Interpretation.new(
+        expression: 'Rainy tomorrow afternoon',
+        locale: 'en'
+      )
+      interpretation_next.intent = intents(:weather_forecast)
+      assert_not interpretation_next.save
+      expected = ['Quota exceeded (maximum is 11 formulations and entities)']
+      assert_equal expected, interpretation_next.errors.full_messages
+    end
+  end
 end
