@@ -109,10 +109,11 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   def build_fixture_files_path(filename)
     if ENV.key?('CI_PROJECT_DIR')
-      fixture_files_path = File.join(ENV.fetch('CI_PROJECT_DIR'), 'webapp')
+      webapp_root_path = File.join(ENV.fetch('CI_PROJECT_DIR'), 'webapp')
     else
-      fixture_files_path = File.join(Rails.root, 'test', 'fixtures', 'files')
+      webapp_root_path = Rails.root
     end
+    fixture_files_path = File.join(webapp_root_path, 'test', 'fixtures', 'files')
     File.join(fixture_files_path, filename)
   end
 end
