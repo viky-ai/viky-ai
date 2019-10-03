@@ -402,3 +402,16 @@ backup_restore:
     - kubectl delete pods -l 'app in (viky-webapp-worker, viky-webapp, viky-nlp)'
   when: manual
   allow_failure: true
+
+# update homepage and doc to latest image
+doc_update:
+  extends:
+    - .kubernetes_runner
+  stage: admin
+  variables:
+    GIT_STRATEGY: none
+  script:
+    # delete pods to restart viky apps deployment
+    - kubectl delete pods -l 'app in (viky-doc)'
+  when: manual
+  allow_failure: true
