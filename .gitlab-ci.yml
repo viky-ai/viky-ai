@@ -67,7 +67,6 @@ test_webapp:
   needs: ["build_webapp_test"]
   image: ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG}
   variables:
-    GIT_STRATEGY: none
     VIKYAPP_DB_USERNAME: superman
     VIKYAPP_DB_PASSWORD: sup_3rman
     VIKYAPP_DB_HOST: postgres
