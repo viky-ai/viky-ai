@@ -89,7 +89,7 @@ static og_status NlpMatchGroupNumbersInitConf(og_nlp_th ctrl_nlp_th)
   // associate conf with locale
 
   // fr-FR, *-FR, fr-* | default (first declared)
-  IFE(addLocaleConf(DOgLangFR, DOgCountryFR, conf_space_coma));
+  IFE(addLocaleConf(DOgLangFR, DOgCountryFR, conf_dot_coma));
 
   // en-US, *-US, en-*
   IFE(addLocaleConf(DOgLangEN, DOgCountryUS, conf_coma_dot));
@@ -141,14 +141,14 @@ static struct number_sep_conf* NlpMatchGroupNumbersInitAddSeparatorConf(og_nlp_t
   // match pattern in en-US (thousand_sep="," decimal_sep=".")
   // https://jex.im/regulex/#!flags=&re=%5E((%3F%3A(%3F%3A%5Cd%7B1%2C3%7D(%3F%3A%2C%5Cd%7B3%7D)%2B)%7C%5Cd%2B))(%3F%3A%5C.(%5Cd%2B))%3F%24
   og_char_buffer pattern[DPcPathSize];
-  snprintf(pattern, DPcPathSize, "^((?:(?:\\d{1,3}(?:%s\\d{3})+)|\\d+))(?:%s(\\d+))?$", escaped_thousand_sep,
+  snprintf(pattern, DPcPathSize, "^((?:(?:\\d{1,3}(?:[%s ]\\d{3})+)|\\d+))(?:%s(\\d+))?$", escaped_thousand_sep,
       escaped_decimal_sep);
 
   // not_ambiguous pattern in en-US (thousand_sep="," decimal_sep=".")
   // https://jex.im/regulex/#!flags=&re=(%3F%3A%5E%7C%5B%5E%5Cd'.%2C%5D)(%3F%3A%5Cd%7B1%2C3%7D(%3F%3A%20%5Cd%7B3%7D)%2B%2C%5Cd%2B%7C%5Cd%7B1%2C3%7D(%3F%3A%20%5Cd%7B3%7D)%2B%20%5Cd%7B3%7D%7C%5Cd%2B%2C(%3F%3A%5Cd%7B1%2C2%7D%7C%5Cd%7B4%2C%7D))(%3F%3A%24%7C%5B%5E%5Cd'.%2C%5D)
   og_char_buffer guest_locale_not_ambiguous_pattern[DPcPathSize];
-  snprintf(guest_locale_not_ambiguous_pattern, DPcPathSize, "(?:^|[^\\d%s])(?:\\d{1,3}(?:%s\\d{3})+%s\\d+|"
-      "\\d{1,3}(?:%s\\d{3})+%s\\d{3}|\\d+%s(?:\\d{1,2}|\\d{4,}))(?:$|[^\\d%s])", escaped_all_sperators,
+  snprintf(guest_locale_not_ambiguous_pattern, DPcPathSize, "(?:^|[^\\d%s])(?:\\d{1,3}(?:[%s ]\\d{3})+%s\\d+|"
+      "\\d{1,3}(?:[%s ]\\d{3})+[%s ]\\d{3}|\\d+%s(?:\\d{1,2}|\\d{4,}))(?:$|[^\\d%s])", escaped_all_sperators,
       escaped_thousand_sep, escaped_decimal_sep, escaped_thousand_sep, escaped_thousand_sep, escaped_decimal_sep,
       escaped_all_sperators);
 
@@ -156,7 +156,7 @@ static struct number_sep_conf* NlpMatchGroupNumbersInitAddSeparatorConf(og_nlp_t
   // https://jex.im/regulex/#!flags=&re=(%3F%3A%5E%7C%5B%5E%5Cd'%5C.%2C%5D)(%3F%3A(%3F%3A(%3F%3A%5Cd%7B1%2C3%7D(%3F%3A%2C%5Cd%7B3%7D)%2B)%7C%5Cd%2B)(%3F%3A%5C.%5Cd%2B)%3F)(%3F%3A%24%7C%5B%5E%5Cd'%5C.%2C%5D)
   og_char_buffer guest_locale_ambiguous_pattern[DPcPathSize];
   snprintf(guest_locale_ambiguous_pattern, DPcPathSize,
-      "(?:^|[^\\d%s])(?:(?:(?:\\d{1,3}(?:%s\\d{3})+)|\\d+)(?:%s\\d+)?)(?:$|[^\\d%s])", escaped_all_sperators,
+      "(?:^|[^\\d%s])(?:(?:(?:\\d{1,3}(?:[%s ]\\d{3})+)|\\d+)(?:%s\\d+)?)(?:$|[^\\d%s])", escaped_all_sperators,
       escaped_thousand_sep, escaped_decimal_sep, escaped_all_sperators);
 
   g_free(escaped_thousand_sep);
@@ -362,6 +362,11 @@ og_status NlpMatchGroupNumbers(og_nlp_th ctrl_nlp_th)
 
   og_bool numbers_grouped = FALSE;
 
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    IFE(NlpLogRequestWords(ctrl_nlp_th));
+  }
+
   /** list of struct number_sep_conf_locale*/
   GQueue list_locale_to_try[1];
   g_queue_init(list_locale_to_try);
@@ -371,6 +376,11 @@ og_status NlpMatchGroupNumbers(og_nlp_th ctrl_nlp_th)
 
   // free list
   g_queue_clear(list_locale_to_try);
+
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    IFE(NlpLogRequestWords(ctrl_nlp_th));
+  }
 
   if (conf_locale)
   {
@@ -447,6 +457,7 @@ static og_bool NlpMatchGroupNumbersParsingEnsureFree(og_nlp_th ctrl_nlp_th, og_s
   og_char_buffer value_buffer[DPcPathSize];
   snprintf(value_buffer, DPcPathSize, "%.*s", integerPartLength, sentence + integerPartStart);
   str_remove_inplace(value_buffer, thousand_sep);
+  str_remove_inplace(value_buffer, " ");
 
   // append decimal part
   if (decimalPartMatch && decimalPartLength > 0)
