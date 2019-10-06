@@ -1,11 +1,14 @@
 /*
  *  Handling decimal number parsing with different locale convention
  *
- *  Copyright (c) 2017 Pertimm, by Sebastien Manfedini, Brice Ruzand
- *  Dev : Janyary 2018
- *  Version 1.0
+ *  Copyright (c) 2017 Pertimm, by Sebastien Manfedini, Brice Ruzand, Patrick Constant
+ *  Dev : January 2018, October 2019
+ *  Version 1.1
  */
 #include "ogm_nlp.h"
+
+static og_status NlpNumberAddWord(og_nlp_th ctrl_nlp_th, struct request_word *rw_start, struct request_word *rw_end,
+    double value);
 
 /**
  * thousand and decimal separator configuration language agnostic
@@ -519,6 +522,10 @@ static og_bool NlpMatchGroupNumbersWithLocale(og_nlp_th ctrl_nlp_th, struct numb
   int request_word_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_word);
   if (request_word_used == 0) return FALSE;
 
+  struct request_word *rw_start_number = NULL;
+  struct request_word *rw_end_number = NULL;
+  double value_number = 0.0;
+
   struct request_word *rw_start = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
   IFN(rw_start)
   {
@@ -527,8 +534,6 @@ static og_bool NlpMatchGroupNumbersWithLocale(og_nlp_th ctrl_nlp_th, struct numb
     DPcErr;
   }
 
-  og_bool numbers_grouped = FALSE;
-  og_bool previous_match = FALSE;
   for (struct request_word *rw_end = rw_start; rw_end; rw_end = rw_end->next)
   {
 
@@ -556,41 +561,12 @@ static og_bool NlpMatchGroupNumbersWithLocale(og_nlp_th ctrl_nlp_th, struct numb
     int end_position = rw_end->start_position + rw_end->length_position;
     int length = end_position - start_position;
     snprintf(expression_string, DPcPathSize, "%.*s", length, request_sentence + start_position);
-    int iexpression_string = strlen(expression_string);
 
     og_bool number_match = NlpMatchGroupNumbersParsing(ctrl_nlp_th, expression_string, locale_conf->sep_conf, &value);
     IFE(number_match);
 
     if (number_match)
     {
-      if (rw_start != rw_end)
-      {
-        numbers_grouped = TRUE;
-      }
-      rw_start->next = rw_end->next;
-      rw_start->length_position = rw_end->start_position - rw_start->start_position + rw_end->length_position;
-
-      // build new raw word
-      {
-        rw_start->raw_start = OgHeapGetCellsUsed(ctrl_nlp_th->hba);
-        rw_start->raw_length = iexpression_string;
-        IFE(OgHeapAppend(ctrl_nlp_th->hba, iexpression_string + 1, expression_string));
-      }
-
-      // build new normalized word
-      {
-        og_char_buffer normalized_word[DPcPathSize];
-        snprintf(normalized_word, DPcPathSize, DOgPrintDouble, value);
-        int inormalized_word = strlen(normalized_word);
-        rw_start->start = OgHeapGetCellsUsed(ctrl_nlp_th->hba);
-        rw_start->length = inormalized_word;
-        IFE(OgHeapAppend(ctrl_nlp_th->hba, inormalized_word + 1, normalized_word));
-      }
-
-      rw_start->is_number = TRUE;
-      rw_start->number_value = value;
-      previous_match = TRUE;
-
       if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceGroupNumbers)
       {
         og_char_buffer current_lang_country[DPcPathSize];
@@ -600,63 +576,27 @@ static og_bool NlpMatchGroupNumbersWithLocale(og_nlp_th ctrl_nlp_th, struct numb
             locale_conf->sep_conf->thousand_sep, locale_conf->sep_conf->decimal_sep);
       }
 
+      rw_start_number = rw_start;
+      rw_end_number = rw_end;
+      value_number = value;
     }
     else
     {
-      if (previous_match)
+      if (rw_start_number != NULL)
       {
-        // si on a 123.456 789 XXXX, on a un match à false, mais il faut reconsidérer 789 comme un nombre
-
-        // recuperer la string entre NumberGroupStart et NumberGroupEnd
-        start_position = rw_end->start_position;
-        end_position = rw_end->start_position + rw_end->length_position;
-        length = end_position - start_position;
-        snprintf(expression_string, DPcPathSize, "%.*s", length, request_sentence + start_position);
-
-        number_match = NlpMatchGroupNumbersParsing(ctrl_nlp_th, expression_string, locale_conf->sep_conf, &value);
-        IFE(number_match);
-
-        if (number_match)
-        {
-          // on est dans le cas 123.456 789 XXXX, il faut considérer le 789 comme un nombre
-
-          rw_start = rw_end;
-          rw_start->is_number = TRUE;
-          rw_start->number_value = value;
-
-          if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceGroupNumbers)
-          {
-            og_char_buffer current_lang_country[DPcPathSize];
-            NlpLog(DOgNlpTraceGroupNumbers,
-                "NlpMatchGroupNumbersWithLocale: \"%s\" " "find group number " DOgPrintDouble " (locale=\"%s\" thousand_sep=\"%s\", decimal_sep=\"%s\")",
-                expression_string, value, OgIso639_3166ToCode(locale_conf->lang_country, current_lang_country),
-                locale_conf->sep_conf->thousand_sep, locale_conf->sep_conf->decimal_sep);
-          }
-
-        }
-        else
-        {
-          // on est dans le cas 123.456 aa XXXX, il faut recommencer le parsing au mot suivant
-
-          if (rw_end->next)
-          {
-            rw_start = rw_end->next;
-          }
-          previous_match = FALSE;
-        }
-
+        IFE(NlpNumberAddWord(ctrl_nlp_th, rw_start_number, rw_end_number, value_number));
+        rw_start_number = NULL;
       }
-      else
-      {
-        if (rw_end->next)
-        {
-          rw_start = rw_end->next;
-        }
-      }
+      rw_start = rw_end;
     }
   }
 
-  return numbers_grouped;
+  if (rw_start_number != NULL)
+  {
+    IFE(NlpNumberAddWord(ctrl_nlp_th, rw_start_number, rw_end_number, value_number));
+  }
+
+  DONE;
 }
 
 static og_status NlpMatchGroupNumbersBuildLocaleList(og_nlp_th ctrl_nlp_th, GQueue *list_locale_to_try)
@@ -830,3 +770,69 @@ static og_bool str_remove_inplace(og_char_buffer *source, og_string to_replace)
   }
   return FALSE;
 }
+
+static og_status NlpNumberAddWord(og_nlp_th ctrl_nlp_th, struct request_word *rw_start, struct request_word *rw_end,
+    double value)
+{
+  og_string request_sentence = ctrl_nlp_th->request_sentence;
+
+  for (struct request_word *rw = rw_start; rw != rw_end; rw = rw->next)
+  {
+    rw->is_number = FALSE;
+  }
+  rw_end->is_number = FALSE;
+
+  og_char_buffer expression_string[DPcPathSize];
+  int start_position = rw_start->start_position;
+  int end_position = rw_end->start_position + rw_end->length_position;
+  int length_position = end_position - start_position;
+  snprintf(expression_string, DPcPathSize, "%.*s", length_position, request_sentence + start_position);
+  int iexpression_string = strlen(expression_string);
+
+  NlpLog(DOgNlpTraceMatch, "NlpNumberAddWord: adding word '%.*s' at start %d", iexpression_string, expression_string, start_position)
+
+  og_char_buffer normalized_word[DPcPathSize];
+  snprintf(normalized_word, DPcPathSize, DOgPrintDouble, value);
+  int inormalized_word = strlen(normalized_word);
+  NlpLog(DOgNlpTraceMatch, "NlpNumberAddWord: normalized word '%.*s'", inormalized_word, normalized_word)
+
+  size_t Irequest_word;
+  struct request_word *request_word = OgHeapNewCell(ctrl_nlp_th->hrequest_word, &Irequest_word);
+  IFn(request_word) DPcErr;
+  IF(Irequest_word) DPcErr;
+
+  request_word->self_index = Irequest_word;
+
+  request_word->start = OgHeapGetCellsUsed(ctrl_nlp_th->hba);
+  request_word->length = inormalized_word;
+  IFE(OgHeapAppend(ctrl_nlp_th->hba, request_word->length, normalized_word));
+  IFE(OgHeapAppend(ctrl_nlp_th->hba, 1, ""));
+
+  request_word->raw_start = OgHeapGetCellsUsed(ctrl_nlp_th->hba);
+  request_word->raw_length = iexpression_string;
+  IFE(OgHeapAppend(ctrl_nlp_th->hba, request_word->raw_length, expression_string));
+  IFE(OgHeapAppend(ctrl_nlp_th->hba, 1, ""));
+
+  request_word->start_position = start_position;
+  request_word->length_position = length_position;
+
+  request_word->is_number = TRUE;
+  request_word->number_value = value;
+  request_word->is_punctuation = FALSE;
+  request_word->is_auto_complete_word = FALSE;
+  request_word->is_regex = FALSE;
+  request_word->regex_input_part = NULL;
+  request_word->spelling_score = 1.0;
+  request_word->lang_id = DOgLangNil;
+
+  int nb_matched_words = 1;
+  for (struct request_word *rw = rw_start; rw != rw_end; rw = rw->next)
+  {
+    nb_matched_words++;
+  }
+
+  request_word->nb_matched_words = nb_matched_words;
+
+  DONE;
+}
+

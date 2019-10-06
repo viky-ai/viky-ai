@@ -531,6 +531,24 @@ module Nls
 
       end
 
+      def test_no_number
+        package = Package.new("test_no_number")
+
+        interpretation_private = package.new_interpretation("no_number")
+        interpretation_private << Expression.new("123 456", solution: "ott ffs")
+
+        Nls.remove_all_packages
+
+        Interpretation.default_locale = nil
+
+        Nls.package_update(package)
+
+        check_interpret("123 456",
+          interpretation: "no_number",
+          solution: "ott ffs"
+        )
+
+      end
 
     end
   end
