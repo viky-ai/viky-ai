@@ -15,6 +15,9 @@ echo "DB_POSTGRES $DB_POSTGRES"
 echo "DB_REDIS $DB_REDIS"
 echo "ES $ES"
 
+DISABLE_SPRING=1
+COVERAGE=1
+
 # wait for services
 /usr/local/bin/dockerize -wait tcp://$DB_POSTGRES:5432 -wait tcp://$DB_REDIS -wait tcp://$ES -timeout 60s
 

@@ -1,4 +1,7 @@
 require "test_helper"
+if ENV['COVERAGE']
+  SimpleCov.command_name "rails-tests-system"
+end
 
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   include ActiveJob::TestHelper
