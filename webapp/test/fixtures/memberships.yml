@@ -22,3 +22,8 @@ five:
   user_id: "139ea746-a7df-4218-a6a4-b202958f2cf6" # users(:edit_on_agent_weather)
   agent: weather
   rights: edit
+
+six:
+  user_id: "930025d1-cfd0-5f27-8cb1-a0aecd1309fd" # users(:locked)
+  agent: cities
+  rights: all

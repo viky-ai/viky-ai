@@ -4,11 +4,21 @@ require "model_test_helper"
 class AgentRegressionChecksTest < ApplicationSystemTestCase
 
   def setup
+    super
     create_agent_regression_check_fixtures
   end
 
+  # We isolate websocket communication between test in order
+  # to activate parallel testing
+  def isolate_actioncable_and_go_to_ui
+    user = users(:edit_on_agent_weather)
+    agent = AgentDuplicator.new(agents(:weather), user).duplicate
+    user_go_to_agent_show(users(:edit_on_agent_weather), agent)
+  end
+
+
   test "Add new test" do
-    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    isolate_actioncable_and_go_to_ui
 
     Nlp::Interpret.any_instance.stubs("send_nlp_request").returns(
       status: 200,
@@ -45,8 +55,9 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     end
   end
 
+
   test "Add a new test for entities list" do
-    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    isolate_actioncable_and_go_to_ui
 
     Nlp::Interpret.any_instance.stubs("send_nlp_request").returns(
       status: 200,
@@ -62,10 +73,11 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     )
 
     within(".console") do
-      fill_in "interpret[sentence]", with: "sun"
-      click_button "console-send-sentence"
       assert has_content?("3 tests")
       assert has_content?("1 running, 1 success, 1 failure")
+
+      fill_in "interpret[sentence]", with: "sun"
+      click_button "console-send-sentence"
 
       click_button "Add to tests suite"
       assert has_content?("Not run yet...")
@@ -79,11 +91,11 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       assert has_content?("4 tests")
       assert 4, find("ul.cts__list").all("li").count
     end
-
   end
 
+
   test "Add new test with language, now and spellchecking" do
-    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    isolate_actioncable_and_go_to_ui
 
     Nlp::Interpret.any_instance.stubs("send_nlp_request").returns(
       status: 200,
@@ -101,32 +113,31 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     )
 
     within(".console") do
-      fill_in "interpret[sentence]", with: "hello"
+      assert has_content?("3 tests")
+      assert has_content?("1 running, 1 success, 1 failure")
+
       all(".dropdown__trigger > .btn")[0].click
       click_link "en"
       all(".dropdown__trigger > .btn")[1].click
       click_link "Medium"
       click_button "Manual"
       fill_in "interpret[now]", with: "2017-12-05T15:14:01+01:00"
+      fill_in "interpret[sentence]", with: "hello"
       click_button "console-send-sentence"
-      assert has_content?("3 tests")
-      assert has_content?("1 running, 1 success, 1 failure")
 
       click_button "Add to tests suite"
-      assert has_content?("Not run yet...")
-
       assert has_content?("4 tests")
       find("#console-footer").click
     end
 
-     within("#console-ts") do
+    within("#console-ts") do
       sleep 0.2 # Wait Animation
       assert has_content?("4 tests")
       assert 4, find("ul.cts__list").all("li").count
       assert has_link?("hello")
       click_link("hello")
 
-     within(".cts-item__full") do
+      within(".cts-item__full") do
         assert has_content?("hello")
         assert has_content?("SLUG (Expected)")
         assert has_content?("SOLUTION (Expected)")
@@ -140,8 +151,10 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     end
   end
 
+
   test "Try to add a new test but sentence is too long" do
-    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    isolate_actioncable_and_go_to_ui
+
     Nlp::Interpret.any_instance.stubs("send_nlp_request").returns(
       status: 200,
       body: {
@@ -165,7 +178,8 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
 
   test "Can only add test for the first intent" do
-    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    isolate_actioncable_and_go_to_ui
+
     Nlp::Interpret.any_instance.stubs("send_nlp_request").returns(
       status: 200,
       body: {
@@ -196,8 +210,8 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
 
   test "Detect interpretation already tested" do
-    admin_login
-    go_to_agent_show(agents(:weather))
+    isolate_actioncable_and_go_to_ui
+
     Nlp::Interpret.any_instance.stubs("send_nlp_request").returns(
       status: 200,
       body: {
@@ -231,7 +245,8 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
 
   test "Display tests suite panel" do
-    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    isolate_actioncable_and_go_to_ui
+
     within(".console") do
       assert has_content?("3 tests")
       assert has_content?("1 running, 1 success, 1 failure")
@@ -256,7 +271,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
 
   test "Edit and delete button should be disabled for running tests" do
-    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    isolate_actioncable_and_go_to_ui
 
     within(".console") do
       assert has_content?("3 tests")
@@ -279,7 +294,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
 
   test "Delete test - success" do
-    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    isolate_actioncable_and_go_to_ui
 
     within(".console") do
       assert has_content?("3 tests")
@@ -313,7 +328,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
 
   test "Send test" do
-    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    isolate_actioncable_and_go_to_ui
 
     Nlp::Interpret.any_instance.stubs("send_nlp_request").returns(
       status: 200,
@@ -376,7 +391,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     @regression_weather_condition.state = "failure"
     assert @regression_weather_condition.save
 
-    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    isolate_actioncable_and_go_to_ui
 
     within(".console") do
       assert has_content?("3 tests")
@@ -407,7 +422,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     @regression_weather_question.state = "failure"
     assert @regression_weather_question.save
 
-    user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    isolate_actioncable_and_go_to_ui
 
     within(".console") do
       assert has_content?("3 tests")
@@ -423,7 +438,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
     within(".cts-item__full") do
       assert has_content?("What's the weather like in London?")
-      assert has_content?(intents(:weather_question).slug)
+      assert has_content?("edit_on_agent_weather/weather-copy/interpretations/weather_question")
       assert has_content?(entities_lists(:weather_conditions).slug)
     end
   end

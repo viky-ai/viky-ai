@@ -24,6 +24,7 @@ admin:
   admin: true
 
 locked:
+  id: "930025d1-cfd0-5f27-8cb1-a0aecd1309fd"
   encrypted_password: <%= Devise::Encryptor.digest(User, 'BimBamBoom') %>
   email: locked@viky.ai
   username: locked

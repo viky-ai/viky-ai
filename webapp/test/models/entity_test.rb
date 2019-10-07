@@ -34,12 +34,12 @@ class EntityTest < ActiveSupport::TestCase
   test 'term and entities_list are mandatory' do
     entity = Entity.new
     assert !entity.save
-    expected = {
-      terms: ["can't be blank"],
-      solution: ["can't be blank"],
-      entities_list: ['must exist'],
-    }
-    assert_equal expected, entity.errors.messages
+    expected = [
+      "Entities list must exist",
+      "Solution can't be blank",
+      "Terms can't be blank"
+    ]
+    assert_equal expected, entity.errors.full_messages
     assert_nil entity.solution
   end
 
@@ -50,11 +50,11 @@ class EntityTest < ActiveSupport::TestCase
     entity.auto_solution_enabled = false
     entity.terms = 'a' * 5001
     assert entity.invalid?
-    expected = {
-      solution: ['is too long (maximum is 2000 characters)'],
-      terms: ['is too long (maximum is 5000 characters)']
-    }
-    assert_equal expected, entity.errors.messages
+    expected = [
+      "Solution is too long (maximum is 2000 characters)",
+      "Terms is too long (maximum is 5000 characters)"
+    ]
+    assert_equal expected, entity.errors.full_messages
   end
 
 
@@ -64,10 +64,8 @@ class EntityTest < ActiveSupport::TestCase
       { 'term' => 'À' * 2000, 'locale' => 'en' },
     ]
     assert entity.invalid?
-    expected = {
-      terms: ['(3.906 KB) is too long (maximum is 2 KB)']
-    }
-    assert_equal expected, entity.errors.messages
+    expected = ['Terms (3.906 KB) is too long (maximum is 2 KB)']
+    assert_equal expected, entity.errors.full_messages
   end
 
 
@@ -136,17 +134,13 @@ class EntityTest < ActiveSupport::TestCase
 
     entity.terms = "soleil:xy"
     assert_not entity.save
-    expected = {
-      terms: ["uses an unauthorized locale 'xy' for this agent"]
-    }
-    assert_equal expected, entity.errors.messages
+    expected = ["Terms uses an unauthorized locale 'xy' for this agent"]
+    assert_equal expected, entity.errors.full_messages
 
     entity.terms = ":fr"
     assert_not entity.save
-    expected = {
-      terms: ["can't contains only locale information"]
-    }
-    assert_equal expected, entity.errors.messages
+    expected = ["Terms can't contains only locale information"]
+    assert_equal expected, entity.errors.full_messages
 
     entity.terms = "soleil:en:fr"
     assert entity.save
@@ -162,7 +156,6 @@ class EntityTest < ActiveSupport::TestCase
     )
     expected = ["*", "en", "fr", "es"]
     assert_equal expected, entity.entities_list.agent.locales
-
     entity.terms = "soleil:pt"
     assert entity.save
     expected = ["*", "en", "fr", "es", "pt"]
@@ -247,17 +240,13 @@ class EntityTest < ActiveSupport::TestCase
       { term: (['a'] * 37).join(' '), locale: 'en' }
     ]
     assert_not entity.save
-    expected = {
-      terms: ['is too long (maximum is 36 elements), found: 37']
-    }
-    assert_equal expected, entity.errors.messages
+    expected = ['Terms is too long (maximum is 36 elements), found: 37']
+    assert_equal expected, entity.errors.full_messages
 
     entity.terms = 'a1.2' * 15
     assert_not entity.save
-    expected = {
-      terms: ['is too long (maximum is 36 elements), found: 60']
-    }
-    assert_equal expected, entity.errors.messages
+    expected = ['Terms is too long (maximum is 36 elements), found: 60']
+    assert_equal expected, entity.errors.full_messages
 
     entity.terms = ([
       '²', # G_UNICODE_OTHER_NUMBER (No)
@@ -277,12 +266,32 @@ class EntityTest < ActiveSupport::TestCase
       '🏿',  # G_UNICODE_BREAK_EMOJI_MODIFIER (EM)
     ] * 3).join
     assert_not entity.save
-    expected = {
-      terms: ['is too long (maximum is 36 elements), found: 45']
-    }
-    assert_equal expected, entity.errors.messages
+    expected = ['Terms is too long (maximum is 36 elements), found: 45']
+
+    assert_equal expected, entity.errors.full_messages
 
     entity.terms = (['a'] * 36 + ['؀' * 2]).join(' ')
     assert entity.save
+  end
+
+
+  test 'Entities limit' do
+    Feature.with_quota_enabled do
+      Quota.stubs(:expressions_limit).returns(11)
+      entity_1 = Entity.new(
+        terms: [{ term: 'Éric', locale: 'fr' }],
+        entities_list: entities_lists(:weather_conditions)
+      )
+      assert entity_1.save
+
+      entity_2 = Entity.new(
+        terms: [{ term: 'Éric', locale: 'fr' }],
+        entities_list: entities_lists(:weather_conditions)
+      )
+      assert_not entity_2.save
+
+      expected = ['Quota exceeded (maximum is 11 formulations and entities)']
+      assert_equal expected, entity_2.errors.full_messages
+    end
   end
 end

@@ -17,7 +17,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     )
     new_agent = AgentDuplicator.new(agent, users(:admin)).duplicate
     assert new_agent.persisted?
-    
+
     assert 0, new_agent.errors.size
     assert_equal "#{agent.name} [COPY]", new_agent.name
     assert_equal agent.description, new_agent.description
@@ -37,6 +37,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     assert_equal "#{agent.agentname}-copy-1", another_agent.agentname
   end
 
+
   test 'Duplicate public agent' do
     agent = agents(:terminator)
     current_user = users(:show_on_agent_weather)
@@ -52,6 +53,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
   test 'Duplicate keeps track of source agent' do
     agent = agents(:terminator)
     current_user = users(:show_on_agent_weather)
+
     new_agent = AgentDuplicator.new(agent, current_user).duplicate
     assert new_agent.persisted?
 
@@ -187,6 +189,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     end
   end
 
+
   test 'Duplicate agent with regression tests' do
     create_agent_regression_check_fixtures
     agent = agents(:weather)
@@ -245,11 +248,12 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     assert_equal @regression_weather_condition.position, duplicated_tests.third.position
   end
 
+
   test 'The order of agent associations with property position should be maintained' do
     agent = agents(:weather)
     assert agent.entities_lists.destroy_all
     assert agent.intents.destroy(intents(:weather_question))
-    
+
     intent = intents(:weather_forecast)
     assert intent.interpretations.destroy_all
 
@@ -297,4 +301,30 @@ class AgentDuplicateTest < ActiveSupport::TestCase
       end
     end
   end
+
+
+  test 'Should not be able to duplicate an agent according to quota' do
+    Feature.with_quota_enabled do
+      weather_agent = agents(:weather)
+      admin_user = users(:admin)
+
+      assert_equal 10, admin_user.expressions_count
+      assert_equal 7, weather_agent.expressions_count
+
+      duplicator = AgentDuplicator.new(weather_agent, admin_user)
+
+      Quota.stubs(:expressions_limit).returns(10)
+      assert_not duplicator.respects_quota?
+
+      Quota.stubs(:expressions_limit).returns(15)
+      assert_not duplicator.respects_quota?
+
+      Quota.stubs(:expressions_limit).returns(17)
+      assert duplicator.respects_quota?
+
+      Quota.stubs(:expressions_limit).returns(20)
+      assert duplicator.respects_quota?
+    end
+  end
+
 end

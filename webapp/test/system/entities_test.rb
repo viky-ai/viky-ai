@@ -56,11 +56,12 @@ class EntitiesTest < ApplicationSystemTestCase
     # - Entities are draggable
     assert_selector(".card-list__item__draggable", count: 2)
 
-    (1..100).each do |i|
+    (2..101).each do |i|
       Entity.create!({
         terms: "term_#{i}",
         auto_solution_enabled: true,
-        entities_list: entities_list
+        entities_list: entities_list,
+        position: i
       })
     end
 
@@ -94,11 +95,12 @@ class EntitiesTest < ApplicationSystemTestCase
     # - No search
     assert_selector(".entities-search-and-page-entries form", count: 0)
 
-    (1..100).each do |i|
+    (2..101).each do |i|
       Entity.create!({
         terms: "term_#{i}",
         auto_solution_enabled: true,
-        entities_list: entities_list
+        entities_list: entities_list,
+        position: i
       })
     end
 
@@ -323,14 +325,10 @@ class EntitiesTest < ApplicationSystemTestCase
     perform_enqueued_jobs do
       within(".modal") do
         assert_text "Import entities"
-        file = File.join(Rails.root, "test", "fixtures", "files", "import_entities_ko.csv")
-
-        # Display import file imput in order to allow capybara attach_file
-        execute_script("$('#import_file').css('opacity','1')");
-        attach_file("import_file", file)
+        file = build_fixture_files_path('import_entities_ko.csv')
+        attach_file("import_file", file, make_visible: true)
         click_button "Import"
       end
-
       assert has_text? "Import failed"
     end
   end
@@ -344,21 +342,15 @@ class EntitiesTest < ApplicationSystemTestCase
     perform_enqueued_jobs do
       within(".modal") do
         assert_text "Import entities"
-        file = File.join(Rails.root, "test", "fixtures", "files", "import_entities_ok.csv")
-
-        # Display import file imput in order to allow capybara attach_file
-        execute_script("$('#import_file').css('opacity','1')");
-        attach_file("import_file", file)
+        file = build_fixture_files_path('import_entities_ok.csv')
+        attach_file("import_file", file, make_visible: true)
         click_button "Import"
       end
-
       assert has_text? "Processing import"
       assert has_text? "3 entities imported successfully"
     end
-
     # Wait redirection
     sleep 6
-
     assert_equal 5, all("#entities-list > li").count
   end
 
@@ -371,23 +363,16 @@ class EntitiesTest < ApplicationSystemTestCase
     perform_enqueued_jobs do
       within(".modal") do
         assert_text "Import entities"
-        file = File.join(Rails.root, "test", "fixtures", "files", "import_entities_ok.csv")
-
-        # Display import file imput in order to allow capybara attach_file
-        execute_script("$('#import_file').css('opacity','1');")
-        attach_file("import_file", file)
-
+        file = build_fixture_files_path('import_entities_ok.csv')
+        attach_file("import_file", file, make_visible: true)
         choose "Replace current entities"
         click_button "Import"
       end
-
       assert has_text? "Processing import"
       assert has_text? "3 entities imported successfully"
     end
-
     # Wait redirection
     sleep 6
-
     assert_equal 3, all("#entities-list > li").count
   end
 

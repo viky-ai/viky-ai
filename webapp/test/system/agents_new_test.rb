@@ -59,15 +59,9 @@ class AgentsNewTest < ApplicationSystemTestCase
     within(".modal") do
       fill_in "Name", with: "Wall-e"
       fill_in "ID", with: "wall-e"
-
       click_button("Or upload an image")
-      file = File.join(Rails.root, "test", "fixtures", "files", "wall-e.jpg")
-
-      # Display import file imput in order to allow capybara attach_file
-      execute_script("$('#agent_image').css('opacity','1')")
-
-      attach_file("agent_image", file)
-
+      file = build_fixture_files_path('wall-e.jpg')
+      attach_file("agent_image", file, make_visible: true)
       click_button "Create"
     end
 

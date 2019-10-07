@@ -9,7 +9,6 @@ ARG VIKY_IMAGE_TAG=latest
 #################################################
 # image_ruby_deps : tools_ruby_base + app dependencies
 #################################################
-
 FROM docker-registry.pertimm.net/viky.ai/platform/tools_ruby_base:${VIKY_IMAGE_TAG} AS image_ruby_run
 
 # App specific
@@ -62,9 +61,9 @@ CMD ["./bin/docker_run.sh"]
 #  CMD /webapp/bin/docker_healthcheck.sh
 
 #################################################
-# image_ruby_test : image_ruby_base_test + test dependencies
+# image_ruby_test : image_ruby_base + test dependencies
 #################################################
-FROM docker-registry.pertimm.net/viky.ai/platform/tools_ruby_base_test:${VIKY_IMAGE_TAG} AS image_ruby_test
+FROM docker-registry.pertimm.net/viky.ai/platform/tools_ruby_base:${VIKY_IMAGE_TAG} AS image_ruby_test
 
 # App specific
 RUN mkdir -p /webapp

@@ -32,7 +32,6 @@ build_ruby_base:
   stage: prerequist
   script:
     - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}      deployment/docker_tools/ruby_base "--target image_ruby_base"
-    - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}_test deployment/docker_tools/ruby_base "--target image_ruby_base_test"
 
 build_nlp_base:
   extends: .kubernetes_runner
@@ -84,9 +83,12 @@ build_nlp:
     POSTGRES_USER: superman
     POSTGRES_PASSWORD: sup_3rman
     POSTGRES_DB: vikyapp_test
+    ES_JAVA_OPTS: "-Xms128m -Xmx392m"
   services:
     - postgres:11.5-alpine
     - redis:5.0-alpine
+    - name: selenium/standalone-chrome:3.141.59
+      alias: selenium-chrome
     - name: docker.elastic.co/elasticsearch/elasticsearch:7.3.2
       # Important other wise, port 9200 will never be exposed
       command:
@@ -103,6 +105,7 @@ build_nlp:
     - export VIKYAPP_ACTIONCABLE_REDIS_URL="redis://${CI_SERVICE_HOST:-redis}:6379/1"
     - export VIKYAPP_ACTIVEJOB_REDIS_URL="redis://${CI_SERVICE_HOST:-redis}:6379/2"
     - export VIKYAPP_STATISTICS_URL="http://${CI_SERVICE_HOST:-elasticsearch}:9200"
+    - export SELENIUM_REMOTE_URL="http://${CI_SERVICE_HOST:-selenium-chrome}:4444/wd/hub/"
     - export VIKYAPP_STATISTICS_NO_REPLICA="true"
     - cd /webapp
   artifacts:
@@ -175,7 +178,6 @@ tag_ruby_base:
     GIT_STRATEGY: none
   script:
     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}
-    - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}_test
 
 tag_backup:
   extends: .kubernetes_runner

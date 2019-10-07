@@ -19,4 +19,23 @@ module Feature
     postmark_enabled = ENV.fetch("POSTMARK_TOKEN") { false }
     postmark_enabled || smtp_enabled == 'true'
   end
+
+  def self.quota_enabled?
+    ENV['VIKYAPP_QUOTA_ENABLED'] == 'true'
+  end
+
+  def self.enable_quota
+    ENV['VIKYAPP_QUOTA_ENABLED'] = 'true'
+  end
+
+  def self.disable_quota
+    ENV['VIKYAPP_QUOTA_ENABLED'] = 'false'
+  end
+
+  def self.with_quota_enabled
+    enable_quota
+    yield
+    disable_quota
+  end
+
 end

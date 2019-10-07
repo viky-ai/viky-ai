@@ -5,17 +5,18 @@ en:
       edit:
         breadcrumb: Edition
         global:
-          title: General informations
+          title: Your general informations
+          submit_btn: Update
         avatar:
           title: Your avatar
         authentication:
-          title: Authentication parameters
+          title: Your authentication parameters
           waiting_email_confirmation: "Currently waiting confirmation for: %{email}"
           password_constraint: At least %{min_length} characters
           leave_blank: leave blank if you don't want to change it
-          btn: Update profile
+          submit_btn: Update
         destroy:
-          title: Delete my account
+          title: Delete your account
           message: Deleting your account is final, you will not be able to go back.
           not_possible_message: You must delete all agents you own in order to delete your account.
           btn: I want to delete my account
@@ -27,3 +28,40 @@ en:
         errors_message: "Deletion failed: %{errors}."
       stop_switch:
         success_message: Welcome home!
+      show_user:
+        title: Your profile
+        missing_info: Not specified
+        edit_btn: Edit your profile
+      show_data_use:
+        title: Your data use
+        radial_graph_label: of data quota
+        unlimited_html: Unlimited use<br />No quota enabled
+        expressions_label: Entities and Formulations
+        entities_label: Entities
+        formulations_label: Formulations
+        top:
+          title: Agents with most data
+          previous: ‹ Previous
+          next: Next ›
+      show_api_use:
+        title: Your API use over the last 30 days
+        radial_graph_label: of API quota
+        unlimited_html: Unlimited use<br />No quota enabled
+        all_requests: API requests (last 30 days)
+        under_quota_requests: Accepted
+        over_quota_requests: Rejected
+        quota:
+          title: Your quotas
+          help: You are allowed a fixed number of API requests per time period.
+          per_day: Max requests per day
+          per_second: Max requests per second
+        request_distribution:
+          title: API Requests distribution over the last 30 days
+          under_quota_requests: Accepted API requests
+          over_quota_requests: Rejected API requests
+          all_requests: Requests
+        heapmap_under:
+          title: TOP 10 agents with most API requests under quota
+          title_without_quota: TOP 10 agents with most API requests
+        heapmap_over:
+          title: TOP 10 agents with most API requests over quota

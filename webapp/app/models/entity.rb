@@ -12,7 +12,8 @@ class Entity < ApplicationRecord
   validate :validate_locales_exists
   validate :validate_terms_present
   validate :validate_terms_length_in_bytes
-  validate :check_expression_nlp_length
+  validate :validate_expression_nlp_length
+  validate :validate_owner_quota, on: :create, if: -> { Feature.quota_enabled? }
 
   before_validation :parse_terms
   before_validation :build_solution
@@ -109,7 +110,7 @@ class Entity < ApplicationRecord
       end
     end
 
-    def check_expression_nlp_length
+    def validate_expression_nlp_length
       return if terms.nil?
       nlp_max_length = 36
       if terms.instance_of?(Array)
@@ -143,6 +144,15 @@ class Entity < ApplicationRecord
                 .gsub(/\p{Cs}/, '') # G_UNICODE_SURROGATE (Cs)
         actual_count = exp.split.size
         errors.add(:terms, I18n.t('errors.entity.term_nlp_length', count: nlp_max_length, actual_count: actual_count)) if actual_count > nlp_max_length
+      end
+    end
+
+    def validate_owner_quota
+      unless entities_list.nil?
+        owner = User.find(entities_list.agent.owner_id)
+        if owner.quota_exceeded?
+          errors.add(:quota, I18n.t('errors.entity.quota', maximum: Quota.expressions_limit))
+        end
       end
     end
 

@@ -324,6 +324,14 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
+  test "Test agent expressions_count" do
+    assert_equal 7, agents(:weather).expressions_count
+    assert_equal 3, agents(:terminator).expressions_count
+    assert_equal 0, agents(:weather_confirmed).expressions_count
+    assert_equal 4, agents(:cities).expressions_count
+  end
+
+
   test "Clean agentname" do
     agent = Agent.new(
       name: "Agent 2",
@@ -389,6 +397,29 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
+  test "Transfer agent ownership whereas new owner doesn't have enougth quota" do
+    current_owner = users(:admin)
+    next_owner    = users(:locked)
+    terminator_agent = agents(:terminator)
+
+    Feature.with_quota_enabled do
+      assert_equal current_owner.id, terminator_agent.owner_id
+      assert_equal 4, next_owner.expressions_count
+      assert_equal 3, terminator_agent.expressions_count
+
+      Quota.stubs(:expressions_limit).returns(6)
+      result = terminator_agent.transfer_ownership_to(next_owner.email)
+      assert_not result[:success]
+      expected = ["This user does not have enough quota to accept this transfer"]
+      assert_equal expected, result[:errors]
+
+      Quota.stubs(:expressions_limit).returns(7)
+      result = terminator_agent.transfer_ownership_to(next_owner.email)
+      assert result[:success]
+    end
+  end
+
+
   test "A new agent always has a token" do
     agent = Agent.new(
       name: "Agent A",
@@ -432,18 +463,18 @@ class AgentTest < ActiveSupport::TestCase
 
   test "Destroy validation when collaborators are presents" do
     agent = agents(:weather)
-    assert_equal 5, Membership.all.count
+    assert_equal 6, Membership.all.count
     assert !agent.destroy
     expected = ["You must remove all collaborators before delete an agent"]
     assert_equal expected, agent.errors.full_messages
-    assert_equal 5, Membership.all.count
+    assert_equal 6, Membership.all.count
 
     agent.memberships.where.not(rights: 'all').each do |m|
       assert m.destroy
     end
-    assert_equal 3, Membership.all.count
+    assert_equal 4, Membership.all.count
     assert agent.destroy
-    assert_equal 2, Membership.all.count
+    assert_equal 3, Membership.all.count
   end
 
 

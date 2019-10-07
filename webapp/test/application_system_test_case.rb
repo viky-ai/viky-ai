@@ -1,5 +1,4 @@
 require "test_helper"
-SimpleCov.command_name "system"
 
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   include ActiveJob::TestHelper
@@ -7,8 +6,10 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   Capybara.register_driver(:headless_chrome) do |app|
     options = Selenium::WebDriver::Chrome::Options.new
     options.add_argument 'no-sandbox'
+    options.add_argument 'disable-dev-shm-usage'
     options.headless!
     driver_options = { browser: :chrome, options: options }
+    driver_options[:url] = ENV['SELENIUM_REMOTE_URL'] if ENV['SELENIUM_REMOTE_URL']
 
     Capybara::Selenium::Driver.new(app, driver_options).tap do |driver|
       driver.browser.manage.window.size = Selenium::WebDriver::Dimension.new(1400, 900)
@@ -17,6 +18,16 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   driven_by :headless_chrome
   #driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400]
+
+  def setup
+    return unless ENV['SELENIUM_REMOTE_URL']
+
+    net = Socket.ip_address_list.detect(&:ipv4_private?)
+    ip = net.nil? ? 'localhost' : net.ip_address
+    Capybara.server_host = ip
+    Capybara.always_include_port = true
+    Capybara.app_host = "http://#{ip}"
+  end
 
   def login_as(login, password)
     visit new_user_session_path
@@ -95,5 +106,13 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     assert page.has_no_css?('.modal')
   end
 
-
+  def build_fixture_files_path(filename)
+    if ENV.key?('CI_PROJECT_DIR')
+      webapp_root_path = File.join(ENV.fetch('CI_PROJECT_DIR'), 'webapp')
+    else
+      webapp_root_path = Rails.root
+    end
+    fixture_files_path = File.join(webapp_root_path, 'test', 'fixtures', 'files')
+    File.join(fixture_files_path, filename)
+  end
 end
