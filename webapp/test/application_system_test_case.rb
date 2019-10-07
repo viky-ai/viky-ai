@@ -19,6 +19,10 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     end
   end
 
+  Capybara.configure do |config|
+    config.default_max_wait_time = 4
+  end
+
   driven_by :headless_chrome
   #driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400]
 

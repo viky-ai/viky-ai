@@ -182,6 +182,8 @@ class EntitiesListsTest < ApplicationSystemTestCase
       click_link("weather_forecast")
     end
 
+    assert current_url.include?('/agents/admin/weather/interpretations#smooth-scroll-to-intent')
+
     within(".aliased-intents-list") do
       assert has_link?("weather_forecast")
     end
