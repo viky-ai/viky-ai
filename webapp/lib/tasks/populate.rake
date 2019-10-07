@@ -10,8 +10,8 @@ namespace :populate do
     opts = {
       owner: user,
       nb_interpretation: 15,
-      nb_formulation: 8,
-      nb_entity_list: 5,
+      nb_formulation: 6,
+      nb_entity_list: 4,
       nb_entity_list_entites: 100,
       nb_big_entity_list: 1,
       nb_big_entity_list_entites: 2000
@@ -21,6 +21,7 @@ namespace :populate do
       Task::Populate.agent(opts)
       puts "Agent #{i} created"
     end
+
   end
 end
 
@@ -52,8 +53,7 @@ class Task::Populate
 
     Nlp::Package.sync_active = true
 
-    agent.touch
-    agent.save
+    Nlp::Package.new(agent).push
   end
 
   def self.interpretations(agent, opts)
@@ -112,61 +112,42 @@ class Task::Populate
     end
   end
 
-  def self.entiy_lists(agent, opts)
-    opts[:nb_entity_list].times do
-      entities_list = EntitiesList.new(
-        listname: quick_rand(10),
-        description: 'Entities of the world',
-        visibility: 'is_private',
-        agent: agent,
-        proximity: 'glued'
-      )
-      entities_list.save!
-
-      opts[:nb_entity_list_entites].times do
-        terms = []
-        rand(1..4).times do
-          terms << quick_rand(6)
-        end
-
-        entity = Entity.new(
-          auto_solution_enabled: true,
-          terms: [
-            { term: terms.join(' '), locale: ['fr', 'en', '*'].sample }
-          ],
-          entities_list: entities_list
-        )
-        entity.save!
-      end
+  def self.big_entiy_lists(agent, opts)
+    opts[:nb_big_entity_list].times do
+      entiy_lists_internal(agent, 'Big entities of the world', opts[:nb_big_entity_list_entites])
     end
   end
 
-  def self.big_entiy_lists(agent, opts)
-    opts[:nb_big_entity_list].times do
-      entities_list = EntitiesList.new(
-        listname: quick_rand(10),
-        description: 'Big entities of the world',
-        visibility: 'is_private',
-        agent: agent,
-        proximity: 'glued'
-      )
-      entities_list.save!
-
-      opts[:nb_big_entity_list_entites].times do
-        terms = []
-        rand(1..4).times do
-          terms << quick_rand(6)
-        end
-
-        entity = Entity.new(
-          auto_solution_enabled: true,
-          terms: [
-            { term: terms.join(' '), locale: ['fr', 'en', '*'].sample }
-          ],
-          entities_list: entities_list
-        )
-        entity.save!
-      end
+  def self.entiy_lists(agent, opts)
+    opts[:nb_entity_list].times do
+      entiy_lists_internal(agent, 'Entities of the world', opts[:nb_entity_list_entites])
     end
+  end
+
+  def self.entiy_lists_internal(agent, _desc, nb)
+    entities_list = EntitiesList.new(
+      listname: quick_rand(10),
+      description: 'Entities of the world',
+      visibility: 'is_private',
+      agent: agent,
+      proximity: 'glued'
+    )
+    entities_list.save!
+
+    columns = %i[terms auto_solution_enabled entities_list_id position searchable_terms]
+    entities = []
+    count = 0
+    nb.times do
+      term = []
+      rand(1..4).times do
+        term << quick_rand(6)
+      end
+      terms = EntityTermsParser.new(term.join(' ') + ':' + %w[fr en].sample).proceed
+      searchable_terms = Entity.extract_searchable_terms(terms)
+      entities << [terms, true, entities_list.id, count, searchable_terms]
+      count += 1
+    end
+    Entity.import(columns, entities, validate_with_context: :import)
+    EntitiesList.update_counters(entities_list.id, entities_count: count)
   end
 end
