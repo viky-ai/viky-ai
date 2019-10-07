@@ -15,9 +15,6 @@ echo "DB_POSTGRES $DB_POSTGRES"
 echo "DB_REDIS $DB_REDIS"
 echo "ES $ES"
 
-DISABLE_SPRING=1
-COVERAGE=1
-
 # wait for services
 /usr/local/bin/dockerize -wait tcp://$DB_POSTGRES:5432 -wait tcp://$DB_REDIS -wait tcp://$ES -timeout 60s
 
@@ -28,7 +25,7 @@ COVERAGE=1
 ./bin/rails statistics:setup
 
 # Run tests
-./bin/rails test
+COVERAGE=1 DISABLE_SPRING=1 ./bin/rails test
 
 # Run system tests
-./bin/rails test:system
+COVERAGE=1 DISABLE_SPRING=1 ./bin/rails test:system
