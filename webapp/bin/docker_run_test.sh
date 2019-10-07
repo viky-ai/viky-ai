@@ -28,4 +28,4 @@ echo "ES $ES"
 COVERAGE=1 DISABLE_SPRING=1 ./bin/rails test
 
 # Run system tests
-PARALLEL_WORKERS=6 COVERAGE=1 DISABLE_SPRING=1 ./bin/rails test:system
+COVERAGE=1 DISABLE_SPRING=1 ./bin/rails test:system
