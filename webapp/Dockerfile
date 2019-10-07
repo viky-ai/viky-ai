@@ -81,16 +81,16 @@ ENV PATH="/webapp/bin:${PATH}"
 COPY Gemfile /webapp
 COPY Gemfile.lock /webapp
 
-ENV RAILS_ENV=test
-
 # Get correct bundler version
 RUN gem install bundler -v 2.0.2
 
 # Install test dependencies
-RUN bundle install --jobs=$(nproc)
+RUN bundle install --jobs=$(nproc) --with=test
 
 # Copy application code
 COPY . /webapp
+
+ENV RAILS_ENV=test
 
 # Precompile assets
 RUN ./bin/rails assets:precompile
