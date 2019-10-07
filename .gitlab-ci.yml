@@ -195,8 +195,8 @@ tag_backup:
     - master
     - tags
   environment:
-    name: ${CI_COMMIT_REF_NAME}
-    url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
+    name: dev-${CI_COMMIT_REF_NAME}
+    url: https://viky-dev-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
   variables:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
@@ -209,8 +209,8 @@ tag_backup:
   except:
     - tags
   environment:
-    name: ${CI_COMMIT_REF_NAME}
-    url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
+    name: dev-${CI_COMMIT_REF_NAME}
+    url: https://viky-dev-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
   variables:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
@@ -261,7 +261,7 @@ tag_backup:
 # Deploy any branches on dev
 deploy_branches:
   environment:
-    name: ${CI_COMMIT_REF_NAME}
+    name: dev-${CI_COMMIT_REF_NAME}
     on_stop: delete_env
   extends:
     - .deploy
@@ -270,7 +270,7 @@ deploy_branches:
 deploy_branches_forced:
   extends: deploy_branches
   environment:
-    name: ${CI_COMMIT_REF_NAME}
+    name: dev-${CI_COMMIT_REF_NAME}
     on_stop: delete_env
   when: manual
   variables:
@@ -279,7 +279,7 @@ deploy_branches_forced:
 # Deploy any branches on dev
 deploy_develop:
   environment:
-    name: ${CI_COMMIT_REF_NAME}
+    name: dev-${CI_COMMIT_REF_NAME}
     on_stop: delete_env
   extends:
     - .deploy
@@ -288,7 +288,7 @@ deploy_develop:
 deploy_develop_forced:
   extends: deploy_develop
   environment:
-    name: ${CI_COMMIT_REF_NAME}
+    name: dev-${CI_COMMIT_REF_NAME}
     on_stop: delete_env
   when: manual
   variables:
@@ -312,7 +312,7 @@ delete_env:
     - .kubernetes_runner
     - .deploy_branches
   environment:
-    name: ${CI_COMMIT_REF_NAME}
+    name: dev-${CI_COMMIT_REF_NAME}
     action: stop
   stage: admin
   needs:
