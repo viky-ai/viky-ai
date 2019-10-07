@@ -24,9 +24,6 @@ echo "ES $ES"
 # Setup statistics
 ./bin/rails statistics:setup
 
-# Prepare assets
-./bin/rails webpacker:compile
-
 # Run tests
 COVERAGE=1 DISABLE_SPRING=1 ./bin/rails test
 

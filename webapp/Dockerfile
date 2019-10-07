@@ -81,6 +81,8 @@ ENV PATH="/webapp/bin:${PATH}"
 COPY Gemfile /webapp
 COPY Gemfile.lock /webapp
 
+ENV RAILS_ENV=test
+
 # Get correct bundler version
 RUN gem install bundler -v 2.0.2
 
@@ -90,7 +92,8 @@ RUN bundle install --jobs=$(nproc)
 # Copy application code
 COPY . /webapp
 
-ENV RAILS_ENV=test
+# Precompile assets
+RUN ./bin/rails assets:precompile
 
 # Run test
 CMD ["./bin/docker_run_test.sh"]
