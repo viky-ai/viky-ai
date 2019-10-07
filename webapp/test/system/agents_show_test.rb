@@ -52,6 +52,8 @@ class AgentsShowTest < ApplicationSystemTestCase
     click_link "Configure"
     assert has_text?("Configure agent")
     click_button "Cancel"
+
+    assert_modal_is_close
     assert_equal "/agents/admin/weather", current_path
 
     click_link "Configure"
@@ -59,6 +61,10 @@ class AgentsShowTest < ApplicationSystemTestCase
     fill_in "Name", with: "My new updated weather agent"
     fill_in "ID", with: "weather-v2"
     click_button "Update"
+
+    assert_modal_is_close
+
+    assert has_text?("My new updated weather agent")
     assert has_text?("admin/weather-v2")
     assert_equal "/agents/admin/weather-v2", current_path
   end
