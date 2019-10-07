@@ -182,14 +182,13 @@ class EntitiesListsTest < ApplicationSystemTestCase
       click_link("weather_forecast")
     end
 
-    assert current_url.include?('/agents/admin/weather/interpretations#smooth-scroll-to-intent')
-
-    within(".aliased-intents-list") do
-      assert has_link?("weather_forecast")
-    end
     expected = "/agents/admin/weather/interpretations#smooth-scroll-to-intent-#{intents(:weather_forecast).id}"
     assert current_url.include?(expected)
+
+    assert_equal 1, all('.highlight').size
+    assert_equal "weather_forecast", first('.highlight .card-list__item__name').text
   end
+
 
   private
 
