@@ -281,6 +281,8 @@ class EntitiesTest < ApplicationSystemTestCase
       click_button "Add"
     end
 
+    assert has_content? "Entity has been successfully created."
+
     within("#entities-list") do
       click_link "brumeux"
       assert_text('"condition: brumeux"')
