@@ -20,7 +20,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   end
 
   Capybara.configure do |config|
-    config.default_max_wait_time = 4
+    config.default_max_wait_time = 5
   end
 
   driven_by :headless_chrome
