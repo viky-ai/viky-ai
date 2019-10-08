@@ -32,7 +32,7 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
 
-    assert has_content?("Your avatar")
+    assert has_text?("Your avatar")
 
     within(".test-profile-edit-avatar") do
       assert find(".avatar img")["src"].include? "default"
@@ -55,7 +55,7 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
 
-    assert has_content?("Your avatar")
+    assert has_text?("Your avatar")
 
     within(".test-profile-edit-avatar") do
       assert find(".avatar img")["src"].include? "default"
@@ -66,7 +66,7 @@ class ProfileTest < ApplicationSystemTestCase
 
       assert find(".avatar img")["src"].include? "default"
 
-      assert has_content?("Avatar type must be one of: image/jpeg, image/png, image/gif")
+      assert has_text?("Avatar type must be one of: image/jpeg, image/png, image/gif")
     end
   end
 
@@ -78,7 +78,7 @@ class ProfileTest < ApplicationSystemTestCase
     within(".test-profile-edit-auth") do
       fill_in "Password", with: ""
       click_button "Update"
-      assert has_no_content?("Password is too short (minimum is 6 characters)")
+      assert has_no_text?("Password is too short (minimum is 6 characters)")
     end
 
   end
@@ -92,12 +92,12 @@ class ProfileTest < ApplicationSystemTestCase
       fill_in "Password", with: "short"
       click_button "Update"
 
-      assert has_content?("Password is too short (minimum is 6 characters)")
+      assert has_text?("Password is too short (minimum is 6 characters)")
 
       fill_in "Password", with: "shortshort"
       click_button "Update"
 
-      assert has_no_content?("Password is too short (minimum is 6 characters)")
+      assert has_no_text?("Password is too short (minimum is 6 characters)")
     end
 
     logout
@@ -106,7 +106,7 @@ class ProfileTest < ApplicationSystemTestCase
     fill_in "Password", with: "shortshort"
     click_button "Log in"
 
-    assert has_content?("Signed in successfully.")
+    assert has_text?("Signed in successfully.")
   end
 
 
@@ -117,7 +117,7 @@ class ProfileTest < ApplicationSystemTestCase
     within(".test-profile-edit-auth") do
       fill_in "Email", with: "admin_new@viky.ai"
       click_button "Update"
-      assert has_content?("Currently waiting confirmation for: admin_new@viky.ai")
+      assert has_text?("Currently waiting confirmation for: admin_new@viky.ai")
     end
   end
 
@@ -126,7 +126,7 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
     within(".test-profile-edit-destroy") do
-      assert has_content?("You must delete all agents you own in order to delete your account.")
+      assert has_text?("You must delete all agents you own in order to delete your account.")
     end
   end
 
@@ -158,16 +158,16 @@ class ProfileTest < ApplicationSystemTestCase
       click_link "I want to delete my account"
     end
 
-    assert has_content?("Are you sure?")
+    assert has_text?("Are you sure?")
 
     fill_in "validation", with: "DEL"
     click_button("Delete my account")
-    assert has_content?("Please enter the text exactly as it is displayed to confirm.")
+    assert has_text?("Please enter the text exactly as it is displayed to confirm.")
 
     fill_in "validation", with: "DELETE"
     click_button("Delete my account")
 
-    assert has_content?("Your account has been successfully deleted. Bye bye.")
+    assert has_text?("Your account has been successfully deleted. Bye bye.")
   end
 
 end

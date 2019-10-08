@@ -20,8 +20,8 @@ class ReadmeTest < ApplicationSystemTestCase
     user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
     click_link "Add a README"
     within(".modal") do
-      assert has_text? "Create README"
-      assert has_text? "You can use this README to describe current agent. Write content in Mardown format."
+      assert has_text?("Create README")
+      assert has_text?("You can use this README to describe current agent. Write content in Mardown format.")
     end
   end
 
@@ -41,7 +41,7 @@ class ReadmeTest < ApplicationSystemTestCase
     user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
     click_link "Add a README"
     within(".modal") do
-      assert has_text? "Create README"
+      assert has_text?("Create README")
       fill_in_code_editor("")
       click_button "Create"
     end
@@ -53,7 +53,7 @@ class ReadmeTest < ApplicationSystemTestCase
     user_go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
     click_link "Add a README"
     within(".modal") do
-      assert has_text? "Create README"
+      assert has_text?("Create README")
       fill_in_code_editor("README creation test.")
       click_button "Create"
     end
@@ -67,7 +67,7 @@ class ReadmeTest < ApplicationSystemTestCase
     go_to_agent_show(agents(:terminator))
     click_link "Edit"
     within(".modal") do
-      assert has_text? "Edit README"
+      assert has_text?("Edit README")
       fill_in_code_editor("")
       click_button "Update"
     end
@@ -80,7 +80,7 @@ class ReadmeTest < ApplicationSystemTestCase
     go_to_agent_show(agents(:terminator))
     click_link "Edit"
     within(".modal") do
-      assert has_text? "Edit README"
+      assert has_text?("Edit README")
       fill_in_code_editor("README creation update test.")
       click_button "Update"
     end

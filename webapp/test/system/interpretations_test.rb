@@ -84,7 +84,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
 
     assert has_link?("What the weather like tomorrow ?")
-    assert_equal 1, all(".interpretation-resume").count
+    assert has_css?(".interpretation-resume", count: 1)
     assert_equal "What the weather like", first(".interpretation-resume__alias-blue").text
 
     first("trix-editor").click.set("Salut Marcel")
@@ -123,7 +123,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
 
     assert has_link?("What the weather like tomorrow ?")
-    assert_equal 1, all(".interpretation-resume").count
+    assert has_css?(".interpretation-resume", count: 1)
     assert_equal "What the weather like", first(".interpretation-resume__alias-blue").text
 
     first("trix-editor").click.set("Y a-t-il du soleil ?")
@@ -140,7 +140,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     click_button "Add"
 
     assert has_text?("Y a-t-il du soleil ?")
-    assert_equal 2, all(".interpretation-resume").count
+    assert has_css?(".interpretation-resume", count: 2)
     assert_equal "soleil", first(".interpretation-resume__alias-purple").text
 
     within("#interpretations-list") do
@@ -161,7 +161,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
 
     assert has_link?("What the weather like tomorrow ?")
-    assert_equal 1, all(".interpretation-resume").count
+    assert has_css?(".interpretation-resume", count: 1)
     assert_equal "What the weather like", first(".interpretation-resume__alias-blue").text
 
     first("trix-editor").click.set("Le 01/01/2018 j'achète de l'Aspirine")
@@ -190,7 +190,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     click_button "Add"
     assert has_text?("Le 01/01/2018 j'achète de l'Aspirine")
 
-    assert_equal 2, all(".interpretation-resume").count
+    assert has_css?(".interpretation-resume", count: 2)
     expected = ["01", "01", "2018"]
     assert_equal expected, all(".interpretation-resume__alias-black").collect(&:text)
 
@@ -248,7 +248,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
 
     assert has_link?("What the weather like tomorrow ?")
-    assert_equal 1, all(".interpretation-resume").count
+    assert has_css?(".interpretation-resume", count: 1)
     assert_equal "What the weather like", first(".interpretation-resume__alias-blue").text
 
     first("trix-editor").click.set("Salut Marcel")
@@ -319,14 +319,14 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
 
     assert has_link?("What the weather like tomorrow ?")
-    assert_equal 1, all(".interpretation-resume").count
+    assert has_css?(".interpretation-resume", count: 1)
     assert_equal ["What the weather like", "?"], all(".interpretation-resume__alias-blue").collect(&:text)
 
     within("#interpretations-list") do
       click_link "What the weather like tomorrow ?"
       assert has_text?("Cancel")
       assert all("input[name*='is_list']")[0].checked?
-      assert !all("input[name*='is_list']")[1].checked?
+      assert_not all("input[name*='is_list']")[1].checked?
     end
   end
 
@@ -350,7 +350,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     click_button "Update"
 
     assert has_link?("What the weather like tomorrow ?")
-    assert_equal 1, all(".interpretation-resume").count
+    assert has_css?(".interpretation-resume", count: 1)
   end
 
   test "Update an interpretation (change proximity)" do
@@ -405,7 +405,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
 
     assert has_link?("What the weather like tomorrow ?")
-    assert_equal 0, all(".interpretation-resume").count
+    assert has_no_css?(".interpretation-resume")
   end
 
 
@@ -433,14 +433,18 @@ class InterpretationsTest < ApplicationSystemTestCase
     expected = ["No language 0", "en 1", "fr 1", "es 0", "+"]
     assert_equal expected, all(".card > .tabs ul li").collect(&:text)
 
-    # Does not works...
+    within '.tabs' do
+      click_link "en"
+    end
 
-    # source = first("#interpretations-list .card-list__item__draggable)
-    # target = first(".tabs li.js-draggable-locale")
-    # source.drag_to(target)
+    source = first("#interpretations-list .card-list__item__draggable")
+    target = all(".tabs li.js-draggable-locale a")[1]
+    source.drag_to(target)
 
-    # expected = ["en 0", "fr 2", "+"]
-    # assert_equal expected, all(".tabs ul li").collect(&:text)
+    sleep(0.5)
+
+    expected = ["No language 0", "en 0", "fr 2", "es 0", "+"]
+    assert_equal expected, all(".card > .tabs ul li").collect(&:text)
   end
 
 

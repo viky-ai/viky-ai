@@ -6,7 +6,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
     admin_go_to_agent_entities_lists(agents("terminator"))
     click_link "New entities list"
     within(".modal") do
-      assert has_text? "Create a new entities list"
+      assert has_text?("Create a new entities list")
       fill_in "ID", with: "towns"
       fill_in "Description", with: "List every towns in the world !"
       click_button "Private"
@@ -22,7 +22,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
     admin_go_to_agent_entities_lists(agents("terminator"))
     click_link "New entities list"
     within(".modal") do
-      assert has_text? "Create a new entities list"
+      assert has_text?("Create a new entities list")
       fill_in "ID", with: ""
       fill_in "Description", with: "List every towns in the world !"
       all(".dropdown__trigger > .btn")[0].click
@@ -42,7 +42,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
     end
 
     within(".modal") do
-      assert has_text? "Edit entities list"
+      assert has_text?("Edit entities list")
       fill_in "ID", with: "countries"
       fill_in "Description", with: "Every countries"
       all(".dropdown__trigger > .btn")[0].click
@@ -79,17 +79,21 @@ class EntitiesListsTest < ApplicationSystemTestCase
     entities_list = EntitiesList.new(listname: "test", agent: agents(:weather))
     assert entities_list.save
     admin_go_to_agent_entities_lists(agents("weather"))
-    assert has_link? "New entities list"
-    # assert_equal ["test", "weather_conditions"], all(".card-list__item__name").collect(&:text)
-    #
-    # assert_equal 2, all(".card-list__item__draggable").size
-    #
-    # Does not works...
-    # first_item = all(".card-list__item__draggable).first
-    # last_item  = all(".card-list__item__draggable).last
-    # first_item.drag_to(last_item)
+    assert has_link?("New entities list")
 
-    # assert_equal ["weather_conditions", "test"], all(".card-list__item__name").collect(&:text)
+    expected = ["test", "weather_conditions", "weather_dates"]
+    assert_equal expected, all(".card-list__item__name").collect(&:text)
+
+    first_item = all(".card-list__item__draggable").first
+    last_item  = all(".card-list__item__draggable").last
+    first_item.drag_to(last_item)
+
+    expected = ["weather_conditions", "weather_dates", "test"]
+    assert_equal expected, all(".card-list__item__name").collect(&:text)
+
+    # Is persisted ?
+    admin_go_to_agent_entities_lists(agents("weather"))
+    assert_equal expected, all(".card-list__item__name").collect(&:text)
   end
 
 

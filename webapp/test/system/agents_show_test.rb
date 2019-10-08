@@ -72,7 +72,7 @@ class AgentsShowTest < ApplicationSystemTestCase
 
   test "Transfer agent ownership" do
     admin_go_to_agents_index
-    assert has_content?("admin/terminator")
+    assert has_text?("admin/terminator")
     click_link "T-800"
     click_link "Transfer ownership"
     within(".modal") do
@@ -81,32 +81,32 @@ class AgentsShowTest < ApplicationSystemTestCase
     end
     assert has_text?("Agent T-800 transferred to user confirmed")
     assert_equal "/agents", current_path
-    assert has_no_content?("admin/terminator")
+    assert has_no_text?("admin/terminator")
   end
 
 
   test "Transfer agent ownership whereas another agent with the same agentname throw an error" do
     admin_go_to_agents_index
-    assert has_content?("admin/weather")
+    assert has_text?("admin/weather")
     click_link "My awesome weather bot"
     click_link "Transfer ownership"
     within(".modal") do
       fill_in "js-new-owner", with: users("confirmed").email
       click_button "Transfer"
-      assert has_content?("This user already have an agent with this ID")
+      assert has_text?("This user already have an agent with this ID")
     end
   end
 
 
   test "Tranfer agent ownership to non existant user" do
     admin_go_to_agents_index
-    assert has_content?("admin/weather")
+    assert has_text?("admin/weather")
     click_link "My awesome weather bot"
     click_link "Transfer ownership"
     within(".modal") do
       fill_in "js-new-owner", with: "missing username"
       click_button "Transfer"
-      assert has_content?("Please enter a valid username or email of a viky.ai user.")
+      assert has_text?("Please enter a valid username or email of a viky.ai user.")
     end
   end
 
@@ -116,7 +116,7 @@ class AgentsShowTest < ApplicationSystemTestCase
     click_link "T-800"
     click_link "Share"
     click_link "Invite collaborators"
-    assert has_content?("Share with")
+    assert has_text?("Share with")
     within(".modal") do
       fill_in "users-input", with: users("confirmed").username
       click_button "Invite"
@@ -243,7 +243,7 @@ class AgentsShowTest < ApplicationSystemTestCase
     go_to_agent_show(agents(:terminator))
     within(".user-list") do
       assert has_text?("admin Owner")
-      assert_not has_text?("admin@viky.ai")
+      assert has_no_text?("admin@viky.ai")
     end
   end
 end
