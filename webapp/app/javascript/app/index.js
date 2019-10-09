@@ -1,7 +1,8 @@
 // App specific
 
 // Sortable (https://github.com/RubaXa/Sortable)
-window.Sortable = require('sortablejs');
+import Sortable from 'sortablejs';
+window.Sortable = Sortable;
 
 // Mousetrap (https://github.com/ccampbell/mousetrap)
 window.Mousetrap = require('mousetrap/mousetrap.js');
@@ -38,7 +39,7 @@ import './play/main.scss';
 import './play/chooser.coffee';
 import './play/form.coffee';
 window.App.PlayAside  = require('./play/aside.coffee');
-window.App.PlayResult  = require('./play/result.coffee');
+window.App.PlayResult = require('./play/result.coffee');
 
 import './agents/agent_form.coffee';
 import './agents/main.scss';

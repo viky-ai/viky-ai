@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class ColorPicker
   constructor: ->
     $("body").on 'click', (event) => @dispatch(event)

@@ -1,3 +1,5 @@
+import consumer from "./consumer"
+
 class AgentInterfaceChannel
   @_current_instance: null
 
@@ -18,7 +20,7 @@ class AgentInterfaceChannel
       @create()
 
   create: =>
-    @constructor._current_instance = App.cable.subscriptions.create @identifier,
+    @constructor._current_instance = consumer.subscriptions.create @identifier,
       received: (data) ->
         if data.trigger
           $("body").trigger(data.trigger.event, data.trigger.data)

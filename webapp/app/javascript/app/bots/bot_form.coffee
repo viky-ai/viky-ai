@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class BotForm
   constructor: ->
     $('body').on 'modal:load', (event) =>

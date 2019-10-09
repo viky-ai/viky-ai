@@ -1,4 +1,3 @@
-$ = require('jquery');
 autosize = require('autosize');
 
 # https://github.com/kelektiv/node-uuid

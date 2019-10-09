@@ -111,7 +111,7 @@ class MembershipsTest < ApplicationSystemTestCase
     click_link "Share"
     within(".modal") do
       click_link "Invite collaborators"
-      assert has_content?("Share with")
+      assert has_text?("Share with")
       fill_in "users-input", with: "#{users('confirmed').username}, #{users('show_on_agent_weather').email}"
       click_button "Invite"
     end
@@ -126,7 +126,7 @@ class MembershipsTest < ApplicationSystemTestCase
     click_link "Share"
     within(".modal") do
       click_link "Invite collaborators"
-      assert has_content?("Share with")
+      assert has_text?("Share with")
       fill_in "users-input", with: "#{users('confirmed').email}, #{users('show_on_agent_weather').email}"
       click_button "Invite"
       assert has_text?("Agent is already shared with user: show_on_agent_weather@viky.ai.")

@@ -17,9 +17,9 @@ class AgentsTest < ApplicationSystemTestCase
     click_link "New agent"
 
     within(".modal") do
-      assert has_field? "Name"
-      assert has_field? "ID"
-      assert has_button? "Create"
+      assert has_field?("Name")
+      assert has_field?("ID")
+      assert has_button?("Create")
     end
   end
 
@@ -30,7 +30,7 @@ class AgentsTest < ApplicationSystemTestCase
   test "Button to delete agent is not present" do
     admin_go_to_agents_index
     all(".dropdown__trigger > button").first.click
-    assert !has_link?("Delete")
+    assert has_no_link?("Delete")
   end
 
   test "Button to delete agent is (not) present" do
@@ -115,13 +115,13 @@ class AgentsTest < ApplicationSystemTestCase
     user_go_to_agent_show(user, agents(:weather))
     click_link "Configure"
     within(".modal") do
-      assert has_text? "Configure agent"
+      assert has_text?("Configure agent")
       fill_in "Name", with: "Updated weather agent of admin"
       click_button "Update"
     end
-    assert has_text? "Your agent has been successfully updated."
+    assert has_text?("Your agent has been successfully updated.")
     assert_equal "/agents/admin/weather", current_path
-    assert has_text? "Updated weather agent of admin"
+    assert has_text?("Updated weather agent of admin")
   end
 
 
@@ -143,8 +143,8 @@ class AgentsTest < ApplicationSystemTestCase
     admin_go_to_agents_index
     fill_in "search_query", with: "800"
     click_button "#search"
-    assert has_content?("T-800")
-    assert has_no_content?("My awesome weather bot")
+    assert has_text?("T-800")
+    assert has_no_text?("My awesome weather bot")
     assert_equal "/agents", current_path
   end
 
@@ -153,8 +153,8 @@ class AgentsTest < ApplicationSystemTestCase
     admin_go_to_agents_index
     fill_in "search_query", with: "inator"
     click_button "#search"
-    assert has_content?("T-800")
-    assert has_no_content?("My awesome weather bot")
+    assert has_text?("T-800")
+    assert has_no_text?("My awesome weather bot")
     assert_equal "/agents", current_path
   end
 
@@ -163,12 +163,12 @@ class AgentsTest < ApplicationSystemTestCase
     admin_go_to_agents_index
     fill_in "search_query", with: "inator"
     click_button "#search"
-    assert has_content?("T-800")
-    assert has_no_content?("My awesome weather bot")
+    assert has_text?("T-800")
+    assert has_no_text?("My awesome weather bot")
     fill_in "search_query", with: ""
     click_button "#search"
-    assert has_content?("T-800")
-    assert has_content?("My awesome weather bot")
+    assert has_text?("T-800")
+    assert has_text?("My awesome weather bot")
     assert_equal "/agents", current_path
   end
 
@@ -195,19 +195,19 @@ class AgentsTest < ApplicationSystemTestCase
     assert agent.save
 
     admin_go_to_agents_index
-    assert has_content?("admin/terminator")
-    assert has_content?("admin/weather")
-    assert has_content?("confirmed/weather")
+    assert has_text?("admin/terminator")
+    assert has_text?("admin/weather")
+    assert has_text?("confirmed/weather")
 
     click_button "Private"
-    assert has_no_content?("admin/terminator")
-    assert has_content?("admin/weather")
-    assert has_no_content?("confirmed/weather")
+    assert has_no_text?("admin/terminator")
+    assert has_text?("admin/weather")
+    assert has_no_text?("confirmed/weather")
 
     click_button "Public"
-    assert has_content?("admin/terminator")
-    assert has_no_content?("admin/weather")
-    assert has_content?("confirmed/weather")
+    assert has_text?("admin/terminator")
+    assert has_no_text?("admin/weather")
+    assert has_text?("confirmed/weather")
   end
 
 
@@ -220,19 +220,19 @@ class AgentsTest < ApplicationSystemTestCase
     assert FavoriteAgent.create(user: admin, agent: agents(:weather))
 
     admin_go_to_agents_index
-    assert has_content?("admin/terminator")
-    assert has_content?("admin/weather")
-    assert has_content?("confirmed/weather")
+    assert has_text?("admin/terminator")
+    assert has_text?("admin/weather")
+    assert has_text?("confirmed/weather")
 
     click_button "Yours"
-    assert has_content?("admin/terminator")
-    assert has_content?("admin/weather")
-    assert has_no_content?("confirmed/weather")
+    assert has_text?("admin/terminator")
+    assert has_text?("admin/weather")
+    assert has_no_text?("confirmed/weather")
 
     click_button "Favorites"
-    assert has_no_content?("admin/terminator")
-    assert has_content?("admin/weather")
-    assert has_content?("confirmed/weather")
+    assert has_no_text?("admin/terminator")
+    assert has_text?("admin/weather")
+    assert has_text?("confirmed/weather")
   end
 
 
@@ -246,18 +246,18 @@ class AgentsTest < ApplicationSystemTestCase
     find(".dropdown__content", text: "Sort by last update").click
     click_button "Private"
     click_button "Yours"
-    assert has_content?("admin/weather")
-    assert has_no_content?("admin/terminator")
-    assert has_no_content?("confirmed/weather")
+    assert has_text?("admin/weather")
+    assert has_no_text?("admin/terminator")
+    assert has_no_text?("confirmed/weather")
 
     click_link "My awesome weather bot admin/weather"
-    assert has_content?("Sharing overview")
+    assert has_text?("Sharing overview")
     admin_go_to_agents_index
-    assert has_content?("admin/weather")
-    assert has_no_content?("admin/terminator")
-    assert has_no_content?("confirmed/weather")
+    assert has_text?("admin/weather")
+    assert has_no_text?("admin/terminator")
+    assert has_no_text?("confirmed/weather")
 
-    assert has_content?("Sort by last update")
+    assert has_text?("Sort by last update")
     assert first("button[data-input-value='owned']").matches_css?(".btn--primary")
     assert first("button[data-input-value='private']").matches_css?(".btn--primary")
   end
@@ -267,7 +267,7 @@ class AgentsTest < ApplicationSystemTestCase
     admin_go_to_agents_index
     fill_in "search_query", with: "weather"
     click_button "#search"
-    assert has_content?("1 agent found. Reset search")
+    assert has_text?("1 agent found. Reset search")
   end
 
 

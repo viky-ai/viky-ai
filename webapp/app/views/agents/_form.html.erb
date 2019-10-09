@@ -163,7 +163,7 @@
         <% end %>
 
         <div class="agent-upload__new field field--upload" <% unless agent.image.nil? %>style="display:none;"<% end %>>
-          <%= f.hidden_field :image, value: agent.cached_image_data %>
+          <%= f.hidden_field :image, value: agent.cached_image_data, id: nil %>
           <label for="agent_image">
             <div>
               <p>

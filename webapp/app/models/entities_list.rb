@@ -74,7 +74,7 @@ class EntitiesList < ApplicationRecord
   def entities_in_ordered_batchs(batch_size = 1_000)
     Enumerator.new do |block|
       if entities.exists?
-        cursor_max, cursor_min = entities.pluck('MAX("entities"."position"), MIN("entities"."position")').first
+        cursor_max, cursor_min = entities.pluck(Arel.sql 'MAX("entities"."position"), MIN("entities"."position")').first
         cursor = cursor_max
         loop do
           batch_max_position = cursor

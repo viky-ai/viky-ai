@@ -18,7 +18,7 @@ en:
     registrations:
       new:
         title: Sign up
-        tagline: Start building chatbots now!
+        tagline: Start building agents now!
         username_label: Choose your username
         btn: Sign up
     passwords:

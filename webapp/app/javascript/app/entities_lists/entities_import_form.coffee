@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class EntitiesImportForm
   constructor: ->
     $("body").on "ajax:before", (event) =>

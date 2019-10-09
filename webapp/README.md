@@ -2,18 +2,18 @@
 
 ## Dependencies
 
-- Ruby (2.4.2) ( https://github.com/rbenv/rbenv#installation )
-- bundler (1.15.4) ( `gem install bundler` )
-- NodeJS (8.4.0) ( https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions )
-- Yarn (1.0.1) ( https://yarnpkg.com/lang/en/docs/install/ )
-- PostgreSQL (9.6.5) ( `sudo apt-get install -y postgresql postgresql-contrib libpq-dev` )
-- Redis (3.2) ( `sudo apt-get install redis-server` or `sudo apt-get install redis` )
-- ElasticSearch (6.6) ( use docker : `docker pull docker.elastic.co/elasticsearch/elasticsearch:6.6.1`)
-- Cerebro ( use docker : `docker pull yannart/cerebro` )
-- Kibana ( use docker : `docker pull docker.elastic.co/kibana/kibana:6.6.1` )
-- ImageMagick ( `sudo apt-get install -y graphicsmagick-imagemagick-compat` )
-- Graphviz ( `sudo apt-get install -y graphviz` )
-- Docker 17.09.0-ce ( [see below](#docker) )
+* Ruby (2.4.2)         ( https://github.com/rbenv/rbenv#installation )
+* bundler (1.15.4)     ( `gem install bundler` )
+* NodeJS (10+)         ( https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions )
+* Yarn (1.13+)         ( https://yarnpkg.com/lang/en/docs/install/ )
+* PostgreSQL (9.6.5)   ( `sudo apt-get install -y postgresql postgresql-contrib libpq-dev` )
+* Redis (3.2)          ( `sudo apt-get install redis-server` or `sudo apt-get install redis` )
+* ElasticSearch (6.6)  ( use docker : `docker pull docker.elastic.co/elasticsearch/elasticsearch:6.6.1`)
+* Cerebro              ( use docker : `docker pull yannart/cerebro` )
+* Kibana               ( use docker : `docker pull docker.elastic.co/kibana/kibana:6.6.1` )
+* ImageMagick          ( `sudo apt-get install -y graphicsmagick-imagemagick-compat` )
+* Graphviz             ( `sudo apt-get install -y graphviz` )
+* Docker 17.09.0-ce    ( [see below](#docker) )
 
 ## Install a dev environment
 

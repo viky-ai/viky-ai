@@ -273,6 +273,12 @@ input[type='text'].code{
       }
     }
   }
+  .label + .help,
+  label + .help{
+    line-height: 1.1em;
+    vertical-align: text-top;
+    margin-left: .5em;
+  }
 }
 
 

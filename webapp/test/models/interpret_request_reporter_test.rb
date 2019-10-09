@@ -2,11 +2,6 @@ require 'test_helper'
 
 class InterpretRequestReporterTest < ActiveSupport::TestCase
 
-  setup do
-    IndexManager.reset_indices
-  end
-
-
   test 'API Requests basic count' do
     user = users(:admin)
     agent = agents(:weather)

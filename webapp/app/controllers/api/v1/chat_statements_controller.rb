@@ -30,7 +30,11 @@ class Api::V1::ChatStatementsController < Api::V1::ApplicationController
       when 'video'
         params.require(:statement).permit(:nature, content: video_content_params)
       when 'map'
-        params.require(:statement).permit(:nature, content: map_content_params)
+        data = params.require(:statement).permit(:nature, content: map_content_params)
+        # enum value "map" is not permitted due to conflict with ActiveRecord map method
+        # so we use interactive_map internally.
+        data[:nature] = "interactive_map"
+        data
       when 'button'
         params.require(:statement).permit(:nature, content: button_content_params)
       when 'button_group'

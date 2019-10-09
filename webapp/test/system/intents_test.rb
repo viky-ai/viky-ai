@@ -6,13 +6,13 @@ class IntentsTest < ApplicationSystemTestCase
     admin_go_to_agent_intents(agents("terminator"))
     click_link "New interpretation"
     within(".modal") do
-      assert page.has_text? "Create a new interpretation"
+      assert has_text?("Create a new interpretation")
       fill_in "ID", with: "sunny_day"
       fill_in "Description", with: "Questions about the next sunny day"
       click_button "Private"
       click_button "Create"
     end
-    assert page.has_text?("Interpretation has been successfully created.")
+    assert has_text?("Interpretation has been successfully created.")
   end
 
 
@@ -20,12 +20,12 @@ class IntentsTest < ApplicationSystemTestCase
     admin_go_to_agent_intents(agents("terminator"))
     click_link "New interpretation"
     within(".modal") do
-      assert page.has_text? "Create a new interpretation"
+      assert has_text?("Create a new interpretation")
       fill_in "ID", with: ""
       fill_in "Description", with: "Questions about the next sunny day"
       click_button "Create"
-      assert page.has_text?("ID is too short (minimum is 3 characters)")
-      assert page.has_text?("ID can't be blank")
+      assert has_text?("ID is too short (minimum is 3 characters)")
+      assert has_text?("ID can't be blank")
     end
   end
 
@@ -38,12 +38,12 @@ class IntentsTest < ApplicationSystemTestCase
     end
 
     within(".modal") do
-      assert page.has_text? "Edit interpretation"
+      assert has_text?("Edit interpretation")
       fill_in "ID", with: "sunny_day"
       fill_in "Description", with: "Questions about the next sunny day"
       click_button "Update"
     end
-    assert page.has_text?("Your interpretation has been successfully updated.")
+    assert has_text?("Your interpretation has been successfully updated.")
   end
 
 
@@ -57,14 +57,14 @@ class IntentsTest < ApplicationSystemTestCase
     end
 
     within(".modal") do
-      assert page.has_text?("Are you sure?")
+      assert has_text?("Are you sure?")
       click_button("Delete")
-      assert page.has_text?("Please enter the text exactly as it is displayed to confirm.")
+      assert has_text?("Please enter the text exactly as it is displayed to confirm.")
 
       fill_in "validation", with: "DELETE"
       click_button("Delete")
     end
-    assert page.has_text?("Interpretation with the name: weather_forecast has successfully been deleted.")
+    assert has_text?("Interpretation with the name: weather_forecast has successfully been deleted.")
 
     assert_equal user_agent_intents_path(agent.owner, agent), current_path
   end
@@ -76,16 +76,21 @@ class IntentsTest < ApplicationSystemTestCase
     assert intent.save
 
     admin_go_to_agent_intents(agents("weather"))
-    assert_equal ["test", "weather_forecast", "weather_question"], all(".card-list__item__name").collect(&:text)
+    expected = ["test", "weather_forecast", "weather_question"]
+    assert_equal expected, all(".card-list__item__name").collect(&:text)
 
-    assert_equal 3, all(".card-list__item__draggable").size
+    assert has_css?(".card-list__item__draggable", count: 3)
 
-    # Does not works...
-    # first_item = all(".intents-list__item__draggable").first
-    # last_item  = all(".intents-list__item__draggable").last
-    # first_item.drag_to(last_item)
+    first_item = all(".card-list__item__draggable").first
+    last_item  = all(".card-list__item__draggable").last
+    first_item.drag_to(last_item)
 
-    # assert_equal ["weather_forecast", "test"], all(".intents-list__item__name").collect(&:text)
+    expected = ["weather_forecast", "weather_question", "test"]
+    assert_equal expected, all(".card-list__item__name").collect(&:text)
+
+    # Is persisted ?
+    admin_go_to_agent_intents(agents("weather"))
+    assert_equal expected, all(".card-list__item__name").collect(&:text)
   end
 
 
@@ -93,38 +98,38 @@ class IntentsTest < ApplicationSystemTestCase
     admin_go_to_agent_intents(agents("terminator"))
     click_link "terminator_find"
 
-    assert page.has_text?("+")
-    assert page.has_no_text?("fr")
+    assert has_text?("+")
+    assert has_no_text?("fr")
     click_link "+"
     within(".modal") do
-      assert page.has_text?("Choose a language")
+      assert has_text?("Choose a language")
       click_link("fr (French)")
     end
-    assert page.has_text?("fr 0")
+    assert has_text?("fr 0")
   end
 
 
   test "locale navigation persistence" do
     admin_go_to_agent_intents(agents("terminator"))
     click_link "terminator_find"
-    assert page.has_text?("+")
+    assert has_text?("+")
 
     # Add fr locale
     click_link "+"
     within(".modal") do
-      assert page.has_text?("Choose a language")
+      assert has_text?("Choose a language")
       click_link("fr (French)")
     end
-    assert page.has_text?("fr 0")
+    assert has_text?("fr 0")
     assert_equal "fr 0", first("li[data-locale] a.current").text
 
     # Add es locale
     click_link "+"
     within(".modal") do
-      assert page.has_text?("Choose a language")
+      assert has_text?("Choose a language")
       click_link("es (Spanish)")
     end
-    assert page.has_text?("es 0")
+    assert has_text?("es 0")
     assert_equal "es 0", first("li[data-locale] a.current").text
 
     # Leaves and comes back
@@ -132,7 +137,7 @@ class IntentsTest < ApplicationSystemTestCase
       click_link "Interpretations"
     end
     click_link "terminator_find"
-    assert page.has_text?("+")
+    assert has_text?("+")
     assert_equal "es 0", first("li[data-locale] a.current").text
 
     # Switch to fr, leaves and comes back
@@ -141,7 +146,7 @@ class IntentsTest < ApplicationSystemTestCase
       click_link "Interpretations"
     end
     click_link "terminator_find"
-    assert page.has_text?("+")
+    assert has_text?("+")
     assert_equal "fr 0", first("li[data-locale] a.current").text
   end
 
@@ -154,7 +159,7 @@ class IntentsTest < ApplicationSystemTestCase
     admin_go_to_agent_intents(agents("weather"))
     within "#intents-list-is_private" do
       first(".dropdown__trigger > button").click
-      assert page.has_no_link?("Move to T-800")
+      assert has_no_link?("Move to T-800")
       click_link "Move to..."
     end
 
@@ -162,19 +167,19 @@ class IntentsTest < ApplicationSystemTestCase
       click_link "T-800"
     end
 
-    assert page.has_text?("Intent weather_question moved to agent T-800")
-    assert page.has_link?("T-800")
+    assert has_text?("Intent weather_question moved to agent T-800")
+    assert has_link?("T-800")
 
     within "#intents-list-is_public" do
       first(".dropdown__trigger > button").click
-      assert page.has_link?("Move to T-800")
+      assert has_link?("Move to T-800")
     end
 
     admin_go_to_agent_intents(agents("terminator"))
     within "#intents-list-is_private" do
-      assert page.has_text?("weather_question")
+      assert has_text?("weather_question")
       first(".dropdown__trigger > button").click
-      assert page.has_no_link?("Move to T-800")
+      assert has_no_link?("Move to T-800")
     end
   end
 
@@ -194,8 +199,8 @@ class IntentsTest < ApplicationSystemTestCase
 
     within(".modal") do
       click_button "Favorites"
-      assert page.has_no_text?("My awesome weather bot\nadmin/weather")
-      assert page.has_text?("Weather bot\nconfirmed/weather")
+      assert has_no_text?("My awesome weather bot\nadmin/weather")
+      assert has_text?("Weather bot\nconfirmed/weather")
     end
   end
 
@@ -216,8 +221,8 @@ class IntentsTest < ApplicationSystemTestCase
     within(".modal") do
       fill_in "search_query", with: "awesome"
       click_button "#search"
-      assert page.has_text?("My awesome weather bot\nadmin/weather")
-      assert page.has_no_text?("Weather bot\nconfirmed/weather")
+      assert has_text?("My awesome weather bot\nadmin/weather")
+      assert has_no_text?("Weather bot\nconfirmed/weather")
     end
   end
 
@@ -234,9 +239,9 @@ class IntentsTest < ApplicationSystemTestCase
       click_link "Used by..."
     end
 
-    assert page.has_text?("Interpretations using simple_where")
+    assert has_text?("Interpretations using simple_where")
     within ".modal" do
-      assert page.has_link?("terminator_find")
+      assert has_link?("terminator_find")
       click_link("terminator_find")
     end
 

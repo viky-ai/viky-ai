@@ -97,12 +97,8 @@
 /**
  *  Markdown form editor
 **/
-.js-readme-form{
-  height: calc(90vh - 100px);
-  overflow: auto;
-}
 .markdown-editor{
-  margin-bottom: 2em;
+  padding-bottom: 1em;
   display: grid;
 
   & > div:nth-child(2){
@@ -117,7 +113,7 @@
     }
   }
   .markdown-editor__input{
-    height: calc(90vh - 200px);
+    height: calc(100vh - 300px);
     overflow: auto;
     padding: 2px;
     .CodeMirror{
@@ -126,7 +122,7 @@
     }
   }
   .markdown-editor__preview.markdown{
-    height: calc(90vh - 200px - 4px);
+    height: calc(100vh - 300px - 2px);
     overflow: auto;
     border: 1px dashed #ddd;
     border-radius: 3px;

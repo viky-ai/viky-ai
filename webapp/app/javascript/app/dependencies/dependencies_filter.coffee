@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class DependenciesFilter
   constructor: ->
     $('body').on 'modal:load', (event) =>

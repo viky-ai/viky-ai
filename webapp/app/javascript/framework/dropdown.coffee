@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class Dropdown
   constructor: ->
     $("body").on 'click', (event) => @dispatch(event)

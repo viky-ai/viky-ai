@@ -11,7 +11,9 @@ en:
         style_guide: Style guide
         sidekiq_ui: Async jobs
         mailer_test: Mailer test
-        elasticsearch_ui: Index admin
         kibana_ui: Index explorer
       switched: Switched
       comeback: Comeback
+      sign_in: Log in
+      sign_up: Sign up
+      manage_agents_html: Manage Agents &rarr;

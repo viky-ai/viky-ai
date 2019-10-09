@@ -16,7 +16,7 @@
 
   <ul class="cts__list">
     <% if current_user_can_edit_agent %>
-    <draggable v-model="tests" :options="{handle:'.cts-item__grip', animation: 100}" @update="onPositionUpdate">
+    <draggable v-model="tests" handle=".cts-item__grip" animation="100" @update="onPositionUpdate">
     <% end %>
       <transition-group name="cts-list">
         <li v-for="(test,index) in tests" :key="test.id">
