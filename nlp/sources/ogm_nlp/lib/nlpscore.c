@@ -16,8 +16,9 @@ og_status NlpCalculateScore(og_nlp_th ctrl_nlp_th, struct request_expression *re
   IFE(NlpCalculateScoreRecursive(ctrl_nlp_th, request_expression, request_expression));
 
   // Taking into account the punctuation words if they exist
-  request_expression->score->coverage = request_expression->request_positions_nb;
-  request_expression->score->coverage /= ctrl_nlp_th->basic_group_request_word_nb;
+  // but does not word with number such as 13345.678 so we remove this patch
+  //request_expression->score->coverage = request_expression->request_positions_nb;
+  //request_expression->score->coverage /= ctrl_nlp_th->basic_group_request_word_nb;
   IFE(NlpCalculateTotalScore(ctrl_nlp_th, request_expression));
 
   DONE;
