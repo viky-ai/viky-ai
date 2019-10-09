@@ -1,4 +1,3 @@
-$ = require('jquery');
 moment = require('moment');
 
 class ConsolePreserveScroll

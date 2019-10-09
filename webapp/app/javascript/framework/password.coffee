@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class PasswordInput
   constructor: ->
     @build_markup()

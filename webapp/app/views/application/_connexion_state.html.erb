@@ -1,5 +1,8 @@
 <% if user_signed_in? %>
-  <%= link_to "Manage Agents &rarr;".html_safe, agents_path %>
+  <%= link_to t('views.nav.manage_agents_html'), agents_path %>
 <% else %>
-  <%= link_to "Login &rarr;".html_safe, new_user_session_path %>
+  <% unless Feature.user_registration_disabled? %>
+    <%= link_to t('views.nav.sign_up'), new_user_registration_path %>
+  <% end %>
+  <%= link_to t('views.nav.sign_in'), new_user_session_path %>
 <% end %>

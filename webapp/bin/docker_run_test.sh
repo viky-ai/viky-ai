@@ -25,7 +25,7 @@ echo "ES $ES"
 ./bin/rails statistics:setup
 
 # Run tests
-./bin/rails test
+COVERAGE=1 DISABLE_SPRING=1 ./bin/rails test
 
 # Run system tests
-./bin/rails test:system
+PARALLEL_WORKERS=6 COVERAGE=1 DISABLE_SPRING=1 ./bin/rails test:system

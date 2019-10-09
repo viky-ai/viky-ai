@@ -15,7 +15,7 @@ module NlpRoute
     @@nls_background = nil
 
     def pidfile()
-      pidfile = "#{NlpLauncher.pwd}/ogm_nls.pid"
+      "#{NlpLauncher.pwd}/ogm_nls.pid"
     end
 
     # get all package from webapp in json format and store in /nlp/import/ then start nlp
@@ -137,7 +137,7 @@ module NlpRoute
 
       duration = Time.now - start_time
 
-      nls_memory = `ps -p $(cat #{pidfile}) -o rss | head -n 2 | tail -n +2`.strip.to_i rescue 0
+      nls_memory = `ps -p $(cat #{pidfile}) -o rss | head -n 2 | tail -n +2  2> /dev/null`.strip.to_i rescue 0
 
       puts "Loading all (#{packages_ids.size}) packages in #{'%.2f' % duration}s using #{nls_memory / 1024} MB memory."
 

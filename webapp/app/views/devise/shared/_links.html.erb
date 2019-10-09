@@ -10,7 +10,7 @@
         </li>
       <% end -%>
 
-      <% if Feature.user_registration_enabled? %>
+      <% unless Feature.user_registration_disabled? %>
         <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
           <li>
             <%= t('views.auth.shared.new_registration_prefix') %>
@@ -25,7 +25,7 @@
         </li>
       <% end -%>
 
-      <% if Feature.user_registration_enabled? %>
+      <% unless Feature.user_registration_disabled? %>
         <%- if devise_mapping.confirmable? && controller_name != 'confirmations' %>
           <li>
             <%= link_to t('views.auth.shared.new_confirmation'), new_confirmation_path(resource_name) %>

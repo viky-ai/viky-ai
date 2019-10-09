@@ -2,11 +2,6 @@ require 'test_helper'
 
 class NlsControllerTest < ActionDispatch::IntegrationTest
 
-  setup do
-    IndexManager.reset_indices
-  end
-
-
   test "Interpret route" do
     assert_routing({
       method: 'get',
@@ -168,13 +163,8 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
       ]
     }
     assert_equal expected, JSON.parse(response.body)
-    client = IndexManager.client
-    result = client.search(
-      index: InterpretRequestLog::SEARCH_ALIAS_NAME,
-      type: InterpretRequestLog::INDEX_TYPE,
-      body: { query: { match: { sentence: sentence } } },
-      size: 1
-    )
+    client = InterpretRequestLogTestClient.new
+    result = client.search_documents({ match: { sentence: sentence } },1)
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 'abc', found[:context]['session_id']
     assert_equal '1.1-a58b', found[:context]['bot_version']
@@ -228,13 +218,8 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
           agent_token: agent.api_token
         }
 
-    client = IndexManager.client
-    result = client.search(
-      index: InterpretRequestLog::SEARCH_ALIAS_NAME,
-      type: InterpretRequestLog::INDEX_TYPE,
-      body: { query: { match: { sentence: sentence } } },
-      size: 1
-    )
+    client = InterpretRequestLogTestClient.new
+    result = client.search_documents({ match: { sentence: sentence } },1)
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 503, found[:status]
     assert_equal ['NLS temporarily unavailable', 'No more NLP server are available', 'Connection refused - Failed to open TCP connection'],
@@ -253,13 +238,8 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
           agent_token: agent.api_token
         }
 
-    client = IndexManager.client
-    result = client.search(
-      index: InterpretRequestLog::SEARCH_ALIAS_NAME,
-      type: InterpretRequestLog::INDEX_TYPE,
-      body: { query: { match: { sentence: sentence } } },
-      size: 1
-    )
+    client = InterpretRequestLogTestClient.new
+    result = client.search_documents({ match: { sentence: sentence } },1)
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 503, found[:status]
     assert_equal ['NLS temporarily unavailable', 'NLP have just crashed'], found[:body]['errors']
@@ -278,13 +258,8 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
         }
     assert_response 500
 
-    client = IndexManager.client
-    result = client.search(
-      index: InterpretRequestLog::SEARCH_ALIAS_NAME,
-      type: InterpretRequestLog::INDEX_TYPE,
-      body: { query: { match: { sentence: sentence } } },
-      size: 1
-    )
+    client = InterpretRequestLogTestClient.new
+    result = client.search_documents({ match: { sentence: sentence } },1)
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 500, found[:status]
     assert_equal ['Unexpected error while requesting NLS', '#<RuntimeError: Big big error>'], found[:body]['errors']

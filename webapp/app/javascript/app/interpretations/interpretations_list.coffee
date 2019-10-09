@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class InterpretationsList
   constructor: ->
     App.CardListHelper.updateDraggable()

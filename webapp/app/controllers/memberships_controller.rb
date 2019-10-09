@@ -63,7 +63,7 @@ class MembershipsController < ApplicationController
   def destroy
     @membership = Membership.find(params[:id])
     if @membership.destroy
-      MembershipMailer.destroy_membership(@agent.owner, @agent, @membership.user).deliver_later
+      MembershipMailer.destroy_membership(@agent.owner, @agent, @membership.user).deliver_later if Feature.email_configured?
     end
     respond_to do |format|
       format.js{

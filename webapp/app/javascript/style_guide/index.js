@@ -5,4 +5,6 @@ import './card-shake.coffee';
 import './chatbot-list.coffee';
 import './form.coffee';
 
-window.Sortable = require('sortablejs');
+// Sortable (https://github.com/RubaXa/Sortable)
+import Sortable from 'sortablejs';
+window.Sortable = Sortable;

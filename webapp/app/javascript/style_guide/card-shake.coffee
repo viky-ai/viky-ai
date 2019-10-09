@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class CardShake
   constructor: ->
     $(".shake-card-trigger").on 'click', ->

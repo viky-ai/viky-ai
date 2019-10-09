@@ -1,3 +1,5 @@
+require_relative 'lib/task'
+
 namespace :entities do
 
   desc "Update all entities searchable_terms"

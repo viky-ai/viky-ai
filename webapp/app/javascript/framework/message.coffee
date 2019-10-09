@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class MessageRouter
   constructor: ->
     $("body").on 'ajax:error', (event) =>

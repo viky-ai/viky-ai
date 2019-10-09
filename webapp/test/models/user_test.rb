@@ -32,7 +32,6 @@ class UserTest < ActiveSupport::TestCase
 
     admin.username = "  "
     assert_not admin.save
-    assert_equal "", admin.username
 
     admin.username = "\" 1   2 3 ABC !?/^äù"
     assert admin.save

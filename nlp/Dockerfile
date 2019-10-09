@@ -9,10 +9,13 @@
 # docker build --target test_image -t docker-registry.pertimm.net/viky.ai/platform/nlp_test .
 # docker run -t docker-registry.pertimm.net/viky.ai/platform/nlp_test
 
+ARG VIKY_IMAGE_TAG=latest
+FROM docker-registry.pertimm.net/viky.ai/platform/tools_nlp_base:${VIKY_IMAGE_TAG} AS tools_nlp_base
+
 # ============================================================================
 # Compile and package Nls
 # ============================================================================
-FROM docker-registry.pertimm.net/tools/docker-ebusiness-build-stack AS build_image
+FROM tools_nlp_base AS build_image
 
 ENV OG_REPO_PATH=/builds/nls
 ENV OG_TOOL_PATH=${OG_REPO_PATH}/tools
@@ -44,26 +47,9 @@ RUN factory.pl -p bu2_nls rebuild
 RUN factory.pl -s bu2_nls   build
 
 # ============================================================================
-# Setup a lightweigth image only with minimal binaries
+# Install nlp_route dependencies
 # ============================================================================
-FROM ruby:2.4-slim-stretch AS ruby_build_image
-
-# Add libxml2 needed for XSD validation
-# Add curl needed for healthcheck
-RUN set -ex; \
-    apt-get update ; \
-    apt-get install -y --no-install-recommends \
-      build-essential \
-      ca-certificates \
-      curl \
-      g++ \
-      libgmp-dev \
-      libxml2 \
-      wget \
-    ; \
-    rm -rf /var/lib/apt/lists/*
-
-WORKDIR /
+FROM tools_nlp_base AS nlp_route_dependencies
 
 # Firstly bundle install (faster build)
 COPY ./nlp_route/Gemfile      /nlp_route/
@@ -78,12 +64,10 @@ RUN set -ex; \
     find /usr/local/bundle/gems/  -name "*.c"    -delete ;\
     find /usr/local/bundle/gems/  -name "*.o"    -delete
 
-
-
 # ============================================================================
 # Setup a lightweigth image only with minimal binaries
 # ============================================================================
-FROM ruby:2.4-slim-stretch AS run_image
+FROM ruby:2.6-slim-buster AS run_image
 
 # Add libxml2 needed for XSD validation
 # Add curl needed for healthcheck
@@ -103,8 +87,8 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 # Copy dependencies
-COPY --from=ruby_build_image  /nlp_route         /nlp_route
-COPY --from=ruby_build_image  /usr/local/bundle  /usr/local/bundle
+COPY --from=nlp_route_dependencies  /nlp_route         /nlp_route
+COPY --from=nlp_route_dependencies  /usr/local/bundle  /usr/local/bundle
 
 # Copy application code
 COPY ./nlp_route/ /nlp_route/
@@ -127,7 +111,7 @@ CMD ["./docker_run.sh"]
 # ============================================================================
 # Test Nls
 # ============================================================================
-FROM ruby:2.4-stretch AS test_image
+FROM tools_nlp_base AS test_image
 
 ADD ./docker_run_test.sh /
 

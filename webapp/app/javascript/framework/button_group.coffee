@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class ButtonGroup
   constructor: ->
     $("body").on 'click', (event) => @dispatch(event)

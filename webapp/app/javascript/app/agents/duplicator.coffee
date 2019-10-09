@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class AgentDuplicator
   constructor: ->
     $('#agent-duplicate-link').on 'click', (event) =>

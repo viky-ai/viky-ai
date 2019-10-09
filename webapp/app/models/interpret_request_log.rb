@@ -1,11 +1,6 @@
 class InterpretRequestLog
   include ActiveModel::Model
 
-  INDEX_NAME = 'stats-interpret_request_log'.freeze
-  INDEX_ALIAS_NAME = ['index', INDEX_NAME].join('-').freeze
-  SEARCH_ALIAS_NAME = ['search', INDEX_NAME].join('-').freeze
-  INDEX_TYPE = 'log'.freeze
-
   attr_accessor :id, :agents, :timestamp, :sentence, :language, :spellchecking, :now, :status, :body, :context
 
   validates :context_to_s, length: {
@@ -13,14 +8,13 @@ class InterpretRequestLog
   }
 
   def self.count(params = {})
-    client = IndexManager.client
-    result = client.count index: SEARCH_ALIAS_NAME, body: params
-    result['count']
+    client = InterpretRequestLogClient.build_client
+    client.count_documents(params)
   end
 
   def self.find(id)
-    client = IndexManager.client
-    result = client.get index: SEARCH_ALIAS_NAME, type: INDEX_TYPE, id: id
+    client = InterpretRequestLogClient.build_client
+    result = client.get_document id
     params = result['_source'].symbolize_keys
     params[:id] = result['_id']
     params.delete(:agent_slug)
@@ -49,9 +43,8 @@ class InterpretRequestLog
   def save
     return false unless valid?
 
-    refresh = Rails.env == 'test'
-    client = IndexManager.client
-    result = client.index index: INDEX_ALIAS_NAME, type: INDEX_TYPE, body: to_json, id: @id, refresh: refresh
+    client = InterpretRequestLogClient.build_client
+    result = client.save_document(to_json, @id)
     @id = result['_id']
   end
 

@@ -1,8 +1,7 @@
 module Feature
 
-  # User registration
-  def self.user_registration_enabled?
-    ENV['VIKYAPP_USER_REGISTRATION'] == 'true'
+  def self.user_registration_disabled?
+    ENV['VIKYAPP_USER_REGISTRATION'] == 'false'
   end
 
   def self.enable_user_registration
@@ -13,7 +12,14 @@ module Feature
     ENV['VIKYAPP_USER_REGISTRATION'] = 'false'
   end
 
-  # Quota
+  def self.email_configured?
+    return true if Rails.env.test?
+
+    smtp_enabled = ENV.fetch("SMTP_ENABLED") { false }
+    postmark_enabled = ENV.fetch("POSTMARK_TOKEN") { false }
+    postmark_enabled || smtp_enabled == 'true'
+  end
+
   def self.quota_enabled?
     ENV['VIKYAPP_QUOTA_ENABLED'] == 'true'
   end

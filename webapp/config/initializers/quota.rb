@@ -2,7 +2,6 @@ require 'rack/throttle'
 require "#{Rails.root}/lib/rack/throttle/custom_rules.rb"
 
 module Quota
-
   def self.cache
     Redis.new(
       url: ENV.fetch('VIKYAPP_QUOTA_REDIS_URL') { "redis://localhost:6379/4/#{Rails.env}" }

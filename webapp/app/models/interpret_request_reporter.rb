@@ -101,15 +101,15 @@ class InterpretRequestReporter
   def count
     @query["from"] = 0
     @query["size"] = 0
-    proceed["hits"]["total"]
+    proceed["hits"]["total"]["value"]
   end
 
 
   private
 
     def proceed
-      client = IndexManager.client
-      client.search(index: InterpretRequestLog::SEARCH_ALIAS_NAME, body: query)
+      client = InterpretRequestLogClient.build_client
+      client.search(query)
     end
 
 end

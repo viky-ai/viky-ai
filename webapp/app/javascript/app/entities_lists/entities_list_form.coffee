@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class EntitiesListForm
   constructor: ->
     $('body').on 'modal:load', (event) =>

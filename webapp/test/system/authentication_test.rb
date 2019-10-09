@@ -72,7 +72,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
     message  = "A message with a confirmation link has been sent to your email address. "
     message << "Please follow the link to activate your account."
-    assert has_content?(message)
+    assert has_text?(message)
 
     # Second sign up with same credentials
     visit new_user_registration_path
@@ -103,7 +103,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
     message  = "A message with a confirmation link has been sent to your email address. "
     message << "Please follow the link to activate your account."
-    assert has_content?(message)
+    assert has_text?(message)
   end
 
 
@@ -112,7 +112,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     click_button "Log in"
 
     assert_equal new_user_session_path, current_path
-    assert has_content?("Invalid Email or password.")
+    assert has_text?("Invalid Email or password.")
   end
 
 
@@ -120,7 +120,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     login_as "notconfirmed@viky.ai", "BimBamBoom"
 
     assert_equal new_user_session_path, current_path
-    assert has_content?("You have to confirm your email address before continuing.")
+    assert has_text?("You have to confirm your email address before continuing.")
   end
 
 
@@ -128,7 +128,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     login_as "confirmed@viky.ai", "BimBam"
 
     assert_equal new_user_session_path, current_path
-    assert has_content?("Invalid Email or password.")
+    assert has_text?("Invalid Email or password.")
   end
 
 
@@ -136,17 +136,17 @@ class AuthenticationTest < ApplicationSystemTestCase
     login_as "confirmed@viky.ai", "BimBamBoom"
 
     assert_equal "/agents", current_path
-    assert has_content?("Signed in successfully.")
+    assert has_text?("Signed in successfully.")
   end
 
 
   test "Successful log in then log out" do
     login_as "confirmed@viky.ai", "BimBamBoom"
     assert_equal "/agents", current_path
-    assert has_content?("Signed in successfully.")
+    assert has_text?("Signed in successfully.")
 
     logout
-    assert has_content?("Signed out successfully.")
+    assert has_text?("Signed out successfully.")
   end
 
 
@@ -166,7 +166,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
     message  = "A message with a confirmation link has been sent to your email address. "
     message << "Please follow the link to activate your account."
-    assert has_content?(message)
+    assert has_text?(message)
 
     # Visit confirmation url from email
     confirmation_token = User.find_by_email("batman@viky.ai").confirmation_token
@@ -177,7 +177,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
     # Log in
     assert_equal new_user_session_path, current_path
-    assert has_content?("Your email address has been successfully confirmed.")
+    assert has_text?("Your email address has been successfully confirmed.")
 
     fill_in "Email", with: "batman@viky.ai"
     fill_in "Password", with: "great password baby!"
@@ -185,7 +185,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
     # I"m in!
     assert_equal "/agents", current_path
-    assert has_content?("Signed in successfully.")
+    assert has_text?("Signed in successfully.")
   end
 
 
@@ -204,7 +204,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     click_button "Send me reset password instructions"
 
     message = "You will receive an email with instructions on how to reset your password in a few minutes."
-    assert has_content?(message)
+    assert has_text?(message)
     assert_equal new_user_session_path, current_path
 
     # Visit url from email with reset password instructions
@@ -215,7 +215,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     click_button "Change my password"
 
     message = "Your password has been changed successfully. You are now signed in."
-    assert has_content?(message)
+    assert has_text?(message)
     assert_equal "/agents", current_path
   end
 
@@ -226,7 +226,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     visit new_user_session_path
 
     click_link("Didn't receive confirmation instructions?")
-    assert has_content? "Resend confirmation instructions"
+    assert has_text? "Resend confirmation instructions"
 
     fill_in "user[email]", with: "confirmed@viky.ai"
     click_button "Resend confirmation instructions"
@@ -242,14 +242,14 @@ class AuthenticationTest < ApplicationSystemTestCase
     visit new_user_session_path
 
     click_link("Didn't receive confirmation instructions?")
-    assert has_content? "Resend confirmation instructions"
+    assert has_text? "Resend confirmation instructions"
 
     fill_in "user[email]", with: "notconfirmed@viky.ai"
     click_button "Resend confirmation instructions"
 
     message  = "You will receive an email with instructions for how "
     message << "to confirm your email address in a few minutes."
-    assert has_content?(message)
+    assert has_text?(message)
     assert_equal new_user_session_path, current_path
   end
 
@@ -262,30 +262,30 @@ class AuthenticationTest < ApplicationSystemTestCase
       fill_in "Email", with: "confirmed@viky.ai"
       fill_in "Password", with: "BimBam"
       click_button "Log in"
-      assert has_content?("Invalid Email or password.")
+      assert has_text?("Invalid Email or password.")
     end
 
     fill_in "Email", with: "confirmed@viky.ai"
     fill_in "Password", with: "BimBam"
     click_button "Log in"
-    assert has_content?("You have one more attempt before your account is locked.")
+    assert has_text?("You have one more attempt before your account is locked.")
 
     fill_in "Email", with: "confirmed@viky.ai"
     fill_in "Password", with: "BimBam"
     click_button "Log in"
-    assert has_content?("Your account is locked.")
+    assert has_text?("Your account is locked.")
 
     # Unlock
     token = User.find_by_email("confirmed@viky.ai").send_unlock_instructions
     visit user_unlock_path(unlock_token: token)
-    assert has_content?("Your account has been unlocked successfully. Please sign in to continue.")
+    assert has_text?("Your account has been unlocked successfully. Please sign in to continue.")
 
     # Log in
     fill_in "Email", with: "confirmed@viky.ai"
     fill_in "Password", with: "BimBamBoom"
     click_button "Log in"
     assert_equal "/agents", current_path
-    assert has_content?("Signed in successfully.")
+    assert has_text?("Signed in successfully.")
   end
 
 
@@ -293,7 +293,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     visit new_user_session_path
 
     click_link("Didn't receive unlock instructions?")
-    assert has_content? "Resend unlock instructions"
+    assert has_text? "Resend unlock instructions"
 
     fill_in "Email", with: "confirmed@viky.ai"
     click_button "Resend unlock instructions"
@@ -313,7 +313,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     login_as "confirmed@viky.ai", "BimBamBoom"
 
     visit accept_user_invitation_path(invitation_token: raw_token)
-    assert has_content? "You are already signed in."
+    assert has_text? "You are already signed in."
   end
 
 
@@ -329,18 +329,18 @@ class AuthenticationTest < ApplicationSystemTestCase
     visit accept_user_invitation_path(invitation_token: raw_token)
     fill_in "Password", with: "The Great Magic Password"
     click_button "Validate"
-    assert has_content? "Username can't be blank"
+    assert has_text? "Username can't be blank"
 
     fill_in "Password", with: "The Great Magic Password"
     fill_in "Choose your username", with: "magicusername"
     click_button "Validate"
     expected = "Your password and username were set successfully. You are now signed in."
-    assert has_content? expected
+    assert has_text? expected
 
     logout
 
     visit accept_user_invitation_path(invitation_token: u.invitation_token)
-    assert has_content? "The invitation token provided is not valid!"
+    assert has_text? "The invitation token provided is not valid!"
   end
 
 
@@ -348,7 +348,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     Feature.disable_user_registration
 
     visit new_user_registration_path
-    assert has_content?("User registration is temporarily disabled.")
+    assert has_text?("User registration is temporarily disabled.")
     assert_equal "/users/sign_in", current_path
   end
 

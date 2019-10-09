@@ -5,7 +5,7 @@ class Chatbot::MapTest < ActiveSupport::TestCase
   test 'Create a simple map statement' do
     statement = ChatStatement.new(
       speaker: :bot,
-      nature: :map,
+      nature: :interactive_map,
       content: {
         params: "place?key=***REMOVED***&q=Valence"
       },
@@ -18,7 +18,7 @@ class Chatbot::MapTest < ActiveSupport::TestCase
   test 'Params presence validation' do
     statement = ChatStatement.new(
       speaker: :bot,
-      nature: :map,
+      nature: :interactive_map,
       content: { params: '' },
       chat_session: chat_sessions(:one)
     )
@@ -31,7 +31,7 @@ class Chatbot::MapTest < ActiveSupport::TestCase
   test 'Params, title and description length validation' do
     statement = ChatStatement.new(
       speaker: :bot,
-      nature: :map,
+      nature: :interactive_map,
       content: {
         params: 'a' * 5001,
         title: 'a' * 101,

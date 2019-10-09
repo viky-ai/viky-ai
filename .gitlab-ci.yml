@@ -14,18 +14,17 @@ variables:
   DOCKER_DRIVER: overlay
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
+  DOCKER_IMAGE_TOOLS_NLP: $CI_REGISTRY_IMAGE/tools_nlp_base
   DOCKER_IMAGE_TOOLS_RUBY: $CI_REGISTRY_IMAGE/tools_ruby_base
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
   DOCKER_IMAGE_ELASTICSEARCH: $CI_REGISTRY_IMAGE/elasticsearch
   TRACE: "0"
 
 # Build docker image
-
-build_ruby_base:
+build_nlp_base:
   stage: prerequist
   script:
-    - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}      deployment/docker_tools/ruby_base "--target image_ruby_base"
-    - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}_test deployment/docker_tools/ruby_base "--target image_ruby_base_test"
+    - docker_build ${DOCKER_IMAGE_TOOLS_NLP} nlp/tools/docker
 
 build_backup:
   stage: prerequist
@@ -40,25 +39,22 @@ build_elastic:
 build_webapp:
   stage: build
   script:
-    - docker_build ${DOCKER_IMAGE_APP}      webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_run"
-
-build_webapp_test:
-  stage: build
-  script:
-    - docker_build ${DOCKER_IMAGE_APP}_test webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_test"
+    - docker_build ${DOCKER_IMAGE_APP}      webapp "--target image_ruby_run"
+    - docker_build ${DOCKER_IMAGE_APP}_test webapp "--target image_ruby_test"
 
 build_nlp:
   stage: build
+  needs: ["build_nlp_base"]
   script:
-    - docker_build ${DOCKER_IMAGE_NLP}      nlp "--target run_image"
-    - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--target test_image"
+    - docker_build ${DOCKER_IMAGE_NLP}      nlp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target run_image"
+    - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target test_image"
 
 # Test
 test_webapp:
   stage: test
+  needs: ["build_webapp"]
   image: ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG}
   variables:
-    GIT_STRATEGY: none
     VIKYAPP_DB_USERNAME: superman
     VIKYAPP_DB_PASSWORD: sup_3rman
     VIKYAPP_DB_HOST: postgres
@@ -69,10 +65,14 @@ test_webapp:
     VIKYAPP_ACTIVEJOB_REDIS_URL: "redis://redis:6379/2"
     VIKYAPP_QUOTA_REDIS_URL: "redis://redis:6379/4"
     VIKYAPP_STATISTICS_URL: "http://elasticsearch:9200"
+    ES_JAVA_OPTS: "-Xms128m -Xmx392m"
+    SELENIUM_REMOTE_URL: "http://selenium-chrome:4444/wd/hub/"
   services:
-    - postgres:9.6-alpine
-    - redis:3.2-alpine
-    - name: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
+    - postgres:11.5-alpine
+    - redis:5.0-alpine
+    - name: selenium/standalone-chrome:3.141.59
+      alias: selenium-chrome
+    - name: docker.elastic.co/elasticsearch/elasticsearch:7.3.2
       command:
         [
           "bin/elasticsearch",
@@ -89,7 +89,7 @@ test_nlp:
   needs: ["build_nlp"]
   image: ${DOCKER_IMAGE_NLP}_test:${CI_COMMIT_REF_SLUG}
   services:
-    - redis:3.2-alpine
+    - redis:5.0-alpine
   variables:
     GIT_STRATEGY: none
     VIKYAPP_REDIS_PACKAGE_NOTIFIER: "redis://redis/3"
@@ -125,7 +125,6 @@ tag_ruby_base:
     GIT_STRATEGY: none
   script:
     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}
-    - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}_test
 
 tag_backup:
   stage: docker_tag

@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 class CardList
   constructor: (id, group_name) ->
     CardListHelper.updateDraggable()
