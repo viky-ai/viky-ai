@@ -113,6 +113,7 @@ group :test do
   gem 'mocha'
   gem 'shrine-memory'
   gem 'simplecov'
+  gem 'minitest-retry'
 end
 
 # Skylight: profiler for Ruby on Rails applications.
