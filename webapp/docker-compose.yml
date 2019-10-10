@@ -1,5 +1,20 @@
-version: "3"
+version: "3.6"
 services:
+  viky-nlp-dev:
+    image: webapp_viky-nlp-dev:${NLP_TAG}
+    build:
+      context: ../nlp/
+      target: run_image
+    ports:
+      - "9345:9345"
+    environment:
+      VIKYAPP_INTERNAL_URL: ${VIKYAPP_INTERNAL_URL}
+      VIKYAPP_REDIS_PACKAGE_NOTIFIER: 'redis://viky-redis-dev:6379/3'
+    networks:
+      kerbnet: {}
+    depends_on:
+      - viky-redis-dev
+      - viky-db-dev
   viky-db-dev:
     image: "postgres:11.5-alpine"
     ports:
@@ -13,6 +28,8 @@ services:
     image: "redis:5.0-alpine"
     ports:
       - "6379:6379"
+    networks:
+      kerbnet: {}
   viky-stats01-dev:
     image: "docker.elastic.co/elasticsearch/elasticsearch:7.3.2"
     ports:
@@ -25,19 +42,24 @@ services:
     volumes:
       - ./backups:/backup_data
       - vikyapp_stats01_dev:/usr/share/elasticsearch/data
+    networks:
+      kerbnet: {}
   viky-kibana-dev:
-    depends_on:
-      - viky-stats01-dev
     image: "docker.elastic.co/kibana/kibana:7.3.2"
     ports:
       - "5601:5601"
-    links:
-      - viky-stats01-dev
     environment:
       SERVER_BASEPATH: "/kibana"
       SERVER_REWRITEBASEPATH: "true"
       ELASTICSEARCH_HOSTS: "http://viky-stats01-dev:9200"
+    networks:
+      kerbnet: {}
+    depends_on:
+      - viky-stats01-dev
 
 volumes:
   vikyapp_db01_dev: {}
   vikyapp_stats01_dev: {}
+
+networks:
+  kerbnet: {}
