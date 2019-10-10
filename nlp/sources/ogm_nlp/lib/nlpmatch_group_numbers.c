@@ -100,6 +100,12 @@ static og_status NlpMatchGroupNumbersInitConf(og_nlp_th ctrl_nlp_th)
   // es-ES, *-ES, es-*
   IFE(addLocaleConf(DOgLangES, DOgCountryES, conf_dot_coma));
 
+  // it-IT, *-IT, it-*
+  IFE(addLocaleConf(DOgLangIT, DOgCountryIT, conf_dot_coma));
+
+  // pt-PT, *-PT, pt-*
+  IFE(addLocaleConf(DOgLangPT, DOgCountryPT, conf_dot_coma));
+
   // de-DE, *-DE, de-*
   IFE(addLocaleConf(DOgLangDE, DOgCountryDE, conf_dot_coma));
 
@@ -711,7 +717,7 @@ static og_status NlpMatchGroupNumbersBuildLocaleList(og_nlp_th ctrl_nlp_th, GQue
 
   if (list_locale_to_try->length == 0)
   {
-    int key = locale_lang_country(DOgLangEN, DOgCountryUS);
+    gconstpointer key = GINT_TO_POINTER(locale_lang_country(DOgLangEN, DOgCountryUS));
     GList *list_lang_country = g_hash_table_lookup(nmgn->sep_conf_lang_by_lang_country, key);
     struct number_sep_conf_locale *conf = list_lang_country->data;
     g_queue_push_tail(list_locale_to_try, conf);
