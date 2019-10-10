@@ -215,6 +215,8 @@ tag_backup:
   stage: deploy
   needs:
     - build_backup
+    - build_webapp
+    - build_nlp
     - test_webapp
     - test_nlp
   variables:
