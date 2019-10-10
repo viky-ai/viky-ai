@@ -12,7 +12,6 @@ variables:
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
   DOCKER_IMAGE_TOOLS_NLP: $CI_REGISTRY_IMAGE/tools_nlp_base
-  DOCKER_IMAGE_TOOLS_RUBY: $CI_REGISTRY_IMAGE/tools_ruby_base
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
 
 image: vikyai/tools-gitlab-auto-deploy-image:latest
@@ -27,12 +26,6 @@ before_script:
     CI_SERVICE_HOST: "127.0.0.1"
 
 # Build docker image
-build_ruby_base:
-  extends: .kubernetes_runner
-  stage: prerequist
-  script:
-    - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}      deployment/docker_tools/ruby_base "--target image_ruby_base"
-
 build_nlp_base:
   extends: .kubernetes_runner
   stage: prerequist
@@ -41,9 +34,9 @@ build_nlp_base:
 
 build_backup:
   extends: .kubernetes_runner
-  stage: prerequist
+  stage: build
   script:
-    - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup "--build-arg VIKYAPP_BACKUP_PASSWORD=${VIKYAPP_BACKUP_PASSWORD}"
+    - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup
 
 build_webapp:
   stage: build
