@@ -91,11 +91,20 @@ static og_status NlpMatchGroupNumbersInitConf(og_nlp_th ctrl_nlp_th)
 
   // associate conf with locale
 
-  // fr-FR, *-FR, fr-* | default (first declared)
+  // en-US, *-US, en-* | default (first declared)
+  IFE(addLocaleConf(DOgLangEN, DOgCountryUS, conf_coma_dot));
+
+  // fr-FR, *-FR, fr-*
   IFE(addLocaleConf(DOgLangFR, DOgCountryFR, conf_dot_coma));
 
-  // en-US, *-US, en-*
-  IFE(addLocaleConf(DOgLangEN, DOgCountryUS, conf_coma_dot));
+  // es-ES, *-ES, es-*
+  IFE(addLocaleConf(DOgLangES, DOgCountryES, conf_dot_coma));
+
+  // it-IT, *-IT, it-*
+  IFE(addLocaleConf(DOgLangIT, DOgCountryIT, conf_dot_coma));
+
+  // pt-PT, *-PT, pt-*
+  IFE(addLocaleConf(DOgLangPT, DOgCountryPT, conf_dot_coma));
 
   // de-DE, *-DE, de-*
   IFE(addLocaleConf(DOgLangDE, DOgCountryDE, conf_dot_coma));
@@ -704,6 +713,14 @@ static og_status NlpMatchGroupNumbersBuildLocaleList(og_nlp_th ctrl_nlp_th, GQue
 
       g_queue_push_tail(list_locale_to_try, conf);
     }
+  }
+
+  if (list_locale_to_try->length == 0)
+  {
+    gconstpointer key = GINT_TO_POINTER(locale_lang_country(DOgLangEN, DOgCountryUS));
+    GList *list_lang_country = g_hash_table_lookup(nmgn->sep_conf_lang_by_lang_country, key);
+    struct number_sep_conf_locale *conf = list_lang_country->data;
+    g_queue_push_tail(list_locale_to_try, conf);
   }
 
   DONE;
