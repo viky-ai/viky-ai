@@ -21,11 +21,13 @@ module PlayHelper
         text_decorated << "<div class='highlight-pop highlight-pop--#{colors[start_highlight["slug"]]}' data-package='#{start_highlight['package']}' data-color='#{colors[start_highlight["slug"]]}'>"
         text_decorated << "  <div x-arrow></div>"
         text_decorated << "  <div class='highlight-pop__content'>"
-        if intent_has_unsuitable_list_pattern?(Intent.find(start_highlight["id"]))
-          text_decorated << "  <p class='warning'>"
-          text_decorated << "    <span class='icon icon--small icon--white'>#{icon_alert}</span>"
-          text_decorated << "    #{t('views.play.warning.bad_list_pattern')}"
-          text_decorated << "  </p>"
+        if start_highlight["slug"].include? "/interpretations/"
+          if intent_has_unsuitable_list_pattern?(Intent.find(start_highlight["id"]))
+            text_decorated << "  <p class='warning'>"
+            text_decorated << "    <span class='icon icon--small icon--white'>#{icon_alert}</span>"
+            text_decorated << "    #{t('views.play.warning.bad_list_pattern')}"
+            text_decorated << "  </p>"
+          end
         end
         text_decorated << "    <h4>Interpretation</h4>"
         text_decorated << "    <a href='/agents/#{start_highlight["slug"]}'>#{start_highlight["slug"]}</a>"
