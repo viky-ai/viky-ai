@@ -39,6 +39,7 @@ build_backup:
     - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup
 
 build_webapp:
+  extends: .kubernetes_runner
   stage: build
   script:
     - docker_build ${DOCKER_IMAGE_APP}      webapp "--target image_ruby_run"
