@@ -17,9 +17,9 @@ class ConsoleTest < ApplicationSystemTestCase
       )
       click_button "console-send-sentence"
 
-      assert has_content?("No interpretation found.")
+      assert has_text?("No interpretation found.")
       click_link "JSON"
-      assert has_content?("interpretations")
+      assert has_text?("interpretations")
     end
   end
 
@@ -47,7 +47,7 @@ class ConsoleTest < ApplicationSystemTestCase
         }
       )
       click_button "console-send-sentence"
-      assert has_content?("1 interpretation found.")
+      assert has_text?("1 interpretation found.")
 
       Nlp::Interpret.any_instance.stubs("send_nlp_request").returns(
         {
@@ -101,8 +101,8 @@ class ConsoleTest < ApplicationSystemTestCase
       click_button "ON"
 
       assert first("button[data-input-value='true']").matches_css?(".btn--primary")
-      assert has_content?("1 interpretation found.")
-      assert has_content?("Hello world viki.ai")
+      assert has_text?("1 interpretation found.")
+      assert has_text?("Hello world viki.ai")
 
       # Play with Auto/Manual Datetime
       assert_equal 0, all("input[name='interpret[now]']").count
@@ -116,13 +116,13 @@ class ConsoleTest < ApplicationSystemTestCase
       assert_equal 0, all("input[name='interpret[now]']").count
 
       # Spellchecking
-      assert has_content?("Low")
+      assert has_text?("Low")
       all(".dropdown__trigger > .btn")[1].click
       click_link "High"
 
-      assert has_content?("High")
-      assert has_content?("1 interpretation found.")
-      assert has_content?("Hello world viki.ai")
+      assert has_text?("High")
+      assert has_text?("1 interpretation found.")
+      assert has_text?("Hello world viki.ai")
     end
   end
 
@@ -141,7 +141,7 @@ class ConsoleTest < ApplicationSystemTestCase
     within(".console") do
       fill_in "interpret[sentence]", with: "hello"
       click_button "console-send-sentence"
-      assert has_content?("No interpretation found.")
+      assert has_text?("No interpretation found.")
     end
 
     #
@@ -154,8 +154,8 @@ class ConsoleTest < ApplicationSystemTestCase
       fill_in "ID", with: "my-new-intent"
       click_button "Create"
     end
-    assert has_content?("my-new-intent")
-    assert has_content?("No interpretation found.")
+    assert has_text?("my-new-intent")
+    assert has_text?("No interpretation found.")
 
     #
     # Edit intent
@@ -171,14 +171,14 @@ class ConsoleTest < ApplicationSystemTestCase
       click_button "Update"
     end
     assert has_text?("my-new-intent-updated")
-    assert has_content?("No interpretation found.")
+    assert has_text?("No interpretation found.")
 
     #
     # Show intent
     #
     click_link "my-new-intent-updated"
     assert has_text?("Interpretations / my-new-intent-updated PUBLIC")
-    assert has_content?("No interpretation found.")
+    assert has_text?("No interpretation found.")
   end
 
 
@@ -233,8 +233,8 @@ class ConsoleTest < ApplicationSystemTestCase
       )
       click_button "ON"
       assert first("button[data-input-value='true']").matches_css?(".btn--primary")
-      assert has_content?("1 interpretation found.")
-      assert has_content?("weather")
+      assert has_text?("1 interpretation found.")
+      assert has_text?("weather")
 
       within(".c-intent__highlight") do
         # Show highlight
@@ -255,7 +255,7 @@ class ConsoleTest < ApplicationSystemTestCase
       end
     end
 
-    assert has_content?("What the weather like tomorrow ?")
+    assert has_text?("What the weather like tomorrow ?")
   end
 
 
@@ -343,19 +343,19 @@ class ConsoleTest < ApplicationSystemTestCase
       )
       click_button "ON"
       assert first("button[data-input-value='true']").matches_css?(".btn--primary")
-      assert has_content?("2 interpretations found.")
-      assert has_content?("My awesome weather")
+      assert has_text?("2 interpretations found.")
+      assert has_text?("My awesome weather")
 
       find(".highlight-words", text: "terminator").click
       assert has_link?("admin/terminator/interpretations/terminator_find")
       click_link("admin/terminator/interpretations/terminator_find")
     end
 
-    assert has_content?("Where is Sarah Connor ?")
+    assert has_text?("Where is Sarah Connor ?")
     within(".console") do
       assert first("button[data-input-value='true']").matches_css?(".btn--primary")
-      assert has_content?("2 interpretations found.")
-      assert has_content?("My awesome weather")
+      assert has_text?("2 interpretations found.")
+      assert has_text?("My awesome weather")
     end
   end
 
@@ -377,7 +377,7 @@ class ConsoleTest < ApplicationSystemTestCase
         }
       )
       click_button "console-send-sentence"
-      assert has_content?("500 Oops, an error occurred.")
+      assert has_text?("500 Oops, an error occurred.")
     end
   end
 
@@ -413,8 +413,8 @@ class ConsoleTest < ApplicationSystemTestCase
       )
 
       click_button "console-send-sentence"
-      assert has_content?("500 Oops, an error occurred.")
-      assert has_content?("SyntaxError: invalid object literal (line 5)")
+      assert has_text?("500 Oops, an error occurred.")
+      assert has_text?("SyntaxError: invalid object literal (line 5)")
       click_link "See the offending code"
     end
 

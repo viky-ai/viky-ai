@@ -6,21 +6,21 @@ class AgentsNewTest < ApplicationSystemTestCase
     admin_go_to_agents_index
     click_link("New agent")
     within(".modal") do
-      assert has_text? "Create a new agent"
+      assert has_text?("Create a new agent")
     end
   end
 
 
   test "Navigation to agent creation" do
     admin_go_to_agents_index
-    assert has_text? "New agent"
+    assert has_text?("New agent")
     click_link "New agent"
 
     within(".modal") do
-      assert has_field? "Name"
-      assert has_field? "ID"
-      assert has_button? "Create"
-      assert has_button? "Cancel"
+      assert has_field?("Name")
+      assert has_field?("ID")
+      assert has_button?("Create")
+      assert has_button?("Cancel")
     end
   end
 
@@ -50,7 +50,7 @@ class AgentsNewTest < ApplicationSystemTestCase
       "agent-box__header background-color-gradient__black",
       "agent-box__header background-color-gradient__red"
     ]
-    assert_equal expected,  all(".agent-box__header").collect {|n| n["class"]}
+    assert_equal expected, all(".agent-box__header").collect {|n| n["class"]}
   end
 
 
@@ -145,7 +145,7 @@ class AgentsNewTest < ApplicationSystemTestCase
     expected.each do |error|
       assert has_text?(error)
     end
-    assert_equal 3, all(".help--error").size
+    assert has_css?(".help--error", count: 3)
   end
 
 
@@ -158,7 +158,7 @@ class AgentsNewTest < ApplicationSystemTestCase
     expected.each do |error|
       assert has_text?(error)
     end
-    assert_equal 1, all(".help--error").size
+    assert has_css?(".help--error", count: 1)
   end
 
 

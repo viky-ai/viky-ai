@@ -1,4 +1,9 @@
 require "test_helper"
+if ENV['COVERAGE']
+  SimpleCov.command_name "rails-tests-system"
+end
+require 'minitest/retry'
+Minitest::Retry.use!
 
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   include ActiveJob::TestHelper
@@ -16,8 +21,12 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     end
   end
 
+  Capybara.configure do |config|
+    config.default_max_wait_time = 5
+  end
+
   driven_by :headless_chrome
-  #driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400]
+  # driven_by :selenium, using: :chrome, screen_size: [1400, 1400]
 
   def setup
     return unless ENV['SELENIUM_REMOTE_URL']

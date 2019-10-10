@@ -76,8 +76,8 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     click_button "Add"
 
     assert has_text?("Salut Marcel")
-    assert_equal 2, all(".interpretation-resume").count
-    assert_equal 1, all('span[title="admin/terminator/interpretations/terminator_find"]').size
+    assert has_css?(".interpretation-resume", count: 2)
+    assert has_css?('span[title="admin/terminator/interpretations/terminator_find"]', count: 1)
 
     # Return to interpretation list
     click_link "Overview"
@@ -101,8 +101,8 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     end
 
     assert has_text?("Salut Marcel")
-    assert_equal 1, all(".interpretation-resume").count
-    assert_equal 0, all('span[title="admin/terminator/interpretations/terminator_find"]').size
+    assert has_css?(".interpretation-resume", count: 1)
+    assert has_no_css?('span[title="admin/terminator/interpretations/terminator_find"]')
   end
 
 

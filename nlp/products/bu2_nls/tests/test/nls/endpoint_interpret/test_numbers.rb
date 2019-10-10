@@ -10,7 +10,7 @@ module Nls
 
       # Rappel de la conf effective :
       #
-      # { thousands: " ", decimal: "," }  # 1 234,56   -- French
+      # { thousands: ".", decimal: "," }  # 1 234,56   -- French
       # { thousands: ",", decimal: "." }  # 1,234.56   -- United States
       # { thousands: ".", decimal: "," }  # 1.234,56   -- German
       # { thousands: "'", decimal: "." }  # 1'234.56   -- Switzerland
@@ -209,7 +209,7 @@ module Nls
         check_interpret("33,12,34,56,78", { interpretation: "numbers_list", solution: [33, 12, 34, 56, 78] })
         check_interpret("1234,123",       { interpretation: "numbers_list", solution: [1234, 123] })
         check_interpret("12,123.123,123", { interpretation: "numbers_list", solution: [12, 123, 123, 123] })
-        check_interpret("12,123,12 123",  { interpretation: "numbers_list", solution: [12123, 12, 123] })
+        check_interpret("12,123,12 123",  { interpretation: "numbers_list", solution: [12123, 12123] })
         check_interpret("1, 2, 3.4",      { interpretation: "numbers_list", solution: [1, 2, 3.4] })
       end
 
@@ -219,7 +219,7 @@ module Nls
         check_interpret("33.12.34.56.78", { interpretation: "numbers_list", solution: [33, 12, 34, 56, 78] })
         check_interpret("1234.123",       { interpretation: "numbers_list", solution: [1234, 123] })
         check_interpret("12.123,123.123", { interpretation: "numbers_list", solution: [12, 123, 123, 123] })
-        check_interpret("12.123.12 123",  { interpretation: "numbers_list", solution: [12123, 12, 123] })
+        check_interpret("12.123.12 123",  { interpretation: "numbers_list", solution: [12123, 12123] })
         check_interpret("1. 2. 3,4",      { interpretation: "numbers_list", solution: [1, 2, 3.4] })
       end
 
@@ -229,7 +229,7 @@ module Nls
         check_interpret("33'12'34'56'78", { interpretation: "numbers_list", solution: [33, 12, 34, 56, 78] })
         check_interpret("1234'123",       { interpretation: "numbers_list", solution: [1234, 123] })
         check_interpret("12'123.123'123", { interpretation: "numbers_list", solution: [12, 123, 123, 123] })
-        check_interpret("12'123,12 123",  { interpretation: "numbers_list", solution: [12123, 12, 123] })
+        check_interpret("12'123,12 123",  { interpretation: "numbers_list", solution: [12123, 12123] })
         check_interpret("1' 2' 3.4",      { interpretation: "numbers_list", solution: [1, 2, 3.4] })
       end
 
@@ -302,76 +302,76 @@ module Nls
         check_interpret("1 000", { interpretation: "numbers_list", solution: [1000] })
         check_interpret("1,000", { interpretation: "numbers_list", solution: [1] })
         check_interpret("1'000", { interpretation: "numbers_list", solution: [1000] })
-        check_interpret("1.000", { interpretation: "numbers_list", solution: [1] })
+        check_interpret("1.000", { interpretation: "numbers_list", solution: [1000] })
 
         Interpretation.default_locale = nil
         check_interpret("1 000", { interpretation: "numbers_list", solution: [1000] })
         check_interpret("1,000", { interpretation: "numbers_list", solution: [1] })
         check_interpret("1'000", { interpretation: "numbers_list", solution: [1000] })
-        check_interpret("1.000", { interpretation: "numbers_list", solution: [1] })
+        check_interpret("1.000", { interpretation: "numbers_list", solution: [1000] })
 
         Interpretation.default_locale = "*"
         check_interpret("1 000", { interpretation: "numbers_list", solution: [1000] })
         check_interpret("1,000", { interpretation: "numbers_list", solution: [1] })
         check_interpret("1'000", { interpretation: "numbers_list", solution: [1000] })
-        check_interpret("1.000", { interpretation: "numbers_list", solution: [1] })
+        check_interpret("1.000", { interpretation: "numbers_list", solution: [1000] })
 
         Interpretation.default_locale = "fr-FR"
         check_interpret("1 000", { interpretation: "numbers_list", solution: [1000] })
         check_interpret("1,000", { interpretation: "numbers_list", solution: [1] })
         check_interpret("1'000", { interpretation: "numbers_list", solution: [1, 0] })
-        check_interpret("1.000", { interpretation: "numbers_list", solution: [1, 0] })
+        check_interpret("1.000", { interpretation: "numbers_list", solution: [1000] })
 
         Interpretation.default_locale = "fr-CA"
         check_interpret("1 000", { interpretation: "numbers_list", solution: [1000] })
         check_interpret("1,000", { interpretation: "numbers_list", solution: [1] })
         check_interpret("1'000", { interpretation: "numbers_list", solution: [1, 0] })
-        check_interpret("1.000", { interpretation: "numbers_list", solution: [1, 0] })
+        check_interpret("1.000", { interpretation: "numbers_list", solution: [1000] })
 
         Interpretation.default_locale = "fr"
         check_interpret("1 000", { interpretation: "numbers_list", solution: [1000] })
         check_interpret("1,000", { interpretation: "numbers_list", solution: [1] })
         check_interpret("1'000", { interpretation: "numbers_list", solution: [1, 0] })
-        check_interpret("1.000", { interpretation: "numbers_list", solution: [1, 0] })
+        check_interpret("1.000", { interpretation: "numbers_list", solution: [1000] })
 
         Interpretation.default_locale = "en-US"
-        check_interpret("1 000", { interpretation: "numbers_list", solution: [1, 0] })
+        check_interpret("1 000", { interpretation: "numbers_list", solution: [1000] })
         check_interpret("1,000", { interpretation: "numbers_list", solution: [1000] })
         check_interpret("1'000", { interpretation: "numbers_list", solution: [1, 0] })
         check_interpret("1.000", { interpretation: "numbers_list", solution: [1] })
 
         Interpretation.default_locale = "en-UK"
-        check_interpret("1 000", { interpretation: "numbers_list", solution: [1, 0] })
+        check_interpret("1 000", { interpretation: "numbers_list", solution: [1000] })
         check_interpret("1,000", { interpretation: "numbers_list", solution: [1000] })
         check_interpret("1'000", { interpretation: "numbers_list", solution: [1, 0] })
         check_interpret("1.000", { interpretation: "numbers_list", solution: [1] })
 
         Interpretation.default_locale = "en"
-        check_interpret("1 000", { interpretation: "numbers_list", solution: [1, 0] })
+        check_interpret("1 000", { interpretation: "numbers_list", solution: [1000] })
         check_interpret("1,000", { interpretation: "numbers_list", solution: [1000] })
         check_interpret("1'000", { interpretation: "numbers_list", solution: [1, 0] })
         check_interpret("1.000", { interpretation: "numbers_list", solution: [1] })
 
         Interpretation.default_locale = "de-DE"
-        check_interpret("1 000", { interpretation: "numbers_list", solution: [1, 0] })
+        check_interpret("1 000", { interpretation: "numbers_list", solution: [1000] })
         check_interpret("1,000", { interpretation: "numbers_list", solution: [1] })
         check_interpret("1'000", { interpretation: "numbers_list", solution: [1, 0] })
         check_interpret("1.000", { interpretation: "numbers_list", solution: [1000] })
 
         Interpretation.default_locale = "de"
-        check_interpret("1 000", { interpretation: "numbers_list", solution: [1, 0] })
+        check_interpret("1 000", { interpretation: "numbers_list", solution: [1000] })
         check_interpret("1,000", { interpretation: "numbers_list", solution: [1] })
         check_interpret("1'000", { interpretation: "numbers_list", solution: [1, 0] })
         check_interpret("1.000", { interpretation: "numbers_list", solution: [1000] })
 
         Interpretation.default_locale = "fr-CH"
-        check_interpret("1 000", { interpretation: "numbers_list", solution: [1, 0] })
+        check_interpret("1 000", { interpretation: "numbers_list", solution: [1000] })
         check_interpret("1,000", { interpretation: "numbers_list", solution: [1, 0] })
         check_interpret("1'000", { interpretation: "numbers_list", solution: [1000] })
         check_interpret("1.000", { interpretation: "numbers_list", solution: [1] })
 
         Interpretation.default_locale = "de-CH"
-        check_interpret("1 000", { interpretation: "numbers_list", solution: [1, 0] })
+        check_interpret("1 000", { interpretation: "numbers_list", solution: [1000] })
         check_interpret("1,000", { interpretation: "numbers_list", solution: [1, 0] })
         check_interpret("1'000", { interpretation: "numbers_list", solution: [1000] })
         check_interpret("1.000", { interpretation: "numbers_list", solution: [1] })
@@ -396,58 +396,58 @@ module Nls
        check_interpret("1 000,2", { interpretation: "numbers_list", solution: [1000.2] })
        check_interpret("1,000.2", { interpretation: "numbers_list", solution: [1, 0, 2] })
        check_interpret("1'000.2", { interpretation: "numbers_list", solution: [1, 0, 2] })
-       check_interpret("1.000,2", { interpretation: "numbers_list", solution: [1, 0, 2] })
+       check_interpret("1.000,2", { interpretation: "numbers_list", solution: [1000.2] })
 
        Interpretation.default_locale = "fr-CA"
        check_interpret("1 000,2", { interpretation: "numbers_list", solution: [1000.2] })
        check_interpret("1,000.2", { interpretation: "numbers_list", solution: [1, 0, 2] })
        check_interpret("1'000.2", { interpretation: "numbers_list", solution: [1, 0, 2] })
-       check_interpret("1.000,2", { interpretation: "numbers_list", solution: [1, 0, 2] })
+       check_interpret("1.000,2", { interpretation: "numbers_list", solution: [1000.2] })
 
        Interpretation.default_locale = "fr"
        check_interpret("1 000,2", { interpretation: "numbers_list", solution: [1000.2] })
        check_interpret("1,000.2", { interpretation: "numbers_list", solution: [1, 0, 2] })
        check_interpret("1'000.2", { interpretation: "numbers_list", solution: [1, 0, 2] })
-       check_interpret("1.000,2", { interpretation: "numbers_list", solution: [1, 0, 2] })
+       check_interpret("1.000,2", { interpretation: "numbers_list", solution: [1000.2] })
 
        Interpretation.default_locale = "en-US"
-       check_interpret("1 000,2", { interpretation: "numbers_list", solution: [1, 0, 2] })
+       check_interpret("1 000,2", { interpretation: "numbers_list", solution: [1000, 2] })
        check_interpret("1,000.2", { interpretation: "numbers_list", solution: [1000.2] })
        check_interpret("1'000.2", { interpretation: "numbers_list", solution: [1, 0, 2] })
        check_interpret("1.000,2", { interpretation: "numbers_list", solution: [1, 0, 2] })
 
        Interpretation.default_locale = "en-UK"
-       check_interpret("1 000,2", { interpretation: "numbers_list", solution: [1, 0, 2] })
+       check_interpret("1 000,2", { interpretation: "numbers_list", solution: [1000, 2] })
        check_interpret("1,000.2", { interpretation: "numbers_list", solution: [1000.2] })
        check_interpret("1'000.2", { interpretation: "numbers_list", solution: [1, 0, 2] })
        check_interpret("1.000,2", { interpretation: "numbers_list", solution: [1, 0, 2] })
 
        Interpretation.default_locale = "en"
-       check_interpret("1 000,2", { interpretation: "numbers_list", solution: [1, 0, 2] })
+       check_interpret("1 000,2", { interpretation: "numbers_list", solution: [1000, 2] })
        check_interpret("1,000.2", { interpretation: "numbers_list", solution: [1000.2] })
        check_interpret("1'000.2", { interpretation: "numbers_list", solution: [1, 0, 2] })
        check_interpret("1.000,2", { interpretation: "numbers_list", solution: [1, 0, 2] })
 
        Interpretation.default_locale = "de-DE"
-       check_interpret("1 000,2", { interpretation: "numbers_list", solution: [1, 0.2] })
+       check_interpret("1 000,2", { interpretation: "numbers_list", solution: [1000.2] })
        check_interpret("1,000.2", { interpretation: "numbers_list", solution: [1, 0, 2] })
        check_interpret("1'000.2", { interpretation: "numbers_list", solution: [1, 0, 2] })
        check_interpret("1.000,2", { interpretation: "numbers_list", solution: [1000.2] })
 
        Interpretation.default_locale = "de"
-       check_interpret("1 000,2", { interpretation: "numbers_list", solution: [1, 0.2] })
+       check_interpret("1 000,2", { interpretation: "numbers_list", solution: [1000.2] })
        check_interpret("1,000.2", { interpretation: "numbers_list", solution: [1, 0, 2] })
        check_interpret("1'000.2", { interpretation: "numbers_list", solution: [1, 0, 2] })
        check_interpret("1.000,2", { interpretation: "numbers_list", solution: [1000.2] })
 
        Interpretation.default_locale = "fr-CH"
-       check_interpret("1 000,2", { interpretation: "numbers_list", solution: [1, 0, 2] })
+       check_interpret("1 000,2", { interpretation: "numbers_list", solution: [1000, 2] })
        check_interpret("1,000.2", { interpretation: "numbers_list", solution: [1, 0, 2] })
        check_interpret("1'000.2", { interpretation: "numbers_list", solution: [1000.2] })
        check_interpret("1.000,2", { interpretation: "numbers_list", solution: [1, 0, 2] })
 
        Interpretation.default_locale = "de-CH"
-       check_interpret("1 000,2", { interpretation: "numbers_list", solution: [1, 0, 2] })
+       check_interpret("1 000,2", { interpretation: "numbers_list", solution: [1000, 2] })
        check_interpret("1,000.2", { interpretation: "numbers_list", solution: [1, 0, 2] })
        check_interpret("1'000.2", { interpretation: "numbers_list", solution: [1000.2] })
        check_interpret("1.000,2", { interpretation: "numbers_list", solution: [1, 0, 2] })
@@ -531,6 +531,24 @@ module Nls
 
       end
 
+      def test_no_number
+        package = Package.new("test_no_number")
+
+        interpretation_private = package.new_interpretation("no_number")
+        interpretation_private << Expression.new("123 456", solution: "ott ffs")
+
+        Nls.remove_all_packages
+
+        Interpretation.default_locale = nil
+
+        Nls.package_update(package)
+
+        check_interpret("123 456",
+          interpretation: "no_number",
+          solution: "ott ffs"
+        )
+
+      end
 
     end
   end

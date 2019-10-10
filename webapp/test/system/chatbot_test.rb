@@ -13,7 +13,7 @@ class ChatbotTest < ApplicationSystemTestCase
       first('button[type="submit"]').click
     end
     within(".chatbot__discussion") do
-      assert has_text? "My name is Stan"
+      assert has_text?("My name is Stan")
     end
   end
 
@@ -57,8 +57,8 @@ class ChatbotTest < ApplicationSystemTestCase
     within(".chatbots-list--for-index") do
       fill_in "search_query", with: "nol"
       click_button "#search"
-      assert has_content?("Arnold")
-      assert has_no_content?("Weather")
+      assert has_text?("Arnold")
+      assert has_no_text?("Weather")
     end
   end
 
@@ -69,14 +69,14 @@ class ChatbotTest < ApplicationSystemTestCase
       all(".dropdown__trigger > button").first.click
       click_link "Exclude WIP"
 
-      assert has_no_content?("Arnold")
-      assert has_content?("Weather")
+      assert has_no_text?("Arnold")
+      assert has_text?("Weather")
 
       all(".dropdown__trigger > button").first.click
       click_link "Include WIP"
 
-      assert has_content?("Arnold")
-      assert has_content?("Weather")
+      assert has_text?("Arnold")
+      assert has_text?("Weather")
     end
   end
 
@@ -86,8 +86,8 @@ class ChatbotTest < ApplicationSystemTestCase
     within(".chatbots-list--for-index") do
       fill_in "search_query", with: "azerty"
       click_button "#search"
-      assert has_no_content?("Arnold")
-      assert has_no_content?("Weather")
+      assert has_no_text?("Arnold")
+      assert has_no_text?("Weather")
     end
   end
 
@@ -97,15 +97,15 @@ class ChatbotTest < ApplicationSystemTestCase
     within(".chatbots-list--for-index") do
       fill_in "search_query", with: "ath"
       click_button "#search"
-      assert has_no_content?("Arnold")
-      assert has_content?("Weather")
+      assert has_no_text?("Arnold")
+      assert has_text?("Weather")
     end
     admin_go_to_agents_index
     admin_go_to_chatbots
     within(".chatbots-list--for-index") do
       assert has_text? "ath"
-      assert has_no_content?("Arnold")
-      assert has_content?("Weather")
+      assert has_no_text?("Arnold")
+      assert has_text?("Weather")
     end
   end
 

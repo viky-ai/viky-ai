@@ -46,20 +46,10 @@ build_backup:
     - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup "--build-arg VIKYAPP_BACKUP_PASSWORD=${VIKYAPP_BACKUP_PASSWORD}"
 
 build_webapp:
-  extends: .kubernetes_runner
-  needs:
-    - "build_ruby_base"
   stage: build
   script:
-    - docker_build ${DOCKER_IMAGE_APP}      webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_run"
-
-build_webapp_test:
-  extends: .kubernetes_runner
-  needs:
-    - "build_ruby_base"
-  stage: build
-  script:
-    - docker_build ${DOCKER_IMAGE_APP}_test webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_test"
+    - docker_build ${DOCKER_IMAGE_APP}      webapp "--target image_ruby_run"
+    - docker_build ${DOCKER_IMAGE_APP}_test webapp "--target image_ruby_test"
 
 build_nlp:
   extends: .kubernetes_runner
@@ -73,12 +63,12 @@ build_nlp:
     - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target test_image"
 
 # Test
-.test_webapp:
+test_webapp:
   extends: .kubernetes_runner
   stage: test
   image: ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG}
   needs:
-    - "build_webapp_test"
+    - "build_webapp"
   variables:
     POSTGRES_USER: superman
     POSTGRES_PASSWORD: sup_3rman
@@ -98,7 +88,7 @@ build_nlp:
           "-Enetwork.host=0.0.0.0",
         ]
       alias: elasticsearch
-  before_script:
+  script:
     - export VIKYAPP_DB_USERNAME="${POSTGRES_USER}"
     - export VIKYAPP_DB_PASSWORD="${POSTGRES_PASSWORD}"
     - export VIKYAPP_DB_HOST="${CI_SERVICE_HOST:-postgres}"
@@ -108,22 +98,11 @@ build_nlp:
     - export SELENIUM_REMOTE_URL="http://${CI_SERVICE_HOST:-selenium-chrome}:4444/wd/hub/"
     - export VIKYAPP_STATISTICS_NO_REPLICA="true"
     - cd /webapp
+    - if [ "${SKIP_TEST:-false}" != "true" ]; then ./bin/docker_run_test.sh unit ; fi
   artifacts:
     # expire_in: 1 week
     reports:
       junit: "reports/TEST-*.xml"
-
-test_webapp_unit:
-  extends: .test_webapp
-  script:
-    - cd /webapp
-    - if [ "${SKIP_TEST:-false}" != "true" ]; then ./bin/docker_run_test.sh unit ; fi
-
-# Test
-test_webapp_system:
-  extends: .test_webapp
-  script:
-    - if [ "${SKIP_TEST:-false}" != "true" ]; then ./bin/docker_run_test.sh system ; fi
 
 test_nlp:
   extends: .kubernetes_runner
@@ -242,8 +221,7 @@ tag_backup:
   stage: deploy
   needs:
     - build_backup
-    - test_webapp_unit
-    - test_webapp_system
+    - test_webapp
     - test_nlp
   variables:
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
@@ -251,8 +229,11 @@ tag_backup:
     HELM_EXTRA_OPTIONS: "--wait"
   script:
     - kube_setup
+    # current deployment status
     - helm history "${RELEASE_NAME}" || true
     - helm status  "${RELEASE_NAME}" || true
+    # backup current env
+    - kubectl exec $(kube_get_pods "app=viky-webapp-backup") bash /backup/backup.sh || true
     # Go to Kubernetes directory
     - cd deployment/kubernetes/
     - bin/generate-ci-override-values.sh

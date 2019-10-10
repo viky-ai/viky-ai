@@ -1,8 +1,5 @@
-db:       docker kill viky-db-dev; docker run --rm -p "5432:5432" --mount 'type=volume,src=vikyapp_db01_dev,dst=/var/lib/postgresql/data' --name viky-db-dev -e POSTGRES_USER=viky -e POSTGRES_PASSWORD=viky postgres:11.5-alpine
-redis:    docker kill viky-redis-dev; docker run -p "6379:6379" --rm --name viky-redis-dev --init redis:5.0-alpine
+infra:    docker-compose up
 workers:  bundle exec sidekiq -C config/sidekiq.yml
 webpack:  ./bin/webpack-dev-server
 web:      bundle exec rails s -p 3000 -b 0.0.0.0
 nls:      ./bin/foreman_nls.sh $MY_CURRENT_GIT_BRANCH
-stats:    docker kill viky-stats01-dev ; docker run -p 9200:9200 -v $(pwd)/backups:/backup_data -e "path.repo=/backup_data" -e "discovery.type=single-node" -e "node.name=viky-stats01-dev"  -e "ES_JAVA_OPTS=-Xms128m -Xmx392m" --rm --mount 'type=volume,src=vikyapp_stats01_dev,dst=/usr/share/elasticsearch/data'  --name viky-stats01-dev  docker.elastic.co/elasticsearch/elasticsearch:7.3.2
-kibana:       docker kill viky-kibana;       sleep 5; docker run -p 5601:5601 --link viky-stats01-dev  -e "SERVER_BASEPATH=/kibana" -e "SERVER_REWRITEBASEPATH=true" -e "ELASTICSEARCH_HOSTS=http://viky-stats01-dev:9200" --rm --name viky-kibana docker.elastic.co/kibana/kibana:7.3.2

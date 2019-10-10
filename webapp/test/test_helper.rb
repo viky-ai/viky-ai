@@ -1,3 +1,8 @@
+if ENV['COVERAGE']
+  require 'simplecov'
+  SimpleCov.command_name "rails-tests"
+end
+
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
 require 'rails/test_help'
@@ -24,7 +29,10 @@ class ActiveSupport::TestCase
 
   Feature.disable_quota
 
-  parallelize_setup do
+  parallelize_setup do |worker|
+    if ENV['COVERAGE']
+      SimpleCov.command_name "#{SimpleCov.command_name}-#{worker}"
+    end
     @index_client = InterpretRequestLogTestClient.new
     @index_client.create_test_index
   end
@@ -35,6 +43,9 @@ class ActiveSupport::TestCase
   end
 
   parallelize_teardown do
+    if ENV['COVERAGE']
+      SimpleCov.result
+    end
     @index_client.drop_test_index
   end
 end

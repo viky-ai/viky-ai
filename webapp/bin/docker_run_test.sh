@@ -25,16 +25,8 @@ export DISABLE_SPRING=true
 # Setup statistics
 ./bin/rails statistics:setup
 
-if [[ "$1" == "unit" ]] || [[ "$1" == "" ]]; then
+# Run tests
+COVERAGE=1 DISABLE_SPRING=1 ./bin/rails test
 
-  # Run tests
-  ./bin/rails test
-
-fi
-
-if [[ "$1" == "system" ]] || [[ "$1" == "" ]]; then
-
-  # Run system tests
-  ./bin/rails test:system
-
-fi
+# Run system tests
+PARALLEL_WORKERS=6 COVERAGE=1 DISABLE_SPRING=1 ./bin/rails test:system
