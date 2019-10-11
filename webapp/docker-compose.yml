@@ -31,7 +31,7 @@ services:
     networks:
       kerbnet: {}
   viky-stats01-dev:
-    image: "docker.elastic.co/elasticsearch/elasticsearch:7.3.2"
+    image: "vikyai/elasticsearch-s3:7.3.2"
     ports:
       - "9200:9200"
     environment:
