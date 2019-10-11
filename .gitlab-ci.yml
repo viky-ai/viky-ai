@@ -17,6 +17,10 @@ variables:
 image: vikyai/tools-gitlab-auto-deploy-image:latest
 before_script:
   # load auto-deploy if exits (not in test)
+  - ls -l $CI_BUILDS_DIR
+  - pwd 
+  - ls $(pwd)
+  - cat ${CI_BUILDS_DIR}/deployment/kubernetes/config/config.yml
   - if [ -f /auto-deploy.sh ]; then . /auto-deploy.sh ; fi
 
 .kubernetes_runner:
@@ -172,6 +176,7 @@ tag_backup:
     # ASN cluster
     KUBECONFIG_URL: "file://${CI_BUILDS_DIR}/deployment/kubernetes/config/config.yml"
     KUBE_NAMESPACE: viky
+
 
 .deploy_develop:
   only:
