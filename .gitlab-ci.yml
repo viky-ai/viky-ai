@@ -18,7 +18,7 @@ image: vikyai/tools-gitlab-auto-deploy-image:latest
 before_script:
   # load auto-deploy if exits (not in test)
   - echo $KUBECONFIG_URL
-  - cat $KUBECONFIG_URL || true
+  - curl $KUBECONFIG_URL || true
   - echo $KUBE_NAMESPACE
   - if [ -f /auto-deploy.sh ]; then . /auto-deploy.sh ; fi
 
