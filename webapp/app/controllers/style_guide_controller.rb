@@ -2,8 +2,12 @@ class StyleGuideController < ApplicationController
 
   def page
     set_pages
-    @page = @pages.find{|p| p[:slug] == params[:page_id] }
-    render params[:page_id]
+    if params[:page_id].nil?
+      @page = @pages.first
+    else
+      @page = @pages.find{|p| p[:slug] == params[:page_id] }
+    end
+    render @page[:slug]
   end
 
   def set_pages
