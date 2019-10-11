@@ -26,12 +26,6 @@ before_script:
     CI_SERVICE_HOST: "127.0.0.1"
 
 # Build docker image
-build_nlp_base:
-  extends: .kubernetes_runner
-  stage: prerequist
-  script:
-    - docker_build ${DOCKER_IMAGE_TOOLS_NLP} nlp/tools/docker
-
 build_backup:
   extends: .kubernetes_runner
   stage: build
@@ -48,8 +42,6 @@ build_webapp:
 build_nlp:
   extends: .kubernetes_runner
   stage: build
-  needs:
-    - "build_nlp_base"
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   script:

@@ -80,7 +80,7 @@ class ConsoleController < ApplicationController
 
     def endpoint_path(nlp)
       interpret_path = "/api/v1/agents/#{@owner.username}/#{@agent.agentname}/interpret.json"
-      base_url       = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
+      base_url       = ENV.fetch('VIKYAPP_PUBLIC_URL') { 'http://localhost:3000' }
       parameters = {
         agent_token: @agent.api_token,
         sentence: nlp.sentence,

@@ -165,11 +165,11 @@ class Agent < ApplicationRecord
   end
 
   def owner
-    users.includes(:memberships).find_by('memberships.rights' => 'all')
+    users.find_by('memberships.rights' => 'all')
   end
 
   def collaborators
-    users.includes(:memberships).where.not('memberships.rights' => 'all')
+    users.where.not('memberships.rights' => 'all')
   end
 
   def collaborator?(user)

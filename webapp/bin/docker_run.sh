@@ -63,7 +63,7 @@ else
     ./bin/rails statistics:rollover
     ;;
   *)
-    echo "viky.ai will be available on ${VIKYAPP_BASEURL}"
+    echo "viky.ai will be available on ${VIKYAPP_PUBLIC_URL}"
 
     # Start web server
     ./bin/rails server -b 0.0.0.0 -p 3000 &

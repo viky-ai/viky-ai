@@ -33,6 +33,7 @@
     "webpack": "^4.40.2"
   },
   "devDependencies": {
+    "wait-on": "^3.3.0",
     "webpack-dev-server": "^3.8.0"
   }
 }

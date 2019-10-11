@@ -5,7 +5,7 @@ require 'json'
 
 module NlpRoute
   class PackageApiWrapper
-    VIKY_URL = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
+    VIKY_URL = ENV.fetch('VIKYAPP_INTERNAL_URL') { 'http://localhost:3000' }
     NLP_URL =  ENV.fetch('VIKYAPP_NLP_URL') { 'http://localhost:9345' }
     VIKYAPP_INTERNAL_API_TOKEN = ENV.fetch('VIKYAPP_INTERNAL_API_TOKEN') { 'Uq6ez5IUdd' }
     INIT_TIMEOUT = ENV.fetch('VIKYAPP_NLP_INIT_TIMEOUT') { "#{60_000}" }
