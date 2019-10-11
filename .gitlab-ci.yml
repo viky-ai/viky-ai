@@ -17,10 +17,11 @@ variables:
 image: vikyai/tools-gitlab-auto-deploy-image:latest
 before_script:
   # load auto-deploy if exits (not in test)
-  - ls -l $CI_BUILDS_DIR
+  - echo $CI_PROJECT_DIR
+  - ls -l $CI_PROJECT_DIR
   - pwd 
   - ls $(pwd)
-  - cat ${CI_BUILDS_DIR}/deployment/kubernetes/config/config.yml
+  - cat ${pwd}/deployment/kubernetes/config/config.yml
   - if [ -f /auto-deploy.sh ]; then . /auto-deploy.sh ; fi
 
 .kubernetes_runner:
@@ -174,7 +175,7 @@ tag_backup:
     HELM_RELEASE_NAME: "viky-branches"
     HELM_VALUES: "custom-values.yml,viky/custom-values/dev.yaml"
     # ASN cluster
-    KUBECONFIG_URL: "file://${CI_BUILDS_DIR}/deployment/kubernetes/config/config.yml"
+    KUBECONFIG_URL: "file://${CI_PROJECT_DIR}/deployment/kubernetes/config/config.yml"
     KUBE_NAMESPACE: viky
 
 
