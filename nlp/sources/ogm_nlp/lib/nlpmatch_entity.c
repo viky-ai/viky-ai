@@ -212,8 +212,8 @@ static og_status NlpMatchEntitiesInPackageRecursive(struct nlp_match_entities_ct
 og_status NlpMatchCurrentEntity(struct nlp_match_entities_ctrl *me_ctrl)
 {
   og_nlp_th ctrl_nlp_th = me_ctrl->ctrl_nlp_th;
-  NlpLog(DOgNlpTraceMatch, "NlpMatchCurrentEntity: request_word to search is '%s' length=%d", me_ctrl->string_entity,
-      me_ctrl->request_word_list_length);
+  NlpLog(DOgNlpTraceMatch, "NlpMatchCurrentEntity: request_word to search is '%s' number of words=%d, start_position=%d", me_ctrl->string_entity,
+      me_ctrl->request_word_list_length,me_ctrl->request_word_list[0]->start_position);
 
   og_bool found_entity = NlpMatchEntity(me_ctrl);
   IFE(found_entity);
@@ -341,10 +341,12 @@ static og_bool NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int ib
   gpointer result = g_hash_table_lookup(me_ctrl->expression_hash, expression);
   IFX(result)
   {
-    NlpLog(DOgNlpTraceMatch, "NlpMatchEntityAdd: expression '%s' already created", expression->text);
-    DONE;
+    NlpLog(DOgNlpTraceMatch, "NlpMatchEntityAdd: expression '%s' already created, going on", expression->text);
   }
-  g_hash_table_insert(me_ctrl->expression_hash, expression, GINT_TO_POINTER(1));
+  else
+  {
+    g_hash_table_insert(me_ctrl->expression_hash, expression, GINT_TO_POINTER(1));
+  }
 
   if (expression->input_parts_nb != me_ctrl->request_word_list_length)
   {
