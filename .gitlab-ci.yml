@@ -169,6 +169,9 @@ tag_backup:
     S3_SECRET_KEY: ${S3_SECRET_KEY}
     HELM_RELEASE_NAME: "viky-branches"
     HELM_VALUES: "custom-values.yml,viky/custom-values/dev.yaml"
+    # ASN cluster
+    KUBECONFIG_URL: "${CI_BUILDS_DIR}/deployment/kubernetes/config/config.yml"
+    KUBE_NAMESPACE: viky
 
 .deploy_develop:
   only:
