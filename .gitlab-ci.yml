@@ -160,7 +160,7 @@ deploy_dev:
     on_stop: delete_env
   variables:
     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-    VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+    VIKYAPP_PUBLIC_URL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
     DOC_STACK: "doc-develop-platform-dev/doc"
   script:
@@ -186,7 +186,7 @@ deploy_preprod:
   variables:
     VIKYAPP_AUTO_BACKUP: "true"
     VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
-    VIKYAPP_BASEURL: https://viky-beta.viky.ai
+    VIKYAPP_PUBLIC_URL: https://viky-beta.viky.ai
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
     DOC_STACK: "viky-beta-doc/doc"
   script:
@@ -209,7 +209,7 @@ delete_env:
     action: stop
   variables:
     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-    VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+    VIKYAPP_PUBLIC_URL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
   script:
     - echo "Remove ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
@@ -230,7 +230,7 @@ invite_admin_dev:
   variables:
     GIT_STRATEGY: none
     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-    VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+    VIKYAPP_PUBLIC_URL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
   script:
     - echo "Add user ${GITLAB_USER_EMAIL} as admin on ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - TASK_CMD="./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]"
@@ -250,7 +250,7 @@ invite_admin_preprod:
   variables:
     GIT_STRATEGY: none
     VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
-    VIKYAPP_BASEURL: https://viky-beta.viky.ai
+    VIKYAPP_PUBLIC_URL: https://viky-beta.viky.ai
   script:
     - echo "Add user ${GITLAB_USER_EMAIL} as admin on ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - TASK_CMD="./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]"
@@ -271,7 +271,7 @@ backup_dev:
   variables:
     GIT_STRATEGY: none
     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-    VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+    VIKYAPP_PUBLIC_URL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
   script:
     - echo "Backup platform data from ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
@@ -290,7 +290,7 @@ backup_preprod:
   variables:
     GIT_STRATEGY: none
     VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
-    VIKYAPP_BASEURL: https://viky-beta.viky.ai
+    VIKYAPP_PUBLIC_URL: https://viky-beta.viky.ai
   script:
     - echo "Backup platform data from ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
@@ -310,7 +310,7 @@ backup_restore_dev:
   variables:
     GIT_STRATEGY: none
     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-    VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+    VIKYAPP_PUBLIC_URL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
   script:
     - echo "Restore data from preprod (https://viky-beta.viky.ai) to ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - echo "Ensure platform ${VIKYAPP_DEPLOY_RANCHER_STACK} is starting ..."
@@ -357,7 +357,7 @@ cache_clear_dev:
   variables:
     GIT_STRATEGY: none
     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-    VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+    VIKYAPP_PUBLIC_URL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
   script:
     - echo "Clear cache to ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - echo "Ensure platform ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis is started ..."
@@ -379,7 +379,7 @@ cache_clear_preprod:
   variables:
     GIT_STRATEGY: none
     VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
-    VIKYAPP_BASEURL: https://viky-beta.viky.ai
+    VIKYAPP_PUBLIC_URL: https://viky-beta.viky.ai
   script:
     - echo "Clear cache to ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/prod ( ${CI_ENVIRONMENT_URL} )"
     - echo "Ensure platform ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis is started ..."
