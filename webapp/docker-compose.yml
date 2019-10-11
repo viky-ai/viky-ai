@@ -1,7 +1,7 @@
 version: "3.6"
 services:
   viky-nlp-dev:
-    image: webapp_viky-nlp-dev:${NLP_TAG}
+    image: webapp_viky-nlp-dev:${NLP_TAG:-latest}
     build:
       context: ../nlp/
       target: run_image
