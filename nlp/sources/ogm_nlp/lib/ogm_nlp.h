@@ -1052,12 +1052,15 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
 og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_bool NlpRequestExpressionsAreGlued(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression1,
     struct request_expression *request_expression2, og_bool keep_order);
-og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th);
 og_status NlpRequestInterpretationsBuild(og_nlp_th ctrl_nlp_th, json_t *json_interpretations);
 og_status NlpSortedRequestExpressionsLog(og_nlp_th ctrl_nlp_th, char *title);
 og_status NlpRequestExpressionsLog(og_nlp_th ctrl_nlp_th, int request_expression_start, char *title);
 og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, int offset);
 og_status NlpRequestExpressionShowTree(og_nlp_th ctrl_nlp_th, int Irequest_expression, og_string label);
+
+/* nlprecal.c */
+og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th);
+og_bool NlpAnyValidateExpression(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
 /* nlprposition.c */
 og_status NlpRequestPositionAdd(og_nlp_th ctrl_nlp_th, int start, int length, size_t *pIrequest_position);

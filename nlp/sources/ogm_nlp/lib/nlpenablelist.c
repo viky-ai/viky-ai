@@ -85,7 +85,17 @@ static og_status NlpEnableListInterpretation(og_nlp_th ctrl_nlp_th, GQueue *sort
       gpointer exists = g_hash_table_lookup(ctrl_nlp_th->interpretation_hash,
           request_expression1->expression->interpretation);
       IFN(exists) continue;
-      request_expression1->keep_as_result = TRUE;
+      og_bool validated = NlpAnyValidateExpression(ctrl_nlp_th, request_expression1);
+      IFE(validated);
+      if (validated)
+      {
+        request_expression1->keep_as_result = TRUE;
+      }
+      else
+      {
+        request_expression1->keep_as_result = FALSE;
+        continue;
+      }
       for (GList *iter2 = iter1->next; iter2; iter2 = iter2->next)
       {
         struct request_expression *request_expression2 = iter2->data;
