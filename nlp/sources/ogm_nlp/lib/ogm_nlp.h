@@ -807,7 +807,6 @@ struct og_ctrl_nlp_threaded
   og_heap hinterpret_package;
   og_string request_sentence;
   int basic_request_word_used;
-  int basic_group_request_word_nb;
   og_heap haccept_language;
   og_bool show_explanation;
   og_bool auto_complete;
@@ -1008,7 +1007,6 @@ og_status NlpMatchWords(og_nlp_th ctrl_nlp_th);
 og_bool NlpMatchCaseAccent(og_nlp_th ctrl_nlp_th, struct request_word *request_word, struct input_part *input_part);
 
 og_status NlpMatchWordChainRequestWords(og_nlp_th ctrl_nlp_th);
-og_status NlpMatchWordChainUpdateWordCount(og_nlp_th ctrl_nlp_th);
 
 /* nlpmatch_group_numbers.c */
 og_status NlpMatchGroupNumbersInit(og_nlp_th ctrl_nlp_th);
