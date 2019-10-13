@@ -64,16 +64,15 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
-    IFE(NlpSortedRequestExpressionsLog(ctrl_nlp_th, "NlpRequestExpressionsCalculate: list of sorted request expressions before enable list and any validation:"));
+    IFE(NlpSortedRequestExpressionsLog(ctrl_nlp_th, "NlpRequestExpressionsCalculate: list of sorted request expressions before enable list:"));
   }
 
   IFE(NlpEnableList(ctrl_nlp_th, sorted_request_expressions));
-
   IFE(NlpListsSort(ctrl_nlp_th, sorted_request_expressions));
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
-    IFE(NlpSortedRequestExpressionsLog(ctrl_nlp_th, "NlpRequestExpressionsCalculate: list of sorted request expressions after enable list and any validation:"));
+    IFE(NlpSortedRequestExpressionsLog(ctrl_nlp_th, "NlpRequestExpressionsCalculate: list of sorted request expressions after enable list:"));
   }
 
   for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
@@ -84,7 +83,7 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
     IFE(NlpCalculateScore(ctrl_nlp_th, request_expression));
   }
 
-  IFE(NlpEnableListCheckOverlapAfterAnyCalculation(ctrl_nlp_th, sorted_request_expressions));
+  IFE(NlpEnableListCheckOverlapAfterCalculation(ctrl_nlp_th, sorted_request_expressions));
 
   // sort again to take into account scores
   g_queue_sort(sorted_request_expressions, NlpRequestExpressionCmp, NULL);
@@ -107,6 +106,13 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
 static og_status NlpCalculateKeptRequestExpressions(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions)
 {
   if (sorted_request_expressions->length == 0) CONT;
+
+  for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
+  {
+    struct request_expression *request_expression = iter->data;
+    IFE(NlpSolutionCalculatePositions(ctrl_nlp_th, request_expression));
+    request_expression->keep_as_result = FALSE;
+  }
 
   g_queue_sort(sorted_request_expressions, (GCompareDataFunc) NlpRequestExpressionCmp, NULL);
 
@@ -212,6 +218,12 @@ static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconst
   if (request_expression1->keep_as_result != request_expression2->keep_as_result)
   {
     return (request_expression2->keep_as_result - request_expression1->keep_as_result);
+  }
+  int length1 = request_expression1->end_position_char - request_expression1->start_position_char;
+  int length2 = request_expression2->end_position_char - request_expression2->start_position_char;
+  if (length1 != length2)
+  {
+    return (length2 - length1);
   }
   if (request_expression1->request_positions_nb != request_expression2->request_positions_nb)
   {

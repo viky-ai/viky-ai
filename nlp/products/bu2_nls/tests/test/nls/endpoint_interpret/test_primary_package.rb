@@ -73,7 +73,7 @@ module Nls
         expected = {
           packages: [@package_activity1, @package_activity2, @package_main],
           primary_packages: [@package_activity1, @package_activity2],
-          interpretations: %w[i_pub i_pub2]
+          interpretations: %w[i_pub2 i_pub]
         }
         check_interpret('pour marcher, pour skier', expected)
       end

@@ -54,7 +54,6 @@ og_status NlpEnableList(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expression
         g_hash_table_insert(ctrl_nlp_th->interpretation_hash, GINT_TO_POINTER(interpretation), GINT_TO_POINTER(1));
       }
     }
-    IFE(NlpSolutionCalculatePositions(ctrl_nlp_th, request_expression));
   }
 
   IFE(NlpEnableListInterpretation(ctrl_nlp_th, sorted_request_expressions));
@@ -135,7 +134,7 @@ static og_status NlpEnableListInterpretation(og_nlp_th ctrl_nlp_th, GQueue *sort
   DONE;
 }
 
-og_status NlpEnableListCheckOverlapAfterAnyCalculation(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions)
+og_status NlpEnableListCheckOverlapAfterCalculation(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions)
 {
   for (GList *iter1 = sorted_request_expressions->head; iter1; iter1 = iter1->next)
   {

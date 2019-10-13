@@ -1274,7 +1274,7 @@ og_status NlpEnableListInit(og_nlp_th ctrl_nlp_th);
 og_status NlpEnableListFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpEnableListReset(og_nlp_th ctrl_nlp_th);
 og_status NlpEnableList(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions);
-og_status NlpEnableListCheckOverlapAfterAnyCalculation(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions);
+og_status NlpEnableListCheckOverlapAfterCalculation(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions);
 
 /* nlpprimarypackage.c*/
 og_status NlpPrimaryPackageInit(og_nlp_th ctrl_nlp_th);
