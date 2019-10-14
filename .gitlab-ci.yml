@@ -173,7 +173,6 @@ tag_backup:
     KUBECONFIG_URL: "file://${CI_PROJECT_DIR}/deployment/kubernetes/config/config.yml"
     KUBE_NAMESPACE: viky-preprod
 
-
 .deploy_develop:
   only:
     - develop
@@ -196,9 +195,6 @@ tag_backup:
   environment:
     name: viky-preprod
     url: https://viky-beta-kube.viky.ai
-  variables:
-    HELM_RELEASE_NAME: "viky_preprod"
-    VIKYAPP_AUTO_BACKUP: "true"
   variables:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
@@ -330,7 +326,6 @@ invite_admin_preprod:
     - .deploy_preprod
     - .invite_admin
 
-
 # backup
 .backup:
   stage: admin
@@ -355,7 +350,6 @@ backup_preprod:
     - .deploy_preprod
     - .backup
 
-
 # backup restore only for dev
 backup_restore:
   extends:
@@ -375,7 +369,6 @@ backup_restore:
     - kubectl delete pods -l 'app in (viky-webapp-worker, viky-webapp, viky-nlp)'
   when: manual
   allow_failure: true
-
 
 # update homepage and doc to latest image
 .update_doc:
@@ -403,7 +396,6 @@ update_doc_preprod:
     - .kubernetes_runner
     - .deploy_preprod
     - .update_doc
-
 
 # Get deployment status
 .deploy_status:
