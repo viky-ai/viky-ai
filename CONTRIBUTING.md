@@ -59,7 +59,10 @@ We will guide you through the contribution of a patch to viky.ai for the first t
 
 The first step to contributing to viky.ai is to get a copy of the source code. First, [fork viky.ai on GitHub](https://github.com/viky.ai/viky.ai/fork). Then, from the command line, navigate to the directory where you’ll want your local copy of viky.ai to live and use the following command:
 
-    $ git clone https://github.com/YourGitHubName/viky-ai.git
+```bash
+$ git clone https://github.com/YourGitHubName/viky-ai.git
+```
+
 
 ### Install locally viky.ai platform
 
@@ -67,8 +70,10 @@ Install requirements describe in [REAME](README.md#requirements).
 
 Setup the application using the following command:
 
-    $ cd webapp/
-    $ ./bin/setup
+```bash
+$ cd webapp/
+$ ./bin/setup
+```
 
 This setup script will perform the following tasks to run the webapp component in development mode:
 
@@ -80,7 +85,9 @@ This setup script will perform the following tasks to run the webapp component i
 
 Once the execution is finished, you can start the platform in development mode with the following command:
 
-    $ foreman start
+```bash
+$ foreman start
+```
 
 The `foreman` command allows you to launch several commands defined in the `Procfile` file simultaneously. We use `docker-compose` to launch PostgresSQL, Redis, Elastic, kibana and NLP services. Another command runs sidekiq, used to execute tasks asynchronously in the webapp. Finally, the Rails application is also started.
 
@@ -92,8 +99,10 @@ When you contribute to the viky.ai webapp component, it is very important that y
 
 The webapp component being a Ruby On Rails application, you must execute the following commands to run the tests:
 
-    ./bin/rails test
-    ./bin/rails test:system
+```bash
+$ ./bin/rails test
+$ ./bin/rails test:system
+```
 
 The second command starts the system tests which simulate how a real user would interact with the app. Don't worry and take a sit, it takes a few minutes.
 
@@ -101,8 +110,10 @@ The second command starts the system tests which simulate how a real user would 
 
 We'll work on a "fake feature" as a case study:
 
-    Title: Add user hello method
-    Description: `User` model should provide an instance method called `hello` that returns "Hi".
+```
+Title: Add user hello method
+Description: `User` model should provide an instance method called `hello` that returns "Hi".
+```
 
 We'll now implement this feature and associated tests.
 
@@ -110,7 +121,9 @@ We'll now implement this feature and associated tests.
 
 Before making any changes, create a new branch for this ticket:
 
-    $ git checkout -b features/add_user_hello_method
+```bash
+$ git checkout -b features/add_user_hello_method
+```
 
 At this step, you must choose a branch name that allows you to easily identify the ticket associated with the branch. All changes made in this branch must be specific to the ticket in progress.
 
@@ -124,20 +137,27 @@ For patches containing new features, you'll need to include tests which ensure t
 
 In our case, we must write a model test to validate the implementation of the `hello` method. Navigate to tests/models/ folder and edit file `user_test.rb`. Add the following code:
 
-    test "hello method" do
-      assert_equal "Hi", User.first.hello
-    end
+```ruby
+test "hello method" do
+  assert_equal "Hi", User.first.hello
+end
+```
+
 
 Since we haven't made any modifications to `User` model yet, our test should fail. Let’s run all the tests to make sure that's really what happens.
 
-    $ ./bin/rails test
+```bash
+$ ./bin/rails test
+```
 
 If the tests ran correctly, you should see one failure corresponding to the test method we added, with this error:
 
-    Error:
-    UserTest#test_hello_method:
-    NoMethodError: undefined method `hello' for #<User:0x00007f9adcfec198>
-        test/models/user_test.rb:6:in `block in <class:UserTest>'
+```bash
+Error:
+UserTest#test_hello_method:
+NoMethodError: undefined method `hello' for #<User:0x00007f9adcfec198>
+    test/models/user_test.rb:6:in `block in <class:UserTest>'
+```
 
 #### Writing the code for your patch
 
@@ -145,13 +165,18 @@ We will now add the method `hello` to the `User` model.
 
 Navigate to app/models/ folder and edit file `user.rb`. Add the following code:
 
-    def hello
-      "Hi"
-    end
+```ruby
+def hello
+  "Hi"
+end
+```
+
 
 Now we need to make sure that the test we wrote earlier passes, so we can see whether the code we added is working correctly.
 
-    $ ./bin/rails test
+```bash
+$ ./bin/rails test
+```
 
 Everything should pass. You can proceed to the next step.
 
@@ -162,50 +187,64 @@ Everything should pass. You can proceed to the next step.
 
 Now it’s time to go through all the changes made in our patch. To stage the changes ready for commit, run:
 
-    $ git add app/models/user.rb test/models/user_test.rb
+```bash
+$ git add app/models/user.rb test/models/user_test.rb
+```
 
 Then display the differences between your current copy of viky.ai (with your changes) and the revision that you initially checked out earlier with:
 
-    $ git diff --cached
-    diff --git a/webapp/app/models/user.rb b/webapp/app/models/user.rb
-    index ec3adfdc..a5f9d0be 100644
-    --- a/webapp/app/models/user.rb
-    +++ b/webapp/app/models/user.rb
-    @@ -26,6 +26,10 @@ class User < ApplicationRecord
-       before_validation :clean_username
-       before_destroy :check_agents_presence, prepend: true
+```bash
+$ git diff --cached
+```
 
-    +  def hello
-    +    "Hi"
-    +  end
-    +
-       def can?(action, agent)
-         return false unless [:edit, :show].include? action
-         return true  if action == :show && agent.is_public?
-    diff --git a/webapp/test/models/user_test.rb b/webapp/test/models/user_test.rb
-    index 93c789c8..8c2c426a 100644
-    --- a/webapp/test/models/user_test.rb
-    +++ b/webapp/test/models/user_test.rb
-    @@ -2,6 +2,10 @@ require 'test_helper'
+Use the arrow keys to move up and down. Hit the **q** key to return to the command line.
 
-     class UserTest < ActiveSupport::TestCase
+```diff
+diff --git a/webapp/app/models/user.rb b/webapp/app/models/user.rb
+index ec3adfdc..a5f9d0be 100644
+--- a/webapp/app/models/user.rb
++++ b/webapp/app/models/user.rb
+@@ -26,6 +26,10 @@ class User < ApplicationRecord
+   before_validation :clean_username
+   before_destroy :check_agents_presence, prepend: true
 
-    +  test "hello method" do
-    +    assert_equal "Hi", User.first.hello
-    +  end
-    +
-       test "non admin user" do
-         assert !User.find_by_email('notconfirmed@viky.ai').admin?
-         assert User.find_by_email('admin@viky.ai').admin?
++  def hello
++    "Hi"
++  end
++
+   def can?(action, agent)
+     return false unless [:edit, :show].include? action
+     return true  if action == :show && agent.is_public?
+diff --git a/webapp/test/models/user_test.rb b/webapp/test/models/user_test.rb
+index 93c789c8..8c2c426a 100644
+--- a/webapp/test/models/user_test.rb
++++ b/webapp/test/models/user_test.rb
+@@ -2,6 +2,10 @@ require 'test_helper'
+
+ class UserTest < ActiveSupport::TestCase
+
++  test "hello method" do
++    assert_equal "Hi", User.first.hello
++  end
++
+   test "non admin user" do
+     assert !User.find_by_email('notconfirmed@viky.ai').admin?
+     assert User.find_by_email('admin@viky.ai').admin?
+```
+
 
 If the patch’s content looked okay, it’s time to commit the changes.
 
-    $ git commit . -m "(added) User instance can say hello"
+```bash
+$ git commit . -m "(added) User instance can say hello"
+```
 
 #### Pushing the commit and making a pull request
 
 After committing the patch, send it to your fork on GitHub.
 
-    $ git push origin features/add_user_hello_method
+```bash
+$ git push origin features/add_user_hello_method
+```
 
 You can now create a pull request by visiting the [viky.ai GitHub page](https://github.com/viky-ai/viky-ai/). You'll see your branch under "Your recently pushed branches". Click "Compare & pull request" next to it and create the pull request.
