@@ -171,11 +171,6 @@ Rails.application.routes.draw do
     end
   end
 
-  if Rails.env.production?
-    # Mount ping_pong_bot Sinatra App
-    mount PingPongBot, at: '/bots/ping-pong'
-  end
-
   # API internal without versioning
   namespace :api_internal do
     get '/packages',              to: 'packages#index'
