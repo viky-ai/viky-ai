@@ -49,13 +49,11 @@ To do so, make changes to [viky.ai documentation source files](https://github.co
 
 We will guide you through the contribution of a patch to viky.ai for the first time. The process is as follows:
 
-1. Getting a copy of viky.ai core.
+1. Getting a copy of viky.ai code.
 2. Running locally viky.ai platform.
 3. Running locally viky.ai webapp tests suite.
-4. Writing a test for your patch.
-5. Writing the code for your patch.
-6. Testing your patch.
-7. Submitting a pull request.
+4. Working on a feature
+5. Submitting a pull request
 
 ### Getting a copy of viky.ai code
 
@@ -97,18 +95,117 @@ The webapp component being a Ruby On Rails application, you must execute the fol
     ./bin/rails test
     ./bin/rails test:system
 
-### Writing a test for your patch
+The second command starts the system tests which simulate how a real user would interact with the app. Don't worry and take a sit, it takes a few minutes.
 
-TODO
+### Working on a feature
 
-### Writing the code for your patch
+We'll work on a "fake feature" as a case study:
 
-TODO
+    Title: Add user hello method
+    Description: `User` model should provide an instance method called `hello` that returns "Hi".
 
-### Testing your patch
+We'll now implement this feature and associated tests.
 
-TODO
+#### Creating a branch for the feature
+
+Before making any changes, create a new branch for this ticket:
+
+    $ git checkout -b features/add_user_hello_method
+
+At this step, you must choose a branch name that allows you to easily identify the ticket associated with the branch. All changes made in this branch must be specific to the ticket in progress.
+
+#### Writing a test for the feature
+
+In most cases, for a patch to be accepted into viky.ai it has to include tests. For bug fix patches, this means writing a regression test to ensure that the bug is never reintroduced into viky.ai later on.
+
+A regression test should be written in such a way that it will fail while the bug still exists and pass once the bug has been fixed.
+
+For patches containing new features, you'll need to include tests which ensure that the new features are working correctly. They too should fail when the new feature is not present, and then pass once it has been implemented.
+
+In our case, we must write a model test to validate the implementation of the `hello` method. Navigate to tests/models/ folder and edit file `user_test.rb`. Add the following code:
+
+    test "hello method" do
+      assert_equal "Hi", User.first.hello
+    end
+
+Since we haven't made any modifications to `User` model yet, our test should fail. Let’s run all the tests to make sure that's really what happens.
+
+    $ ./bin/rails test
+
+If the tests ran correctly, you should see one failure corresponding to the test method we added, with this error:
+
+    Error:
+    UserTest#test_hello_method:
+    NoMethodError: undefined method `hello' for #<User:0x00007f9adcfec198>
+        test/models/user_test.rb:6:in `block in <class:UserTest>'
+
+#### Writing the code for your patch
+
+We will now add the method `hello` to the `User` model.
+
+Navigate to app/models/ folder and edit file `user.rb`. Add the following code:
+
+    def hello
+      "Hi"
+    end
+
+Now we need to make sure that the test we wrote earlier passes, so we can see whether the code we added is working correctly.
+
+    $ ./bin/rails test
+
+Everything should pass. You can proceed to the next step.
+
 
 ### Submitting a pull request
 
-TODO
+#### Previewing your changes
+
+Now it’s time to go through all the changes made in our patch. To stage the changes ready for commit, run:
+
+    $ git add app/models/user.rb test/models/user_test.rb
+
+Then display the differences between your current copy of viky.ai (with your changes) and the revision that you initially checked out earlier with:
+
+    $ git diff --cached
+    diff --git a/webapp/app/models/user.rb b/webapp/app/models/user.rb
+    index ec3adfdc..a5f9d0be 100644
+    --- a/webapp/app/models/user.rb
+    +++ b/webapp/app/models/user.rb
+    @@ -26,6 +26,10 @@ class User < ApplicationRecord
+       before_validation :clean_username
+       before_destroy :check_agents_presence, prepend: true
+
+    +  def hello
+    +    "Hi"
+    +  end
+    +
+       def can?(action, agent)
+         return false unless [:edit, :show].include? action
+         return true  if action == :show && agent.is_public?
+    diff --git a/webapp/test/models/user_test.rb b/webapp/test/models/user_test.rb
+    index 93c789c8..8c2c426a 100644
+    --- a/webapp/test/models/user_test.rb
+    +++ b/webapp/test/models/user_test.rb
+    @@ -2,6 +2,10 @@ require 'test_helper'
+
+     class UserTest < ActiveSupport::TestCase
+
+    +  test "hello method" do
+    +    assert_equal "Hi", User.first.hello
+    +  end
+    +
+       test "non admin user" do
+         assert !User.find_by_email('notconfirmed@viky.ai').admin?
+         assert User.find_by_email('admin@viky.ai').admin?
+
+If the patch’s content looked okay, it’s time to commit the changes.
+
+    $ git commit . -m "(added) User instance can say hello"
+
+#### Pushing the commit and making a pull request
+
+After committing the patch, send it to your fork on GitHub.
+
+    $ git push origin features/add_user_hello_method
+
+You can now create a pull request by visiting the [viky.ai GitHub page](https://github.com/viky-ai/viky-ai/). You'll see your branch under "Your recently pushed branches". Click "Compare & pull request" next to it and create the pull request.
