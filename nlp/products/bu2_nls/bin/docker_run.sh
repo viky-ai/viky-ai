@@ -19,14 +19,21 @@ trap "sigterm_handler; exit" SIGTERM
 # remove previously started server pid
 rm -f ./ogm_nls.pid
 
-if [ "${VIKYAPP_BASEURL}" ] && [ "${VIKYAPP_REDIS_PACKAGE_NOTIFIER}" ]
+if [ "${VIKYAPP_INTERNAL_URL}" ]
 then
-  # wait for services
-  /usr/local/bin/dockerize -wait ${VIKYAPP_REDIS_PACKAGE_NOTIFIER/redis/tcp} -wait $VIKYAPP_BASEURL -timeout 60s
+  WAIT_VIKYAPP="-wait ${VIKYAPP_INTERNAL_URL}"
 else
-  # wait for services
-  /usr/local/bin/dockerize -wait tcp://localhost:6379 -wait http://localhost:3000 -timeout 60s
+  WAIT_VIKYAPP="-wait http://localhost:3000"
 fi
+
+if [ "${VIKYAPP_REDIS_PACKAGE_NOTIFIER}" ]
+then
+  WAIT_REDIS="-wait ${VIKYAPP_REDIS_PACKAGE_NOTIFIER/redis/tcp}"
+else
+  WAIT_REDIS="-wait tcp://localhost:6379"
+fi
+
+/usr/local/bin/dockerize ${WAIT_REDIS} ${WAIT_VIKYAPP} -timeout 60s
 
 # Start nlp in background, not in daemon
 cd /nlp_route

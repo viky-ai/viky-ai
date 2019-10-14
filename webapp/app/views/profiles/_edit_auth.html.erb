@@ -7,7 +7,7 @@
       <%= f.text_field :email, autocomplete: "off" %>
       <%= display_errors(@profile, :email) %>
 
-      <% if @profile.pending_reconfirmation? %>
+      <% if Feature.email_configured? && @profile.pending_reconfirmation? %>
         <div class="help help--success">
           <span class="icon icon--x-small"><%= icon_information %></span>
           <%= t('views.profile.edit.authentication.waiting_email_confirmation', email: @profile.unconfirmed_email) %>

@@ -291,7 +291,7 @@ class PingPongBot < Sinatra::Base
 
 
   get '/ping' do
-    base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
+    base_url = ENV.fetch('VIKYAPP_PUBLIC_URL') { 'http://localhost:3000' }
     url = "#{base_url}/api/v1/ping.json"
 
     ping_failed = true

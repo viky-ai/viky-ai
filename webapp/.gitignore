@@ -37,6 +37,7 @@ yarn-debug.log*
 /public/uploads
 /coverage/
 /import/*
+/test/reports/
 /backups/*
 !/backups/.keep
 
