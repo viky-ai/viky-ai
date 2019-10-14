@@ -306,15 +306,15 @@ module Nls
 
         Interpretation.default_locale = nil
         check_interpret("1 000", { interpretation: "numbers_list", solution: [1000] })
-        check_interpret("1,000", { interpretation: "numbers_list", solution: [1] })
+        check_interpret("1.000", { interpretation: "numbers_list", solution: [1] })
         check_interpret("1'000", { interpretation: "numbers_list", solution: [1000] })
-        check_interpret("1.000", { interpretation: "numbers_list", solution: [1000] })
+        check_interpret("1,000", { interpretation: "numbers_list", solution: [1000] })
 
         Interpretation.default_locale = "*"
         check_interpret("1 000", { interpretation: "numbers_list", solution: [1000] })
-        check_interpret("1,000", { interpretation: "numbers_list", solution: [1] })
+        check_interpret("1.000", { interpretation: "numbers_list", solution: [1] })
         check_interpret("1'000", { interpretation: "numbers_list", solution: [1000] })
-        check_interpret("1.000", { interpretation: "numbers_list", solution: [1000] })
+        check_interpret("1,000", { interpretation: "numbers_list", solution: [1000] })
 
         Interpretation.default_locale = "fr-FR"
         check_interpret("1 000", { interpretation: "numbers_list", solution: [1000] })

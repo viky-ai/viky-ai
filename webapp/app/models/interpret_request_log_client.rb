@@ -19,7 +19,6 @@ class InterpretRequestLogClient
     raise "Missing statistics configuration for environment #{environment}" if config.empty?
 
     @client = Elasticsearch::Client.new(config[:client].symbolize_keys.merge(options))
-    @repository_name = 'viky-es-backup_dev'
     @expected_cluster_status = Rails.env.production? ? 'green' : 'yellow'
     @refresh_on_save = false
   end
@@ -131,6 +130,12 @@ class InterpretRequestLogClient
     }
   end
 
+  def disable_all_replication()
+    @client.indices.put_settings index: '_all', ignore_unavailable: true, allow_no_indices: true, body: {
+      'index.number_of_replicas' => 0
+    }
+  end
+
   def switch_indexing_to_new_index(current_index, new_index)
     @client.indices.update_aliases body: { actions: [
       { remove: { index: current_index.name, alias: index_alias_name } },
@@ -202,40 +207,55 @@ class InterpretRequestLogClient
     list_indices.each { |index| delete_index index }
   end
 
-  def create_repository(location)
-    @client.snapshot.create_repository repository: @repository_name, body: {
+  def create_local_repository(repository_name, env_name)
+    @client.snapshot.create_repository repository: repository_name, body: {
       type: 'fs',
-      settings: { location: location }
+      settings: { location: "/backup_data/#{env_name}/es-backup" }
     }
   end
 
-  def delete_repository
-    @client.snapshot.delete_repository repository: @repository_name
+  def create_s3_restore_repository(repository_name, env_name, bucket = 'viky-ai')
+    @client.snapshot.create_repository repository: repository_name, body: {
+      type: 's3',
+      settings: {
+        bucket: bucket,
+        readonly: true,
+        base_path: "viky-backups/#{env_name}/es-backup"
+      }
+    }
   end
 
-  def create_snapshot(snapshot_name)
-    @client.snapshot.create repository: @repository_name, snapshot: snapshot_name, wait_for_completion: true, body: {
+  def create_snapshot(repository_name, snapshot_name)
+    @client.snapshot.create repository: repository_name, snapshot: snapshot_name, wait_for_completion: true, body: {
       indices: "#{InterpretRequestLogClient.index_name}-*",
-      include_global_state: false
+      include_global_state: false,
+      ignore_unavailable: true
     }
   end
 
-  def restore_most_recent_snapshot
+  def restore_most_recent_snapshot(repository)
     snapshot = @client.cat.snapshots(
-      repository: @repository_name,
+      repository: repository,
       s: 'end_epoch',
       h: 'id'
     ).split("\n").last
+
+    opts = {
+      indices: "#{InterpretRequestLogClient.index_name}-*",
+      include_aliases: true,
+      allow_no_indices: true,
+      ignore_unavailable: true,
+      index_settings: {}
+    }
+    if ENV['VIKYAPP_STATISTICS_NO_REPLICA'] == 'true'
+      opts[:index_settings]['index.number_of_replicas'] = 0
+    end
+
     @client.snapshot.restore(
-      repository: @repository_name,
+      repository: repository,
       snapshot: snapshot,
       wait_for_completion: true,
-      body: {
-        indices: "#{InterpretRequestLogClient.index_name}-*",
-        index_settings: {
-          'index.number_of_replicas' => 1
-        }
-      }
+      body: opts
     )
   end
 

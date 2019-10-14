@@ -155,7 +155,7 @@ deploy_dev:
     - build_webapp
     - build_nlp
   environment:
-    name: ${CI_COMMIT_REF_NAME}
+    name: dev-${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
     on_stop: delete_env
   variables:
@@ -204,7 +204,7 @@ delete_env:
     - tags
   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
   environment:
-    name: ${CI_COMMIT_REF_NAME}
+    name: dev-${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
     action: stop
   variables:
@@ -225,7 +225,7 @@ invite_admin_dev:
     - master
     - tags
   environment:
-    name: ${CI_COMMIT_REF_NAME}
+    name: dev-${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
   variables:
     GIT_STRATEGY: none
@@ -266,7 +266,7 @@ backup_dev:
     - master
     - tags
   environment:
-    name: ${CI_COMMIT_REF_NAME}
+    name: dev-${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
   variables:
     GIT_STRATEGY: none
@@ -305,7 +305,7 @@ backup_restore_dev:
     - master
     - tags
   environment:
-    name: ${CI_COMMIT_REF_NAME}
+    name: dev-${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
   variables:
     GIT_STRATEGY: none
@@ -329,7 +329,7 @@ backup_restore_dev:
     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/backup                --type service
     - sleep 5
     - echo "Restoring data ..."
-    - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 /backup/restore.sh
+    - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 /backup/restore.sh viky-beta
     - sleep 2
     - echo "Restart sevices in right order ..."
     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/stats-service --type service
@@ -352,7 +352,7 @@ cache_clear_dev:
     - master
     - tags
   environment:
-    name: ${CI_COMMIT_REF_NAME}
+    name: dev-${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
   variables:
     GIT_STRATEGY: none
