@@ -248,7 +248,7 @@ class InterpretRequestLogClient
       index_settings: {}
     }
     if ENV['VIKYAPP_STATISTICS_NO_REPLICA'] == 'true'
-      opts['index_settings']['index.number_of_replicas'] = 0
+      opts[:index_settings]['index.number_of_replicas'] = 0
     end
 
     @client.snapshot.restore(
