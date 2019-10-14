@@ -130,6 +130,12 @@ class InterpretRequestLogClient
     }
   end
 
+  def disable_all_replication()
+    @client.indices.put_settings index: '_all', ignore_unavailable: true, allow_no_indices: true, body: {
+      'index.number_of_replicas' => 0
+    }
+  end
+
   def switch_indexing_to_new_index(current_index, new_index)
     @client.indices.update_aliases body: { actions: [
       { remove: { index: current_index.name, alias: index_alias_name } },
@@ -233,19 +239,23 @@ class InterpretRequestLogClient
       s: 'end_epoch',
       h: 'id'
     ).split("\n").last
+
+    opts = {
+      indices: "#{InterpretRequestLogClient.index_name}-*",
+      include_aliases: true,
+      allow_no_indices: true,
+      ignore_unavailable: true,
+      index_settings: {}
+    }
+    if ENV['VIKYAPP_STATISTICS_NO_REPLICA'] == 'true'
+      opts['index_settings']['index.number_of_replicas'] = 0
+    end
+
     @client.snapshot.restore(
       repository: repository,
       snapshot: snapshot,
       wait_for_completion: true,
-      body: {
-        indices: "#{InterpretRequestLogClient.index_name}-*",
-        include_aliases: true,
-        allow_no_indices: true,
-        ignore_unavailable: true,
-        index_settings: {
-          'index.number_of_replicas' => 1
-        }
-      }
+      body: opts
     )
   end
 
