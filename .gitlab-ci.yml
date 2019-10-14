@@ -7,7 +7,7 @@ stages:
   - admin
 
 variables:
-  SKIP_TEST: "true"
+  SKIP_TEST: "false"
   GIT_SUBMODULE_STRATEGY: none
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
