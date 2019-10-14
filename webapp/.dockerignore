@@ -8,6 +8,7 @@ tmp
 coverage
 
 backups
+reports
 
 public/packs
 public/assets
