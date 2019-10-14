@@ -110,10 +110,12 @@ The second command starts the system tests which simulate how a real user would 
 
 We'll work on a "fake feature" as a case study:
 
-```
-Title: Add user hello method
-Description: `User` model should provide an instance method called `hello` that returns "Hi".
-```
+<dl>
+  <dt>Title</dt>
+  <dd>Add hello method to <code>User</code> model</dd>
+  <dt>Description</dt>
+  <dd><code>User</code> model should provide an instance method called <code>hello</code> that returns "Hi".</dd>
+</dl>
 
 We'll now implement this feature and associated tests.
 
