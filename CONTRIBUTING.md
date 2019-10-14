@@ -4,6 +4,7 @@ This guide covers ways in which you can become a part of the ongoing development
 
 As mentioned in [README](README.md), everyone interacting in viky.ai codebases, issue trackers, chat rooms, and mailing lists is expected to follow this [code of conduct](CODE_OF_CONDUCT.md).
 
+
 ## Reporting an Issue
 
 viky.ai uses [GitHub Issue Tracking](https://github.com/viky-ai/viky-ai/issues) to track issues. If you've found a bug, this is the place to start. You'll need to create a GitHub account in order to submit an issue, to comment on them, or to create pull requests.
@@ -32,18 +33,20 @@ We're always trying to make viky.ai better, and your feature requests are a key 
 
 As with most open-source projects, code talks. If you are willing to write the code for the feature yourself it’s much more likely to be accepted. Fork viky.ai on GitHub, create a feature branch, and show us your work with a merge request!
 
-## Helping to resolve existing issues
+### Helping to resolve existing issues
 
 As a next step beyond reporting issues, you can help us to resolve existing ones by providing feedback about them.
 
 * Can you reproduce the reported issue on your own computer? If so, you can add a comment to the issue saying that you're seeing the same thing.
 * If an issue is vague, can you help us reduce it to something more specific? Perhaps you can provide additional information to help reproduce a bug.
 
+
 ## Contributing to the viky.ai documentation
 
 You can help improve the viky.ai documentation by making it more coherent, consistent, or readable, adding missing information, correcting factual errors, fixing typos.
 
 To do so, make changes to [viky.ai documentation source files](https://github.com/viky-ai/doc). Then open a pull request to apply your changes to the development branch.
+
 
 ## Contributing to the viky.ai webapp code
 
@@ -62,7 +65,6 @@ The first step to contributing to viky.ai is to get a copy of the source code. F
 ```bash
 $ git clone https://github.com/YourGitHubName/viky-ai.git
 ```
-
 
 ### Install locally viky.ai platform
 
@@ -145,7 +147,6 @@ test "hello method" do
 end
 ```
 
-
 Since we haven't made any modifications to `User` model yet, our test should fail. Let’s run all the tests to make sure that's really what happens.
 
 ```bash
@@ -173,7 +174,6 @@ def hello
 end
 ```
 
-
 Now we need to make sure that the test we wrote earlier passes, so we can see whether the code we added is working correctly.
 
 ```bash
@@ -181,7 +181,6 @@ $ ./bin/rails test
 ```
 
 Everything should pass. You can proceed to the next step.
-
 
 ### Submitting a pull request
 
