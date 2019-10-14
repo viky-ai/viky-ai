@@ -12,6 +12,8 @@ variables:
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
+  DOCKER_IMAGE_DOC: docker-registry.pertimm.net/viky.ai/doc
+  DOCKER_IMAGE_DOC_TAG: master
 
 image: vikyai/tools-gitlab-auto-deploy-image:latest
 before_script:
@@ -382,7 +384,10 @@ backup_restore:
   script:
     # delete pods to restart viky apps deployment
     - kube_setup
-    - kubectl delete pods -l 'app in (viky-doc)'
+    - docker_login
+    - docker pull "${DOCKER_IMAGE_DOC}:${DOCKER_IMAGE_DOC_TAG}"
+    - DOCKER_IMAGE_DOC_DIGEST=$(docker inspect --format='{{index .Id}}' "${DOCKER_IMAGE_DOC}:${DOCKER_IMAGE_DOC_TAG}")
+    - kubectl kubectl set image deployments -l 'app in (viky-doc)' *="${DOCKER_IMAGE_DOC}:${DOCKER_IMAGE_DOC_TAG}@${DOCKER_IMAGE_DOC_DIGEST}"
   when: manual
   allow_failure: true
 
