@@ -65,7 +65,7 @@ The first step to contributing to viky.ai is to get a copy of the source code. F
 
 ### Install locally viky.ai platform
 
-Install requirements describe in [REAME](README.md).
+Install requirements describe in [REAME](README.md#requirements).
 
 Setup the application using the following command:
 
@@ -78,13 +78,13 @@ This setup script will perform the following tasks to run the webapp component i
 * Installation of JavaScript yarn packages (`yarn install`).
 * Initialization of tables in the PostgreSQL database (`./bin/rails db:setup`).
 * Initialization of the Elastic indexes (`./bin/rails statistics:setup`).
-* Initialization of an.env file to define the minimum necessary environment variables.
+* Initialization of a `.env` file to define the minimum necessary environment variables.
 
 Once the execution is finished, you can start the platform in development mode with the following command:
 
     $ foreman start
 
-The `foreman` command allows you to launch several commands defined in the `Procfile` file simultaneously. We use "docker-compose" to launch PostGres, Redis, Elastic, kibana and NLP services. Another command runs sidekiq, used to execute tasks asynchronously in the webapp. Finally, the rails application is also started.
+The `foreman` command allows you to launch several commands defined in the `Procfile` file simultaneously. We use `docker-compose` to launch PostgresSQL, Redis, Elastic, kibana and NLP services. Another command runs sidekiq, used to execute tasks asynchronously in the webapp. Finally, the Rails application is also started.
 
 The application is now available at the following address: http://localhost:3000/
 
