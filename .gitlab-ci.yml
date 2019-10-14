@@ -11,7 +11,6 @@ variables:
   GIT_SUBMODULE_STRATEGY: none
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
-  DOCKER_IMAGE_TOOLS_NLP: $CI_REGISTRY_IMAGE/tools_nlp_base
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
 
 image: vikyai/tools-gitlab-auto-deploy-image:latest
@@ -191,7 +190,7 @@ tag_backup:
     - tags
   environment:
     name: viky-preprod
-    url: https://viky-beta-kube.viky.ai
+    url: https://viky-beta.viky.ai
   variables:
     HELM_RELEASE_NAME: "viky_preprod"
     VIKYAPP_AUTO_BACKUP: "true"
