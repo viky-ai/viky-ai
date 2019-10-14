@@ -21,6 +21,7 @@ If your bug or feature request touches on user interface, there are a few additi
 * Include screenshots which are the visual equivalent of a minimal testcase.
 * Make sure to include URLs, code snippets, and step-by-step instructions on how to reproduce the behavior visible in the screenshots.
 * Indicate the operating system and web browser used.
+
 ### Requesting features
 
 We're always trying to make viky.ai better, and your feature requests are a key part of that. Here are some tips on how to make a request:
@@ -44,16 +45,70 @@ You can help improve the viky.ai documentation by making it more coherent, consi
 
 To do so, make changes to (viky.ai documentation source files)[https://github.com/viky-ai/doc]. Then open a pull request to apply your changes to the development branch.
 
+## Contributing to the viky.ai webapp code
+
+We will guide you through the contribution of a patch to viky.ai for the first time. The process is as follows:
+
+1. Getting a copy of viky.ai core.
+2. Running locally viky.ai platform.
+3. Running locally viky.ai webapp tests suite.
+4. Writing a test for your patch.
+5. Writing the code for your patch.
+6. Testing your patch.
+7. Submitting a pull request.
+
+### Getting a copy of viky.ai core
+
+The first step to contributing to viky.ai is to get a copy of the source code. First, (fork viky.ai on GitHub)[https://github.com/viky.ai/code/fork]. Then, from the command line, navigate to the directory where you’ll want your local copy of viky.ai to live and use the following command:
+
+    $ git clone https://github.com/YourGitHubName/viky-ai.git
+
+### Install locally viky.ai platform
+
+Install requirements describe in (REAME)[README.md].
+
+Setup the application using the following command:
+
+    $ cd webapp/
+    $ ./bin/setup
+
+This setup script will perform the following tasks to run the webapp component in development mode:
+
+* Installation of ruby gems (`bundle install`).
+* Installation of JavaScript yarn packages (`yarn install`).
+* Initialization of tables in the PostgreSQL database (`./bin/rails db:setup`).
+* Initialization of the Elastic indexes (`./bin/rails statistics:setup`).
+* Initialization of an.env file to define the minimum necessary environment variables.
+
+Once the execution is finished, you can start the platform in development mode with the following command:
+
+    $ foreman start
+
+The `foreman` command allows you to launch several commands defined in the `Procfile` file simultaneously. We use "docker-compose" to launch PostGres, Redis, Elastic, kibana and NLP services. Another command runs sidekiq, used to execute tasks asynchronously in the webapp. Finally, the rails application is also started.
+
+The application is now available at the following address: http://localhost:3000/
+
+### Running locally viky.ai webapp tests suite
+
+When you contribute to the viky.ai webapp component, it is very important that your code changes do not introduce bugs in other parts of the application. One way to check that the viky.ai webapp component still works after making your changes is to run its test suite. If you have never run the webapp test suite before, it is a good idea to run it once before to familiarize yourself with its result.
+
+The webapp component being a Ruby On Rails application, you must execute the following commands to run the tests:
+
+    ./bin/rails test
+    ./bin/rails test:system
+
+### Writing a test for your patch
+
 TODO
 
-## Helping to Resolve Existing Issues
+### Writing the code for your patch
 
 TODO
 
-## Contributing to the viky.ai Documentation
+### Testing your patch
 
 TODO
 
-## Contributing to the viky.ai Code
+### Submitting a pull request
 
 TODO
