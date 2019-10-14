@@ -171,7 +171,7 @@ tag_backup:
     HELM_VALUES: "custom-values.yml,viky/custom-values/dev.yaml"
     # ASN cluster
     KUBECONFIG_URL: "file://${CI_PROJECT_DIR}/deployment/kubernetes/config/config.yml"
-    KUBE_NAMESPACE: viky
+    KUBE_NAMESPACE: viky-preprod
 
 
 .deploy_develop:
@@ -229,6 +229,7 @@ tag_backup:
     # Go to Kubernetes directory
     - cd deployment/kubernetes/
     - bin/generate-ci-override-values.sh
+    - cat bin/generate-ci-override-values.sh
     # Deploy Viky Platform
     - HELM_OPTIONS="--install ${HELM_EXTRA_OPTIONS} --timeout ${HELM_TIMEOUT}  --values ${HELM_VALUES}"
     - helm upgrade ${HELM_OPTIONS} "${RELEASE_NAME}" ./viky/
