@@ -1,0 +1,82 @@
+#!/usr/bin/env ruby
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __dir__)
+require 'bundler/setup'
+
+system('bundle install')
+system('yarn install')
+
+require 'pg'
+require 'elasticsearch'
+
+env_file_path = File.expand_path('../.env', __dir__)
+
+def wait_service(service_name)
+  max_retry = 60
+  retry_count = 0
+  service_ready = false
+  print "Waiting #{service_name.downcase} service..."
+  while !service_ready && retry_count <= max_retry
+    print '.'
+    begin
+      service_ready = yield
+    rescue StandardError
+      # Nothing to do, we will retry in the next iteration
+    end
+    retry_count += 1
+    if retry_count > max_retry
+      print "taking too long: aborting\n"
+      system('docker-compose stop')
+      exit
+    end
+    sleep 1
+    print " ready !\n" if service_ready
+  end
+end
+
+if File.exist? env_file_path
+  puts 'env file already exists. Nothing to do.'
+  exit
+end
+
+if RUBY_PLATFORM.downcase.include?('linux')
+  vikyapp_internal_url = "http://$(ip -4 addr show docker0 | grep -Po 'inet \\K[\\d.]+'):3000"
+elsif RUBY_PLATFORM.downcase.include?('darwin')
+  # On MacOS we use the external IP address because Docker is in a VM
+  vikyapp_internal_url = "http://$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\\.){3}[0-9]*' | grep -Eo '([0-9]*\\.){3}[0-9]*' | grep -v '127.0.0.1'):3000"
+else
+  puts 'Unsupported operating system'
+  exit
+end
+
+File.open(env_file_path, 'a') do |f|
+  f.write "MY_CURRENT_GIT_BRANCH=$(git describe --all --abbrev=0 --always --contains | sed 's|[~^].*||' | sed 's|remotes/origin/||' | sed 's|heads/||' | sed 's|tag    s/||' | sed 's|/|-|g' | sed 's|_|-|g')\n"
+  f.write "VIKYAPP_INTERNAL_URL=#{vikyapp_internal_url}\n"
+  f.write "VIKYAPP_STATISTICS_NO_REPLICA=true\n"
+  f.flush
+end
+
+compose = spawn('VIKYAPP_INTERNAL_URL=$VIKYAPP_INTERNAL_URL NLP_TAG=$MY_CURRENT_GIT_BRANCH docker-compose up -d')
+
+sleep 3
+
+wait_service('Database') do
+  is_ready = PG::Connection.ping(
+    host: 'localhost',
+    port: 5432,
+    dbname: :postgres,
+    user: 'viky',
+    password: 'viky')
+  is_ready == PG::PQPING_OK
+end
+wait_service('Statistics') do
+  client = Elasticsearch::Client.new(url: 'localhost:9200')
+  client.cluster.health(wait_for_status: 'green')['status'] == 'green'
+end
+wait_service('Dashboard') do
+  system('curl -s -I --output /dev/null --write-out "%{http_code}" "http://localhost:5601/kibana/app/kibana"', out: '/dev/null')
+end
+
+system('./bin/rails viky:setup')
+
+system('docker-compose stop')
+Process.waitpid(compose)
