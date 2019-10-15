@@ -54,7 +54,7 @@ module Nls
         check_interpret('aaa bbb eee', interpretations: %w[ab ef])
         check_interpret('avanttout mot', interpretations: ['g'])
         check_interpret('avanttout aaa', interpretations: ['g'])
-        check_interpret('aaa bbb ddd', interpretations: %w[ab bd])
+        check_interpret('aaa bbb ddd', interpretations: ['ab'])
         check_interpret('aaa bbb ddd', interpretations: ['ab'], no_overlap: true)
       end
     end

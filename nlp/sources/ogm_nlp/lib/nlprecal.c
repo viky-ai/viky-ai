@@ -7,7 +7,7 @@
 #include "ogm_nlp.h"
 
 static og_status NlpCalculateKeptRequestExpressions(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions);
-static og_status NlpAnyValidate(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions);
+static og_status NlpListsSort(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions);
 static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconstpointer ptr_request_expression2,
     gpointer user_data);
 static og_status NlpIsSubRequestExpression(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions,
@@ -64,16 +64,15 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
-    IFE(NlpSortedRequestExpressionsLog(ctrl_nlp_th, "List of sorted request expressions before any validation:"));
+    IFE(NlpSortedRequestExpressionsLog(ctrl_nlp_th, "NlpRequestExpressionsCalculate: list of sorted request expressions before enable list:"));
   }
 
   IFE(NlpEnableList(ctrl_nlp_th, sorted_request_expressions));
-
-  IFE(NlpAnyValidate(ctrl_nlp_th, sorted_request_expressions));
+  IFE(NlpListsSort(ctrl_nlp_th, sorted_request_expressions));
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
-    IFE(NlpSortedRequestExpressionsLog(ctrl_nlp_th, "List of sorted request expressions after any validation:"));
+    IFE(NlpSortedRequestExpressionsLog(ctrl_nlp_th, "NlpRequestExpressionsCalculate: list of sorted request expressions after enable list:"));
   }
 
   for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
@@ -84,7 +83,7 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
     IFE(NlpCalculateScore(ctrl_nlp_th, request_expression));
   }
 
-  IFE(NlpEnableListCheckOverlapAfterAnyCalculation(ctrl_nlp_th, sorted_request_expressions));
+  IFE(NlpEnableListCheckOverlapAfterCalculation(ctrl_nlp_th, sorted_request_expressions));
 
   // sort again to take into account scores
   g_queue_sort(sorted_request_expressions, NlpRequestExpressionCmp, NULL);
@@ -108,6 +107,13 @@ static og_status NlpCalculateKeptRequestExpressions(og_nlp_th ctrl_nlp_th, GQueu
 {
   if (sorted_request_expressions->length == 0) CONT;
 
+  for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
+  {
+    struct request_expression *request_expression = iter->data;
+    IFE(NlpSolutionCalculatePositions(ctrl_nlp_th, request_expression));
+    request_expression->keep_as_result = FALSE;
+  }
+
   g_queue_sort(sorted_request_expressions, (GCompareDataFunc) NlpRequestExpressionCmp, NULL);
 
   struct request_expression *first_request_expression = sorted_request_expressions->head->data;
@@ -126,87 +132,59 @@ static og_status NlpCalculateKeptRequestExpressions(og_nlp_th ctrl_nlp_th, GQueu
   DONE;
 }
 
-static og_status NlpAnyValidate(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions)
+
+static og_status NlpListsSort(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions)
 {
-  og_bool some_expressions_kept = FALSE;
-  while (!some_expressions_kept)
-  {
-    for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
-    {
-      struct request_expression *request_expression = iter->data;
-      if (!request_expression->keep_as_result) continue;
-
-      IFE(NlpRequestExpressionListsSort(ctrl_nlp_th, request_expression));
-
-      if (request_expression->nb_anys > 0)
-      {
-        if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
-        {
-          NlpLog(DOgNlpTraceMatch, "NlpAnyValidate: trying to attach anys to request expression:")
-          IFE(NlpRequestExpressionAnysLog(ctrl_nlp_th, request_expression));
-          IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression, 0));
-        }
-
-        IFE(NlpInterpretTreeAttachAny(ctrl_nlp_th, request_expression));
-
-        int nb_anys_attached = 0;
-        IFE(nb_anys_attached = NlpRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression,FALSE));
-        if (request_expression->nb_anys != nb_anys_attached)
-        {
-          NlpLog(DOgNlpTraceMatch, "NlpAnyValidate: nb_anys=%d != nb_anys_attached=%d, this request is not validated",
-              request_expression->nb_anys, nb_anys_attached);
-          request_expression->any_validate_status = 0;
-          request_expression->keep_as_result = FALSE;
-        }
-        else
-        {
-          NlpLog(DOgNlpTraceMatch, "NlpAnyValidate: nb_anys=%d == nb_anys_attached=%d, this request is validated",
-              request_expression->nb_anys, nb_anys_attached);
-          IFE(NlpRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression,TRUE));
-          request_expression->any_validate_status = 2;
-          some_expressions_kept = TRUE;
-        }
-      }
-      else
-      {
-        // there are no anys in this expression
-        NlpLog(DOgNlpTraceMatch, "NlpAnyValidate: this request with no any is validated");
-        request_expression->any_validate_status = 2;
-        some_expressions_kept = TRUE;
-      }
-
-    }
-
-    IFE(NlpCalculateKeptRequestExpressions(ctrl_nlp_th, sorted_request_expressions));
-
-    // check if there is no more result kept
-    og_bool at_least_one_kept_as_result = FALSE;
-    for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
-    {
-      struct request_expression *request_expression = iter->data;
-      if (request_expression->keep_as_result)
-      {
-        at_least_one_kept_as_result = TRUE;
-        break;
-      }
-    }
-    if (!at_least_one_kept_as_result) break;
-
-  }
-
-  // Some expression containing anys can be selected, but since at least one expression is validated, we unvalidate it.
   for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
   {
     struct request_expression *request_expression = iter->data;
     if (!request_expression->keep_as_result) continue;
-    if (request_expression->nb_anys > 0 && request_expression->any_validate_status == 1)
-    {
-      request_expression->keep_as_result = 0;
-    }
-  }
 
+    IFE(NlpRequestExpressionListsSort(ctrl_nlp_th, request_expression));
+  }
   DONE;
 }
+
+og_bool NlpAnyValidateExpression(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+{
+  if (request_expression->nb_anys <= 0)
+  {
+    NlpLog(DOgNlpTraceMatch, "NlpAnyValidateExpression: this request with no any is validated");
+    return TRUE;
+  }
+
+  if (request_expression->any_validate_status == 0) return FALSE;
+  else if (request_expression->any_validate_status == 2) return TRUE;
+
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    NlpLog(DOgNlpTraceMatch, "NlpAnyValidateExpression: trying to attach anys to request expression:")
+    IFE(NlpRequestExpressionAnysLog(ctrl_nlp_th, request_expression));
+    IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression, 0));
+  }
+
+  IFE(NlpInterpretTreeAttachAny(ctrl_nlp_th, request_expression));
+
+  int nb_anys_attached = 0;
+  IFE(nb_anys_attached = NlpRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression,FALSE));
+  if (request_expression->nb_anys != nb_anys_attached)
+  {
+    NlpLog(DOgNlpTraceMatch,
+        "NlpAnyValidateExpression: nb_anys=%d != nb_anys_attached=%d, this request is not validated",
+        request_expression->nb_anys, nb_anys_attached);
+    request_expression->any_validate_status = 0;
+    return FALSE;
+  }
+
+  NlpLog(DOgNlpTraceMatch, "NlpAnyValidateExpression: nb_anys=%d == nb_anys_attached=%d, this request is validated",
+      request_expression->nb_anys, nb_anys_attached);
+  IFE(NlpRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression,TRUE));
+  request_expression->any_validate_status = 2;
+  return TRUE;
+
+}
+
+
 
 static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconstpointer ptr_request_expression2,
     gpointer user_data)
@@ -240,6 +218,12 @@ static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconst
   if (request_expression1->keep_as_result != request_expression2->keep_as_result)
   {
     return (request_expression2->keep_as_result - request_expression1->keep_as_result);
+  }
+  int length1 = request_expression1->end_position_char - request_expression1->start_position_char;
+  int length2 = request_expression2->end_position_char - request_expression2->start_position_char;
+  if (length1 != length2)
+  {
+    return (length2 - length1);
   }
   if (request_expression1->request_positions_nb != request_expression2->request_positions_nb)
   {
