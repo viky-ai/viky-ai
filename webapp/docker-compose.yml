@@ -12,7 +12,7 @@ services:
       VIKYAPP_INTERNAL_URL: ${VIKYAPP_INTERNAL_URL}
       VIKYAPP_REDIS_PACKAGE_NOTIFIER: 'redis://viky-redis-dev:6379/3'
     networks:
-      kerbnet: {}
+      - kerbnet
     depends_on:
       - viky-redis-dev
       - viky-db-dev
@@ -25,12 +25,14 @@ services:
       POSTGRES_PASSWORD: "viky"
     volumes:
       - vikyapp_db01_dev:/var/lib/postgresql/data
+    networks:
+      - kerbnet
   viky-redis-dev:
     image: "redis:5.0-alpine"
     ports:
       - "6379:6379"
     networks:
-      kerbnet: {}
+      - kerbnet
   viky-stats01-dev:
     image: "vikyai/elasticsearch-s3:7.3.2"
     ports:
@@ -52,7 +54,7 @@ services:
       - ./backups:/backup_data
       - vikyapp_stats01_dev:/usr/share/elasticsearch/data
     networks:
-      kerbnet: {}
+      - kerbnet
   viky-kibana-dev:
     image: "docker.elastic.co/kibana/kibana:7.3.2"
     ports:
@@ -62,7 +64,7 @@ services:
       SERVER_REWRITEBASEPATH: "true"
       ELASTICSEARCH_HOSTS: "http://viky-stats01-dev:9200"
     networks:
-      kerbnet: {}
+      - kerbnet
     depends_on:
       - viky-stats01-dev
 
