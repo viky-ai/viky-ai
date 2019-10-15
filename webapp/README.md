@@ -1,10 +1,10 @@
 # Welcome to viky.ai webapp
 
-`webapp` component is a Ruby On Rails application that allows you to work collaboratively to set up viky.ai agents by offering dedicated interfaces. It also provides the interpret API in order to allow integration into a third-party system.
+*webapp* component is a *Ruby On Rails* application that allows you to work collaboratively to set up viky.ai agents by offering dedicated interfaces. It also provides the interpret API in order to allow integration into a third-party system.
 
 ## Install
 
-Please refer to the instructions given in the [general readme of viky.ai](../README.md).
+Please refer to the instructions given in the [main readme](../README.md).
 
 ## Configuring
 
@@ -32,7 +32,7 @@ The application also sends mails for certain operations such as transferring age
 To activate the mailing and therefore the features described above you have two possibilities:
 
 * Use [Postmark](postmarkapp.com) in order to send emails, for that define the environment variable `POSTMARK_TOKEN`.
-* Use SMTP directly, for that set `SMTP_ENABLED` to `true` and define the following environment variables
+* Use SMTP directly, for that set `SMTP_ENABLED` to `true` and define the following environment variables:
   - `SMTP_ADDRESS`: Allows you to use a remote mail server. Just change it from its default "localhost" setting.
   - `SMTP_PORT`: On the off chance that your mail server doesn't run on port 25, you can change it.
   - `SMTP_USER_NAME`: If your mail server requires authentication, set the username in this setting.
@@ -52,16 +52,15 @@ Two other environment variables are used to  to limit the use of the API: a limi
 
 Here is an example of a quota configuration:
 
-    # If you want to enabled quota
+    # Enabled quota
     VIKYAPP_QUOTA_ENABLED=true
 
-    # If you want to change the interpret endpoint requests limit
-    VIKYAPP_QUOTA_INTERPRET_PER_DAY=400   # Max 400 requests to interpret endpoint per day
-    VIKYAPP_QUOTA_INTERPRET_PER_SECOND=3  # Max 3 requests to interpret endpoint per second
-
-    # If you want to change the expression limitation
+    # Set the expression limitation
     VIKYAPP_QUOTA_EXPRESSION=20000        # Limit the overall formulations and entities count to 20 000
 
+    # Configure interpret endpoint requests limit
+    VIKYAPP_QUOTA_INTERPRET_PER_DAY=400   # Max 400 requests to interpret endpoint per day
+    VIKYAPP_QUOTA_INTERPRET_PER_SECOND=3  # Max 3 requests to interpret endpoint per second
 
 ## Defines a user as administrator
 
