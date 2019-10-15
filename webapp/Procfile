@@ -1,5 +1,4 @@
-infra:    docker-compose up
-workers:  bundle exec sidekiq -C config/sidekiq.yml
+infra:    VIKYAPP_INTERNAL_URL=$VIKYAPP_INTERNAL_URL NLP_TAG=$MY_CURRENT_GIT_BRANCH docker-compose up
+workers:  ./node_modules/wait-on/bin/wait-on tcp:localhost:6379 && bundle exec sidekiq -C config/sidekiq.yml
 webpack:  ./bin/webpack-dev-server
-web:      bundle exec rails s -p 3000 -b 0.0.0.0
-nls:      ./bin/foreman_nls.sh $MY_CURRENT_GIT_BRANCH
+web:      ./node_modules/wait-on/bin/wait-on tcp:localhost:5432 && bundle exec rails s -p 3000 -b 0.0.0.0

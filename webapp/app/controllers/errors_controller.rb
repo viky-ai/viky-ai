@@ -1,4 +1,5 @@
 class ErrorsController < ActionController::Base
+  skip_forgery_protection
 
   def not_found
     @title = "404 - viky.ai"

@@ -16,12 +16,9 @@ namespace :backup do
     end
 
     if args.skip_stats == "false"
-      if Task::Backup::RestoreElastic.dump_file_exist?(args.name)
-        Task::Print.step("Restore Elastic indexes")
-        Task::Backup::RestoreElastic.run(args.name)
-      else
-        Task::Print.warning("Restore Elastic indexes skipped (no dump files)")
-      end
+      env_name = args.name.gsub(/\/[\w-]+\/?$/, '')
+      Task::Print.step("Restore Elastic indexes")
+      Task::Backup::RestoreElastic.run(env_name)
     end
 
     if Task::Backup::RestoreUploads.dump_file_exist?(args.name)
@@ -33,8 +30,9 @@ namespace :backup do
 
     database = Task::Backup::RestorePostgres.database(args.name)
     Task::Print.step("Update .env with VIKYAPP_DB_NAME_DEV=#{database}")
-    Task::Cmd.exec("echo \"VIKYAPP_DB_NAME_DEV=#{database}\" >> #{Rails.root}/.env")
-
+    File.open("#{Rails.root}/.env", 'a') do |f|
+      f.write("\nVIKYAPP_DB_NAME_DEV=#{database}\n")
+    end
     Task::Print.success("Restore completed, do not forget to restart your apps.")
   end
 

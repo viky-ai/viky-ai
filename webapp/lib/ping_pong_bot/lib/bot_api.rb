@@ -46,7 +46,7 @@ module BotApi
         locale: locale
       }
     }
-    base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
+    base_url = ENV.fetch('VIKYAPP_PUBLIC_URL') { 'http://localhost:3000' }
     url = "#{base_url}/api/v1/chat_sessions/#{session_id}"
     RestClient.put(url, parameters.to_json, content_type: :json, accept: :json)
     self.text("Done").send(session_id)
@@ -180,7 +180,7 @@ module BotApi
     private
 
       def post(session_id, parameters)
-        base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
+        base_url = ENV.fetch('VIKYAPP_PUBLIC_URL') { 'http://localhost:3000' }
         url = "#{base_url}/api/v1/chat_sessions/#{session_id}/statements"
         RestClient.post(url, parameters.to_json, content_type: :json, accept: :json)
       end
