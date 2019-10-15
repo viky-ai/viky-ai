@@ -83,6 +83,10 @@ test_webapp:
   script:
     - cd /webapp
     - if [ "$SKIP_TEST" != "true" ]; then ./bin/docker_run_test.sh ; fi
+  artifacts:
+    # expire_in: 1 week
+    reports:
+      junit: "reports/TEST-*.xml"
 
 test_nlp:
   stage: test
