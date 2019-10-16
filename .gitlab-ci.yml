@@ -1,5 +1,4 @@
 stages:
-  - prerequist
   - build
   - test
   - docker_tag
@@ -14,25 +13,18 @@ variables:
   DOCKER_DRIVER: overlay
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
-  DOCKER_IMAGE_TOOLS_NLP: $CI_REGISTRY_IMAGE/tools_nlp_base
-  DOCKER_IMAGE_TOOLS_RUBY: $CI_REGISTRY_IMAGE/tools_ruby_base
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
   DOCKER_IMAGE_ELASTICSEARCH: $CI_REGISTRY_IMAGE/elasticsearch
   TRACE: "0"
 
 # Build docker image
-build_nlp_base:
-  stage: prerequist
-  script:
-    - docker_build ${DOCKER_IMAGE_TOOLS_NLP} nlp/tools/docker
-
 build_backup:
-  stage: prerequist
+  stage: build
   script:
     - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup
 
 build_elastic:
-  stage: prerequist
+  stage: build
   script:
     - docker_build ${DOCKER_IMAGE_ELASTICSEARCH} deployment/docker_tools/elasticsearch
 
@@ -44,7 +36,6 @@ build_webapp:
 
 build_nlp:
   stage: build
-  needs: ["build_nlp_base"]
   script:
     - docker_build ${DOCKER_IMAGE_NLP}      nlp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target run_image"
     - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target test_image"
@@ -100,7 +91,7 @@ test_nlp:
 tag_webapp:
   stage: docker_tag
   only:
-    - develop
+    - master
   variables:
     GIT_STRATEGY: none
   script:
@@ -109,27 +100,17 @@ tag_webapp:
 
 tag_nlp:
   stage: docker_tag
-  needs: ["build_nlp", "test_nlp"]
   only:
-    - develop
+    - master
   variables:
     GIT_STRATEGY: none
   script:
     - docker_tag_latest ${DOCKER_IMAGE_NLP}
 
-tag_ruby_base:
-  stage: docker_tag
-  only:
-    - develop
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}
-
 tag_backup:
   stage: docker_tag
   only:
-    - develop
+    - master
   variables:
     GIT_STRATEGY: none
   script:
@@ -138,7 +119,7 @@ tag_backup:
 tag_elastic:
   stage: docker_tag
   only:
-    - develop
+    - master
   variables:
     GIT_STRATEGY: none
   script:

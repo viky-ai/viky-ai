@@ -32,7 +32,7 @@ module Nls
 
         interpretation_public = package.new_interpretation('i_pub', scope: 'public')
         aliases = { 'pour' => interpretation_pour, 'activite' => interpretation_ski }
-        interpretation_public << Expression.new('@{pour} @{activite}', aliases: aliases)
+        interpretation_public << Expression.new('@{pour} @{activite}', aliases: aliases, glue_distance: 0)
 
         package
       end
@@ -48,7 +48,7 @@ module Nls
 
         interpretation_public = package.new_interpretation('i_pub2', scope: 'public')
         aliases = { 'pour' => interpretation_pour, 'activite' => interpretation_marche }
-        interpretation_public << Expression.new('@{pour} @{activite}', aliases: aliases)
+        interpretation_public << Expression.new('@{pour} @{activite}', aliases: aliases, glue_distance: 0)
 
         package
       end
@@ -73,7 +73,7 @@ module Nls
         expected = {
           packages: [@package_activity1, @package_activity2, @package_main],
           primary_packages: [@package_activity1, @package_activity2],
-          interpretations: %w[i_pub i_pub2]
+          interpretations: %w[i_pub2 i_pub]
         }
         check_interpret('pour marcher, pour skier', expected)
       end

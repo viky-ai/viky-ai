@@ -175,6 +175,11 @@ static og_status NlpLemWordLang(og_nlp_th ctrl_nlp_th, int Irequest_word, int la
         if (!PcIsdigit(out[i])) break;
       }
 
+      // must be reset here because of reallocation in NlpLemAddWord
+      request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, Irequest_word);
+      IFN(request_word) DPcErr;
+      mot = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
+      IFN(mot) DPcErr;
       unsigned char result[DPcPathSize];
       snprintf(result, DPcPathSize, "%.*s", imot, mot);
       unsigned char strdecal[100];

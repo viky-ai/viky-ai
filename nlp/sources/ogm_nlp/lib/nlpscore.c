@@ -18,7 +18,7 @@ og_status NlpCalculateScore(og_nlp_th ctrl_nlp_th, struct request_expression *re
   // Taking into account the punctuation words if they exist
   // but does not word with number such as 13345.678 so we remove this patch
   //request_expression->score->coverage = request_expression->request_positions_nb;
-  //request_expression->score->coverage /= ctrl_nlp_th->basic_group_request_word_nb;
+  //request_expression->score->coverage /= ctrl_nlp_th->basic_request_word_used;
   IFE(NlpCalculateTotalScore(ctrl_nlp_th, request_expression));
 
   DONE;
@@ -30,7 +30,7 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
   struct request_score score[1];
   memset(score, 0, sizeof(struct request_score));
   score->any = 1.0;
-  int nb_words = ctrl_nlp_th->basic_group_request_word_nb;
+  int nb_words = ctrl_nlp_th->basic_request_word_used;
   request_expression->nb_matched_words = 0;
 
   for (int i = 0; i < request_expression->orips_nb; i++)
