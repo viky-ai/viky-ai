@@ -68,7 +68,7 @@ $ git clone https://github.com/YourGitHubName/viky-ai.git
 
 ### Install locally viky.ai platform
 
-Install requirements describe in [REAME](README.md#requirements).
+Install requirements describe in [README](README.md#requirements).
 
 Setup the application using the following command:
 
