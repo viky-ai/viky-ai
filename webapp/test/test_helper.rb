@@ -8,11 +8,16 @@ require_relative '../config/environment'
 require 'rails/test_help'
 
 if ENV['COVERAGE']
-  require 'minitest/reporters'
-  Minitest::Reporters.use!([
-    Minitest::Reporters::DefaultReporter.new,
-    Minitest::Reporters::JUnitReporter.new
-  ])
+  ci_project_dir = ENV.fetch('CI_PROJECT_DIR', nil)
+  unless ci_project_dir.blank?
+    require 'minitest/reporters'
+    reports_dir = "#{ci_project_dir}/reports/"
+    FileUtils.mkdir_p reports_dir
+    Minitest::Reporters.use!([
+      Minitest::Reporters::DefaultReporter.new,
+      Minitest::Reporters::JUnitReporter.new(reports_dir, false)
+    ])
+  end
 end
 
 class ActiveSupport::TestCase

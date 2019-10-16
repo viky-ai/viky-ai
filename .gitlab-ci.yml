@@ -86,7 +86,7 @@ test_webapp:
   artifacts:
     # expire_in: 1 week
     reports:
-      junit: "/webapp/test/reports/TEST-*.xml"
+      junit: "reports/TEST-*.xml"
 
 test_nlp:
   stage: test
