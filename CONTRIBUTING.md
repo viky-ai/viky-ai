@@ -237,7 +237,7 @@ index 93c789c8..8c2c426a 100644
 If the patch’s content looked okay, it’s time to commit the changes.
 
 ```bash
-$ git commit . -m "(added) User instance can say hello"
+$ git commit . -m "User instance can say hello"
 ```
 
 #### Pushing the commit and making a pull request
