@@ -25,12 +25,12 @@ viky.ai local install used for development relies on the following dependencies.
 
 1. Setup the application using the following command:
    ```
-   $ ./webapp/bin/setup
+   $ cd webapp/
+   $ ./bin/setup
    ```
 
-2. Start the application using the following commands:
+2. Within webapp directory, start the application using the following commands:
    ```
-   $ cd webapp/
    $ foreman start
    ```
 
