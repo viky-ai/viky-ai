@@ -1,82 +1,140 @@
 #!/usr/bin/env ruby
-ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __dir__)
-require 'bundler/setup'
+require 'fileutils'
 
-system('bundle install')
-system('yarn install')
+APP_ROOT = File.expand_path('..', __dir__)
 
-require 'pg'
-require 'elasticsearch'
+def system!(*args)
+  system(*args) || abort("\n== Command #{args} failed ==")
+end
 
-env_file_path = File.expand_path('../.env', __dir__)
+$total_step = 7
+$current_step = 1
+def print_step(title)
+  content = "#{$current_step}/#{$total_step}. #{title}"
+  puts "\n#{content}"
+  puts "-" * content.size
+  $current_step = $current_step + 1
+end
 
 def wait_service(service_name)
+  last_exception = nil
   max_retry = 60
   retry_count = 0
   service_ready = false
-  print "Waiting #{service_name.downcase} service..."
+  print "Waiting #{service_name} ..."
   while !service_ready && retry_count <= max_retry
     print '.'
     begin
       service_ready = yield
-    rescue StandardError
-      # Nothing to do, we will retry in the next iteration
+    rescue => e
+      # Nothing raised, we will retry in the next iteration
+      last_exception = e
     end
     retry_count += 1
     if retry_count > max_retry
-      print "taking too long: aborting\n"
-      system('docker-compose stop')
-      exit
+      message  = "\n\e[91m"
+      message << "\nAborting setup, waiting for #{service_name} too long.\n"
+      unless last_exception.nil?
+        message << "\nException type:\n"
+        message << "  #{last_exception.class}"
+        message << "\nException message:\n"
+        message << "  #{last_exception.message}\n"
+        message << "Exception backtrace:\n"
+        message << last_exception.backtrace.map{|l| "  #{l}"}.join("\n")
+      end
+      message << "\e[0m"
+      raise StandardError.new(message)
     end
-    sleep 1
-    print " ready !\n" if service_ready
+    sleep 0.5
+    print " ready!\n" if service_ready
   end
 end
 
-if File.exist? env_file_path
-  puts 'env file already exists. Nothing to do.'
-  exit
+def vikyapp_internal_url_script
+  if RUBY_PLATFORM.downcase.include?('linux')
+    "http://$(ip -4 addr show docker0 | grep -Po 'inet \\K[\\d.]+'):3000"
+  elsif RUBY_PLATFORM.downcase.include?('darwin')
+    # On MacOS we use the external IP address because Docker is in a VM
+    "http://$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\\.){3}[0-9]*' | grep -Eo '([0-9]*\\.){3}[0-9]*' | grep -v '127.0.0.1'):3000"
+  else
+    abort("Unsupported operating system, only linux and MacOS are supported.")
+  end
 end
 
-if RUBY_PLATFORM.downcase.include?('linux')
-  vikyapp_internal_url = "http://$(ip -4 addr show docker0 | grep -Po 'inet \\K[\\d.]+'):3000"
-elsif RUBY_PLATFORM.downcase.include?('darwin')
-  # On MacOS we use the external IP address because Docker is in a VM
-  vikyapp_internal_url = "http://$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\\.){3}[0-9]*' | grep -Eo '([0-9]*\\.){3}[0-9]*' | grep -v '127.0.0.1'):3000"
-else
-  puts 'Unsupported operating system'
-  exit
+def my_current_git_branch_script
+  [
+    "$(git describe --all --abbrev=0 --always --contains",
+    "sed 's|[~^].*||'",
+    "sed 's|remotes/origin/||'",
+    "sed 's|heads/||'",
+    "sed 's|tag    s/||'",
+    "sed 's|/|-|g'",
+    "sed 's|_|-|g')"
+  ].join(" | ")
 end
 
-File.open(env_file_path, 'a') do |f|
-  f.write "MY_CURRENT_GIT_BRANCH=$(git describe --all --abbrev=0 --always --contains | sed 's|[~^].*||' | sed 's|remotes/origin/||' | sed 's|heads/||' | sed 's|tag    s/||' | sed 's|/|-|g' | sed 's|_|-|g')\n"
-  f.write "VIKYAPP_INTERNAL_URL=#{vikyapp_internal_url}\n"
-  f.write "VIKYAPP_STATISTICS_NO_REPLICA=true\n"
-  f.flush
+def set_env_variable_if_needed(name, value)
+  if ENV[name].nil?
+    File.open('.env', 'a') do |f|
+      f.write "#{name}=#{value}\n"
+    end
+    puts "- Add #{name} variable to .env file\n"
+  else
+    puts "- #{name} variable already defined in .env file\n"
+  end
 end
 
-compose = spawn('VIKYAPP_INTERNAL_URL=$VIKYAPP_INTERNAL_URL NLP_TAG=$MY_CURRENT_GIT_BRANCH docker-compose up -d')
+FileUtils.chdir APP_ROOT do
+  print_step 'Installing gem dependencies'
+  system! 'gem install bundler --conservative'
+  system('bundle check') || system!('bundle install')
+  ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __dir__)
+  require 'bundler/setup'
 
-sleep 3
+  print_step 'Installing yarn dependencies'
+  system('bin/yarn')
 
-wait_service('Database') do
-  is_ready = PG::Connection.ping(
-    host: 'localhost',
-    port: 5432,
-    dbname: :postgres,
-    user: 'viky',
-    password: 'viky')
-  is_ready == PG::PQPING_OK
+  print_step 'Setup environment variables'
+  require 'dotenv/load'
+  set_env_variable_if_needed( "MY_CURRENT_GIT_BRANCH", my_current_git_branch_script)
+  set_env_variable_if_needed("VIKYAPP_INTERNAL_URL", vikyapp_internal_url_script)
+  set_env_variable_if_needed("VIKYAPP_STATISTICS_NO_REPLICA", true  )
+
+  begin
+    print_step 'Start infrastructure services'
+    compose_pid = spawn('VIKYAPP_INTERNAL_URL=$VIKYAPP_INTERNAL_URL NLP_TAG=$MY_CURRENT_GIT_BRANCH docker-compose up -d')
+    sleep 6
+
+    print_step 'Waiting infrastructure services are up'
+
+    require 'pg'
+    wait_service('database service (PosgresSQL)') do
+      is_ready = PG::Connection.ping(
+        host: 'localhost',
+        port: 5432,
+        dbname: :postgres,
+        user: 'viky',
+        password: 'viky')
+      is_ready == PG::PQPING_OK
+    end
+
+    require 'elasticsearch'
+    wait_service('statistics service (Elastic)') do
+      client = Elasticsearch::Client.new(url: 'localhost:9200')
+      client.cluster.health(wait_for_status: 'green')['status'] == 'green'
+    end
+
+    wait_service('statistics dashboard service (Kibana)') do
+      system('curl -s -I --output /dev/null --write-out "%{http_code}" "http://localhost:5601/kibana/app/kibana"', out: '/dev/null')
+    end
+
+    print_step 'Setup application'
+    system('./bin/rails viky:setup')
+  rescue => e
+    puts e.message
+  ensure
+    print_step 'Stop infrastructure services'
+    system('docker-compose stop')
+    Process.waitpid(compose_pid)
+  end
 end
-wait_service('Statistics') do
-  client = Elasticsearch::Client.new(url: 'localhost:9200')
-  client.cluster.health(wait_for_status: 'green')['status'] == 'green'
-end
-wait_service('Dashboard') do
-  system('curl -s -I --output /dev/null --write-out "%{http_code}" "http://localhost:5601/kibana/app/kibana"', out: '/dev/null')
-end
-
-system('./bin/rails viky:setup')
-
-system('docker-compose stop')
-Process.waitpid(compose)
