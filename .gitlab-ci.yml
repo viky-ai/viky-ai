@@ -222,8 +222,8 @@ tag_backup:
 # Deploy any branches on dev
 deploy_branches:
   environment:
-    name: ${CI_COMMIT_REF_NAME}
-    # on_stop: delete_env
+    name: dev-${CI_COMMIT_REF_NAME}
+    on_stop: delete_env
   extends:
     - .deploy
     - .deploy_branches
