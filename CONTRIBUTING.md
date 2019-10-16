@@ -91,13 +91,13 @@ Once the execution is finished, you can start the platform in development mode w
 $ foreman start
 ```
 
-The `foreman` command allows you to launch several commands defined in the `Procfile` file simultaneously. We use `docker-compose` to launch PostgresSQL, Redis, Elastic, kibana and NLP services. Another command runs sidekiq, used to execute tasks asynchronously in the webapp. Finally, the Rails application is also started.
+The `foreman` command allows you to launch several commands defined in the `Procfile` file simultaneously. We use `docker-compose` to launch PostgresSQL, Redis, Elastic, Kibana and NLP services. Other commands runs Sidekiq to execute tasks asynchronously in the webapp and Webpack to bundle static assets . Finally, the Rails application is also started.
 
 The application is now available at the following address: http://localhost:3000/
 
 ### Running locally viky.ai webapp tests suite
 
-When you contribute to the viky.ai webapp component, it is very important that your code changes do not introduce bugs in other parts of the application. One way to check that the viky.ai webapp component still works after making your changes is to run its test suite. If you have never run the webapp test suite before, it is a good idea to run it once before to familiarize yourself with its result.
+When you contribute to the viky.ai webapp component, it is very important that your code changes do not introduce bugs in other parts of the application. One way to check that the viky.ai webapp component still works after making your changes is to run its tests suite. If you have never run the webapp tests suite before, it is a good idea to run it once before to familiarize yourself with its result.
 
 The webapp component being a Ruby On Rails application, you must execute the following commands to run the tests:
 
@@ -137,9 +137,9 @@ In most cases, for a patch to be accepted into viky.ai it has to include tests. 
 
 A regression test should be written in such a way that it will fail while the bug still exists and pass once the bug has been fixed.
 
-For patches containing new features, you'll need to include tests which ensure that the new features are working correctly. They too should fail when the new feature is not present, and then pass once it has been implemented.
+For patches containing new features, you'll need to include tests which ensure that the new features are working correctly. They should fail too when the new feature is not present, and then pass once it has been implemented.
 
-In our case, we must write a model test to validate the implementation of the `hello` method. Navigate to tests/models/ folder and edit file `user_test.rb`. Add the following code:
+In our case, we must write a model test to validate the implementation of the `hello` method. Navigate to `tests/models/` folder and edit file `user_test.rb`. Add the following code:
 
 ```ruby
 test "hello method" do
@@ -166,7 +166,7 @@ NoMethodError: undefined method `hello' for #<User:0x00007f9adcfec198>
 
 We will now add the method `hello` to the `User` model.
 
-Navigate to app/models/ folder and edit file `user.rb`. Add the following code:
+Navigate to `app/models/` folder and edit file `user.rb`. Add the following code:
 
 ```ruby
 def hello
