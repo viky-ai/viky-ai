@@ -1,5 +1,4 @@
 stages:
-  - prerequist
   - build
   - test
   - docker_tag
@@ -115,7 +114,7 @@ tag_webapp:
   extends: .kubernetes_runner
   stage: docker_tag
   only:
-    - develop
+    - master
   variables:
     GIT_STRATEGY: none
   script:
@@ -129,27 +128,17 @@ tag_nlp:
     - "build_nlp"
     - "test_nlp"
   only:
-    - develop
+    - master
   variables:
     GIT_STRATEGY: none
   script:
     - docker_tag_latest ${DOCKER_IMAGE_NLP}
 
-tag_ruby_base:
-  extends: .kubernetes_runner
-  stage: docker_tag
-  only:
-    - develop
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}
-
 tag_backup:
   extends: .kubernetes_runner
   stage: docker_tag
   only:
-    - develop
+    - master
   variables:
     GIT_STRATEGY: none
   script:

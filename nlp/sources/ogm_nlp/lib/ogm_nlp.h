@@ -807,7 +807,6 @@ struct og_ctrl_nlp_threaded
   og_heap hinterpret_package;
   og_string request_sentence;
   int basic_request_word_used;
-  int basic_group_request_word_nb;
   og_heap haccept_language;
   og_bool show_explanation;
   og_bool auto_complete;
@@ -1008,7 +1007,6 @@ og_status NlpMatchWords(og_nlp_th ctrl_nlp_th);
 og_bool NlpMatchCaseAccent(og_nlp_th ctrl_nlp_th, struct request_word *request_word, struct input_part *input_part);
 
 og_status NlpMatchWordChainRequestWords(og_nlp_th ctrl_nlp_th);
-og_status NlpMatchWordChainUpdateWordCount(og_nlp_th ctrl_nlp_th);
 
 /* nlpmatch_group_numbers.c */
 og_status NlpMatchGroupNumbersInit(og_nlp_th ctrl_nlp_th);
@@ -1052,12 +1050,15 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
 og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_bool NlpRequestExpressionsAreGlued(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression1,
     struct request_expression *request_expression2, og_bool keep_order);
-og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th);
 og_status NlpRequestInterpretationsBuild(og_nlp_th ctrl_nlp_th, json_t *json_interpretations);
 og_status NlpSortedRequestExpressionsLog(og_nlp_th ctrl_nlp_th, char *title);
 og_status NlpRequestExpressionsLog(og_nlp_th ctrl_nlp_th, int request_expression_start, char *title);
 og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, int offset);
 og_status NlpRequestExpressionShowTree(og_nlp_th ctrl_nlp_th, int Irequest_expression, og_string label);
+
+/* nlprecal.c */
+og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th);
+og_bool NlpAnyValidateExpression(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
 /* nlprposition.c */
 og_status NlpRequestPositionAdd(og_nlp_th ctrl_nlp_th, int start, int length, size_t *pIrequest_position);
@@ -1271,7 +1272,7 @@ og_status NlpEnableListInit(og_nlp_th ctrl_nlp_th);
 og_status NlpEnableListFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpEnableListReset(og_nlp_th ctrl_nlp_th);
 og_status NlpEnableList(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions);
-og_status NlpEnableListCheckOverlapAfterAnyCalculation(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions);
+og_status NlpEnableListCheckOverlapAfterCalculation(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions);
 
 /* nlpprimarypackage.c*/
 og_status NlpPrimaryPackageInit(og_nlp_th ctrl_nlp_th);

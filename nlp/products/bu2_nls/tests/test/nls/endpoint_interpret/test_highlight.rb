@@ -269,6 +269,7 @@ module Nls
             ],
           }
         }
+        Interpretation.default_locale = "fr-FR"
         check_interpret("testNumber 12 345,678", interpretations: ["numbers"], explain: true, explanation: expected_explanation)
       end
 
