@@ -7,7 +7,7 @@ def system!(*args)
   system(*args) || abort("\n== Command #{args} failed ==")
 end
 
-$total_step = 7
+$total_step = 9
 $current_step = 1
 def print_step(title)
   content = "#{$current_step}/#{$total_step}. #{title}"
@@ -101,8 +101,15 @@ FileUtils.chdir APP_ROOT do
   set_env_variable_if_needed("VIKYAPP_STATISTICS_NO_REPLICA", true  )
 
   begin
+    print_step 'Pull or buils images for infrastructure services'
+    docker_compose_env = {
+      "VIKYAPP_INTERNAL_URL" => ENV["VIKYAPP_INTERNAL_URL"],
+      "NLP_TAG" => ENV["MY_CURRENT_GIT_BRANCH"]
+    }
+    system(docker_compose_env, 'docker-compose up --no-start --build')
+
     print_step 'Start infrastructure services'
-    compose_pid = spawn('VIKYAPP_INTERNAL_URL=$VIKYAPP_INTERNAL_URL NLP_TAG=$MY_CURRENT_GIT_BRANCH docker-compose up -d')
+    compose_pid = spawn(docker_compose_env, 'docker-compose up -d')
     sleep 6
 
     print_step 'Waiting infrastructure services are up'
@@ -137,4 +144,8 @@ FileUtils.chdir APP_ROOT do
     system('docker-compose stop')
     Process.waitpid(compose_pid)
   end
+
+  print_step 'Setup done!'
+  puts "Start the application using the following commands in the webapp directory:"
+  puts "foreman start\n"
 end
