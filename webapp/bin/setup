@@ -101,7 +101,7 @@ FileUtils.chdir APP_ROOT do
   set_env_variable_if_needed("VIKYAPP_STATISTICS_NO_REPLICA", true  )
 
   begin
-    print_step 'Pull or buils images for infrastructure services'
+    print_step 'Pull or build images of infrastructure services'
     docker_compose_env = {
       "VIKYAPP_INTERNAL_URL" => ENV["VIKYAPP_INTERNAL_URL"],
       "NLP_TAG" => ENV["MY_CURRENT_GIT_BRANCH"]
