@@ -49,9 +49,8 @@ services:
       S3_ACCESS_KEY: ${S3_ACCESS_KEY:-no_access}
       S3_SECRET_KEY: ${S3_SECRET_KEY:-no_secret}
     command: |
-      bash -c "[ -f 'config/elasticsearch.keystore' ] || bin/elasticsearch-keystore create &&
-        echo ${S3_ACCESS_KEY} | bin/elasticsearch-keystore add -f --stdin s3.client.default.access_key &&
-        echo ${S3_SECRET_KEY} | bin/elasticsearch-keystore add -f --stdin s3.client.default.secret_key &&
+      bash -c "echo ${S3_ACCESS_KEY} | bin/elasticsearch-keystore add -f --stdin s3.client.default.access_key &&
+               echo ${S3_SECRET_KEY} | bin/elasticsearch-keystore add -f --stdin s3.client.default.secret_key &&
         /usr/local/bin/docker-entrypoint.sh eswrapper"
     volumes:
       - ./backups:/backup_data
