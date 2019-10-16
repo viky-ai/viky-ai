@@ -7,8 +7,7 @@
  */
 #include "ogm_nlp.h"
 
-static og_status NlpNumberAddWord(og_nlp_th ctrl_nlp_th, struct request_word *rw_start, struct request_word *rw_end,
-    double value);
+static og_status NlpNumberAddWord(og_nlp_th ctrl_nlp_th, int Irw_start, int Irw_end,  double value);
 
 /**
  * thousand and decimal separator configuration language agnostic
@@ -91,11 +90,20 @@ static og_status NlpMatchGroupNumbersInitConf(og_nlp_th ctrl_nlp_th)
 
   // associate conf with locale
 
-  // fr-FR, *-FR, fr-* | default (first declared)
+  // en-US, *-US, en-* | default (first declared)
+  IFE(addLocaleConf(DOgLangEN, DOgCountryUS, conf_coma_dot));
+
+  // fr-FR, *-FR, fr-*
   IFE(addLocaleConf(DOgLangFR, DOgCountryFR, conf_dot_coma));
 
-  // en-US, *-US, en-*
-  IFE(addLocaleConf(DOgLangEN, DOgCountryUS, conf_coma_dot));
+  // es-ES, *-ES, es-*
+  IFE(addLocaleConf(DOgLangES, DOgCountryES, conf_dot_coma));
+
+  // it-IT, *-IT, it-*
+  IFE(addLocaleConf(DOgLangIT, DOgCountryIT, conf_dot_coma));
+
+  // pt-PT, *-PT, pt-*
+  IFE(addLocaleConf(DOgLangPT, DOgCountryPT, conf_dot_coma));
 
   // de-DE, *-DE, de-*
   IFE(addLocaleConf(DOgLangDE, DOgCountryDE, conf_dot_coma));
@@ -522,11 +530,12 @@ static og_bool NlpMatchGroupNumbersWithLocale(og_nlp_th ctrl_nlp_th, struct numb
   int request_word_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_word);
   if (request_word_used == 0) return FALSE;
 
-  struct request_word *rw_start_number = NULL;
-  struct request_word *rw_end_number = NULL;
+  int Irw_start_number = -1;
+  int Irw_end_number = -1;
   double value_number = 0.0;
 
-  struct request_word *rw_start = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
+  int Irw_start = 0;
+  struct request_word *rw_start = OgHeapGetCell(ctrl_nlp_th->hrequest_word, Irw_start);
   IFN(rw_start)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchGroupNumbersWithLocale: "
@@ -534,11 +543,12 @@ static og_bool NlpMatchGroupNumbersWithLocale(og_nlp_th ctrl_nlp_th, struct numb
     DPcErr;
   }
 
-  for (struct request_word *rw_end = rw_start; rw_end; rw_end = rw_end->next)
+  // ignore non basic word (build from ltras)
+  for (int Irw_end = Irw_start; Irw_end < ctrl_nlp_th->basic_request_word_used; Irw_end++)
   {
 
-    // ignore non basic word (build from ltras)
-    if (rw_end->self_index >= ctrl_nlp_th->basic_request_word_used) continue;
+    struct request_word *rw_end = OgHeapGetCell(ctrl_nlp_th->hrequest_word, Irw_end);
+    IFN(rw_end) DPcErr;
 
     og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, rw_end->start);
     if (!string_request_word)
@@ -576,24 +586,27 @@ static og_bool NlpMatchGroupNumbersWithLocale(og_nlp_th ctrl_nlp_th, struct numb
             locale_conf->sep_conf->thousand_sep, locale_conf->sep_conf->decimal_sep);
       }
 
-      rw_start_number = rw_start;
-      rw_end_number = rw_end;
+      Irw_start_number = rw_start->self_index;
+      Irw_end_number = rw_end->self_index;
       value_number = value;
     }
     else
     {
-      if (rw_start_number != NULL)
+      if (Irw_start_number != -1)
       {
-        IFE(NlpNumberAddWord(ctrl_nlp_th, rw_start_number, rw_end_number, value_number));
-        rw_start_number = NULL;
+        IFE(NlpNumberAddWord(ctrl_nlp_th, Irw_start_number, Irw_end_number, value_number));
+        Irw_start_number = -1;
       }
-      rw_start = rw_end;
+      Irw_start = Irw_end;
+      rw_start = OgHeapGetCell(ctrl_nlp_th->hrequest_word, Irw_start);
+      IFN(rw_start) DPcErr;
+
     }
   }
 
-  if (rw_start_number != NULL)
+  if (Irw_start_number != -1)
   {
-    IFE(NlpNumberAddWord(ctrl_nlp_th, rw_start_number, rw_end_number, value_number));
+    IFE(NlpNumberAddWord(ctrl_nlp_th, Irw_start_number, Irw_end_number, value_number));
   }
 
   DONE;
@@ -706,6 +719,14 @@ static og_status NlpMatchGroupNumbersBuildLocaleList(og_nlp_th ctrl_nlp_th, GQue
     }
   }
 
+  if (list_locale_to_try->length == 0)
+  {
+    gconstpointer key = GINT_TO_POINTER(locale_lang_country(DOgLangEN, DOgCountryUS));
+    GList *list_lang_country = g_hash_table_lookup(nmgn->sep_conf_lang_by_lang_country, key);
+    struct number_sep_conf_locale *conf = list_lang_country->data;
+    g_queue_push_tail(list_locale_to_try, conf);
+  }
+
   DONE;
 }
 
@@ -771,13 +792,20 @@ static og_bool str_remove_inplace(og_char_buffer *source, og_string to_replace)
   return FALSE;
 }
 
-static og_status NlpNumberAddWord(og_nlp_th ctrl_nlp_th, struct request_word *rw_start, struct request_word *rw_end,
-    double value)
+static og_status NlpNumberAddWord(og_nlp_th ctrl_nlp_th, int Irw_start, int Irw_end,  double value)
 {
+
+  struct request_word *rw_start = OgHeapGetCell(ctrl_nlp_th->hrequest_word, Irw_start);
+  IFN(rw_start) DPcErr;
+  struct request_word *rw_end = OgHeapGetCell(ctrl_nlp_th->hrequest_word, Irw_end);
+  IFN(rw_end) DPcErr;
+
   og_string request_sentence = ctrl_nlp_th->request_sentence;
 
-  for (struct request_word *rw = rw_start; rw != rw_end; rw = rw->next)
+  for (int i = Irw_start; i<= Irw_end; i++)
   {
+    struct request_word *rw = OgHeapGetCell(ctrl_nlp_th->hrequest_word, i);
+    IFN(rw) DPcErr;
     rw->is_number = FALSE;
   }
   rw_end->is_number = FALSE;
@@ -825,13 +853,7 @@ static og_status NlpNumberAddWord(og_nlp_th ctrl_nlp_th, struct request_word *rw
   request_word->spelling_score = 1.0;
   request_word->lang_id = DOgLangNil;
 
-  int nb_matched_words = 1;
-  for (struct request_word *rw = rw_start; rw != rw_end; rw = rw->next)
-  {
-    nb_matched_words++;
-  }
-
-  request_word->nb_matched_words = nb_matched_words;
+  request_word->nb_matched_words = Irw_end-Irw_start+1;
 
   DONE;
 }
