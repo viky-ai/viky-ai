@@ -12,7 +12,7 @@ variables:
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
   DOCKER_IMAGE_DOC: docker-registry.pertimm.net/viky.ai/doc
-  DOCKER_IMAGE_DOC_TAG: master
+
 
 image: vikyai/tools-gitlab-auto-deploy-image:latest
 before_script:
@@ -373,7 +373,7 @@ backup_restore:
   script:
     # update image fo the doc
     - kube_setup
-    - DOC_DIGEST_TAG=$(docker_digest_tag "${DOCKER_IMAGE_DOC}:${DOCKER_IMAGE_DOC_TAG}")
+    - DOC_DIGEST_TAG=$(docker_digest_tag "${DOCKER_IMAGE_DOC}:${DOCKER_IMAGE_DOC_TAG:-latest}")
     - kubectl kubectl set image deployments -l 'app in (viky-doc)' *="${DOCKER_IMAGE_DOC}:${DOC_DIGEST_TAG}"
   when: manual
   allow_failure: true
