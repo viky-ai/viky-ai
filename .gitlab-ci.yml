@@ -12,7 +12,6 @@ variables:
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
   DOCKER_IMAGE_DOC: docker-registry.pertimm.net/viky.ai/doc
 
-
 image: vikyai/tools-gitlab-auto-deploy-image:latest
 before_script:
   # load auto-deploy if exits (not in test)
@@ -159,7 +158,7 @@ tag_backup:
     HELM_RELEASE_NAME: "viky-branches"
     HELM_VALUES: "viky/custom-values/dev.yaml,custom-values.yml"
     # ASN cluster
-    KUBECONFIG_URL: "file://${CI_PROJECT_DIR}/deployment/kubernetes/config/config.yml"
+    KUBECONFIG_URL: "https://gitlab.pertimm.net/api/v4/projects/383/repository/files/deployment%2Fkubernetes%2Fconfig%2Fconfig.yml/raw?ref=${CI_COMMIT_REF_NAME}&private_token=TZupQ1sUxjKfSuVMUNJH"
     KUBE_NAMESPACE: viky-preprod
 
 .deploy_develop:
