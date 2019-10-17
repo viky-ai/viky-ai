@@ -247,7 +247,7 @@ class InterpretRequestLogClient
       ignore_unavailable: true,
       index_settings: {}
     }
-    unless Rails.env.production?
+    if ENV['VIKYAPP_STATISTICS_NO_REPLICA'] == 'true'
       opts[:index_settings]['index.number_of_replicas'] = 0
     end
 

@@ -8,7 +8,7 @@ class StatisticsIndexTemplate
     @index_name = "#{@configuration['index_patterns'][0..-3]}-#{@state}"
     @configuration['index_patterns'] = "#{@index_name}-*"
 
-    unless Rails.env.production?
+    if ENV['VIKYAPP_STATISTICS_NO_REPLICA'] == 'true'
       @configuration['settings']['number_of_replicas'] = 0
     end
 

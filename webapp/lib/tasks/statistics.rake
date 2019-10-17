@@ -8,9 +8,9 @@ namespace :statistics do
     client = InterpretRequestLogClient.long_waiting_client
 
     # cluster will yellow forever
-    unless Rails.env.production?
+    if ENV['VIKYAPP_STATISTICS_NO_REPLICA'] == 'true'
       client.disable_all_replication
-      Task::Print.success("Indices replica has been disable (environment isn't production).")
+      Task::Print.success("Indices replica has been disable according to VIKYAPP_STATISTICS_NO_REPLICA env.")
     end
 
     unless client.cluster_ready?
