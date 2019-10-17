@@ -12,6 +12,8 @@ The second technical component [webapp](webapp/README.md) is a web application t
 
 You can run viky.ai on Linux and macOS.
 
+Note: When cloning the project do not forget to include submodules with the option `--recurse-submodules`.
+
 ### Requirements
 
 viky.ai local install used for development relies on the following dependencies.
@@ -19,6 +21,8 @@ viky.ai local install used for development relies on the following dependencies.
 * Docker Engine 19 and Compose 1.24
 * Ruby 2.6+ and Bundler 2.0+
 * NodeJS 10+ and Yarn 1.19+
+* Graphviz 2.40+
+* ImageMagick 6.9+
 * postgresql-client 11
 
 ### Setup and run
