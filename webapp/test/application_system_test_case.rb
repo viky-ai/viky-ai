@@ -2,6 +2,7 @@ require "test_helper"
 if ENV['COVERAGE']
   SimpleCov.command_name "rails-tests-system"
 end
+require 'webdrivers/chromedriver'
 require 'minitest/retry'
 Minitest::Retry.use!
 
