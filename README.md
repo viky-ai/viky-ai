@@ -28,6 +28,7 @@ viky.ai local install used for development relies on the following dependencies.
    $ cd webapp/
    $ ./bin/setup
    ```
+_Take a seat, it may take a while. Setup can take up to 15 minutes and 3GB of disk space._
 
 2. Within webapp directory, start the application using the following commands:
    ```
