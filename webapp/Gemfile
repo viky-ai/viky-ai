@@ -112,7 +112,7 @@ group :test do
   gem 'minitest-reporters'
   gem 'capybara'
   gem 'selenium-webdriver'
-  gem 'webdrivers'
+  gem 'webdrivers', require: !ENV['SELENIUM_REMOTE_URL']
   gem 'mocha'
   gem 'shrine-memory'
   gem 'simplecov'
