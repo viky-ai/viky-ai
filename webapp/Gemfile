@@ -112,6 +112,7 @@ group :test do
   gem 'minitest-reporters'
   gem 'capybara'
   gem 'selenium-webdriver'
+  gem 'webdrivers'
   gem 'mocha'
   gem 'shrine-memory'
   gem 'simplecov'
