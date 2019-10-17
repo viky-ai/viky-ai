@@ -8,8 +8,8 @@ en:
           exclude_wip: Exclude WIP
         filter_wip: WIP
         empty_blankslate_html: >
-          <h3>Oops.</h3>
-          <p>Sorry, you have not access to a chatbot at the moment.</p>
+          <h2>Damn, it's empty here.</h2>
+          <p>Sorry, you don't have access to any chatbot at the moment.</p>
         choose_blankslate_html: >
-          <h3>Hello.</h3>
+          <h3>Welcome to chatbots!</h3>
           <p>Choose a chatbot on the left.</p>
