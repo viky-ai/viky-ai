@@ -158,7 +158,7 @@ tag_backup:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
     HELM_RELEASE_NAME: "viky-branches"
-    HELM_VALUES: "custom-values.yml,viky/custom-values/dev.yaml"
+    HELM_VALUES: "viky/custom-values/dev.yaml,custom-values.yml"
 
 .deploy_develop:
   only:
@@ -172,7 +172,7 @@ tag_backup:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
     HELM_RELEASE_NAME: "viky-develop"
-    HELM_VALUES: "custom-values.yml,viky/custom-values/preproduction.yaml"
+    HELM_VALUES: "viky/custom-values/preproduction.yaml,custom-values.yml"
 
 .deploy_preprod:
   only:
@@ -190,7 +190,7 @@ tag_backup:
     S3_SECRET_KEY: ${S3_SECRET_KEY}
     VIKYAPP_AUTO_BACKUP: "true"
     HELM_RELEASE_NAME: "viky-preprod"
-    HELM_VALUES: "custom-values.yml,viky/custom-values/preproduction.yaml"
+    HELM_VALUES: "viky/custom-values/preproduction.yaml,custom-values.yml"
 
 .deploy:
   extends: .kubernetes_runner
@@ -374,7 +374,7 @@ backup_restore:
     # update image fo the doc
     - kube_setup
     - DOC_DIGEST_TAG=$(docker_digest_tag "${DOCKER_IMAGE_DOC}:${DOCKER_IMAGE_DOC_TAG:-latest}")
-    - kubectl kubectl set image deployments -l 'app in (viky-doc)' *="${DOCKER_IMAGE_DOC}:${DOC_DIGEST_TAG}"
+    - kubectl set image deployments -l 'app in (viky-doc)' *="${DOCKER_IMAGE_DOC}:${DOC_DIGEST_TAG}"
   when: manual
   allow_failure: true
 
