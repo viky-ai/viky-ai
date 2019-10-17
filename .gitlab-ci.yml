@@ -373,6 +373,7 @@ backup_restore:
     # update image fo the doc
     - kube_setup
     - DOC_DIGEST_TAG=$(docker_digest_tag "${DOCKER_IMAGE_DOC}:${DOCKER_IMAGE_DOC_TAG:-latest}")
+    - echo "Updating doc to ${DOCKER_IMAGE_DOC}:${DOC_DIGEST_TAG}"
     - kubectl set image deployments/viky-doc-deployment *="${DOCKER_IMAGE_DOC}:${DOC_DIGEST_TAG}"
   when: manual
   allow_failure: true
