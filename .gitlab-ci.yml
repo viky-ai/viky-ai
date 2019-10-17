@@ -1,5 +1,4 @@
 stages:
-  - prerequist
   - build
   - test
   - docker_tag
@@ -7,12 +6,12 @@ stages:
   - admin
 
 variables:
-  SKIP_TEST: "true"
   GIT_SUBMODULE_STRATEGY: none
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
-  DOCKER_IMAGE_TOOLS_NLP: $CI_REGISTRY_IMAGE/tools_nlp_base
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
+  DOCKER_IMAGE_DOC: docker-registry.pertimm.net/viky.ai/doc
+
 
 image: vikyai/tools-gitlab-auto-deploy-image:latest
 before_script:
@@ -84,7 +83,7 @@ test_webapp:
     - export SELENIUM_REMOTE_URL="http://${CI_SERVICE_HOST:-selenium-chrome}:4444/wd/hub/"
     - export VIKYAPP_STATISTICS_NO_REPLICA="true"
     - cd /webapp
-    - if [ "${SKIP_TEST:-false}" != "true" ]; then ./bin/docker_run_test.sh unit ; fi
+    - if [ "${SKIP_TEST:-false}" != "true" ]; then ./bin/docker_run_test.sh ; fi
   artifacts:
     # expire_in: 1 week
     reports:
@@ -114,7 +113,7 @@ tag_webapp:
   extends: .kubernetes_runner
   stage: docker_tag
   only:
-    - develop
+    - master
   variables:
     GIT_STRATEGY: none
   script:
@@ -128,27 +127,17 @@ tag_nlp:
     - "build_nlp"
     - "test_nlp"
   only:
-    - develop
+    - master
   variables:
     GIT_STRATEGY: none
   script:
     - docker_tag_latest ${DOCKER_IMAGE_NLP}
 
-tag_ruby_base:
-  extends: .kubernetes_runner
-  stage: docker_tag
-  only:
-    - develop
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}
-
 tag_backup:
   extends: .kubernetes_runner
   stage: docker_tag
   only:
-    - develop
+    - master
   variables:
     GIT_STRATEGY: none
   script:
@@ -163,12 +152,12 @@ tag_backup:
     - tags
   environment:
     name: dev-${CI_COMMIT_REF_NAME}
-    url: https://${CI_ENVIRONMENT_SLUG}.viky.ai
+    url: https://test-preprod-${CI_ENVIRONMENT_SLUG}.viky.ai
   variables:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
     HELM_RELEASE_NAME: "viky-branches"
-    HELM_VALUES: "custom-values.yml,viky/custom-values/dev.yaml"
+    HELM_VALUES: "viky/custom-values/dev.yaml,custom-values.yml"
     # ASN cluster
     KUBECONFIG_URL: "file://${CI_PROJECT_DIR}/deployment/kubernetes/config/config.yml"
     KUBE_NAMESPACE: viky-preprod
@@ -185,7 +174,7 @@ tag_backup:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
     HELM_RELEASE_NAME: "viky-develop"
-    HELM_VALUES: "custom-values.yml,viky/custom-values/preproduction.yaml"
+    HELM_VALUES: "viky/custom-values/preproduction.yaml,custom-values.yml"
 
 .deploy_preprod:
   only:
@@ -194,13 +183,13 @@ tag_backup:
     - tags
   environment:
     name: viky-preprod
-    url: https://viky-beta-kube.viky.ai
+    url: https://viky-beta.viky.ai
   variables:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
     VIKYAPP_AUTO_BACKUP: "true"
     HELM_RELEASE_NAME: "viky-preprod"
-    HELM_VALUES: "custom-values.yml,viky/custom-values/preproduction.yaml"
+    HELM_VALUES: "viky/custom-values/preproduction.yaml,custom-values.yml"
 
 .deploy:
   extends: .kubernetes_runner
@@ -221,11 +210,10 @@ tag_backup:
     - helm history "${RELEASE_NAME}" || true
     - helm status  "${RELEASE_NAME}" || true
     # backup current env
-    - kubectl exec $(kube_get_pods "app=viky-webapp-backup") bash /backup/backup.sh || true
+    - if [ "${BACKUP_BEFORE_DEPLOY}" == "true" ]; then kubectl exec $(kube_get_pods \"app=viky-webapp-backup\") bash /backup/backup.sh || true ; fi
     # Go to Kubernetes directory
     - cd deployment/kubernetes/
     - bin/generate-ci-override-values.sh
-    - cat bin/generate-ci-override-values.sh
     # Deploy Viky Platform
     - HELM_OPTIONS="--install ${HELM_EXTRA_OPTIONS} --timeout ${HELM_TIMEOUT}  --values ${HELM_VALUES}"
     - helm upgrade ${HELM_OPTIONS} "${RELEASE_NAME}" ./viky/
@@ -233,8 +221,8 @@ tag_backup:
 # Deploy any branches on dev
 deploy_branches:
   environment:
-    name: ${CI_COMMIT_REF_NAME}
-    # on_stop: delete_env
+    name: dev-${CI_COMMIT_REF_NAME}
+    on_stop: delete_env
   extends:
     - .deploy
     - .deploy_branches
@@ -271,6 +259,8 @@ deploy_preprod:
   extends:
     - .deploy
     - .deploy_preprod
+  variables:
+    BACKUP_BEFORE_DEPLOY: "true"
 
 deploy_preprod_forced:
   extends: deploy_preprod
@@ -379,9 +369,11 @@ backup_restore:
     # dummy needs to allow it directly
     - "build_backup"
   script:
-    # delete pods to restart viky apps deployment
+    # update image fo the doc
     - kube_setup
-    - kubectl delete pods -l 'app in (viky-doc)'
+    - DOC_DIGEST_TAG=$(docker_digest_tag "${DOCKER_IMAGE_DOC}:${DOCKER_IMAGE_DOC_TAG:-latest}")
+    - echo "Updating doc to ${DOCKER_IMAGE_DOC}:${DOC_DIGEST_TAG}"
+    - kubectl set image deployments/viky-doc-deployment *="${DOCKER_IMAGE_DOC}:${DOC_DIGEST_TAG}"
   when: manual
   allow_failure: true
 

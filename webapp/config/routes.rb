@@ -183,8 +183,8 @@ Rails.application.routes.draw do
     post '/packages/:id/updated', to: 'packages#updated'
   end
 
-  get 'style-guide', to: 'style_guide#index'
-  get 'style-guide/:page_id', to: "style_guide#page"
+  # get 'style-guide', to: 'style_guide#index'
+  get 'style-guide(/:page_id)', to: "style_guide#page"
 
   unless File.exist? File.join(Rails.root, 'public', 'index.html')
     devise_scope :user do

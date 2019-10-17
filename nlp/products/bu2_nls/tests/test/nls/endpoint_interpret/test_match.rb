@@ -250,34 +250,6 @@ module Nls
         deepness
       end
 
-      def test_score
-        Nls.remove_all_packages
-        Interpretation.default_locale = "fr"
-
-        deepness = create_deepness_package
-        Nls.package_update(deepness)
-
-        request1 = json_interpret_body(deepness, "Je voudrais aller à Paris", locale: "fr")
-        actual1 = Nls.interpret(request1)
-        assert_equal actual1["interpretations"][0]["score"], actual1["interpretations"][1]["score"]
-
-        request2 = json_interpret_body(deepness, "Je voudrais aller à Paris", locale: "en")
-        actual2 = Nls.interpret(request2)
-        assert_equal actual2["interpretations"][0]["score"], actual2["interpretations"][1]["score"]
-
-        request3 = json_interpret_body(deepness, "Je voudrais aller à Paris toto", locale: "fr")
-        actual3 = Nls.interpret(request3)
-        assert_equal actual3["interpretations"][0]["score"], actual3["interpretations"][1]["score"]
-
-        request4 = json_interpret_body(deepness, "Je voudrais aller à Paris toto", locale: "en")
-        actual4 = Nls.interpret(request4)
-        assert_equal actual4["interpretations"][0]["score"], actual4["interpretations"][1]["score"]
-
-        request5 = json_interpret_body(deepness, "Je voudrais aller à Paris toto", locale: "fr")
-        actual5 = Nls.interpret(request5)
-        assert_equal actual5["interpretations"][0]["score"], actual5["interpretations"][1]["score"]
-      end
-
       def test_interpret_aller_de_a
         Nls.remove_all_packages
 
