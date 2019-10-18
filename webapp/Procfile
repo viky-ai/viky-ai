@@ -1,4 +1,4 @@
-# test change BRU
+# test change BRU 2019-10-18T10:31
 infra:    VIKYAPP_INTERNAL_URL=$VIKYAPP_INTERNAL_URL NLP_TAG=$MY_CURRENT_GIT_BRANCH docker-compose up
 workers:  ./node_modules/wait-on/bin/wait-on tcp:localhost:6379 && bundle exec sidekiq -C config/sidekiq.yml
 webpack:  ./bin/webpack-dev-server

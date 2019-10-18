@@ -44,8 +44,8 @@ build_nlp:
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   script:
-    - docker_build ${DOCKER_IMAGE_NLP}      nlp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target run_image"
-    - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target test_image"
+    - docker_build ${DOCKER_IMAGE_NLP}      nlp "--target run_image"
+    - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--target test_image"
 
 # Test
 test_webapp:
