@@ -268,11 +268,7 @@ deploy_preprod_forced:
     HELM_EXTRA_OPTIONS: "--force"
 
 # remove environment only for dev
-delete_env:
-  extends:
-    - .kubernetes_runner
-    - .deploy_branches
-    - .deploy_develop
+.delete_env:
   environment:
     name: dev-${CI_COMMIT_REF_NAME}
     action: stop
@@ -291,6 +287,13 @@ delete_env:
   when: manual
   allow_failure: true
 
+delete_env:
+  extends:
+    - .kubernetes_runner
+    - .deploy_branches
+    - .deploy_develop
+    - .delete_env
+
 # invite admin user
 .invite_admin:
   stage: admin
@@ -303,16 +306,11 @@ delete_env:
   when: manual
   allow_failure: true
 
-invite_admin_dev:
+invite_admin:
   extends:
     - .kubernetes_runner
     - .deploy_branches
-    - .invite_admin
-
-# invite admin user
-invite_admin_preprod:
-  extends:
-    - .kubernetes_runner
+    - .deploy_dev
     - .deploy_preprod
     - .invite_admin
 
@@ -328,24 +326,17 @@ invite_admin_preprod:
   when: manual
   allow_failure: true
 
-backup_dev:
+backup:
   extends:
     - .kubernetes_runner
     - .deploy_branches
     - .deploy_develop
-    - .backup
-
-backup_preprod:
-  extends:
-    - .kubernetes_runner
     - .deploy_preprod
     - .backup
 
 # backup restore only for dev
-backup_restore:
-  extends:
-    - .kubernetes_runner
-    - .deploy_branches
+.backup_restore:
+
   stage: admin
   variables:
     GIT_STRATEGY: none
@@ -360,6 +351,13 @@ backup_restore:
     - kubectl delete pods -l 'app in (viky-webapp-worker, viky-webapp, viky-nlp)'
   when: manual
   allow_failure: true
+
+backup_restore:
+  extends:
+    - .kubernetes_runner
+    - .deploy_branches
+    - .deploy_dev
+    - .backup_restore
 
 # update homepage and doc to latest image
 .update_doc:
@@ -378,16 +376,11 @@ backup_restore:
   when: manual
   allow_failure: true
 
-update_doc_dev:
+update_doc:
   extends:
     - .kubernetes_runner
     - .deploy_branches
     - .deploy_develop
-    - .update_doc
-
-update_doc_preprod:
-  extends:
-    - .kubernetes_runner
     - .deploy_preprod
     - .update_doc
 
@@ -406,15 +399,10 @@ update_doc_preprod:
   when: manual
   allow_failure: true
 
-deploy_status_dev:
+deploy_status:
   extends:
     - .kubernetes_runner
     - .deploy_branches
     - .deploy_develop
-    - .deploy_status
-
-deploy_status_preprod:
-  extends:
-    - .kubernetes_runner
     - .deploy_preprod
     - .deploy_status
