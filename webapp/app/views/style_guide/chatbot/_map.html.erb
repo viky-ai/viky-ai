@@ -1,3 +1,5 @@
+<% google_map_api_key = ENV.fetch("VIKYAPP_GOOGLE_MAP_API_KEY") { "missing-google-map-api-key" } %>
+
 <section>
   <h2>Map</h2>
   <h3>Only map</h3>
@@ -17,8 +19,7 @@
             width="600"
             height="450"
             frameborder="0" style="border:0"
-            src="https://www.google.com/maps/embed/v1/place?key=***REMOVED***
-              &q=Valence" allowfullscreen>
+            src="https://www.google.com/maps/embed/v1/place?key=<%= google_map_api_key %>&q=Valence" allowfullscreen>
           </iframe>
         </div>
       </div>
@@ -44,8 +45,7 @@
             width="600"
             height="450"
             frameborder="0" style="border:0"
-            src="https://www.google.com/maps/embed/v1/place?key=***REMOVED***
-              &q=Valence" allowfullscreen>
+            src="https://www.google.com/maps/embed/v1/place?key=<%= google_map_api_key %>&q=Valence" allowfullscreen>
           </iframe>
         </div>
         <div class="chatbot__widget--map__info">
@@ -74,8 +74,7 @@
             width="600"
             height="450"
             frameborder="0" style="border:0"
-            src="https://www.google.com/maps/embed/v1/place?key=***REMOVED***
-              &q=Valence" allowfullscreen>
+            src="https://www.google.com/maps/embed/v1/place?key=<%= google_map_api_key %>&q=Valence" allowfullscreen>
           </iframe>
         </div>
         <div class="chatbot__widget--map__info">

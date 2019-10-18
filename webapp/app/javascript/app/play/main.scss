@@ -4,6 +4,10 @@ $play_small_breakpoint: 500px;
 $play_breakpoint: 1000px;
 $play_form_color: #fafafa;
 
+body[data-controller-name="play"] main > .blankslate{
+  margin-top: 3.5em;
+}
+
 body[data-controller-name="play"] .modal{
   form{
     margin: 0;

@@ -92,6 +92,7 @@ gem 'bootsnap', '>= 1.4.2', require: false
 gem 'awesome_print'
 gem 'kaminari'
 gem 'rainbow'
+gem 'rest-client'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
@@ -111,6 +112,7 @@ group :test do
   gem 'minitest-reporters'
   gem 'capybara'
   gem 'selenium-webdriver'
+  gem 'webdrivers', require: !ENV['SELENIUM_REMOTE_URL']
   gem 'mocha'
   gem 'shrine-memory'
   gem 'simplecov'
@@ -121,11 +123,6 @@ end
 group :production do
   gem "skylight"
 end
-
-# Used by PingPongBot Sinatra App
-gem 'sinatra', require: 'sinatra/base'
-gem 'sinatra-contrib', require: false
-gem 'rest-client'
 
 # Quota limits
 gem 'rack-throttle'

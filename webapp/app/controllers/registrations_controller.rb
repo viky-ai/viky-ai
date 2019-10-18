@@ -41,7 +41,11 @@ class RegistrationsController < Devise::RegistrationsController
     end
 
     def after_sign_up_path_for(resource)
-      "/users/sign_in"
+      if Feature.email_configured?
+        "/users/sign_in"
+      else
+        "/agents"
+      end
     end
 
     def after_inactive_sign_up_path_for(resource)
