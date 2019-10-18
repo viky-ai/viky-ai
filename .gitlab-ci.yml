@@ -306,11 +306,16 @@ delete_env:
   when: manual
   allow_failure: true
 
-invite_admin:
+invite_admin_dev:
   extends:
     - .kubernetes_runner
     - .deploy_branches
     - .deploy_develop
+    - .invite_admin
+
+invite_admin_preprod:
+  extends:
+    - .kubernetes_runner
     - .deploy_preprod
     - .invite_admin
 
@@ -326,17 +331,21 @@ invite_admin:
   when: manual
   allow_failure: true
 
-backup:
+backup_dev:
   extends:
     - .kubernetes_runner
     - .deploy_branches
     - .deploy_develop
+    - .backup
+
+backup_preprod:
+  extends:
+    - .kubernetes_runner
     - .deploy_preprod
     - .backup
 
 # backup restore only for dev
 .backup_restore:
-
   stage: admin
   variables:
     GIT_STRATEGY: none
@@ -376,11 +385,16 @@ backup_restore:
   when: manual
   allow_failure: true
 
-update_doc:
+update_doc_dev:
   extends:
     - .kubernetes_runner
     - .deploy_branches
     - .deploy_develop
+    - .update_doc
+
+update_doc_preprod:
+  extends:
+    - .kubernetes_runner
     - .deploy_preprod
     - .update_doc
 
@@ -399,10 +413,15 @@ update_doc:
   when: manual
   allow_failure: true
 
-deploy_status:
+deploy_status_dev:
   extends:
     - .kubernetes_runner
     - .deploy_branches
     - .deploy_develop
+    - .deploy_status
+
+deploy_status_preprod:
+  extends:
+    - .kubernetes_runner
     - .deploy_preprod
     - .deploy_status
