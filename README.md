@@ -12,8 +12,6 @@ The second technical component [webapp](webapp/README.md) is a web application t
 
 You can run viky.ai on Linux and macOS.
 
-Note: When cloning the project do not forget to include submodules with the option `--recurse-submodules`.
-
 ### Requirements
 
 viky.ai local install used for development relies on the following dependencies.
@@ -27,14 +25,19 @@ viky.ai local install used for development relies on the following dependencies.
 
 ### Setup and run
 
-1. Setup the application using the following command:
+1. Clone the repository with submodules using the following command:
+   ```
+   git clone --recurse-submodules https://github.com/viky-ai/viky-ai.git
+   ```
+
+2. Setup the application using the following command:
    ```
    $ cd webapp/
    $ ./bin/setup
    ```
    _Take a seat, it may take a while. Setup can take up to 15 minutes and 3GB of disk space._
 
-2. Within webapp directory, start the application using the following commands:
+3. Within webapp directory, start the application using the following commands:
    ```
    $ foreman start
    ```
