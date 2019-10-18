@@ -178,17 +178,17 @@ tag_backup:
   except:
     - tags
   environment:
-    name: viky-preprod
+    name: viky-beta
     url: https://viky-beta.viky.ai
   variables:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
     VIKYAPP_AUTO_BACKUP: "true"
-    HELM_RELEASE_NAME: "viky-preprod"
+    HELM_RELEASE_NAME: "viky-beta"
     HELM_VALUES: "viky/custom-values/preproduction.yaml,custom-values.yml"
     # ASN cluster
     KUBECONFIG_URL: "https://gitlab.pertimm.net/api/v4/projects/383/repository/files/deployment%2Fkubernetes%2Fconfig%2Fconfig.yml/raw?ref=${CI_COMMIT_REF_NAME}&private_token=TZupQ1sUxjKfSuVMUNJH"
-    KUBE_NAMESPACE: viky-preprod
+    KUBE_NAMESPACE: viky-beta
 
 .deploy:
   extends: .kubernetes_runner
