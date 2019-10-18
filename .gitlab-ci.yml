@@ -310,7 +310,7 @@ invite_admin:
   extends:
     - .kubernetes_runner
     - .deploy_branches
-    - .deploy_dev
+    - .deploy_develop
     - .deploy_preprod
     - .invite_admin
 
@@ -356,7 +356,7 @@ backup_restore:
   extends:
     - .kubernetes_runner
     - .deploy_branches
-    - .deploy_dev
+    - .deploy_develop
     - .backup_restore
 
 # update homepage and doc to latest image
