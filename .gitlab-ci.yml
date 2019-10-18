@@ -151,7 +151,7 @@ tag_backup:
     - tags
   environment:
     name: dev-${CI_COMMIT_REF_NAME}
-    url: https://test-preprod-${CI_ENVIRONMENT_SLUG}.viky.ai
+    url: https://viky-${CI_ENVIRONMENT_SLUG}.viky.ai
   variables:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
@@ -272,6 +272,7 @@ delete_env:
   extends:
     - .kubernetes_runner
     - .deploy_branches
+    - .deploy_develop
   environment:
     name: dev-${CI_COMMIT_REF_NAME}
     action: stop
@@ -331,6 +332,7 @@ backup_dev:
   extends:
     - .kubernetes_runner
     - .deploy_branches
+    - .deploy_develop
     - .backup
 
 backup_preprod:
@@ -380,6 +382,7 @@ update_doc_dev:
   extends:
     - .kubernetes_runner
     - .deploy_branches
+    - .deploy_develop
     - .update_doc
 
 update_doc_preprod:
@@ -407,6 +410,7 @@ deploy_status_dev:
   extends:
     - .kubernetes_runner
     - .deploy_branches
+    - .deploy_develop
     - .deploy_status
 
 deploy_status_preprod:
