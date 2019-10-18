@@ -3,9 +3,8 @@
 body[data-controller-name="chatbots"] main{
   padding: 0;
 }
-
-.chatbots-blankslate-container{
-  margin: 2em 1em;
+body[data-controller-name="chatbots"] main > .blankslate{
+  margin-top: 6em;
 }
 
 $chatbots_bg_color: desaturate(lighten(#0E131A, 14%), 12%);
