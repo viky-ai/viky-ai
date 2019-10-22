@@ -17,7 +17,7 @@ class EntityTest < ActiveSupport::TestCase
     )
     assert entity.save
     assert_equal "{gender: 'male'}", entity.solution
-    assert !entity.auto_solution_enabled
+    assert_not entity.auto_solution_enabled
     assert_equal 2, entity.terms.size
     assert_equal 'Éric', entity.terms.first['term']
     assert_equal 'fr', entity.terms.first['locale']

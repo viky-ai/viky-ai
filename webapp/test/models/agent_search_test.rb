@@ -244,7 +244,7 @@ class AgentSearchTest < ActiveSupport::TestCase
       }
     }
     assert user.save
-    assert !AgentSearch.new(user).empty?
+    assert_not AgentSearch.new(user).empty?
 
     user.ui_state = {}
     assert user.save
