@@ -18,11 +18,13 @@
           <%= t('views.nav.play') %>
         </a>
       </li>
-      <li>
-        <a href="<%= chatbots_path %>" <% if ['chatbots'].include? controller_path %>class="current"<% end %>>
-          <%= t('views.nav.chatbots') %>
-        </a>
-      </li>
+      <% if Feature.chatbot_enabled? && current_user.chatbot_enabled? %>
+        <li>
+          <a href="<%= chatbots_path %>" <% if ['chatbots'].include? controller_path %>class="current"<% end %>>
+            <%= t('views.nav.chatbots') %>
+          </a>
+        </li>
+      <% end %>
 
       <% if current_user.admin %>
         <% kibana_url = Rails.env.development? ? 'http://localhost:5601/kibana/' : '/kibana/'%>

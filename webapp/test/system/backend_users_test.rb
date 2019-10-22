@@ -240,4 +240,21 @@ class BackendUsersTest < ApplicationSystemTestCase
     end
   end
 
+
+  test "Chatbot toggle" do
+    Feature.with_chatbot_enabled do
+      admin_login
+
+      click_link("Users management")
+      assert has_text?('7 users')
+
+      assert has_css?('.btn--toggle.btn--toggle-on', count: 0)
+      within('table') do
+        first('.btn--toggle').click
+      end
+      sleep(0.5)
+      assert has_css?('.btn--toggle.btn--toggle-on', count: 1)
+    end
+  end
+
 end

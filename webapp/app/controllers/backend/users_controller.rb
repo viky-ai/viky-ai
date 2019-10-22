@@ -18,6 +18,12 @@ class Backend::UsersController < Backend::ApplicationController
     @user.save
   end
 
+  def toggle_chatbot_enabled
+    @user = User.friendly.find(params[:id])
+    @user.chatbot_enabled = !@user.chatbot_enabled
+    @user.save
+  end
+
   def confirm_destroy
     @user = User.friendly.find(params[:id])
     render partial: 'confirm_destroy', locals: { user: @user }

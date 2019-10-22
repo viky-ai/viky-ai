@@ -38,6 +38,9 @@
             <% if Feature.quota_enabled? %>
               <th class="actions">Quota</th>
             <% end %>
+            <% if Feature.chatbot_enabled? %>
+              <th class="actions">Chatbot</th>
+            <% end %>
             <th class="actions"></th>
           </tr>
         </thead>
@@ -142,6 +145,16 @@
                     <button
                       class="btn btn--toggle btn--toggle-<% if user.quota_enabled %>on<% else %>off<% end %>"
                       id="js-toogle-quota-<%= user.id %>"></button>
+                  <% end %>
+                </td>
+              <% end %>
+
+              <% if Feature.chatbot_enabled? %>
+                <td class="actions">
+                  <%= form_with(url: toggle_chatbot_enabled_backend_user_path(user)) do |f| %>
+                    <button
+                      class="btn btn--toggle btn--toggle-<% if user.chatbot_enabled %>on<% else %>off<% end %>"
+                      id="js-toogle-chatbot-<%= user.id %>"></button>
                   <% end %>
                 </td>
               <% end %>
