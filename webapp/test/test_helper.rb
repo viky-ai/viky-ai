@@ -2,7 +2,10 @@ if ENV['COVERAGE']
   require 'simplecov'
   SimpleCov.command_name "rails-tests"
 end
-
+if ENV['RETRY']
+  require 'minitest/retry'
+  Minitest::Retry.use!
+end
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
 require 'rails/test_help'
