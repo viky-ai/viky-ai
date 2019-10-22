@@ -4,34 +4,18 @@ label{
   margin-bottom: .5em;
   line-height: 1.5;
   display: inline-block;
-  vertical-align: middle;
-  &.radio,
-  &.checkbox{
-    width: auto;
-    cursor: pointer;
-    font-weight: 300;
-    margin-bottom: 0;
-  }
-}
-label{
-  cursor: pointer;
 }
 
-label + .badge{
+
+.label + .help,
+label + .help{
+  line-height: 1.1em;
   vertical-align: text-top;
+  margin-left: .5em;
 }
 
-input[type='radio'],
-input[type='checkbox']{
-  cursor: pointer;
-  margin-bottom: 0;
-}
-input[type='radio'] + label,
-input[type='checkbox'] + label{
-  width: auto;
-  cursor: pointer;
-  font-weight: 300;
-  margin-bottom: 0;
+.label + .badge,
+label + .badge{
   vertical-align: middle;
 }
 
@@ -129,6 +113,42 @@ input[type='text'].code{
       &:last-child{
         margin-right: 0;
       }
+    }
+  }
+
+  .checkbox-inline,
+  label.checkbox-inline{
+    display: block;
+    position: relative;
+    .label{
+      font-weight: 300;
+      padding-left: 18px;
+      margin: 0;
+      line-height: 1em;
+    }
+  }
+
+  .checkbox-inline,
+  label.checkbox-inline,
+  .control{
+    position: relative;
+    input[type='radio'],
+    input[type='checkbox']{
+      box-sizing: border-box;
+      padding: 0;
+      position: absolute;
+      margin-top: 4px;
+      font-size: 14px;
+    }
+    input[type='checkbox']{
+      margin-top: 6px;
+    }
+    input[type='radio'] + label,
+    input[type='checkbox'] + label{
+      font-weight: 300;
+      padding-left: 18px;
+      margin: 0;
+      line-height: 1em;
     }
   }
 
@@ -272,12 +292,6 @@ input[type='text'].code{
         fill: $alert_color;
       }
     }
-  }
-  .label + .help,
-  label + .help{
-    line-height: 1.1em;
-    vertical-align: text-top;
-    margin-left: .5em;
   }
 }
 

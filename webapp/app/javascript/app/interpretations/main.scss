@@ -29,7 +29,6 @@
   width: 100%;
   display: grid;
   grid-column-gap: 1em;
-
 }
 
 .interpretations-form{
@@ -167,11 +166,18 @@
       border-radius: 2px;
       margin-right: .25em;
       font-size: 0.8em;
-      vertical-align: middle;
       padding: .3em .5em;
       white-space: nowrap;
       .btn.btn--outline{
         background-color: #fff;
+      }
+
+      input[type='checkbox']{
+        box-sizing: border-box;
+        padding: 0;
+        position: absolute;
+        margin-top: 5px;
+        font-size: 14px;
       }
     }
     .trix-control__option__child:nth-child(2){
