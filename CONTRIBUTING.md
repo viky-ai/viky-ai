@@ -4,6 +4,7 @@ This guide covers ways in which you can become a part of the ongoing development
 
 As mentioned in [README](README.md), everyone interacting in viky.ai codebases, issue trackers, chat rooms, and mailing lists is expected to follow this [code of conduct](CODE_OF_CONDUCT.md).
 
+
 ## Reporting an Issue
 
 viky.ai uses [GitHub Issue Tracking](https://github.com/viky-ai/viky-ai/issues) to track issues. If you've found a bug, this is the place to start. You'll need to create a GitHub account in order to submit an issue, to comment on them, or to create pull requests.
@@ -32,18 +33,20 @@ We're always trying to make viky.ai better, and your feature requests are a key 
 
 As with most open-source projects, code talks. If you are willing to write the code for the feature yourself it’s much more likely to be accepted. Fork viky.ai on GitHub, create a feature branch, and show us your work with a merge request!
 
-## Helping to resolve existing issues
+### Helping to resolve existing issues
 
 As a next step beyond reporting issues, you can help us to resolve existing ones by providing feedback about them.
 
 * Can you reproduce the reported issue on your own computer? If so, you can add a comment to the issue saying that you're seeing the same thing.
 * If an issue is vague, can you help us reduce it to something more specific? Perhaps you can provide additional information to help reproduce a bug.
 
+
 ## Contributing to the viky.ai documentation
 
 You can help improve the viky.ai documentation by making it more coherent, consistent, or readable, adding missing information, correcting factual errors, fixing typos.
 
 To do so, make changes to [viky.ai documentation source files](https://github.com/viky-ai/doc). Then open a pull request to apply your changes to the development branch.
+
 
 ## Contributing to the viky.ai webapp code
 
@@ -63,10 +66,9 @@ The first step to contributing to viky.ai is to get a copy of the source code. F
 $ git clone https://github.com/YourGitHubName/viky-ai.git
 ```
 
-
 ### Install locally viky.ai platform
 
-Install requirements describe in [REAME](README.md#requirements).
+Install requirements describe in [README](README.md#requirements).
 
 Setup the application using the following command:
 
@@ -89,13 +91,13 @@ Once the execution is finished, you can start the platform in development mode w
 $ foreman start
 ```
 
-The `foreman` command allows you to launch several commands defined in the `Procfile` file simultaneously. We use `docker-compose` to launch PostgresSQL, Redis, Elastic, kibana and NLP services. Another command runs sidekiq, used to execute tasks asynchronously in the webapp. Finally, the Rails application is also started.
+The `foreman` command allows you to launch several commands defined in the `Procfile` file simultaneously. We use `docker-compose` to launch PostgresSQL, Redis, Elastic, Kibana and NLP services. Other commands runs Sidekiq to execute tasks asynchronously in the webapp and Webpack to bundle static assets . Finally, the Rails application is also started.
 
 The application is now available at the following address: http://localhost:3000/
 
 ### Running locally viky.ai webapp tests suite
 
-When you contribute to the viky.ai webapp component, it is very important that your code changes do not introduce bugs in other parts of the application. One way to check that the viky.ai webapp component still works after making your changes is to run its test suite. If you have never run the webapp test suite before, it is a good idea to run it once before to familiarize yourself with its result.
+When you contribute to the viky.ai webapp component, it is very important that your code changes do not introduce bugs in other parts of the application. One way to check that the viky.ai webapp component still works after making your changes is to run its tests suite. If you have never run the webapp tests suite before, it is a good idea to run it once before to familiarize yourself with its result.
 
 The webapp component being a Ruby On Rails application, you must execute the following commands to run the tests:
 
@@ -135,16 +137,15 @@ In most cases, for a patch to be accepted into viky.ai it has to include tests. 
 
 A regression test should be written in such a way that it will fail while the bug still exists and pass once the bug has been fixed.
 
-For patches containing new features, you'll need to include tests which ensure that the new features are working correctly. They too should fail when the new feature is not present, and then pass once it has been implemented.
+For patches containing new features, you'll need to include tests which ensure that the new features are working correctly. They should fail too when the new feature is not present, and then pass once it has been implemented.
 
-In our case, we must write a model test to validate the implementation of the `hello` method. Navigate to tests/models/ folder and edit file `user_test.rb`. Add the following code:
+In our case, we must write a model test to validate the implementation of the `hello` method. Navigate to `tests/models/` folder and edit file `user_test.rb`. Add the following code:
 
 ```ruby
 test "hello method" do
   assert_equal "Hi", User.first.hello
 end
 ```
-
 
 Since we haven't made any modifications to `User` model yet, our test should fail. Let’s run all the tests to make sure that's really what happens.
 
@@ -165,14 +166,13 @@ NoMethodError: undefined method `hello' for #<User:0x00007f9adcfec198>
 
 We will now add the method `hello` to the `User` model.
 
-Navigate to app/models/ folder and edit file `user.rb`. Add the following code:
+Navigate to `app/models/` folder and edit file `user.rb`. Add the following code:
 
 ```ruby
 def hello
   "Hi"
 end
 ```
-
 
 Now we need to make sure that the test we wrote earlier passes, so we can see whether the code we added is working correctly.
 
@@ -181,7 +181,6 @@ $ ./bin/rails test
 ```
 
 Everything should pass. You can proceed to the next step.
-
 
 ### Submitting a pull request
 
@@ -238,7 +237,7 @@ index 93c789c8..8c2c426a 100644
 If the patch’s content looked okay, it’s time to commit the changes.
 
 ```bash
-$ git commit . -m "(added) User instance can say hello"
+$ git commit . -m "User instance can say hello"
 ```
 
 #### Pushing the commit and making a pull request

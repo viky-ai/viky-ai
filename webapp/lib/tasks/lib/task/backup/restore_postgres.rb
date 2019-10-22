@@ -35,7 +35,7 @@ class Task::Backup::RestorePostgres < Task::Backup
   private
 
   def self.dump_file_path(name)
-    files = Dir.glob(File.join(dir, name, "*_db-postgresql.dump.gz"))
+    files = Dir.glob(File.join(dir, name, "*-postgresql.dump.gz"))
     return files.first if files.size == 1
     nil
   end
