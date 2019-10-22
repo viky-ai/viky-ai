@@ -33,7 +33,7 @@ class EntityTest < ActiveSupport::TestCase
 
   test 'term and entities_list are mandatory' do
     entity = Entity.new
-    assert !entity.save
+    assert_not entity.save
     expected = [
       "Entities list must exist",
       "Solution can't be blank",
@@ -189,7 +189,7 @@ class EntityTest < ActiveSupport::TestCase
     assert_equal "soleil", entity.terms_to_s
 
     entity.terms = ":\nsoleil\n:fr\n:"
-    assert !entity.save
+    assert_not entity.save
     assert_equal "soleil\n:fr", entity.terms_to_s
   end
 
