@@ -14,176 +14,149 @@
     <% end %>
   </div>
 </header>
-<style>
-  table td{
-    vertical-align: top;
-  }
-</style>
 
 <% if @users.exists? %>
-  <div class="card">
-    <div class="card-content">
-      <p>
-        <%= page_entries_info @users %>
-      </p>
-      <table>
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Agents</th>
-            <% if Feature.email_configured? %>
-              <th>Status</th>
-            <% end %>
-            <th>Last login & login count</th>
-            <% if Feature.quota_enabled? %>
-              <th class="actions">Quota</th>
-            <% end %>
-            <% if Feature.chatbot_enabled? %>
-              <th class="actions">Chatbot</th>
-            <% end %>
-            <th class="actions"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @users.each do |user| %>
-            <tr>
-              <td>
-                <div class="user">
-                  <div class="user__avatar">
-                    <img src="<%= user.image_url(:square) %>" />
-                  </div>
-                  <div class="user__info">
-                    <%= user.name_or_username %>
-                    <% if user.admin? %>
-                      <span class="badge badge--primary"><%= t('views.backend.users.index.admin_badge') %></span>
-                    <% end %>
-                    <small><%= user.email %></small>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <span class="merged-badges">
-                  <span class="badge">Owner</span>
-                  <span class="badge badge--primary">
-                    <%= user.memberships.where(rights: 'all').count %>
-                  </span>
-                </span>
-                <br />
-                <span class="merged-badges">
-                  <span class="badge">Collaborator</span>
-                  <span class="badge badge--grey">
-                    <%= user.memberships.where.not(rights: 'all').count %>
-                  </span>
-                </span>
-              </td>
-              <% if Feature.email_configured? %>
-                <td>
-                  <% if user.confirmed? %>
-                    <span class="badge badge--success">
-                      <%= t('views.backend.users.index.status.confirmed') %>
-                    </span>
-                  <% else %>
-                    <span class="badge badge--warning">
-                      <%= t('views.backend.users.index.status.not-confirmed') %>
-                    </span>
-                    <% unless user.confirmation_sent_at.nil? %>
-                      <p>
-                        <small>
-                          <%= t('views.backend.users.index.last_confirmation') %>
-                          <%= l(user.confirmation_sent_at, format: :long) %>.
-                        </small>
-                      </p>
-                    <% end %>
-                  <% end %>
+  <div class="backend-users">
+    <% @users.each do |user| %>
+    <div>
 
-                  <% if user.locked_at? %>
-                    <span class="badge badge--danger">
-                      <%= t('views.backend.users.index.status.locked') %>
-                    </span>
-                    <p>
-                      <small>
-                        <%= t('views.backend.users.index.locked_since') %>
-                        <%= l(user.locked_at, format: :long) %>.
-                      </small>
-                    </p>
-                  <% end %>
-
-                  <% unless user.invitation_status == :not_invited %>
-                    <% if user.invitation_status == :valid %>
-                      <p>
-                        <small title="<%= t('views.backend.users.index.invitation_send_on', date: l(user.created_at, format: :long)) %> <% unless user.invited_by.nil? %><%= t('views.backend.users.index.invited_by', email: user.invited_by.email) %><% end %>">
-                          <%= t('views.backend.users.index.invitation_expires_in') %>
-                          <%= distance_of_time_in_words(
-                                user.invitation_sent_at, user.invitation_sent_at + User.invite_for,
-                                scope: 'views.datetime.distance_in_words.short'
-                              ) %>
-                        </small>
-                      </p>
-                    <% else %>
-                      <% if user.invitation_status == :expired %>
-                        <span class="badge badge--danger">
-                          <%= t('views.backend.users.index.status.invitation-expired') %>
-                        </span>
-                      <% end %>
-                    <% end %>
-                  <% end %>
-                </td>
-              <% end %>
-
-              <td>
-                <% if !Feature.email_configured? || user.confirmed? %>
-                  <% unless user.current_sign_in_at.nil? %>
-                    <%= l(user.current_sign_in_at, format: :long) %><br />
-                  <% end %>
-                  <%= pluralize(user.sign_in_count, "login") %>
-                <% end %>
-              </td>
-
-              <% if Feature.quota_enabled? %>
-                <td class="actions">
-                  <%= form_with(url: toggle_quota_enabled_backend_user_path(user)) do |f| %>
-                    <button
-                      class="btn btn--toggle btn--toggle-<% if user.quota_enabled %>on<% else %>off<% end %>"
-                      id="js-toogle-quota-<%= user.id %>"></button>
-                  <% end %>
-                </td>
-              <% end %>
-
-              <% if Feature.chatbot_enabled? %>
-                <td class="actions">
-                  <%= form_with(url: toggle_chatbot_enabled_backend_user_path(user)) do |f| %>
-                    <button
-                      class="btn btn--toggle btn--toggle-<% if user.chatbot_enabled %>on<% else %>off<% end %>"
-                      id="js-toogle-chatbot-<%= user.id %>"></button>
-                  <% end %>
-                </td>
-              <% end %>
-
-              <td class="actions">
-                <% unless !Feature.email_configured? || user.confirmed? %>
-                  <a href="<%= reinvite_backend_user_path(user) %>"
-                     class="btn btn--primary btn--small btn--outline">
-                    <%= t('views.backend.users.index.reinvite.btn') %>
-                  </a>
-                <% end %>
-                <% if user.can_be_destroyed? %>
-                  <a href="<%= confirm_destroy_backend_user_path(user) %>"
-                     class="btn btn--small btn--outline btn--destructive"
-                     data-action="open-remote-modal">
-                    <%= t('views.backend.users.index.delete.btn') %>
-                  </a>
-                <% end %>
-                <% if current_user.email != user.email && (!Feature.email_configured? || user.confirmed?) %>
-                  <%= link_to t('views.backend.users.index.switch.btn'), impersonate_backend_user_path(user.id), method: :post, class: "btn btn--primary btn--small btn--outline" %>
-                <% end %>
-              </td>
-            </tr>
+      <div class="user">
+        <div class="user__avatar">
+          <img src="<%= user.image_url(:square) %>" />
+        </div>
+        <div class="user__info">
+          <%= user.name_or_username %>
+          <% if user.admin? %>
+            <span class="badge badge--primary"><%= t('views.backend.users.index.admin_badge') %></span>
           <% end %>
-        </tbody>
-      </table>
-      <%= paginate @users %>
+          <small><%= user.email %></small>
+        </div>
+      </div>
+
+      <% if Feature.email_configured? %>
+        <% unless user.confirmed? %>
+          <div class="user-status">
+            <span class="badge badge--warning">
+              <%= t('views.backend.users.index.status.not-confirmed') %>
+            </span>
+            <% unless user.confirmation_sent_at.nil? %>
+              <p>
+                <%= t('views.backend.users.index.last_confirmation') %>
+                <%= l(user.confirmation_sent_at, format: :long) %>.
+              </p>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if user.locked_at? %>
+          <div class="user-status">
+            <span class="badge badge--danger">
+              <%= t('views.backend.users.index.status.locked') %>
+            </span>
+            <p>
+              <%= t('views.backend.users.index.locked_since') %>
+              <%= l(user.locked_at, format: :long) %>.
+            </p>
+          </div>
+        <% end %>
+
+        <% unless user.invitation_status == :not_invited %>
+          <div class="user-status">
+            <% if user.invitation_status == :valid %>
+              <p>
+                <span title="<%= t('views.backend.users.index.invitation_send_on', date: l(user.created_at, format: :long)) %> <% unless user.invited_by.nil? %><%= t('views.backend.users.index.invited_by', email: user.invited_by.email) %><% end %>">
+                  <%= t('views.backend.users.index.invitation_expires_in') %>
+                  <%= distance_of_time_in_words(
+                        user.invitation_sent_at, user.invitation_sent_at + User.invite_for,
+                        scope: 'views.datetime.distance_in_words.short'
+                      ) %>
+                </span>
+              </p>
+            <% else %>
+              <% if user.invitation_status == :expired %>
+                <span class="badge badge--danger">
+                  <%= t('views.backend.users.index.status.invitation-expired') %>
+                </span>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+
+      <div class="user-info">
+        <% counter = user.memberships.select(:rights).group(:rights).count %>
+        <p>
+          <small>Owner of</small>
+          <em><%= pluralize(counter['all'].to_i, 'agent') %></em>
+        </p>
+        <p>
+          <small>Collaborator on</small>
+          <em><%= pluralize(counter['edit'].to_i + counter['show'].to_i, 'agent') %></em>
+        </p>
+
+        <% if !Feature.email_configured? || user.confirmed? %>
+          <% unless user.current_sign_in_at.nil? %>
+            <p>
+              <small>Last login</small>
+              <em><%= l(user.current_sign_in_at, format: :long) %></em>
+            </p>
+          <% end %>
+          <p>
+            <small>login count</small>
+            <em><%= pluralize(user.sign_in_count, "login") %></em>
+          </p>
+        <% end %>
+      </div>
+
+      <% if Feature.quota_enabled? %>
+        <div class="user-feature">
+          <div>Quota feature</div>
+          <div>
+            <%= form_with(url: toggle_quota_enabled_backend_user_path(user)) do |f| %>
+              <button
+                class="btn btn--toggle btn--toggle-<% if user.quota_enabled %>on<% else %>off<% end %>"
+                id="js-toogle-quota-<%= user.id %>"></button>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <% if Feature.chatbot_enabled? %>
+        <div class="user-feature">
+          <div>Chatbot feature</div>
+          <div>
+            <%= form_with(url: toggle_chatbot_enabled_backend_user_path(user)) do |f| %>
+              <button
+                class="btn btn--toggle btn--toggle-<% if user.chatbot_enabled %>on<% else %>off<% end %>"
+                id="js-toogle-chatbot-<%= user.id %>"></button>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="user-actions">
+        <% if current_user.email != user.email && (!Feature.email_configured? || user.confirmed?) %>
+          <%= link_to t('views.backend.users.index.switch.btn'), impersonate_backend_user_path(user.id), method: :post, class: "btn btn--primary btn--small btn--outline" %>
+        <% end %>
+        <% unless !Feature.email_configured? || user.confirmed? %>
+          <a href="<%= reinvite_backend_user_path(user) %>"
+             class="btn btn--primary btn--small btn--outline">
+            <%= t('views.backend.users.index.reinvite.btn') %>
+          </a>
+        <% end %>
+        <% if user.can_be_destroyed? %>
+          <a href="<%= confirm_destroy_backend_user_path(user) %>"
+             class="btn btn--small btn--outline btn--destructive"
+             data-action="open-remote-modal">
+            <%= t('views.backend.users.index.delete.btn') %>
+          </a>
+        <% end %>
+      </div>
+
     </div>
+    <% end %>
   </div>
+  <%= paginate @users %>
 <% else %>
   <br />
   <div class="blankslate">
@@ -201,4 +174,3 @@
     </div>
   </div>
 <% end %>
-

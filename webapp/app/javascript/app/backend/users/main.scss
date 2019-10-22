@@ -1,0 +1,74 @@
+.backend-users{
+  margin-top: 2em;
+  display: grid;
+  grid-gap: 2em;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+
+  & > div{
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(black, .1);
+    background-color: #fbfbfb;
+    overflow: hidden;
+  }
+
+  .user{
+    background-color: #fff;
+    font-size: 1em;
+    padding: 1.25em 1em;
+    border-bottom: 1px solid #eee;
+    .user__avatar img{
+      width: 42px;
+    }
+  }
+
+  .user-status{
+    padding: .5rem 1rem;
+    border-bottom: 1px solid #eee;
+    p{
+      margin: 0;
+      font-size: .8em;
+    }
+  }
+
+  .user-info{
+    padding: .5rem 1rem;
+    font-size: .8em;
+    line-height: 1.5em;
+    border-bottom: 1px solid #eee;
+
+    display: grid;
+    grid-columns-gap: 1em;
+    grid-row-gap: .5em;
+    grid-template-columns: 1fr 1fr;
+
+    p{
+      margin: 0;
+    }
+
+    em, small{
+      display: block;
+      font-style: normal;
+    }
+    small{
+      color: #888;
+      font-size: .9em;
+    }
+  }
+
+  .user-feature{
+    font-size: .8em;
+    border-bottom: 1px solid #eee;
+    padding: .25rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    .btn.btn--toggle{
+      transform: scale(.8);
+    }
+  }
+
+  .user-actions{
+    padding: .75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+  }
+}
