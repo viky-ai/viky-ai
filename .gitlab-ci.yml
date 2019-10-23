@@ -154,10 +154,11 @@ deploy_dockerhub:
   only:
     - tags
     - master
+    - feature/21506_hebergement
   script:
-    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_NLP}" "vikyai/nlp"
-    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_APP}" "vikyai/webapp"
-    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_TOOLS_BACKUP}" "vikyai/backup"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_NLP}" "vikyai/nlp:latest"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_APP}" "vikyai/webapp:latest"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_TOOLS_BACKUP}" "vikyai/backup:latest"
 
 # Deploy generic job
 
