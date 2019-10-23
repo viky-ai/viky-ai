@@ -115,6 +115,9 @@ test_nlp:
 tag_webapp:
   extends: .kubernetes_runner
   stage: docker_tag
+  needs:
+    - "build_webapp"
+    - "test_webapp"
   only:
     - master
     - feature/21506_hebergement
@@ -141,6 +144,8 @@ tag_nlp:
 tag_backup:
   extends: .kubernetes_runner
   stage: docker_tag
+  needs:
+    - "build_backup"
   only:
     - master
     - feature/21506_hebergement
@@ -171,6 +176,12 @@ push_dockerhub:
 # Deploy generic job
 
 .deploy_dev:
+  needs:
+    - build_backup
+    - build_webapp
+    - build_nlp
+    - test_webapp
+    - test_nlp
   except:
     - master
     - tags
@@ -184,6 +195,10 @@ push_dockerhub:
     HELM_VALUES: "viky/custom-values/dev.yaml,custom-values.yml"
 
 .deploy_preprod:
+  needs:
+    - "tag_webapp"
+    - "tag_backup"
+    - "tag_nlp"
   only:
     - master
   except:
@@ -204,12 +219,6 @@ push_dockerhub:
 .deploy:
   extends: .kubernetes_runner
   stage: deploy
-  needs:
-    - build_backup
-    - build_webapp
-    - build_nlp
-    - test_webapp
-    - test_nlp
   variables:
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
     HELM_TIMEOUT: "900"
