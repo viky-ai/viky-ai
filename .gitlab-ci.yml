@@ -2,7 +2,7 @@ stages:
   - build
   - test
   - docker_tag
-  - deploy_dockerhub
+  - push_dockerhub
   - deploy
   - admin
 
@@ -148,9 +148,13 @@ tag_backup:
 
 # Push Docker image to Dockerhub only when on Master and it's a Tag
 
-deploy_dockerhub:
+push_dockerhub:
   extends: .kubernetes_runner
-  stage: deploy_dockerhub
+  stage: push_dockerhub
+  needs:
+    - tag_webapp
+    - tag_nlp
+    - tag_backup
   only:
     - tags
     - master
