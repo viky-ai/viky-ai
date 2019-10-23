@@ -117,6 +117,7 @@ tag_webapp:
   stage: docker_tag
   only:
     - master
+    - feature/21506_hebergement
   variables:
     GIT_STRATEGY: none
   script:
@@ -131,6 +132,7 @@ tag_nlp:
     - "test_nlp"
   only:
     - master
+    - feature/21506_hebergement
   variables:
     GIT_STRATEGY: none
   script:
@@ -141,6 +143,7 @@ tag_backup:
   stage: docker_tag
   only:
     - master
+    - feature/21506_hebergement
   variables:
     GIT_STRATEGY: none
   script:
@@ -151,10 +154,11 @@ tag_backup:
 push_dockerhub:
   extends: .kubernetes_runner
   stage: push_dockerhub
+  # TODO Mouadh HSOUMI, activate when in prod
   needs:
-    - tag_webapp
-    - tag_nlp
-    - tag_backup
+    - "tag_webapp"
+    - "tag_nlp"
+    - "tag_backup"
   only:
     - tags
     - master
