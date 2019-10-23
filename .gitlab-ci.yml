@@ -196,9 +196,7 @@ push_dockerhub:
 
 .deploy_preprod:
   needs:
-    - "tag_webapp"
-    - "tag_backup"
-    - "tag_nlp"
+    - "push_dockerhub"
   only:
     - master
   except:
