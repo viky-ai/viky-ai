@@ -9,7 +9,7 @@ class AgentSearchTest < ActiveSupport::TestCase
     s = AgentSearch.new(user)
     assert_equal 5, s.options.size
     assert_equal user.id, s.options[:user_id]
-    assert_equal 'name', s.options[:sort_by]
+    assert_equal 'popularity', s.options[:sort_by]
     assert_equal 'all', s.options[:filter_owner]
     assert_equal 'all', s.options[:filter_visibility]
     assert s.empty?
@@ -255,5 +255,39 @@ class AgentSearchTest < ActiveSupport::TestCase
       'sort_by' => 'updated_at'
     }
     assert !AgentSearch.new(user, criteria).empty?
+  end
+
+  test 'Sort agents by popularity' do
+    #                  C (public)
+    #                  |
+    #                  Z (member)
+    #                /  \
+    # (owner) Weather   Terminator (owner)
+    user = users(:admin)
+    weather = agents(:weather)
+    terminator = agents(:terminator)
+
+    agent_z = create_agent('Agent Z', :confirmed)
+    membership = MembershipsCreator.new(agent_z, user.username, 'show')
+    assert membership.create
+
+    assert AgentArc.create(agent: weather, depends_on: agent_z)
+    assert AgentArc.create(agent: terminator, depends_on: agent_z)
+
+    agent_c = create_agent('Agent C')
+    agent_c.visibility = 'is_public'
+    assert agent_c.save
+    assert AgentArc.create(agent: agent_z, depends_on: agent_c)
+
+    user = users(:admin)
+    s = AgentSearch.new(user, sort_by: 'popularity')
+    assert_equal 4, Agent.search(s.options).count
+    expected = [
+      'Agent Z',
+      'Agent C',
+      'My awesome weather bot',
+      'T-800'
+    ]
+    assert_equal expected, Agent.search(s.options).all.collect(&:name)
   end
 end

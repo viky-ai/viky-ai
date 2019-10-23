@@ -175,13 +175,43 @@ class AgentsTest < ApplicationSystemTestCase
 
   test "Agents can be sorted by last updated date" do
     admin_go_to_agents_index
-    find(".dropdown__trigger", text: "Sort by name").click
+    find(".dropdown__trigger", text: "Sort by popularity").click
     find(".dropdown__content", text: "Sort by last update").click
 
     click_button "#search"
     expected = [
       "admin/weather",
       "admin/terminator"
+    ]
+    assert_equal expected, (all(".agents-box-grid .agent-box").map { |div|
+      div.all("h3").first.text
+    })
+  end
+
+  test "Agents can be sorted by popularity" do
+    admin_go_to_agents_index
+    within('.header__search') do
+      assert has_text?("Sort by popularity")
+    end
+    expected = [
+      "admin/weather",
+      "admin/terminator",
+    ]
+    assert_equal expected, (all(".agents-box-grid .agent-box").map { |div|
+      div.all("h3").first.text
+    })
+
+    weather = agents(:weather)
+    terminator = agents(:terminator)
+    assert AgentArc.create(agent: weather, depends_on: terminator)
+
+    within('.header__search') do
+      assert has_text?("Sort by popularity")
+      click_button "#search"
+    end
+    expected = [
+      "admin/terminator",
+      "admin/weather",
     ]
     assert_equal expected, (all(".agents-box-grid .agent-box").map { |div|
       div.all("h3").first.text
@@ -242,8 +272,8 @@ class AgentsTest < ApplicationSystemTestCase
     assert agent.save
 
     admin_go_to_agents_index
-    find(".dropdown__trigger", text: "Sort by name").click
-    find(".dropdown__content", text: "Sort by last update").click
+    find(".dropdown__trigger", text: "Sort by popularity").click
+    first(".dropdown__content a", text: "Sort by last update").click
     click_button "Private"
     click_button "Yours"
     assert has_text?("admin/weather")

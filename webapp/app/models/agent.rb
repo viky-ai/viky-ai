@@ -112,14 +112,18 @@ class Agent < ApplicationRecord
     end
 
     select_request = public_reachable.present? ? "#{user_reachable.to_sql} UNION #{public_reachable.to_sql}" : user_reachable.to_sql
-    ids = Agent.select(:id).from(Arel.sql "(#{select_request}) AS filter").to_a.map(&:id)
+    sort_request = Agent.from(Arel.sql "(#{select_request}) AS agents")
     case q[:sort_by]
     when 'name'
-      sort_request = Agent.where(id: ids).order(name: :asc)
+      sort_request = sort_request.order(name: :asc)
     when 'updated_at'
-      sort_request = Agent.where(id: ids).order(updated_at: :desc)
-    else
-      sort_request = Agent.where(id: ids)
+      sort_request = sort_request.order(updated_at: :desc, name: :asc)
+    when 'popularity'
+      popularity_sort = sort_request
+                          .select(Arel.sql "agents.id, COUNT(agent_arcs.target_id) AS count_agents")
+                          .left_joins(:in_arcs)
+                          .group(:id)
+      sort_request = Agent.from(Arel.sql "agents, (#{popularity_sort.to_sql}) AS ags").where(Arel.sql 'agents.id = ags.id').order('ags.count_agents desc, agents.name asc')
     end
 
     sort_request
