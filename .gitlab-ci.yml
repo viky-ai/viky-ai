@@ -2,6 +2,7 @@ stages:
   - build
   - test
   - docker_tag
+  - deploy_dockerhub
   - deploy
   - admin
 
@@ -11,6 +12,9 @@ variables:
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
   DOCKER_IMAGE_DOC: docker-registry.pertimm.net/viky.ai/doc
+  DOCKER_HUB_IMAGE_NLP: "vikyai/nlp"
+  DOCKER_HUB_IMAGE_WEBAPP: "vikyai/webapp"
+  DOCKER_HUB_IMAGE_BACKUP: "vikyai/backup"
 
 image: vikyai/tools-gitlab-auto-deploy-image:latest
 before_script:
@@ -141,6 +145,19 @@ tag_backup:
     GIT_STRATEGY: none
   script:
     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_BACKUP}
+
+# Push Docker image to Dockerhub only when on Master and it's a Tag
+
+deploy_dockerhub:
+  extends: .kubernetes_runner
+  stage: deploy_dockerhub
+  only:
+    - tags
+    - master
+  script:
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_NLP}" "vikyai/nlp"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_APP}" "vikyai/webapp"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_TOOLS_BACKUP}" "vikyai/backup"
 
 # Deploy generic job
 
