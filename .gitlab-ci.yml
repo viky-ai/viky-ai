@@ -158,7 +158,6 @@ tag_backup:
     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_BACKUP}
 
 # Push Docker image to Dockerhub only when on Master and it's a Tag
-
 push_dockerhub:
   extends: .kubernetes_runner
   stage: push_dockerhub
@@ -180,11 +179,11 @@ push_dockerhub:
 
 .deploy_dev:
   needs:
-    - build_backup
-    - build_webapp
-    - build_nlp
-    - test_webapp
-    - test_nlp
+    # TODO Mouadh HSOUMI, set back build_backup, test_webapp, test_nlp and remove push_dockerhub
+    # - build_backup
+    # - test_webapp
+    # - test_nlp
+    - "push_dockerhub"
   except:
     - master
     - tags
