@@ -86,15 +86,17 @@ class Agent < ApplicationRecord
     end
 
     if q[:query].present?
-      user_reachable = user_reachable.where(
-        'lower(name) LIKE lower(?) OR lower(agentname) LIKE lower(?) OR lower(description) LIKE lower(?)',
+      user_reachable = user_reachable.joins(:users).where(
+        'lower(users.username) LIKE lower(?) OR lower(agents.name) LIKE lower(?) OR lower(agentname) LIKE lower(?) OR lower(description) LIKE lower(?)',
+        "%#{q[:query]}%",
         "%#{q[:query]}%",
         "%#{q[:query]}%",
         "%#{q[:query]}%"
       )
       if public_reachable.present?
-        public_reachable = public_reachable.where(
-          'lower(name) LIKE lower(?) OR lower(agentname) LIKE lower(?) OR lower(description) LIKE lower(?)',
+        public_reachable = public_reachable.joins(:users).where(
+          'lower(users.username) LIKE lower(?) OR lower(agents.name) LIKE lower(?) OR lower(agentname) LIKE lower(?) OR lower(description) LIKE lower(?)',
+          "%#{q[:query]}%",
           "%#{q[:query]}%",
           "%#{q[:query]}%",
           "%#{q[:query]}%"

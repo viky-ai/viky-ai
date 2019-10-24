@@ -68,6 +68,31 @@ class AgentSearchTest < ActiveSupport::TestCase
   end
 
 
+  test 'Search agents by user name' do
+    user = users(:admin)
+    s = AgentSearch.new(user, query: 'admin')
+    assert_equal 2, Agent.search(s.options).count
+    expected = [
+      'My awesome weather bot',
+      'T-800',
+    ]
+    assert_equal expected, Agent.search(s.options).all.collect(&:name)
+
+    s = AgentSearch.new(user, query: 'confirmed')
+    assert_equal 0, Agent.search(s.options).count
+    user = users(:admin)
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = 'is_public'
+    assert agent_public.save
+    s = AgentSearch.new(user, query: 'confirmed')
+    assert_equal 1, Agent.search(s.options).count
+    expected = [
+      'Weather bot'
+    ]
+    assert_equal expected, Agent.search(s.options).all.collect(&:name)
+  end
+
+
   test "Search agent by name is trimmed" do
     user = users(:admin)
     s = AgentSearch.new(user)
