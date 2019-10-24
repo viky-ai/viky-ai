@@ -120,6 +120,7 @@ tag_webapp:
     - "test_webapp"
   only:
     - master
+    # TODO Mouadh HSOUMI must be removed before we merge to master
     - feature/21506_hebergement
   variables:
     GIT_STRATEGY: none
@@ -135,6 +136,7 @@ tag_nlp:
     - "test_nlp"
   only:
     - master
+    # TODO Mouadh HSOUMI must be removed before we merge to master
     - feature/21506_hebergement
   variables:
     GIT_STRATEGY: none
@@ -148,6 +150,7 @@ tag_backup:
     - "build_backup"
   only:
     - master
+    # TODO Mouadh HSOUMI must be removed before we merge to master
     - feature/21506_hebergement
   variables:
     GIT_STRATEGY: none
@@ -159,7 +162,6 @@ tag_backup:
 push_dockerhub:
   extends: .kubernetes_runner
   stage: push_dockerhub
-  # TODO Mouadh HSOUMI, activate when in prod
   needs:
     - "tag_webapp"
     - "tag_nlp"
@@ -167,6 +169,7 @@ push_dockerhub:
   only:
     - tags
     - master
+    # TODO Mouadh HSOUMI must be removed before we merge to master
     - feature/21506_hebergement
   script:
     - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_NLP}" "vikyai/nlp:latest"
@@ -185,6 +188,9 @@ push_dockerhub:
   except:
     - master
     - tags
+  # TODO Mouadh HSOUMI must be removed before we merge to master
+  only:
+    - feature/21506_hebergement
   environment:
     name: dev-${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
@@ -193,6 +199,7 @@ push_dockerhub:
     S3_SECRET_KEY: ${S3_SECRET_KEY}
     HELM_RELEASE_NAME: "viky-dev"
     HELM_VALUES: "viky/custom-values/dev.yaml,custom-values.yml"
+    KUBE_NAMESPACE: viky-ai-production
 
 .deploy_preprod:
   needs:
@@ -235,6 +242,7 @@ push_dockerhub:
     - helm upgrade ${HELM_OPTIONS} "${RELEASE_NAME}" ./viky/
 
 # Deploy any branches on dev
+
 deploy_dev:
   environment:
     name: dev-${CI_COMMIT_REF_NAME}
