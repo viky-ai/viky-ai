@@ -20,13 +20,17 @@ class User < ApplicationRecord
          :timeoutable
   devise :lockable, :recoverable, :confirmable, :invitable if Feature.email_configured?
 
+  before_validation :clean_username
+
   validates :username, uniqueness: true, length: { in: 3..25 }, presence: true,
     allow_blank: false, if: Proc.new {|u| !u.invitation_token.nil? || (u.confirmation_token.nil? && u.invitation_token.nil?) }
 
-  before_validation :clean_username
   before_destroy :check_agents_presence, prepend: true
 
-  after_commit :sync_agents_slug
+  after_commit do |record|
+    agents.each(&:need_nlp_sync) if record.previous_changes[:username].present?
+    agents.each(&:save)
+  end
 
   def can?(action, agent)
     return false unless [:edit, :show].include? action
@@ -209,9 +213,5 @@ class User < ApplicationRecord
         errors.add(:base, I18n.t('errors.user.delete.agents_presence'))
         throw(:abort)
       end
-    end
-
-    def sync_agents_slug
-      agents.each(&:save)
     end
 end

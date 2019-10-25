@@ -303,6 +303,18 @@ class UserTest < ActiveSupport::TestCase
       assert admin.save
       assert users(:admin).quota_exceeded?
     end
+  end
 
+
+  test 'Trigger an NLP sync of every agent when the username change' do
+    Nlp::Package.any_instance.expects(:push).twice
+
+    user = users(:admin)
+    assert_equal 2, user.agents.count
+    user.username = 'administrator'
+    assert user.save
+
+    user.bio = 'My life is amazing !'
+    assert user.save
   end
 end
