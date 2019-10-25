@@ -33,6 +33,7 @@ if [[ "$1" == "init" ]]; then
       # Parse postgres and redis urls from Env Variables
       # docker-compose.yml -> x-app -> environment
       DB_POSTGRES=$(parse_url "$VIKYAPP_DB_HOST")
+      DB_PORT=${VIKYAPP_DB_PORT:-5432}
       DB_REDIS=$(parse_url "$VIKYAPP_CACHE_REDIS_URL")
       ES=$(parse_url "$VIKYAPP_STATISTICS_URL")
       KIBANA=$(parse_url "$VIKYAPP_STATISTICS_VISUALIZER_URL")
@@ -40,7 +41,7 @@ if [[ "$1" == "init" ]]; then
       echo "Waiting for postgres on $DB_POSTGRES"
       echo "Waiting for redis on $DB_REDIS"
       echo "Waiting for ES on $ES"
-      /usr/local/bin/dockerize -wait tcp://$DB_POSTGRES:5432 -wait tcp://$DB_REDIS -wait tcp://$ES -wait tcp://$KIBANA  -timeout 180s
+      /usr/local/bin/dockerize -wait tcp://$DB_POSTGRES:$DB_PORT -wait tcp://$DB_REDIS -wait tcp://$ES -wait tcp://$KIBANA  -timeout 180s
 
       echo "Database and statistics setup"
       ./bin/rails viky:setup
