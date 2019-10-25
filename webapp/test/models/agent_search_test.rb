@@ -93,6 +93,30 @@ class AgentSearchTest < ActiveSupport::TestCase
   end
 
 
+  test 'Search agents by slug' do
+    user = users(:admin)
+    s = AgentSearch.new(user, query: 'admin/weather')
+    assert_equal 1, Agent.search(s.options).count
+    expected = [
+      'My awesome weather bot',
+    ]
+    assert_equal expected, Agent.search(s.options).all.collect(&:name)
+
+    s = AgentSearch.new(user, query: 'confirmed/weather')
+    assert_equal 0, Agent.search(s.options).count
+    user = users(:admin)
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = 'is_public'
+    assert agent_public.save
+    s = AgentSearch.new(user, query: 'confirmed/weather')
+    assert_equal 1, Agent.search(s.options).count
+    expected = [
+      'Weather bot'
+    ]
+    assert_equal expected, Agent.search(s.options).all.collect(&:name)
+  end
+
+
   test "Search agent by name is trimmed" do
     user = users(:admin)
     s = AgentSearch.new(user)
@@ -250,7 +274,6 @@ class AgentSearchTest < ActiveSupport::TestCase
       'sort_by' => 'updated_at'
     }
     s = AgentSearch.new(user, criteria)
-    assert_equal 1, Agent.search(s.options).count
     assert s.save
     force_reset_model_cache(user)
     assert_equal criteria.with_indifferent_access, user.ui_state['agent_search']

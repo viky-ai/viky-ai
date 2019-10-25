@@ -26,6 +26,8 @@ class User < ApplicationRecord
   before_validation :clean_username
   before_destroy :check_agents_presence, prepend: true
 
+  after_commit :sync_agents_slug
+
   def can?(action, agent)
     return false unless [:edit, :show].include? action
     return true  if action == :show && agent.is_public?
@@ -209,4 +211,7 @@ class User < ApplicationRecord
       end
     end
 
+    def sync_agents_slug
+      agents.each(&:save)
+    end
 end

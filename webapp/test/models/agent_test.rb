@@ -22,6 +22,7 @@ class AgentTest < ActiveSupport::TestCase
     assert_equal 'admin', agent.owner.username
     assert_equal ['agenta', 'terminator', 'weather'], users(:admin).agents.collect(&:agentname).sort
     assert_equal 'is_public', agent.visibility
+    assert_equal 'admin/agenta', agent.slug
     assert agent.is_public?
     assert !agent.is_private?
     assert agents(:terminator).id, agent.source_agent[:id]
@@ -39,6 +40,7 @@ class AgentTest < ActiveSupport::TestCase
     assert !agent.save
     expected = [
       "Owner can't be blank",
+      "Slug can't be blank",
       "Users list does not includes agent owner"
     ]
     assert_equal expected, agent.errors.full_messages
@@ -123,7 +125,7 @@ class AgentTest < ActiveSupport::TestCase
       memberships: []
     )
     assert_not agent.save
-    expected = ["Owner can't be blank", "Users list does not includes agent owner"]
+    expected = ["Owner can't be blank", "Slug can't be blank", "Users list does not includes agent owner"]
     assert_equal expected, agent.errors.full_messages
 
     agent = Agent.new(
@@ -134,7 +136,7 @@ class AgentTest < ActiveSupport::TestCase
       ]
     )
     assert_not agent.save
-    expected = ["Users list does not includes agent owner"]
+    expected = ["Slug can't be blank", "Users list does not includes agent owner"]
     assert_equal expected, agent.errors.full_messages
   end
 
@@ -747,5 +749,23 @@ class AgentTest < ActiveSupport::TestCase
   test 'New agent must sync with NLP' do
     Nlp::Package.any_instance.expects(:push)
     create_agent('Agent A')
+  end
+
+  test 'Keep agent slug in sync when changing its agentname'do
+    agent = agents(:weather)
+    assert_equal 'admin/weather', agent.slug
+    agent.agentname = 'forecast'
+    assert agent.save
+    assert_equal 'admin/forecast', agent.slug
+  end
+
+  test 'Keep agent slug in sync when changing its user name'do
+    user = users(:admin)
+    agent = agents(:weather)
+    assert_equal 'admin/weather', agent.slug
+    user.username = 'administrator'
+    assert user.save
+    force_reset_model_cache agent
+    assert_equal 'administrator/weather', agent.slug
   end
 end

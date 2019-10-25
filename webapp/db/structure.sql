@@ -95,7 +95,8 @@ CREATE TABLE public.agents (
     visibility integer DEFAULT 0,
     source_agent jsonb,
     nlp_updated_at timestamp without time zone,
-    locales jsonb
+    locales jsonb,
+    slug character varying
 );
 
 
@@ -1089,6 +1090,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190619122021'),
 ('20190729072037'),
 ('20190729112306'),
-('20190925090036');
+('20190925090036'),
+('20191025090323');
 
 
