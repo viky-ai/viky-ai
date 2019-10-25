@@ -235,6 +235,7 @@ push_dockerhub:
     # Go to Kubernetes directory
     - cd deployment/kubernetes/
     - bin/generate-ci-override-values.sh
+    - cat custom-values.yml
     # Deploy Viky Platform
     - HELM_OPTIONS="--install ${HELM_EXTRA_OPTIONS} --timeout ${HELM_TIMEOUT}  --values ${HELM_VALUES}"
     - echo "helm upgrade ${HELM_OPTIONS} "${RELEASE_NAME}" ./viky/"
