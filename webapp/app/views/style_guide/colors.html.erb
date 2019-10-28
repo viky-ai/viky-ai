@@ -1,0 +1,88 @@
+<style>
+  .color{
+    height: 5em;
+    border-radius: 3px;
+    color: rgba(255,255,255,.75);
+    display: grid;
+    align-items: center;
+    justify-items: center;
+  }
+  .colors{
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-gap: 1em;
+  }
+  .colors > div{
+    height: 10em;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    font-size: .7em;
+    color: rgba(0,0,0,.5);
+    border-radius: 3px;
+  }
+  .colors.colors--dark > div{
+    color: rgba(255,255,255,.75);
+  }
+</style>
+
+<div class="sg-intro">
+  <h1>Colors</h1>
+</div>
+
+<section>
+  <h2>Primary color</h2>
+  <div class="color bg-primary"><code>$primary_color</code></div>
+</section>
+
+<section>
+  <h2>Destructive color</h2>
+  <div class="color bg-destructive"><code>$destructive_color</code></div>
+</section>
+
+<section>
+  <h2>Success color</h2>
+  <div class="color bg-success"><code>$success_color</code></div>
+</section>
+
+<section>
+  <h2>Warning color</h2>
+  <div class="color bg-warning"><code>$warning_color</code></div>
+</section>
+
+<section>
+  <h2>Alert color</h2>
+  <div class="color bg-alert"><code>$alert_color</code></div>
+</section>
+
+<section>
+  <h2>Light grey</h2>
+  <div class="colors">
+    <div class="bg-light-grey-100"><code>$light-grey-100</code></div>
+    <div class="bg-light-grey-200"><code>$light-grey-200</code></div>
+    <div class="bg-light-grey-300"><code>$light-grey-300</code></div>
+    <div class="bg-light-grey-400"><code>$light-grey-400</code></div>
+    <div class="bg-light-grey-500"><code>$light-grey-500</code></div>
+    <div class="bg-light-grey-600"><code>$light-grey-600</code></div>
+    <div class="bg-light-grey-700"><code>$light-grey-700</code></div>
+    <div class="bg-light-grey-800"><code>$light-grey-800</code></div>
+    <div class="bg-light-grey-900"><code>$light-grey-900</code></div>
+  </div>
+</section>
+
+
+<section>
+  <h2>Dark grey</h2>
+  <div class="colors colors--dark">
+    <div class="bg-dark-grey-100"><code>$dark-grey-100</code></div>
+    <div class="bg-dark-grey-200"><code>$dark-grey-200</code></div>
+    <div class="bg-dark-grey-300"><code>$dark-grey-300</code></div>
+    <div class="bg-dark-grey-400"><code>$dark-grey-400</code></div>
+    <div class="bg-dark-grey-500"><code>$dark-grey-500</code></div>
+    <div class="bg-dark-grey-600"><code>$dark-grey-600</code></div>
+    <div class="bg-dark-grey-700"><code>$dark-grey-700</code></div>
+    <div class="bg-dark-grey-800"><code>$dark-grey-800</code></div>
+    <div class="bg-dark-grey-900"><code>$dark-grey-900</code></div>
+  </div>
+</section>
+

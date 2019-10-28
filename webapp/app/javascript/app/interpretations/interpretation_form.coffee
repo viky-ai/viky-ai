@@ -442,6 +442,7 @@ class AliasesForm
           <input type='hidden' name='#{name_prefix}[any_enabled]' value='false' />
         </td>"
     else
+      radio_prefix = UUID()
       line.push "
         <td>
           <span class='#{alias.color}' title='#{reference_title}'>
@@ -449,13 +450,11 @@ class AliasesForm
           </span>
         </td>
         <td class='options'>
-          <label>
-            <input type='radio' name='#{name_prefix}[is_list]' value='true' #{is_list_checked} /> List
-          </label>
+          <input type='radio' name='#{name_prefix}[is_list]' value='true' #{is_list_checked} id='#{radio_prefix}_list' />
+          <label for='#{radio_prefix}_list'>List</label>
           &nbsp;
-          <label>
-            <input type='radio' name='#{name_prefix}[any_enabled]' value='true' #{any_enabled_checked} /> Any
-          </label>
+          <input type='radio' name='#{name_prefix}[any_enabled]' value='true' #{any_enabled_checked} id='#{radio_prefix}_any'/>
+          <label for='#{radio_prefix}_any'>Any</label>
         </td>"
 
     line.push "<td>#{alias.selection}</td>"

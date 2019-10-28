@@ -32,7 +32,7 @@ class ChatSessionTest < ActiveSupport::TestCase
       user: users(:admin),
       bot: bots(:terminator_bot)
     )
-    assert !old_session.expired?
+    assert_not old_session.expired?
 
     assert ChatSession.create(
       user: users(:admin),

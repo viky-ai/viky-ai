@@ -19,7 +19,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       interpretation_id: interpretations(:weather_forecast_demain).id,
       nature: 'type_intent'
     )
-    assert !type_intent.save
+    assert_not type_intent.save
     assert_equal ["Intent can't be blank"], type_intent.errors.full_messages
 
     type_entities_list = InterpretationAlias.new(
@@ -29,7 +29,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       interpretation_id: interpretations(:weather_forecast_demain).id,
       nature: 'type_entities_list'
     )
-    assert !type_entities_list.save
+    assert_not type_entities_list.save
     assert_equal ["Entities list can't be blank"], type_entities_list.errors.full_messages
   end
 
@@ -105,11 +105,11 @@ class InterpretationAliasTest < ActiveSupport::TestCase
         }
       ]
     })
-    assert !interpretation.save
+    assert_not interpretation.save
     assert_equal ["Interpretation aliases position overlap"], interpretation.errors.full_messages
 
     # Update with 2 ranges with overlap
-    assert !interpretation.update({
+    assert_not interpretation.update({
       interpretation_aliases_attributes: [
         {
           position_start: 8,
@@ -129,7 +129,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
 
 
     # Update with 3 ranges
-    assert !interpretation.update({
+    assert_not interpretation.update({
       interpretation_aliases_attributes: [
         {
           position_start: 0,
@@ -170,11 +170,11 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     assert interpretation_alias.save
     assert_equal "type_intent", interpretation_alias.nature
     assert interpretation_alias.type_intent?
-    assert !interpretation_alias.type_number?
+    assert_not interpretation_alias.type_number?
     assert_equal 8, interpretation_alias.position_start
     assert_equal 21, interpretation_alias.position_end
     assert_equal 'who', interpretation_alias.aliasname
-    assert !interpretation_alias.is_list
+    assert_not interpretation_alias.is_list
     assert_equal weather_forecast_demain.id, interpretation_alias.interpretation.id
     assert_equal weather_who.id, interpretation_alias.interpretation_aliasable.id
   end
@@ -187,7 +187,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       interpretation: interpretations(:weather_forecast_demain),
       interpretation_aliasable: intents(:weather_question)
     )
-    assert !interpretation_alias.save
+    assert_not interpretation_alias.save
     expected = ['Parameter name can\'t be blank', 'Parameter name is invalid']
     assert_equal expected, interpretation_alias.errors.full_messages
   end
@@ -202,7 +202,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     interpretation_alias.interpretation = interpretations(:weather_forecast_demain)
     interpretation_alias.interpretation_aliasable = intents(:weather_question)
 
-    assert !interpretation_alias.validate
+    assert_not interpretation_alias.validate
     expected = ['Position end must be greater than position start']
     assert_equal expected, interpretation_alias.errors.full_messages
   end
@@ -217,7 +217,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     interpretation_alias.interpretation = interpretations(:weather_forecast_demain)
     interpretation_alias.interpretation_aliasable = intents(:weather_question)
 
-    assert !interpretation_alias.validate
+    assert_not interpretation_alias.validate
     expected = ['Position start must be greater than or equal to 0', 'Position end must be greater than 0']
     assert_equal expected, interpretation_alias.errors.full_messages
   end
@@ -232,7 +232,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     interpretation_alias.interpretation = interpretations(:weather_forecast_demain)
     interpretation_alias.interpretation_aliasable = intents(:weather_question)
 
-    assert !interpretation_alias.validate
+    assert_not interpretation_alias.validate
     expected = ['Position end must be greater than position start']
     assert_equal expected, interpretation_alias.errors.full_messages
   end
@@ -391,7 +391,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       interpretation_id: interpretations(:terminator_find_sarah).id,
       nature: 'type_regex'
     )
-    assert !regexp_invalid.save
+    assert_not regexp_invalid.save
     assert_not_nil regexp_invalid.errors[:reg_exp]
     expected_msg = ['Regular expression can\'t be blank']
     assert_equal expected_msg, regexp_invalid.errors.full_messages
@@ -417,7 +417,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       nature: 'type_regex',
       reg_exp: '['
     )
-    assert !regexp_invalid.save
+    assert_not regexp_invalid.save
     assert_not_nil regexp_invalid.errors[:reg_exp]
     expected_msg = ['Regular expression should be valid']
     assert_equal expected_msg, regexp_invalid.errors.full_messages
@@ -433,7 +433,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       nature: 'type_regex',
       reg_exp: "[a#{'b' * 4097}c]"
     )
-    assert !test_regexp.save
+    assert_not test_regexp.save
     assert_not_nil test_regexp.errors[:reg_exp]
     assert_equal ['Regular expression (4.005 KB) is too long (maximum is 4 KB)'], test_regexp.errors.full_messages
 

@@ -31,7 +31,7 @@ class AgentGraphTest < ActiveSupport::TestCase
     assert_equal 2, graph.num_vertices
 
     assert graph.has_edge?(agent_a, agent_b)
-    assert !graph.has_edge?(agent_b, agent_a)
+    assert_not graph.has_edge?(agent_b, agent_a)
   end
 
 
@@ -209,7 +209,7 @@ class AgentGraphTest < ActiveSupport::TestCase
     assert_equal 2, graph.num_vertices
 
     assert graph.has_edge?(agent_b, agent_a)
-    assert !graph.has_edge?(agent_a, agent_b)
+    assert_not graph.has_edge?(agent_a, agent_b)
   end
 
 

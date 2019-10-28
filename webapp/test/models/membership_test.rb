@@ -4,7 +4,7 @@ class MembershipTest < ActiveSupport::TestCase
 
   test "agent_id & user_id uniquiness" do
     membership = Membership.new(user: users(:admin), agent: agents(:weather))
-    assert !membership.save
+    assert_not membership.save
     assert_equal ["User has already been taken"], membership.errors.full_messages
   end
 
@@ -92,7 +92,7 @@ class MembershipTest < ActiveSupport::TestCase
     unknown_rights = 'unknown_rights'
 
     memberships_creator = MembershipsCreator.new(agent_weather, user.username, unknown_rights)
-    assert !memberships_creator.create
+    assert_not memberships_creator.create
     assert_equal "Rights is not included in the list", memberships_creator.errors.first
 
     new_membership = Membership.where(user_id: user.id, agent_id: agent_weather.id).first

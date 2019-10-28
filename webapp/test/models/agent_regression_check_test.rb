@@ -118,7 +118,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     @regression_weather_forecast.state = 'running'
     assert @regression_weather_forecast.save
 
-    assert !@regression_weather_forecast.destroy
+    assert_not @regression_weather_forecast.destroy
     expected_error = { base: ["Regression test cannot be deleted in running state."] }
     assert_equal expected_error, @regression_weather_forecast.errors.messages
   end

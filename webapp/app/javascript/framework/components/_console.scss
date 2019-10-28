@@ -56,8 +56,8 @@
     position: relative;
     padding: 1em;
     height: calc(72px + 1em); // Fix Safari bug
-    background-color: #fbfbfb;
-    border-bottom: 1px solid #eee;
+    background-color: $light-grey-200;
+    border-bottom: 1px solid $light-grey-700;
 
     .console__header__visual{
       &.console__header__visual--image{
@@ -162,7 +162,6 @@
     }
   }
 
-
   pre{
     margin: 0;
     padding: 0;
@@ -174,13 +173,13 @@
 
   .console__footer{
     display: block;
-    border-top: 1px solid rgba(#000, .05);
     padding: .75em 1em;
     text-decoration: none;
-    background-color: rgba(#000, .025);
+    border-top: 1px solid $light-grey-700;
+    background-color: $light-grey-200;
     &:hover,
     &:focus{
-      background-color: rgba(#000, .05);
+      background-color: $light-grey-300;
     }
   }
 }
@@ -188,14 +187,14 @@
 
 .ts-summary{
   .ts-summary__primary{
-    color: rgba(#000, .9);
+    color: $dark-grey-700;
     small{
-      color: rgba(#000, .5);
+      color: $dark-grey-400;
       font-size: 1em;
     }
   }
   .ts-summary__secondary{
-    color: rgba(#000, .6);
+    color: $dark-grey-300;
     font-size: .85em;
     padding-left: 1.5em;
     line-height: 1.3em;
@@ -265,7 +264,7 @@
     }
     .CodeMirror{
       border: none;
-      background-color: rgba(#000, .025);
+      background-color: $light-grey-200;
       padding: .5em 1em;
       pre{
         font-size: 1em;
@@ -459,8 +458,8 @@
     justify-content: space-between;
     align-items: top;
     padding: .75em 1em .75em 1.25em;
-    background-color: rgba(#000, .025);
-    border-bottom: 1px solid rgba(#000, 0.075);
+    border-bottom: 1px solid $light-grey-700;
+    background-color: $light-grey-200;
   }
   .cts__list{
     height: 100%;

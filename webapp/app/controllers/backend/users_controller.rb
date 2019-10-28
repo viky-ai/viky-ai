@@ -3,7 +3,7 @@ class Backend::UsersController < Backend::ApplicationController
   def index
     @search = Backend::UserSearch.new(params[:search])
     @users = User.search(@search.options)
-              .page(params[:page])
+              .page(params[:page]).per(15)
   end
 
   def reinvite
@@ -15,6 +15,12 @@ class Backend::UsersController < Backend::ApplicationController
   def toggle_quota_enabled
     @user = User.friendly.find(params[:id])
     @user.quota_enabled = !@user.quota_enabled
+    @user.save
+  end
+
+  def toggle_chatbot_enabled
+    @user = User.friendly.find(params[:id])
+    @user.chatbot_enabled = !@user.chatbot_enabled
     @user.save
   end
 
