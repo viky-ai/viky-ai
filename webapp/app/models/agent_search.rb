@@ -2,7 +2,7 @@ class AgentSearch
   attr_reader :user_id, :options
 
   DEFAULT_CRITERIA = {
-    'sort_by' => 'name',
+    'sort_by' => 'popularity',
     'filter_owner' => 'all',
     'filter_visibility' => 'all',
     'query' => ''
