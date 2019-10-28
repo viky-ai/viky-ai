@@ -84,33 +84,29 @@
       <div class="agent-locales">
         <% Locales::ALL.each do |locale| %>
           <% if used_locales.include? locale %>
-            <span class="checkbox-inline">
-              <input type="hidden" value="<%= locale %>" name="agent[locales][]" />
-              <input type="checkbox" name="agent[locales][]" value="<%= locale %>"
-                <% if agent.locales.include? locale %>checked<% end %> disabled />
-              <span class="label">
-                <% if locale == Locales::ANY %>
-                  <%= t('locales.no_locale') %>
-                <% else %>
-                  <%= "#{locale} <small>(#{t('locales.'+locale)})</small>".html_safe %>
-                <% end %>
-                <span class="icon icon--x-small"
-                  title="<%= t('views.agents.form.locale_help') %>">
-                  <%= icon_information %>
-                </span>
+            <input type="hidden" value="<%= locale %>" name="agent[locales][]" />
+            <input type="checkbox" name="agent[locales][]" value="<%= locale %>"
+              <% if agent.locales.include? locale %>checked<% end %> disabled />
+            <span class="label">
+              <% if locale == Locales::ANY %>
+                <%= t('locales.no_locale') %>
+              <% else %>
+                <%= "#{locale} <small>(#{t('locales.'+locale)})</small>".html_safe %>
+              <% end %>
+              <span class="icon icon--x-small"
+                title="<%= t('views.agents.form.locale_help') %>">
+                <%= icon_information %>
               </span>
             </span>
           <% else %>
-            <label class="checkbox-inline">
-              <input type="checkbox" name="agent[locales][]" value="<%= locale %>"
-                <% if agent.locales.include? locale %>checked<% end %> />
-              <span class="label">
-                <% if locale == Locales::ANY %>
-                  <%= t('locales.no_locale') %>
-                <% else %>
-                  <%= "#{locale} <small>(#{t('locales.'+locale)})</small>".html_safe %>
-                <% end %>
-              </span>
+            <input type="checkbox" name="agent[locales][]" value="<%= locale %>" id="locale-<%= locale %>"
+              <% if agent.locales.include? locale %>checked<% end %> />
+            <label for="locale-<%= locale %>">
+              <% if locale == Locales::ANY %>
+                <%= t('locales.no_locale') %>
+              <% else %>
+                <%= "#{locale} <small>(#{t('locales.'+locale)})</small>".html_safe %>
+              <% end %>
             </label>
           <% end %>
         <% end %>

@@ -171,13 +171,8 @@
       .btn.btn--outline{
         background-color: #fff;
       }
-
-      input[type='checkbox']{
-        box-sizing: border-box;
-        padding: 0;
-        position: absolute;
-        margin-top: 5px;
-        font-size: 14px;
+      input[type='checkbox'] + label:before {
+        top: -1px;
       }
     }
     .trix-control__option__child:nth-child(2){
@@ -405,6 +400,9 @@ trix-editor{
     }
     td.options{
       white-space: nowrap;
+      label{
+        margin-bottom: 0;
+      }
     }
     th:nth-child(4),
     td:nth-child(4){

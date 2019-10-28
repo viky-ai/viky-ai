@@ -1,5 +1,76 @@
 $border-color: lighten($dark-grey-100, 10%);
 
+input[type='radio'],
+input[type='checkbox']{
+  position: absolute;
+  left: -9999px;
+}
+
+input[type='radio'] + .label,
+input[type='checkbox'] + .label,
+input[type='radio'] + label,
+input[type='checkbox'] + label{
+  position: relative;
+  padding-left: 20px;
+}
+
+input[type='radio'] + .label:before,
+input[type='checkbox'] + .label:before,
+input[type='radio'] + label:before,
+input[type='checkbox'] + label:before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  background-color: #fff;
+  border: 1px solid $dark-grey-100;
+  position: absolute;
+  left: 0;
+  top: 4px;
+  border-radius: 2px;
+}
+
+input[type='radio'] + .label:before,
+input[type='radio'] + label:before {
+  border-radius: 7px;
+}
+
+input[type='radio']:focus + .label:before,
+input[type='checkbox']:focus + .label:before,
+input[type='radio']:focus + label:before,
+input[type='checkbox']:focus + label:before {
+  border-color: $primary_color;
+  box-shadow: 0 0 0 2px rgba($primary_color, .25);
+}
+
+input[type='radio']:focus:checked + .label:before,
+input[type='checkbox']:focus:checked + .label:before,
+input[type='radio']:focus:checked + label:before,
+input[type='checkbox']:focus:checked + label:before {
+  border-color: $primary_color;
+  box-shadow: 0 0 0 2px rgba($primary_color, .25), inset 0 0 0 2px #fff;
+}
+
+input[type='checkbox']:checked + .label:before,
+input[type='checkbox']:checked + label:before{
+  background-color: $primary_color;
+  border-color: $dark-grey-100;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+input[type='radio']:checked + .label:before,
+input[type='radio']:checked + label:before {
+  background-color: $primary_color;
+  border-color: $dark-grey-100;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+input[type='checkbox']:checked:disabled + .label:before,
+input[type='checkbox']:checked:disabled + label:before,
+input[type='radio']:checked:disabled + .label:before,
+input[type='radio']:checked:disabled + label:before{
+  background-color: $dark-grey-100;
+}
+
 .label,
 label{
   font-weight: 400;
@@ -112,42 +183,6 @@ input[type='text'].code{
       &:last-child{
         margin-right: 0;
       }
-    }
-  }
-
-  .checkbox-inline,
-  label.checkbox-inline{
-    display: block;
-    position: relative;
-    .label{
-      font-weight: 300;
-      padding-left: 18px;
-      margin: 0;
-      line-height: 1em;
-    }
-  }
-
-  .checkbox-inline,
-  label.checkbox-inline,
-  .control{
-    position: relative;
-    input[type='radio'],
-    input[type='checkbox']{
-      box-sizing: border-box;
-      padding: 0;
-      position: absolute;
-      margin-top: 4px;
-      font-size: 14px;
-    }
-    input[type='checkbox']{
-      margin-top: 6px;
-    }
-    input[type='radio'] + label,
-    input[type='checkbox'] + label{
-      font-weight: 300;
-      padding-left: 18px;
-      margin: 0;
-      line-height: 1em;
     }
   }
 
