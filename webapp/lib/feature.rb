@@ -12,6 +12,7 @@ module Feature
     ENV['VIKYAPP_USER_REGISTRATION'] = 'false'
   end
 
+
   def self.email_configured?
     return true if Rails.env.test?
 
@@ -19,6 +20,7 @@ module Feature
     postmark_enabled = ENV.fetch("POSTMARK_TOKEN") { false }
     postmark_enabled || smtp_enabled == 'true'
   end
+
 
   def self.quota_enabled?
     ENV['VIKYAPP_QUOTA_ENABLED'] == 'true'
@@ -38,4 +40,28 @@ module Feature
     disable_quota
   end
 
+
+  def self.chatbot_enabled?
+    ENV['VIKYAPP_CHATBOT_ENABLED'] == 'true'
+  end
+
+  def self.enable_chatbot
+    ENV['VIKYAPP_CHATBOT_ENABLED'] = 'true'
+  end
+
+  def self.disable_chatbot
+    ENV['VIKYAPP_CHATBOT_ENABLED'] = 'false'
+  end
+
+  def self.with_chatbot_enabled
+    enable_chatbot
+    yield
+    disable_chatbot
+  end
+
+  def self.with_chatbot_disabled
+    disable_chatbot
+    yield
+    enable_chatbot
+  end
 end

@@ -12,27 +12,25 @@ a.btn,
   text-decoration: none;
   white-space: nowrap;
 
-  color: #000;
-
-  border: 1px solid #ddd;
+  color: $dark-grey-600;
+  border: 1px solid rgba($dark-grey-100, .4);
   border-radius: $btn_border_radius;
 
-  background: linear-gradient(to bottom, #fff 0%, #f9f9f9 100%);
+  background: linear-gradient(to bottom, #fff 0%, $light-grey-100 100%);
   cursor: pointer;
 
   &:hover{
-    background: linear-gradient(to bottom, darken(#fff, 2%) 0%, darken(#f9f9f9, 3%) 100%);
+    background: linear-gradient(to bottom, $light-grey-200 0%, $light-grey-300 100%);
   }
   &:focus{
-    color: #000;
+    color: $dark-grey-800;
     box-shadow: 0 0 0 3px rgba($primary_color, .3);
-    border-color: #bbb;
     border-color: $primary_color;
     outline:0;
   }
   &.btn--disabled{
     background: linear-gradient(to bottom, #fff 0%, #f9f9f9 100%);
-    color: #444;
+    color: $dark-grey-400;
   }
   &.btn--disabled:active{
     transform: none;
@@ -45,10 +43,10 @@ a.btn,
     background-image: none;
     background-color: #fff;
     &:hover{
-      border-color: #aaa;
+      border-color: rgba($dark-grey-100, .8);
     }
     &.btn--disabled{
-      border-color: #ddd;
+      border-color: rgba($dark-grey-100, .5);
     }
   }
 

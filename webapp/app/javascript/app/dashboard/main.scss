@@ -15,9 +15,10 @@
     }
     .card-detail{
       padding: .5em 1em;
-      background-color: #fafafa;
+      border-top: 1px solid $light-grey-600;
+      background-color: $light-grey-100;
       font-size: .8em;
-      color: rgba(#000, .8);
+      color: $dark-grey-300;
       .ts-status{
         vertical-align: baseline;
       }
@@ -25,10 +26,12 @@
   }
   .card--indicator{
     text-align: center;
+    color: $dark-grey-500;
     strong{
       display: block;
       font-size: 1.75em;
       line-height: 1.2em;
+      color: $dark-grey-700;
     }
   }
 }
@@ -46,7 +49,9 @@
       h2{
         padding: 1em;
         margin: -1em -1em 0em -1em;
-        background-color: #fafafa;
+        background-color: $light-grey-100;
+        border-bottom: 1px solid $light-grey-500;
+        color: $dark-grey-800;
         font-size: 1em;
         font-weight: 400;
       }
@@ -96,7 +101,7 @@
         text-align: center;
         font-size: .8em;
         margin: .5em 0 0 0;
-        color: #aaa;
+        color: $dark-grey-100;
       }
     }
   }

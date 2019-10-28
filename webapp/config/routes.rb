@@ -1,3 +1,15 @@
+class FeatureChatbotConstraint
+  def matches?(request)
+    user = request.env["warden"].user(:user)
+    if user.nil?
+      Feature.chatbot_enabled?
+    else
+      Feature.chatbot_enabled? && user.chatbot_enabled
+    end
+  end
+end
+
+
 Rails.application.routes.draw do
   devise_for :users, controllers: {
     invitations: 'backend/invitations', registrations: 'registrations'
@@ -9,6 +21,7 @@ Rails.application.routes.draw do
         get :confirm_destroy
         get :reinvite
         post :toggle_quota_enabled
+        post :toggle_chatbot_enabled
       end
       post :impersonate, on: :member
     end
@@ -20,7 +33,7 @@ Rails.application.routes.draw do
     post :stop_impersonating, on: :collection
   end
 
-  resources :chatbots, only: [:index, :show] do
+  resources :chatbots, only: [:index, :show], constraints: FeatureChatbotConstraint.new do
     collection do
       get :search
     end
@@ -135,7 +148,7 @@ Rails.application.routes.draw do
           end
         end
 
-        resources :bots, except: [:show] do
+        resources :bots, except: [:show], constraints: FeatureChatbotConstraint.new do
           member do
             get :confirm_destroy
           end
@@ -143,6 +156,7 @@ Rails.application.routes.draw do
             get :ping
           end
         end
+
       end
     end
   end
@@ -151,9 +165,8 @@ Rails.application.routes.draw do
 
   require 'sidekiq/web'
   authenticate :user, lambda { |u| u.admin? } do
-
     # disable ip_spoofing, because it does not support multiple reverse proxy with different configuration (HTTP_X_REAL_IP != HTTP_X_FORWARDED_FOR)
-    Sidekiq::Web.use( Rack::Protection, except: :ip_spoofing)
+    Sidekiq::Web.use(Rack::Protection, except: :ip_spoofing)
 
     mount Sidekiq::Web => '/backend/jobs'
   end
@@ -165,7 +178,7 @@ Rails.application.routes.draw do
         get '/:ownername/:agentname/interpret', to: 'nlp#interpret'
       end
       get '/ping', to: 'ping#ping'
-      resources 'chat_sessions', only: [:update] do
+      resources 'chat_sessions', only: [:update], constraints: FeatureChatbotConstraint.new do
         resources 'statements', only: [:create], controller: 'chat_statements'
       end
     end
@@ -178,7 +191,6 @@ Rails.application.routes.draw do
     post '/packages/:id/updated', to: 'packages#updated'
   end
 
-  # get 'style-guide', to: 'style_guide#index'
   get 'style-guide(/:page_id)', to: "style_guide#page"
 
   unless File.exist? File.join(Rails.root, 'public', 'index.html')

@@ -2,9 +2,6 @@ require "test_helper"
 if ENV['COVERAGE']
   SimpleCov.command_name "rails-tests-system"
 end
-require 'minitest/retry'
-Minitest::Retry.use!
-
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   include ActiveJob::TestHelper
 
@@ -23,6 +20,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   Capybara.configure do |config|
     config.default_max_wait_time = 5
+    config.automatic_label_click = true
   end
 
   driven_by :headless_chrome

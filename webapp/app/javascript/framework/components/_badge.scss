@@ -4,8 +4,9 @@
   line-height: 1.5em;
   padding: 1px .5em;
   border-radius: 2px;
-  color: rgba(black, .75);
+  color: $dark-grey-500;
   background-color: rgba(#000, .06);
+  background-color: $light-grey-400;
 
   &.badge--outline{
     background-color: transparent;

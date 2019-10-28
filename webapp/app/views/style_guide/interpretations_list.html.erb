@@ -10,7 +10,7 @@
   <p>
     Click on an item will show details.
   </p>
-  <%= highlight_html do %>
+  <%= highlight_html('bg-light-grey-300') do %>
 <ul class="card-list">
   <li>
     <div class='interpretations-show'>
@@ -98,7 +98,7 @@
   <p>
     JS library <a href="http://rubaxa.github.io/Sortable/">Sortable</a> is used in order to setup Drag&Drop functionality.
   </p>
-  <%= highlight_html do %>
+  <%= highlight_html('bg-light-grey-300') do %>
 <ul id="sortable-list__example" class="card-list">
   <li>
     <div class="card-list__item__draggable"></div>
@@ -170,8 +170,8 @@
                 </span>
               </td>
               <td class='options'>
-                <label><input value="true" type="radio"/> List</label>
-                <label><input value="true" type="radio"/> Any</label>
+                <input value="true" type="radio"/> <label>List</label>
+                <input value="true" type="radio"/> <label>Any</label>
               </td>
               <td>Hello</td>
               <td>
@@ -258,8 +258,8 @@
           </span>
         </td>
         <td class='options'>
-          <label><input value="true" type="radio"/> List</label>
-          <label><input value="true" type="radio"/> Any</label>
+          <input value="true" type="radio"/> <label>List</label>
+          <input value="true" type="radio"/> <label>Any</label>
         </td>
         <td>Hello</td>
         <td>
@@ -348,8 +348,8 @@
           </span>
         </td>
         <td class='options'>
-          <label><input value="true" type="radio"/> List</label>
-          <label><input value="true" type="radio"/> Any</label>
+          <input value="true" type="radio"/> <label>List</label>
+          <input value="true" type="radio"/> <label>Any</label>
         </td>
         <td>Blague</td>
         <td>

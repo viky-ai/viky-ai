@@ -111,6 +111,9 @@ test_nlp:
 tag_webapp:
   extends: .kubernetes_runner
   stage: docker_tag
+  needs:
+    - "build_webapp"
+    - "test_webapp"
   only:
     - master
   variables:
@@ -135,6 +138,8 @@ tag_nlp:
 tag_backup:
   extends: .kubernetes_runner
   stage: docker_tag
+  needs:
+    - "build_backup"
   only:
     - master
   variables:
@@ -144,24 +149,15 @@ tag_backup:
 
 # Deploy generic job
 
-.deploy_branches:
+.deploy_dev:
+  needs:
+    - build_backup
+    - build_webapp
+    - build_nlp
+    - test_webapp
+    - test_nlp
   except:
-    - develop
     - master
-    - tags
-  environment:
-    name: dev-${CI_COMMIT_REF_NAME}
-    url: https://viky-${CI_ENVIRONMENT_SLUG}.viky.ai
-  variables:
-    S3_ACCESS_KEY: ${S3_ACCESS_KEY}
-    S3_SECRET_KEY: ${S3_SECRET_KEY}
-    HELM_RELEASE_NAME: "viky-branches"
-    HELM_VALUES: "viky/custom-values/dev.yaml,custom-values.yml"
-
-.deploy_develop:
-  only:
-    - develop
-  except:
     - tags
   environment:
     name: dev-${CI_COMMIT_REF_NAME}
@@ -169,10 +165,14 @@ tag_backup:
   variables:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
-    HELM_RELEASE_NAME: "viky-develop"
-    HELM_VALUES: "viky/custom-values/preproduction.yaml,custom-values.yml"
+    HELM_RELEASE_NAME: "viky-dev"
+    HELM_VALUES: "viky/custom-values/dev.yaml,custom-values.yml"
 
 .deploy_preprod:
+  needs:
+    - "tag_webapp"
+    - "tag_backup"
+    - "tag_nlp"
   only:
     - master
   except:
@@ -193,12 +193,6 @@ tag_backup:
 .deploy:
   extends: .kubernetes_runner
   stage: deploy
-  needs:
-    - build_backup
-    - build_webapp
-    - build_nlp
-    - test_webapp
-    - test_nlp
   variables:
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
     HELM_TIMEOUT: "900"
@@ -215,37 +209,20 @@ tag_backup:
     - bin/generate-ci-override-values.sh
     # Deploy Viky Platform
     - HELM_OPTIONS="--install ${HELM_EXTRA_OPTIONS} --timeout ${HELM_TIMEOUT}  --values ${HELM_VALUES}"
+    - echo "helm upgrade ${HELM_OPTIONS} "${RELEASE_NAME}" ./viky/"
     - helm upgrade ${HELM_OPTIONS} "${RELEASE_NAME}" ./viky/
 
 # Deploy any branches on dev
-deploy_branches:
+deploy_dev:
   environment:
     name: dev-${CI_COMMIT_REF_NAME}
     on_stop: delete_env
   extends:
     - .deploy
-    - .deploy_branches
+    - .deploy_dev
 
-deploy_branches_forced:
-  extends: deploy_branches
-  environment:
-    name: dev-${CI_COMMIT_REF_NAME}
-    on_stop: delete_env
-  when: manual
-  variables:
-    HELM_EXTRA_OPTIONS: "--force"
-
-# Deploy any branches on dev
-deploy_develop:
-  environment:
-    name: dev-${CI_COMMIT_REF_NAME}
-    on_stop: delete_env
-  extends:
-    - .deploy
-    - .deploy_develop
-
-deploy_develop_forced:
-  extends: deploy_develop
+deploy_dev_forced:
+  extends: deploy_dev
   environment:
     name: dev-${CI_COMMIT_REF_NAME}
     on_stop: delete_env
@@ -290,8 +267,7 @@ deploy_preprod_forced:
 delete_env:
   extends:
     - .kubernetes_runner
-    - .deploy_branches
-    - .deploy_develop
+    - .deploy_dev
     - .delete_env
 
 # invite admin user
@@ -309,8 +285,7 @@ delete_env:
 invite_admin_dev:
   extends:
     - .kubernetes_runner
-    - .deploy_branches
-    - .deploy_develop
+    - .deploy_dev
     - .invite_admin
 
 invite_admin_preprod:
@@ -334,8 +309,7 @@ invite_admin_preprod:
 backup_dev:
   extends:
     - .kubernetes_runner
-    - .deploy_branches
-    - .deploy_develop
+    - .deploy_dev
     - .backup
 
 backup_preprod:
@@ -364,8 +338,7 @@ backup_preprod:
 backup_restore:
   extends:
     - .kubernetes_runner
-    - .deploy_branches
-    - .deploy_develop
+    - .deploy_dev
     - .backup_restore
 
 # update homepage and doc to latest image
@@ -388,8 +361,7 @@ backup_restore:
 update_doc_dev:
   extends:
     - .kubernetes_runner
-    - .deploy_branches
-    - .deploy_develop
+    - .deploy_dev
     - .update_doc
 
 update_doc_preprod:
@@ -416,8 +388,7 @@ update_doc_preprod:
 deploy_status_dev:
   extends:
     - .kubernetes_runner
-    - .deploy_branches
-    - .deploy_develop
+    - .deploy_dev
     - .deploy_status
 
 deploy_status_preprod:
