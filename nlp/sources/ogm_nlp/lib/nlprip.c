@@ -157,14 +157,17 @@ og_bool NlpRequestInputPartsAreExpressionGlued(og_nlp_th ctrl_nlp_th, struct req
   IFE(found);
   if (found)
   {
-    struct request_word *request_word_before = request_words + Irequest_word_start - 1;
-    int end_request_word_before = request_word_before->start_position + request_word_before->length_position;
-    NlpLog(DOgNlpTraceMatchExpression,
-        "NlpRequestInputPartsAreExpressionGlued: end_request_word_before=%d end_request_input_part1=%d Irequest_word_start=%d",
-        end_request_word_before, end_request_input_part1, Irequest_word_start);
-    // This can happen with regexes that match the beginning of the word, in that case, there are some chars
-    // between the two words which are not punctuations.
-    if (end_request_word_before > end_request_input_part1) return(FALSE);
+    if (Irequest_word_start > 0)
+    {
+      struct request_word *request_word_before = request_words + Irequest_word_start - 1;
+      int end_request_word_before = request_word_before->start_position + request_word_before->length_position;
+      NlpLog(DOgNlpTraceMatchExpression,
+          "NlpRequestInputPartsAreExpressionGlued: end_request_word_before=%d end_request_input_part1=%d Irequest_word_start=%d",
+          end_request_word_before, end_request_input_part1, Irequest_word_start);
+      // This can happen with regexes that match the beginning of the word, in that case, there are some chars
+      // between the two words which are not punctuations.
+      if (end_request_word_before > end_request_input_part1) return (FALSE);
+    }
 
     for (int w = Irequest_word_start; w < basic_request_word_used; w++)
     {
