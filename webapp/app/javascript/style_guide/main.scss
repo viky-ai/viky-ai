@@ -1,5 +1,6 @@
 .sg-intro{
   padding: 2em 3em;
+  border-bottom: 1px solid #eee;
   p{
     font-size: 1.2em;
   }
@@ -38,6 +39,8 @@
     }
     .code{
       pre{
+        border-top: 1px solid rgba(#000, .1);
+        background-color: rgba(#000, .01);
         border-bottom-left-radius: 3px;
         border-bottom-right-radius: 3px;
         margin: 0;
@@ -46,9 +49,6 @@
         max-height: 250px;
       }
     }
-  }
-  .component{
-    background-color: #fff;
   }
   .light-background{
     .component{

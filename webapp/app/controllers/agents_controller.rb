@@ -6,7 +6,7 @@ class AgentsController < ApplicationController
     @search = AgentSearch.new(current_user, search_params)
     @total_count = Agent.search(@search.options).count
     @agents = Agent.search(@search.options).order(name: :asc)
-                .page(params[:page]).per(12)
+                .page(params[:page]).per(20)
     @search.save
   end
 

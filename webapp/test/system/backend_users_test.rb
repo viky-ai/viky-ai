@@ -13,8 +13,8 @@ class BackendUsersTest < ApplicationSystemTestCase
 
   test "User index not allowed if user is not admin" do
     login_as "confirmed@viky.ai", "BimBamBoom"
-
     visit backend_users_path
+
     assert has_text?("You do not have permission to access this interface.")
     assert_equal "/agents", current_path
   end
@@ -22,8 +22,8 @@ class BackendUsersTest < ApplicationSystemTestCase
 
   test "Successful login" do
     admin_login
-
     visit backend_users_path
+
     assert has_css?(".backend-users .user", count: 7)
 
     assert_equal "/backend/users", current_path
@@ -32,8 +32,7 @@ class BackendUsersTest < ApplicationSystemTestCase
 
   test "Users can be filtered" do
     admin_login
-
-    click_link("Users management")
+    visit backend_users_path
 
     find(".dropdown__trigger", text: "All").click
     all(".dropdown__content li").each do |filter_name|
@@ -48,8 +47,7 @@ class BackendUsersTest < ApplicationSystemTestCase
 
   test "Users can be sorted by email" do
     admin_login
-
-    click_link("Users management")
+    visit backend_users_path
 
     find(".dropdown__trigger", text: "Sort by last login").click
     find(".dropdown__content", text: "Sort by email").click
@@ -71,8 +69,7 @@ class BackendUsersTest < ApplicationSystemTestCase
 
   test "Users can be found by search" do
     admin_login
-
-    click_link("Users management")
+    visit backend_users_path
 
     assert has_text?("Backend / User management")
 
@@ -88,8 +85,7 @@ class BackendUsersTest < ApplicationSystemTestCase
 
   test "Users can be found by search trimmed" do
     admin_login
-
-    click_link("Users management")
+    visit backend_users_path
 
     assert has_text?("Backend / User management")
 
@@ -107,8 +103,8 @@ class BackendUsersTest < ApplicationSystemTestCase
     before_count = User.count
 
     admin_login
+    visit backend_users_path
 
-    click_link("Users management")
     assert has_css?(".backend-users .user", count: before_count)
 
     all("a.btn--destructive").last.click
@@ -132,8 +128,8 @@ class BackendUsersTest < ApplicationSystemTestCase
   test "Destroy user with username" do
     before_count = User.count
     admin_login
+    visit backend_users_path
 
-    click_link("Users management")
     assert has_css?(".backend-users .user", count: before_count)
 
     all("a.btn--destructive")[2].click
@@ -149,6 +145,7 @@ class BackendUsersTest < ApplicationSystemTestCase
 
   test "An invitation can be sent by administrators only" do
     visit new_user_invitation_path
+
     assert has_text? "You need to sign in or sign up before continuing."
 
     login_as "confirmed@viky.ai", "BimBamBoom"
@@ -174,8 +171,7 @@ class BackendUsersTest < ApplicationSystemTestCase
 
   test "Invitations can be resent to not confirmed users only" do
     admin_login
-
-    click_link("Users management")
+    visit backend_users_path
 
     assert has_css?(".backend-users .user", count: 7)
 
@@ -198,8 +194,8 @@ class BackendUsersTest < ApplicationSystemTestCase
     within("nav") do
       assert has_text?("admin")
     end
+    visit backend_users_path
 
-    click_link("Users management")
     assert has_text?("edit_on_agent_weather@viky.ai")
     within(".backend-users") do
       first(".btn--primary").click
@@ -224,8 +220,7 @@ class BackendUsersTest < ApplicationSystemTestCase
   test "Quota toggle" do
     Feature.with_quota_enabled do
       admin_login
-
-      click_link("Users management")
+      visit backend_users_path
 
       assert has_css?('.btn--toggle.btn--toggle-on', count: 7)
       within('.backend-users') do
@@ -240,8 +235,7 @@ class BackendUsersTest < ApplicationSystemTestCase
   test "Chatbot toggle" do
     Feature.with_chatbot_enabled do
       admin_login
-
-      click_link("Users management")
+      visit backend_users_path
 
       assert has_css?('.btn--toggle.btn--toggle-on', count: 0)
       within('.backend-users') do
