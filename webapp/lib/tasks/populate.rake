@@ -47,7 +47,7 @@ class Task::Populate
     )
     agent.save!
 
-    interpretations(agent, opts)
+    formulations(agent, opts)
     big_entiy_lists(agent, opts)
     entiy_lists(agent, opts)
 
@@ -56,7 +56,7 @@ class Task::Populate
     Nlp::Package.new(agent).push
   end
 
-  def self.interpretations(agent, opts)
+  def self.formulations(agent, opts)
     last_intent = nil
     before_last = nil
 
@@ -64,7 +64,7 @@ class Task::Populate
       intent = Intent.new(
         intentname: quick_rand(10),
         visibility: %w[is_public is_private].sample,
-        description: 'Interpretation of the world'
+        description: 'Formulation of the world'
       )
       intent.agent = agent
       intent.save!
@@ -75,12 +75,12 @@ class Task::Populate
           expressions << quick_rand(6)
         end
 
-        interpretation = Interpretation.new(
+        formulation = Formulation.new(
           expression: expressions.join(' '),
           locale: ['fr', 'en', '*'].sample
         )
-        interpretation.intent = intent
-        interpretation.save!
+        formulation.intent = intent
+        formulation.save!
 
         unless last_intent.nil?
 
@@ -89,7 +89,7 @@ class Task::Populate
             position_start: 0,
             position_end: 6
           )
-          interpretation_alias.interpretation = interpretation
+          interpretation_alias.formulation = formulation
           interpretation_alias.interpretation_aliasable = last_intent
           interpretation_alias.save!
 
@@ -102,7 +102,7 @@ class Task::Populate
           position_start: 7,
           position_end: 13
         )
-        interpretation_alias.interpretation = interpretation
+        interpretation_alias.formulation = formulation
         interpretation_alias.interpretation_aliasable = before_last
         interpretation_alias.save!
       end

@@ -5,12 +5,12 @@ module PlayHelper
     pos = 0
     opened_tag = 0
     closed_tag = 0
-    interpretations = interpreter.result.body["interpretations"]
+    formulations = interpreter.result.body["interpretations"]
     colors = interpreter.result.slug_colors
 
     interpreter.text.each_char do |c|
-      start_highlight = interpretations.find { |interpretation| interpretation["start_position"] == pos }
-      stop_highlight  = interpretations.find { |interpretation| interpretation["end_position"] == pos }
+      start_highlight = formulations.find { |formulation| formulation["start_position"] == pos }
+      stop_highlight  = formulations.find { |formulation| formulation["end_position"] == pos }
       unless stop_highlight.nil?
         text_decorated << "</div>"
         closed_tag = closed_tag + 1
@@ -21,7 +21,7 @@ module PlayHelper
         text_decorated << "<div class='highlight-pop highlight-pop--#{colors[start_highlight["slug"]]}' data-package='#{start_highlight['package']}' data-color='#{colors[start_highlight["slug"]]}'>"
         text_decorated << "  <div x-arrow></div>"
         text_decorated << "  <div class='highlight-pop__content'>"
-        if start_highlight["slug"].include? "/interpretations/"
+        if start_highlight["slug"].include? "/formulations/"
           if intent_has_unsuitable_list_pattern?(Intent.find(start_highlight["id"]))
             text_decorated << "  <p class='warning'>"
             text_decorated << "    <span class='icon icon--small icon--white'>#{icon_alert}</span>"
@@ -47,9 +47,8 @@ module PlayHelper
 
   def intent_has_unsuitable_list_pattern?(intent)
     warning = false
-    intent =
-    if intent.interpretations.count == 1
-      first_interpretation = intent.interpretations.first
+    if intent.formulations.count == 1
+      first_interpretation = intent.formulations.first
       if first_interpretation.interpretation_aliases.count == 1
         warning = first_interpretation.interpretation_aliases.first.is_list?
       end

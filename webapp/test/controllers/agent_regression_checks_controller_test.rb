@@ -20,7 +20,7 @@ class AgentRegressionChecksControllerTest < ActionDispatch::IntegrationTest
             package: agents(:weather).id,
             id: Intent.where(intentname: 'weather_forecast').first.id,
             score: '1.0',
-            solution: Interpretation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json
+            solution: Formulation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json
           },
           now: '2019-01-17T09:00:00+01:00',
           language: 'fr',
@@ -44,7 +44,7 @@ class AgentRegressionChecksControllerTest < ActionDispatch::IntegrationTest
             package: agents(:weather).id,
             id: Intent.where(intentname: 'weather_forecast').first.id,
             score: '1.0',
-            solution: Interpretation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json
+            solution: Formulation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json
           },
           now: '2019-01-17T09:00:00+01:00',
           language: 'fr',
@@ -108,7 +108,7 @@ class AgentRegressionChecksControllerTest < ActionDispatch::IntegrationTest
             root_type: 'intent',
             package: agents(:weather).id,
             id: Intent.where(intentname: 'weather_forecast').first.id,
-            solution: Interpretation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json
+            solution: Formulation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json
           }
         },
         format: :js
@@ -125,7 +125,7 @@ class AgentRegressionChecksControllerTest < ActionDispatch::IntegrationTest
             root_type: 'intent',
             package: agents(:weather).id,
             id: Intent.where(intentname: 'weather_forecast').first.id,
-            solution: Interpretation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json
+            solution: Formulation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json
           }
         },
         format: :js

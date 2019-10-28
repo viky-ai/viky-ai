@@ -172,7 +172,7 @@ class IntentTest < ActiveSupport::TestCase
       intent = intents(:weather_forecast)
       destination_agent = agents(:terminator)
 
-      assert_equal 2, intent.interpretations.count
+      assert_equal 2, intent.formulations.count
       assert_equal 10, destination_agent.owner.expressions_count
 
       Quota.stubs(:expressions_limit).returns(11)
@@ -218,17 +218,17 @@ class IntentTest < ActiveSupport::TestCase
     weather_loc_intent.agent = dependent_agent
     assert weather_loc_intent.save
 
-    interpretation = Interpretation.new(
+    formulation = Formulation.new(
       expression: 'Where is it raining?'
     )
-    interpretation.intent = weather_loc_intent
+    formulation.intent = weather_loc_intent
     interpretation_alias = InterpretationAlias.new(
       position_start: 0,
       position_end: 5,
       aliasname: 'Where',
       nature: 'type_intent'
     )
-    interpretation_alias.interpretation = interpretation
+    interpretation_alias.formulation = formulation
     interpretation_alias.interpretation_aliasable = current_intent
     assert interpretation_alias.save
 
@@ -239,15 +239,15 @@ class IntentTest < ActiveSupport::TestCase
   end
 
 
-  test 'Adding an interpretation trigger an NLP sync' do
+  test 'Adding an formulation trigger an NLP sync' do
     intent = intents(:weather_forecast)
     intent.agent.expects(:sync_nlp).once
 
-    interpretation = Interpretation.new(
+    formulation = Formulation.new(
       expression: 'Good morning John',
       locale: 'en',
       intent: intent
     )
-    assert interpretation.save
+    assert formulation.save
   end
 end

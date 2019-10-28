@@ -1,7 +1,7 @@
 @import '../../framework/abstracts/variables';
 
 .card-list{
-  .interpretations-list__show {
+  .formulations-list__show {
     width: 100%;
     color: #222;
     border-right: 3px solid transparent;
@@ -13,7 +13,7 @@
       }
     }
   }
-  a.interpretations-list__show {
+  a.formulations-list__show {
     &:focus,
     &:hover{
       border-right: 3px solid $primary-color;
@@ -23,17 +23,17 @@
 
 
 
-.interpretations-form,
-.interpretations-show {
+.formulations-form,
+.formulations-show {
   padding: 1.25em 1em;
   width: 100%;
   display: grid;
   grid-column-gap: 1em;
 }
 
-.interpretations-form{
+.formulations-form{
   grid-template:
-          "interpretation interpretation" auto
+          "formulation formulation" auto
           "aliases aliases" auto
           "aliases-errors aliases-errors" auto
           "solution solution" auto
@@ -41,7 +41,7 @@
           2fr 1fr;
   @media (min-width: 424px){
     grid-template:
-            "interpretation interpretation" auto
+            "formulation formulation" auto
             "aliases aliases" auto
             "aliases-errors aliases-errors" auto
             "solution solution" auto
@@ -53,40 +53,40 @@
     margin-bottom: 0;
     grid-area: submit;
   }
-  .interpretations-form__delete {
+  .formulations-form__delete {
     margin-top: 1em;
     grid-area: delete;
     justify-self: end;
   }
 }
 
-.interpretations-show{
+.formulations-show{
   grid-template:
-    "interpretation close" auto
+    "formulation close" auto
     "aliases aliases" auto
     "solution solution" auto /
     1fr 1fr;
 
-  .interpretations-show__close {
+  .formulations-show__close {
     grid-area: close;
     justify-self: right;
   }
 }
 
-.interpretations-form,
-.interpretations-show {
+.formulations-form,
+.formulations-show {
 
-  .interpretations-form__interpretation,
-  .interpretations-show__interpretation{
-    grid-area: interpretation;
+  .formulations-form__formulation,
+  .formulations-show__formulation{
+    grid-area: formulation;
   }
 
-  .interpretations-form__summary,
-  .interpretations-show__summary{
+  .formulations-form__summary,
+  .formulations-show__summary{
     grid-area: aliases;
   }
 
-  .interpretations-form__aliases-errors{
+  .formulations-form__aliases-errors{
     grid-area: aliases-errors;
     color: $alert_color;
     font-size: .8em;
@@ -96,8 +96,8 @@
     }
   }
 
-  .interpretations-form__solution,
-  .interpretations-show__solution{
+  .formulations-form__solution,
+  .formulations-show__solution{
     margin-top: 1em;
     grid-area: solution;
   }
@@ -347,9 +347,9 @@ trix-editor{
   }
 }
 
-.interpretation-resume{
+.formulation-resume{
   @each $name, $color in $colors{
-    .interpretation-resume__alias-#{$name}{
+    .formulation-resume__alias-#{$name}{
       color: $color;
       border-bottom: 2px solid $color;
     }

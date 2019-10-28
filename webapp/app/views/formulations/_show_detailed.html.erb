@@ -2,24 +2,24 @@
 
   <div class="interpretations-show__close">
     <%= link_to icon_close.html_safe,
-                user_agent_intent_interpretation_path(
-                    interpretation.intent.agent.owner,
-                    interpretation.intent.agent,
-                    interpretation.intent,
-                    interpretation
+                user_agent_intent_formulation_path(
+                    formulation.intent.agent.owner,
+                    formulation.intent.agent,
+                    formulation.intent,
+                    formulation
                 ),
                 remote: true,
                 class: 'close' %>
   </div>
 
-  <div class="field interpretations-show__interpretation">
+  <div class="field formulations-show__formulation">
     <div class="control">
-      <%= display_expression(interpretation) %>
+      <%= display_expression(formulation) %>
     </div>
   </div>
 
-  <div class="aliases <% if rtl?(interpretation.locale) %>aliases--rtl<% end %> interpretations-show__summary">
-    <% if interpretation.interpretation_aliases.any? %>
+  <div class="aliases <% if rtl?(formulation.locale) %>aliases--rtl<% end %> formulations-show__summary">
+    <% if formulation.interpretation_aliases.any? %>
       <table>
         <thead>
           <tr>
@@ -30,7 +30,7 @@
           </tr>
         </thead>
         <tbody>
-        <% interpretation.interpretation_aliases.order(position_start: :asc).each do |ia| %>
+        <% formulation.interpretation_aliases.order(position_start: :asc).each do |ia| %>
           <% json_alias = JSON.parse(alias_to_json(ia)) %>
           <tr>
             <td>
@@ -66,7 +66,7 @@
               </label>
             </td>
             <td>
-              <%= ia.interpretation.expression[ia.position_start..ia.position_end-1] %>
+              <%= ia.formulation.expression[ia.position_start..ia.position_end-1] %>
             </td>
           </tr>
         <% end %>
@@ -75,14 +75,14 @@
     <% end %>
   </div>
 
-  <% unless interpretation.auto_solution_enabled %>
+  <% unless formulation.auto_solution_enabled %>
     <div class="field field--for-solution interpretations-show__solution">
       <div class="control">
         <span class="solution-label">
-          <%= t('views.interpretations.solution_label_readonly') %>
+          <%= t('views.formulations.solution_label_readonly') %>
         </span>
         <% %>
-        <%= text_area_tag("solution__#{interpretation.id}", interpretation.solution, readonly: true) %>
+        <%= text_area_tag("solution__#{formulation.id}", formulation.solution, readonly: true) %>
       </div>
     </div>
   <% end %>

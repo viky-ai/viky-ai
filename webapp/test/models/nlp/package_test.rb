@@ -17,14 +17,14 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression"    => "Quel temps fera-t-il demain ?",
-              "pos"            => interpretations(:weather_forecast_demain).position,
+              "pos"            => formulations(:weather_forecast_demain).position,
               "locale"        => "fr",
               "glue-distance" => 20,
               "solution"      => "Quel temps fera-t-il demain ?",
             },
             {
               "expression" => "@{question} @{when} ?",
-              "pos"         => interpretations(:weather_forecast_tomorrow).position,
+              "pos"         => formulations(:weather_forecast_tomorrow).position,
               "aliases"    => [
                 {
                   "alias"   => "question",
@@ -53,7 +53,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression"    => "What the weather like",
-              "pos"            => interpretations(:weather_question_like).position,
+              "pos"            => formulations(:weather_question_like).position,
               "locale"        => "en",
               "glue-distance" => 20,
               "solution"      => "What the weather like",
@@ -156,12 +156,12 @@ class PackageTest < ActiveSupport::TestCase
   test 'Package generation with locale any' do
     weather = agents(:weather)
     intent = intents(:weather_forecast)
-    interpretation = interpretations(:weather_forecast_demain)
-    interpretation.locale = Locales::ANY
-    interpretation.save
+    formulation = formulations(:weather_forecast_demain)
+    formulation.locale = Locales::ANY
+    formulation.save
     assert entities_lists(:weather_conditions).destroy
     assert entities_lists(:weather_dates).destroy
-    intent.interpretations = [interpretation]
+    intent.formulations = [formulation]
     intent.save
     assert intents(:weather_question).destroy
 
@@ -178,7 +178,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression"    => "Quel temps fera-t-il demain ?",
-              "pos"            => interpretations(:weather_forecast_demain).position,
+              "pos"            => formulations(:weather_forecast_demain).position,
               "solution"      => "Quel temps fera-t-il demain ?",
               "glue-distance" => 20
             }
@@ -214,7 +214,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression"    => "What the weather like",
-              "pos"            => interpretations(:weather_question_like).position,
+              "pos"            => formulations(:weather_question_like).position,
               "locale"        => "en",
               "solution"      => "What the weather like",
               "glue-distance" => 20
@@ -250,7 +250,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "@{question}",
-              "pos"         => interpretations(:weather_forecast_tomorrow).position,
+              "pos"         => formulations(:weather_forecast_tomorrow).position,
               "aliases"    => [
                 {
                   "alias"   => "question",
@@ -264,7 +264,7 @@ class PackageTest < ActiveSupport::TestCase
             },
             {
               "expression" => "@{question} @{question_recursive}",
-              "pos"         => interpretations(:weather_forecast_tomorrow).position,
+              "pos"         => formulations(:weather_forecast_tomorrow).position,
               "aliases"    => [
                 {
                   "alias"   => "question",
@@ -291,14 +291,14 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression"     => "Quel temps fera-t-il demain ?",
-              "pos"             => interpretations(:weather_forecast_demain).position,
+              "pos"             => formulations(:weather_forecast_demain).position,
               "locale"         => "fr",
               "solution"       => "Quel temps fera-t-il demain ?",
               "glue-distance"  => 20
             },
             {
               "expression" => "@{question} tomorrow ?",
-              "pos"         => interpretations(:weather_forecast_tomorrow).position,
+              "pos"         => formulations(:weather_forecast_tomorrow).position,
               "aliases"    => [
                 {
                   "alias"   => "question",
@@ -321,7 +321,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression"    => "What the weather like",
-              "pos"            => interpretations(:weather_question_like).position,
+              "pos"            => formulations(:weather_question_like).position,
               "locale"        => "en",
               "solution"      => "What the weather like",
               "glue-distance" => 20
@@ -356,14 +356,14 @@ class PackageTest < ActiveSupport::TestCase
           'expressions' => [
             {
               'expression'    => 'Quel temps fera-t-il demain ?',
-              'pos'           => interpretations(:weather_forecast_demain).position,
+              'pos'           => formulations(:weather_forecast_demain).position,
               'locale'        => 'fr',
               'solution'      => 'Quel temps fera-t-il demain ?',
               "glue-distance" => 20
             },
             {
               'expression' => '@{question} tomorrow ?',
-              'pos'        => interpretations(:weather_forecast_tomorrow).position,
+              'pos'        => formulations(:weather_forecast_tomorrow).position,
               'aliases'    => [
                 {
                   'alias'   => 'question',
@@ -379,7 +379,7 @@ class PackageTest < ActiveSupport::TestCase
             },
             {
               'expression' => '@{question} tomorrow ?',
-              'pos'        => interpretations(:weather_forecast_tomorrow).position,
+              'pos'        => formulations(:weather_forecast_tomorrow).position,
               'aliases'    => [
                 {
                   'alias'   => 'question',
@@ -400,7 +400,7 @@ class PackageTest < ActiveSupport::TestCase
           'expressions' => [
             {
               'expression'    => 'What the weather like',
-              'pos'           => interpretations(:weather_question_like).position,
+              'pos'           => formulations(:weather_question_like).position,
               'locale'        => 'en',
               'solution'      => "What the weather like",
               "glue-distance" => 20
@@ -435,14 +435,14 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression"    => "Quel temps fera-t-il demain ?",
-              "pos"           => interpretations(:weather_forecast_demain).position,
+              "pos"           => formulations(:weather_forecast_demain).position,
               "locale"        => "fr",
               "solution"      => "Quel temps fera-t-il demain ?",
               "glue-distance" => 20
             },
             {
               "expression" => "@{question} tomorrow ?",
-              "pos"        => interpretations(:weather_forecast_tomorrow).position,
+              "pos"        => formulations(:weather_forecast_tomorrow).position,
               "aliases"    => [
                 {
                   "alias"   => "question",
@@ -465,7 +465,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression"    => "What the weather like",
-              "pos"           => interpretations(:weather_question_like).position,
+              "pos"           => formulations(:weather_question_like).position,
               "locale"        => "en",
               "solution"      => "What the weather like",
               "glue-distance" => 20
@@ -484,7 +484,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions"=>  [
               {
                 "expression"    => "Find",
-                "pos"           => interpretations(:terminator_simple_where_1).position,
+                "pos"           => formulations(:terminator_simple_where_1).position,
                 "locale"        => "en",
                 "solution"      => "Find",
                 "glue-distance" => 20
@@ -498,7 +498,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "@{find} Sarah Connor",
-              "pos"        => interpretations(:terminator_where).position,
+              "pos"        => formulations(:terminator_where).position,
               "aliases"=> [
                 {
                   "alias"   => "find",
@@ -512,7 +512,7 @@ class PackageTest < ActiveSupport::TestCase
             },
             {
               "expression"    => "Where is Sarah Connor ?",
-              "pos"            => interpretations(:terminator_find_sarah).position,
+              "pos"            => formulations(:terminator_find_sarah).position,
               "locale"        => "en",
               "solution"      => "Where is Sarah Connor ?",
               "glue-distance" => 20
@@ -533,137 +533,137 @@ class PackageTest < ActiveSupport::TestCase
   end
 
 
-  test 'No interpretation alias' do
+  test 'No formulation alias' do
     expected_expression = 'I want to go to Paris from London'
-    interpretation = Interpretation.new(expression: 'I want to go to Paris from London', locale: 'en')
-    interpretation.save
-    assert_equal expected_expression, interpretation.expression_with_aliases
+    formulation = Formulation.new(expression: 'I want to go to Paris from London', locale: 'en')
+    formulation.save
+    assert_equal expected_expression, formulation.expression_with_aliases
   end
 
 
-  test 'Only interpretation alias' do
+  test 'Only formulation alias' do
     expected_expression = '@{route}'
 
-    interpretation = Interpretation.new
+    formulation = Formulation.new
     interpretation_alias = InterpretationAlias.new
 
     interpretation_alias.stubs(:position_start).returns(0)
     interpretation_alias.stubs(:position_end).returns(33)
-    interpretation_alias.stubs(:interpretation).returns(interpretation)
+    interpretation_alias.stubs(:formulation).returns(formulation)
     interpretation_alias.stubs(:aliasname).returns('route')
 
-    interpretation.stubs(:expression).returns('I want to go to Paris from London')
+    formulation.stubs(:expression).returns('I want to go to Paris from London')
     array = [interpretation_alias]
     array.stubs(:order).returns([interpretation_alias])
     array.stubs(:count).returns([interpretation_alias].size)
-    interpretation.stubs(:interpretation_aliases).returns(array)
+    formulation.stubs(:interpretation_aliases).returns(array)
 
-    assert_equal expected_expression, interpretation.expression_with_aliases
+    assert_equal expected_expression, formulation.expression_with_aliases
   end
 
 
-  test 'Start with interpretation alias' do
+  test 'Start with formulation alias' do
     expected_expression = '@{want} to go to Paris from London'
 
-    interpretation = Interpretation.new
+    formulation = Formulation.new
     interpretation_alias = InterpretationAlias.new
 
     interpretation_alias.stubs(:position_start).returns(0)
     interpretation_alias.stubs(:position_end).returns(6)
-    interpretation_alias.stubs(:interpretation).returns(interpretation)
+    interpretation_alias.stubs(:formulation).returns(formulation)
     interpretation_alias.stubs(:aliasname).returns('want')
 
-    interpretation.stubs(:expression).returns('I want to go to Paris from London')
+    formulation.stubs(:expression).returns('I want to go to Paris from London')
     array = [interpretation_alias]
     array.stubs(:order).returns([interpretation_alias])
     array.stubs(:count).returns([interpretation_alias].size)
-    interpretation.stubs(:interpretation_aliases).returns(array)
+    formulation.stubs(:interpretation_aliases).returns(array)
 
-    assert_equal expected_expression, interpretation.expression_with_aliases
+    assert_equal expected_expression, formulation.expression_with_aliases
   end
 
 
-  test 'End with interpretation alias' do
+  test 'End with formulation alias' do
     expected_expression = 'I want to go to Paris from @{london}'
 
-    interpretation = Interpretation.new
+    formulation = Formulation.new
     interpretation_alias = InterpretationAlias.new
 
     interpretation_alias.stubs(:position_start).returns(27)
     interpretation_alias.stubs(:position_end).returns(33)
-    interpretation_alias.stubs(:interpretation).returns(interpretation)
+    interpretation_alias.stubs(:formulation).returns(formulation)
     interpretation_alias.stubs(:aliasname).returns('london')
 
-    interpretation.stubs(:expression).returns('I want to go to Paris from London')
+    formulation.stubs(:expression).returns('I want to go to Paris from London')
     array = [interpretation_alias]
     array.stubs(:order).returns([interpretation_alias])
     array.stubs(:count).returns([interpretation_alias].size)
-    interpretation.stubs(:interpretation_aliases).returns(array)
+    formulation.stubs(:interpretation_aliases).returns(array)
 
-    assert_equal expected_expression, interpretation.expression_with_aliases
+    assert_equal expected_expression, formulation.expression_with_aliases
   end
 
 
-  test 'Middle interpretation alias' do
+  test 'Middle formulation alias' do
     expected_expression = 'I want to go @{prep-to} Paris from London'
 
-    interpretation = Interpretation.new
+    formulation = Formulation.new
     interpretation_alias = InterpretationAlias.new
 
     interpretation_alias.stubs(:position_start).returns(13)
     interpretation_alias.stubs(:position_end).returns(15)
-    interpretation_alias.stubs(:interpretation).returns(interpretation)
+    interpretation_alias.stubs(:formulation).returns(formulation)
     interpretation_alias.stubs(:aliasname).returns('prep-to')
 
-    interpretation.stubs(:expression).returns('I want to go to Paris from London')
+    formulation.stubs(:expression).returns('I want to go to Paris from London')
     array = [interpretation_alias]
     array.stubs(:order).returns([interpretation_alias])
     array.stubs(:count).returns([interpretation_alias].size)
-    interpretation.stubs(:interpretation_aliases).returns(array)
+    formulation.stubs(:interpretation_aliases).returns(array)
 
-    assert_equal expected_expression, interpretation.expression_with_aliases
+    assert_equal expected_expression, formulation.expression_with_aliases
   end
 
 
-  test 'Repeated interpretation alias' do
+  test 'Repeated formulation alias' do
     expected_expression = 'I want to go to @{town_from} from @{town_to}'
 
-    interpretation = Interpretation.new
+    formulation = Formulation.new
     interpretation_alias1 = InterpretationAlias.new
     interpretation_alias2 = InterpretationAlias.new
 
     interpretation_alias1.stubs(:position_start).returns(16)
     interpretation_alias1.stubs(:position_end).returns(21)
-    interpretation_alias1.stubs(:interpretation).returns(interpretation)
+    interpretation_alias1.stubs(:formulation).returns(formulation)
     interpretation_alias1.stubs(:aliasname).returns('town_from')
 
     interpretation_alias2.stubs(:position_start).returns(27)
     interpretation_alias2.stubs(:position_end).returns(33)
-    interpretation_alias2.stubs(:interpretation).returns(interpretation)
+    interpretation_alias2.stubs(:formulation).returns(formulation)
     interpretation_alias2.stubs(:aliasname).returns('town_to')
 
-    interpretation.stubs(:expression).returns('I want to go to Paris from London')
+    formulation.stubs(:expression).returns('I want to go to Paris from London')
     array = [interpretation_alias1, interpretation_alias2]
     array.stubs(:order).returns([interpretation_alias1, interpretation_alias2])
     array.stubs(:count).returns([interpretation_alias1, interpretation_alias2].size)
-    interpretation.stubs(:interpretation_aliases).returns(array)
+    formulation.stubs(:interpretation_aliases).returns(array)
 
-    assert_equal expected_expression, interpretation.expression_with_aliases
+    assert_equal expected_expression, formulation.expression_with_aliases
   end
 
 
   test 'Package generation with regex type' do
     agent = agents(:terminator)
-    interpretation = interpretations(:terminator_find_sarah)
+    formulation = formulations(:terminator_find_sarah)
     assert entities_lists(:terminator_targets).destroy
-    assert interpretations(:terminator_where).destroy
+    assert formulations(:terminator_where).destroy
     assert intents(:simple_where).destroy
 
     regex_alias = InterpretationAlias.new(
       position_start: 9,
       position_end: 21,
       aliasname: 'name',
-      interpretation_id: interpretation.id,
+      formulation_id: formulation.id,
       nature: 'type_regex',
       reg_exp: '[A-Za-z,-]'
     )
@@ -675,13 +675,13 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/terminator",
       "interpretations" => [
         {
-          "id"    => interpretation.intent.id,
+          "id"    => formulation.intent.id,
           "slug"  => "admin/terminator/interpretations/terminator_find",
           'scope' => 'public',
           "expressions" => [
             {
               "expression" => "Where is @{name} ?",
-              "pos"        => interpretations(:terminator_find_sarah).position,
+              "pos"        => formulations(:terminator_find_sarah).position,
               "aliases"    => [
                 {
                   "alias"   => "name",
@@ -703,11 +703,11 @@ class PackageTest < ActiveSupport::TestCase
 
   test 'Package generation with different proximity values' do
     weather = agents(:weather)
-    interpretation_far = interpretations(:weather_forecast_demain)
+    interpretation_far = formulations(:weather_forecast_demain)
     interpretation_far.proximity = 'accepts_punctuations'
     assert interpretation_far.save
 
-    interpretation_very_close = interpretations(:weather_question_like)
+    interpretation_very_close = formulations(:weather_question_like)
     interpretation_very_close.proximity = 'very_close'
     assert interpretation_very_close.save
 
@@ -715,7 +715,7 @@ class PackageTest < ActiveSupport::TestCase
     entities_far.proximity = 'far'
     assert entities_far.save
 
-    assert interpretations(:weather_forecast_tomorrow).destroy
+    assert formulations(:weather_forecast_tomorrow).destroy
     p = Nlp::Package.new(weather)
 
     expected = {
@@ -729,7 +729,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression"    => "Quel temps fera-t-il demain ?",
-              "pos"           => interpretations(:weather_forecast_demain).position,
+              "pos"           => formulations(:weather_forecast_demain).position,
               "locale"        => "fr",
               "glue-distance" => 0,
               "glue-strength" => 'punctuation',
@@ -744,7 +744,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression"    => "What the weather like",
-              "pos"           => interpretations(:weather_question_like).position,
+              "pos"           => formulations(:weather_question_like).position,
               "locale"        => "en",
               "solution"      => "What the weather like",
               "glue-distance" => 10
@@ -1147,9 +1147,9 @@ class PackageTest < ActiveSupport::TestCase
     other_io = StringIO.new
 
     # Create stale cache by changing data in the DB
-    interpretation = interpretations(:weather_forecast_tomorrow)
-    interpretation.position = 2
-    assert interpretation.save!
+    formulation = formulations(:weather_forecast_tomorrow)
+    formulation.position = 2
+    assert formulation.save!
     entity = entities(:weather_raining)
     entity.position = 2
     assert entity.save!

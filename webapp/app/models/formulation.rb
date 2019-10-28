@@ -1,6 +1,6 @@
 require 'unicode/emoji'
 
-class Interpretation < ApplicationRecord
+class Formulation < ApplicationRecord
   include Positionable
   positionable_ancestor :intent
 
@@ -9,7 +9,7 @@ class Interpretation < ApplicationRecord
 
   accepts_nested_attributes_for :interpretation_aliases, allow_destroy: true
 
-  enum proximity: ExpressionProximity::INTERPRETATION_PROXIMITIES, _prefix: :proximity
+  enum proximity: ExpressionProximity::FORMULATION_PROXIMITIES, _prefix: :proximity
   validates :expression, presence: true, byte_size: { maximum: 2048 }
   validates :solution, byte_size: { maximum: 8192 }
   validates :locale, inclusion: { in: Locales::ALL }, presence: true
@@ -46,7 +46,7 @@ class Interpretation < ApplicationRecord
   def update_locale(new_locale)
     previous_locale = locale
     self.locale = new_locale
-    max_position = intent.interpretations.where(locale: new_locale).maximum(:position)
+    max_position = intent.formulations.where(locale: new_locale).maximum(:position)
     self.position = max_position.nil? ? 0 : max_position + 1
     save
     previous_locale
@@ -58,14 +58,14 @@ class Interpretation < ApplicationRecord
       aliases = interpretation_aliases.reject(&:marked_for_destruction?)
       if aliases.size == 1
         if aliases.first.any_enabled
-          errors.add(:base, I18n.t('errors.interpretation.one_alias_one_any'))
+          errors.add(:base, I18n.t('errors.formulation.one_alias_one_any'))
         end
       elsif aliases.size > 1
         if aliases.select {|a| a.any_enabled}.size > 1
-          errors.add(:base, I18n.t('errors.interpretation.only_one_any'))
+          errors.add(:base, I18n.t('errors.formulation.only_one_any'))
         end
         if aliases.select {|a| a.is_list}.size > 1
-          errors.add(:base, I18n.t('errors.interpretation.only_one_list'))
+          errors.add(:base, I18n.t('errors.formulation.only_one_list'))
         end
       end
     end
@@ -96,14 +96,14 @@ class Interpretation < ApplicationRecord
               .gsub(/\p{Co}/, '') # G_UNICODE_PRIVATE_USE (Co)
               .gsub(/\p{Cs}/, '') # G_UNICODE_SURROGATE (Cs)
       actual_count = exp.split.size
-      errors.add(:expression, I18n.t('errors.interpretation.expression_nlp_length', count: nlp_max_length, actual_count: actual_count)) if actual_count > nlp_max_length
+      errors.add(:expression, I18n.t('errors.formulation.expression_nlp_length', count: nlp_max_length, actual_count: actual_count)) if actual_count > nlp_max_length
     end
 
     def validate_owner_quota
       unless intent.nil?
         owner = User.find(intent.agent.owner_id)
         if owner.quota_exceeded?
-          errors.add(:quota, I18n.t('errors.interpretation.quota', maximum: Quota.expressions_limit))
+          errors.add(:quota, I18n.t('errors.formulation.quota', maximum: Quota.expressions_limit))
         end
       end
     end

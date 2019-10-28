@@ -1,5 +1,5 @@
 <div id="blankslate-start"
-     <% unless intent.interpretations_with_local(@current_locale).empty? %>style="display:none;"<% end %>>
+     <% unless intent.formulations_with_local(@current_locale).empty? %>style="display:none;"<% end %>>
 
   <div class="card">
     <div class="card-content">
@@ -16,9 +16,9 @@
             <% language = current_locale %>
           <% end %>
           <p>
-            <%= t('views.interpretations.blankslate.no_expression', language: language) %>
+            <%= t('views.formulations.blankslate.no_expression', language: language) %>
             <% if current_user.can? :edit, agent %>
-              <br /><%= t('views.interpretations.blankslate.start') %>
+              <br /><%= t('views.formulations.blankslate.start') %>
             <% end %>
           </p>
         </div>

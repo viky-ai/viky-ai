@@ -95,7 +95,8 @@ CREATE TABLE public.agents (
     visibility integer DEFAULT 0,
     source_agent jsonb,
     nlp_updated_at timestamp without time zone,
-    locales jsonb
+    locales jsonb,
+    slug character varying
 );
 
 
@@ -225,6 +226,25 @@ CREATE TABLE public.favorite_agents (
 
 
 --
+-- Name: formulations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.formulations (
+    id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    expression character varying,
+    intent_id uuid,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    locale character varying,
+    "position" integer DEFAULT '-1'::integer,
+    keep_order boolean DEFAULT false,
+    solution text,
+    auto_solution_enabled boolean DEFAULT true,
+    proximity integer DEFAULT 3
+);
+
+
+--
 -- Name: friendly_id_slugs; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -283,32 +303,13 @@ CREATE TABLE public.interpretation_aliases (
     aliasname character varying NOT NULL,
     position_start integer,
     position_end integer,
-    interpretation_id uuid,
+    formulation_id uuid,
     interpretation_aliasable_id uuid,
     nature integer DEFAULT 0,
     is_list boolean DEFAULT false,
     any_enabled boolean DEFAULT false,
     interpretation_aliasable_type character varying,
     reg_exp text
-);
-
-
---
--- Name: interpretations; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.interpretations (
-    id uuid DEFAULT public.gen_random_uuid() NOT NULL,
-    expression character varying,
-    intent_id uuid,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    locale character varying,
-    "position" integer DEFAULT '-1'::integer,
-    keep_order boolean DEFAULT false,
-    solution text,
-    auto_solution_enabled boolean DEFAULT true,
-    proximity integer DEFAULT 3
 );
 
 
@@ -537,10 +538,10 @@ ALTER TABLE ONLY public.entities
 
 
 --
--- Name: interpretations index_interpretations_on_intent_id_locale_and_position; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: formulations index_interpretations_on_intent_id_locale_and_position; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.interpretations
+ALTER TABLE ONLY public.formulations
     ADD CONSTRAINT index_interpretations_on_intent_id_locale_and_position UNIQUE (intent_id, locale, "position") DEFERRABLE;
 
 
@@ -561,10 +562,10 @@ ALTER TABLE ONLY public.interpretation_aliases
 
 
 --
--- Name: interpretations interpretations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: formulations interpretations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.interpretations
+ALTER TABLE ONLY public.formulations
     ADD CONSTRAINT interpretations_pkey PRIMARY KEY (id);
 
 
@@ -706,6 +707,13 @@ CREATE UNIQUE INDEX index_favorite_agents_on_user_id_and_agent_id ON public.favo
 
 
 --
+-- Name: index_formulations_on_intent_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_formulations_on_intent_id ON public.formulations USING btree (intent_id);
+
+
+--
 -- Name: index_friendly_id_slugs_on_slug_and_sluggable_type; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -755,17 +763,10 @@ CREATE UNIQUE INDEX index_intents_on_intentname_and_agent_id ON public.intents U
 
 
 --
--- Name: index_interpretation_aliases_on_interpretation_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_interpretation_aliases_on_formulation_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_interpretation_aliases_on_interpretation_id ON public.interpretation_aliases USING btree (interpretation_id);
-
-
---
--- Name: index_interpretations_on_intent_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_interpretations_on_intent_id ON public.interpretations USING btree (intent_id);
+CREATE INDEX index_interpretation_aliases_on_formulation_id ON public.interpretation_aliases USING btree (formulation_id);
 
 
 --
@@ -926,10 +927,10 @@ ALTER TABLE ONLY public.entities_lists
 
 
 --
--- Name: interpretations fk_rails_7c761fd9bc; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: formulations fk_rails_7c761fd9bc; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.interpretations
+ALTER TABLE ONLY public.formulations
     ADD CONSTRAINT fk_rails_7c761fd9bc FOREIGN KEY (intent_id) REFERENCES public.intents(id) ON DELETE CASCADE;
 
 
@@ -978,7 +979,7 @@ ALTER TABLE ONLY public.readmes
 --
 
 ALTER TABLE ONLY public.interpretation_aliases
-    ADD CONSTRAINT fk_rails_bed1931875 FOREIGN KEY (interpretation_id) REFERENCES public.interpretations(id) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_rails_bed1931875 FOREIGN KEY (formulation_id) REFERENCES public.formulations(id) ON DELETE CASCADE;
 
 
 --
@@ -1091,6 +1092,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190729072037'),
 ('20190729112306'),
 ('20190925090036'),
-('20191018130844');
+('20191018130844'),
+('20191025090323'),
+('20191028091856');
 
 

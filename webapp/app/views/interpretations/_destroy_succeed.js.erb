@@ -1,8 +1,0 @@
-App.CardListHelper.removeFromList("#interpretation-<%= @interpretation.id %>")
-
-setTimeout(function(){
-  App.CardListHelper.updateBlankslates();
-  App.CardListHelper.updateDraggable();
-}, 200);
-
-App.InterpretationsList.decrementTabBadge();

@@ -8,11 +8,11 @@ module ConsoleHelper
     line_number = body["errors_javascript"]["solution_location"]["line_number"]
 
     if slug.split('/')[2] == "interpretations"
-      interpretation = Interpretation.find_by_position_and_intent_id(position, parent_id)
-      agent = interpretation.intent.agent
-      href = "/agents/#{slug}?locale=#{interpretation.locale}"
-      href << "&debug[type]=interpretations"
-      href << "&debug[id]=#{interpretation.id}"
+      formulation = Formulation.find_by_position_and_intent_id(position, parent_id)
+      agent = formulation.intent.agent
+      href = "/agents/#{slug}?locale=#{formulation.locale}"
+      href << "&debug[type]=formulations"
+      href << "&debug[id]=#{formulation.id}"
     else
       list = EntitiesList.find(parent_id)
       entity = list.entities.find_by_position(position)
@@ -71,11 +71,11 @@ module ConsoleHelper
         href << "?search=#{entity.terms.first['term']}" if list.entities_count > 100
         href << "#smooth-scroll-to-entity-#{entity.id}"
       else
-        interpretation = Interpretation.find_by_position_and_intent_id(position, parent_id)
-        agent = interpretation.intent.agent
+        formulation = Formulation.find_by_position_and_intent_id(position, parent_id)
+        agent = formulation.intent.agent
         href = "/agents/#{matches['interpretation_slug']}"
-        href << "?locale=#{interpretation.locale}"
-        href << "#smooth-scroll-to-interpretation-#{interpretation.id}"
+        href << "?locale=#{formulation.locale}"
+        href << "#smooth-scroll-to-formulation-#{formulation.id}"
       end
 
       if current_user.can?(:show, agent)

@@ -29,7 +29,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
             "slug" => intents(:weather_forecast).slug,
             "package" => intents(:weather_forecast).agent.id,
             "score" => "1.0",
-            "solution" => interpretations(:weather_forecast_tomorrow).solution
+            "solution" => formulations(:weather_forecast_tomorrow).solution
           }
         ]
       }
@@ -106,7 +106,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
             "slug" => intents(:weather_forecast).slug,
             "package" => intents(:weather_forecast).agent.id,
             "score" => "1.0",
-            "solution" => interpretations(:weather_forecast_tomorrow).solution
+            "solution" => formulations(:weather_forecast_tomorrow).solution
           }
         ]
       }
@@ -164,7 +164,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
             "slug" => intents(:weather_forecast).slug,
             "package" => intents(:weather_forecast).agent.id,
             "score" => "1.0",
-            "solution" => interpretations(:weather_forecast_tomorrow).solution
+            "solution" => formulations(:weather_forecast_tomorrow).solution
           }
         ]
       }
@@ -188,13 +188,13 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
           "slug" => intents(:terminator_find).slug,
           "package" => intents(:terminator_find).agent.id,
           "score" => "1.0",
-          "solution" => interpretations(:terminator_find_sarah).solution
+          "solution" => formulations(:terminator_find_sarah).solution
         }, {
           "id" => intents(:weather_forecast).id,
           "slug" => intents(:weather_forecast).slug,
           "package" => intents(:weather_forecast).agent.id,
           "score" => "1.0",
-          "solution" => interpretations(:weather_forecast_tomorrow).solution
+          "solution" => formulations(:weather_forecast_tomorrow).solution
         }]
       }
     )
@@ -209,7 +209,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
   end
 
 
-  test "Detect interpretation already tested" do
+  test "Detect formulation already tested" do
     isolate_actioncable_and_go_to_ui
 
     Nlp::Interpret.any_instance.stubs("send_nlp_request").returns(
@@ -220,7 +220,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
           "slug" => intents(:weather_forecast).slug,
           "package" => intents(:weather_forecast).agent.id,
           "score" => "1.0",
-          "solution" => interpretations(:weather_forecast_tomorrow).solution
+          "solution" => formulations(:weather_forecast_tomorrow).solution
         }]
       }
     )
@@ -338,7 +338,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
           "slug" => intents(:weather_forecast).slug,
           "package" => intents(:weather_forecast).agent.id,
           "score" => "1.0",
-          "solution" => interpretations(:weather_question_like).solution
+          "solution" => formulations(:weather_question_like).solution
         }]
       }
     )
@@ -386,7 +386,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       "package"   => intents(:weather_question).agent.id,
       "id"        => intents(:weather_question).id,
       "slug"      => intents(:weather_question).slug,
-      "solution"  => interpretations(:weather_question_like).solution.to_json.to_s
+      "solution"  => formulations(:weather_question_like).solution.to_json.to_s
     }
     @regression_weather_condition.state = "failure"
     assert @regression_weather_condition.save

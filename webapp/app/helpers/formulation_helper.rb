@@ -1,4 +1,4 @@
-module InterpretationHelper
+module FormulationHelper
 
   def rtl?(locale)
     locale == 'ar'
@@ -29,7 +29,7 @@ module InterpretationHelper
   def number_to_json
     JSON.generate({
       color:  "intent-black",
-      aliasname: t("views.interpretations.number").downcase,
+      aliasname: t("views.formulations.number").downcase,
       nature: InterpretationAlias.natures.key(InterpretationAlias.natures[:type_number])
     })
   end
@@ -37,7 +37,7 @@ module InterpretationHelper
   def regex_to_json
     JSON.generate({
       color: "intent-black",
-      aliasname: t("views.interpretations.regex").downcase,
+      aliasname: t("views.formulations.regex").downcase,
       nature: InterpretationAlias.natures.key(InterpretationAlias.natures[:type_regex]),
       reg_exp: ""
     })
@@ -55,7 +55,7 @@ module InterpretationHelper
         nature: InterpretationAlias.natures.key(InterpretationAlias.natures[:type_number]),
         is_list: interpretation_alias.is_list,
         any_enabled: interpretation_alias.any_enabled,
-        slug: t("views.interpretations.number")
+        slug: t("views.formulations.number")
       }
     elsif interpretation_alias.type_regex?
       data = {
@@ -65,7 +65,7 @@ module InterpretationHelper
         reg_exp: interpretation_alias.reg_exp,
         is_list: interpretation_alias.is_list,
         any_enabled: interpretation_alias.any_enabled,
-        slug: t("views.interpretations.regex")
+        slug: t("views.formulations.regex")
       }
     else
       current_aliasable = interpretation_alias.interpretation_aliasable
@@ -114,11 +114,11 @@ module InterpretationHelper
   end
 
 
-  def display_expression_for_trix(interpretation)
-    expression = interpretation.expression
-    return expression if interpretation.interpretation_aliases.empty?
+  def display_expression_for_trix(formulation)
+    expression = formulation.expression
+    return expression if formulation.interpretation_aliases.empty?
 
-    ordered_aliases = interpretation.interpretation_aliases
+    ordered_aliases = formulation.interpretation_aliases
                         .reject { |ialias| ialias._destroy }
                         .sort_by { |ialias| ialias.position_start }
     result = []
@@ -137,17 +137,17 @@ module InterpretationHelper
   end
 
 
-  def display_expression(interpretation)
-    expression = interpretation.expression
+  def display_expression(formulation)
+    expression = formulation.expression
 
     result = []
 
-    if interpretation.interpretation_aliases.count == 0
+    if formulation.interpretation_aliases.count == 0
       result << expression
     else
-      ordered_aliases = interpretation.interpretation_aliases.order(position_start: :asc)
+      ordered_aliases = formulation.interpretation_aliases.order(position_start: :asc)
 
-      result << "<span class='interpretation-resume'>"
+      result << "<span class='formulation-resume'>"
       expression.split('').each_with_index do |character, index|
         interpretation_alias = ordered_aliases.first
         if interpretation_alias.nil? || index < interpretation_alias.position_start
@@ -164,7 +164,7 @@ module InterpretationHelper
             title = interpretation_alias.interpretation_aliasable.slug
             color = interpretation_alias.interpretation_aliasable.color
           end
-          css_class = "interpretation-resume__alias-#{color}"
+          css_class = "formulation-resume__alias-#{color}"
           text = expression[interpretation_alias.position_start..interpretation_alias.position_end-1]
           result << "<span class='#{css_class}' title='#{title}'>#{text}</span>"
           ordered_aliases = ordered_aliases.drop(1)
@@ -176,22 +176,22 @@ module InterpretationHelper
     result << "&nbsp;"
     result << "&nbsp;"
 
-    if interpretation.keep_order
+    if formulation.keep_order
       result << "&nbsp;"
-      result << "<span class='badge' title='#{t("views.interpretations.keep_order_description")}'>"
-      result << t('activerecord.attributes.interpretation.keep_order')
+      result << "<span class='badge' title='#{t("views.formulations.keep_order_description")}'>"
+      result << t('activerecord.attributes.formulation.keep_order')
       result << "</span>"
     end
 
     result << "&nbsp;"
-    result << "<span class='badge' title='#{t("views.interpretations.proximity.description.#{interpretation.proximity}")}'>"
-    result << t("views.interpretations.proximity.#{interpretation.proximity}")
+    result << "<span class='badge' title='#{t("views.formulations.proximity.description.#{formulation.proximity}")}'>"
+    result << t("views.formulations.proximity.#{formulation.proximity}")
     result << "</span>"
 
-    if interpretation.auto_solution_enabled
+    if formulation.auto_solution_enabled
       result << "&nbsp;"
-      result << " <span class='badge' title='#{t("views.interpretations.auto_solution_description")}'>"
-      result << t('activerecord.attributes.interpretation.auto_solution_enabled')
+      result << " <span class='badge' title='#{t("views.formulations.auto_solution_description")}'>"
+      result << t('activerecord.attributes.formulation.auto_solution_enabled')
       result << "</span>"
     end
 

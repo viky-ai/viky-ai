@@ -6,7 +6,7 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Show forbidden' do
     sign_in users(:confirmed)
-    get user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_forecast), interpretations(:weather_forecast_tomorrow)),
+    get user_agent_intent_formulation_url(users(:admin), agents(:weather), intents(:weather_forecast), formulations(:weather_forecast_tomorrow)),
         params: {
           format: :js
         }
@@ -17,9 +17,9 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
   #
   # Show details
   #
-  test 'Show interpretation details forbidden' do
+  test 'Show formulation details forbidden' do
     sign_in users(:confirmed)
-    get show_detailed_user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_forecast), interpretations(:weather_forecast_tomorrow)),
+    get show_detailed_user_agent_intent_formulation_url(users(:admin), agents(:weather), intents(:weather_forecast), formulations(:weather_forecast_tomorrow)),
         params: {
           format: :js
         }
@@ -30,22 +30,22 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
   #
   # Create
   #
-  test 'Create interpretation access' do
+  test 'Create formulation access' do
     sign_in users(:edit_on_agent_weather)
-    post user_agent_intent_interpretations_url(users(:admin), agents(:weather), intents(:weather_forecast)),
+    post user_agent_intent_formulations_url(users(:admin), agents(:weather), intents(:weather_forecast)),
          params: {
-           interpretation: { expression: 'Hello citizen' },
+           formulation: { expression: 'Hello citizen' },
            format: :js
          }
     assert :success
     assert_nil flash[:alert]
   end
 
-  test 'Create interpretation forbidden' do
+  test 'Create formulation forbidden' do
     sign_in users(:show_on_agent_weather)
-    post user_agent_intent_interpretations_url(users(:admin), agents(:weather), intents(:weather_forecast)),
+    post user_agent_intent_formulations_url(users(:admin), agents(:weather), intents(:weather_forecast)),
          params: {
-           interpretation: { expression: 'Hello citizen' },
+           formulation: { expression: 'Hello citizen' },
            format: :js
          }
     assert_redirected_to agents_url
@@ -55,9 +55,9 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
   #
   # Edit
   #
-  test 'Edit interpretation forbidden' do
+  test 'Edit formulation forbidden' do
     sign_in users(:show_on_agent_weather)
-    get edit_user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_forecast), interpretations(:weather_forecast_tomorrow)),
+    get edit_user_agent_intent_formulation_url(users(:admin), agents(:weather), intents(:weather_forecast), formulations(:weather_forecast_tomorrow)),
         params: {
           format: :js
         }
@@ -68,22 +68,22 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
   #
   # Update
   #
-  test 'Update interpretation access' do
+  test 'Update formulation access' do
     sign_in users(:edit_on_agent_weather)
-    patch user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_forecast), interpretations(:weather_forecast_tomorrow)),
+    patch user_agent_intent_formulation_url(users(:admin), agents(:weather), intents(:weather_forecast), formulations(:weather_forecast_tomorrow)),
           params: {
-            interpretation: { expression: 'Hello citizen' },
+            formulation: { expression: 'Hello citizen' },
             format: :js
           }
     assert :success
     assert_nil flash[:alert]
   end
 
-  test 'Update interpretation forbidden' do
+  test 'Update formulation forbidden' do
     sign_in users(:show_on_agent_weather)
-    patch user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_forecast), interpretations(:weather_forecast_tomorrow)),
+    patch user_agent_intent_formulation_url(users(:admin), agents(:weather), intents(:weather_forecast), formulations(:weather_forecast_tomorrow)),
           params: {
-            interpretation: { expression: 'Hello citizen' },
+            formulation: { expression: 'Hello citizen' },
             format: :js
           }
     assert_redirected_to agents_url
@@ -93,9 +93,9 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
   #
   # Delete
   #
-  test 'Delete interpretation access' do
+  test 'Delete formulation access' do
     sign_in users(:admin)
-    delete user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_forecast), interpretations(:weather_forecast_tomorrow)),
+    delete user_agent_intent_formulation_url(users(:admin), agents(:weather), intents(:weather_forecast), formulations(:weather_forecast_tomorrow)),
            params: {
              format: :js
            }
@@ -103,9 +103,9 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
     assert_nil flash[:alert]
   end
 
-  test 'Delete interpretation forbidden' do
+  test 'Delete formulation forbidden' do
     sign_in users(:show_on_agent_weather)
-    delete user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_forecast), interpretations(:weather_forecast_tomorrow)),
+    delete user_agent_intent_formulation_url(users(:admin), agents(:weather), intents(:weather_forecast), formulations(:weather_forecast_tomorrow)),
            params: {
              format: :js
            }
@@ -117,11 +117,11 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
   #
   # Scope agent on owner
   #
-  test 'Interpretation agent scoped on current user' do
+  test 'Formulation agent scoped on current user' do
     sign_in users(:confirmed)
-    post user_agent_intent_interpretations_url(users(:confirmed), agents(:weather_confirmed), intents(:weather_confirmed_question)),
+    post user_agent_intent_formulations_url(users(:confirmed), agents(:weather_confirmed), intents(:weather_confirmed_question)),
          params: {
-           interpretation: { expression: 'Hello citizen' },
+           formulation: { expression: 'Hello citizen' },
            format: :js
          }
     assert :success

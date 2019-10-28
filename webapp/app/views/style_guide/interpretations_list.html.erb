@@ -13,16 +13,16 @@
   <%= highlight_html('bg-light-grey-300') do %>
 <ul class="card-list">
   <li>
-    <div class='interpretations-show'>
-      <div class="interpretations-show__close">
+    <div class='formulations-show'>
+      <div class="formulations-show__close">
         <a href="#" class="close">
           <%= icon_close %>
         </a>
       </div>
-      <div class="field interpretations-show__interpretation">
+      <div class="field formulations-show__formulation">
         <div class="control">
-          <span class="interpretation-resume">
-            <span class="interpretation-resume__alias-brown" title="viky/shopping/greetings">Hello</span>
+          <span class="formulation-resume">
+            <span class="formulation-resume__alias-brown" title="viky/shopping/greetings">Hello</span>
             citizen
           </span>
           <span class="merged-badges">
@@ -31,7 +31,7 @@
           </span>
         </div>
       </div>
-      <div class="aliases interpretations-show__summary">
+      <div class="aliases formulations-show__summary">
         <table>
           <thead>
           <tr>
@@ -58,7 +58,7 @@
           </tbody>
         </table>
       </div>
-      <div class="field interpretations-show__solution">
+      <div class="field formulations-show__solution">
         <div class="control">
           <span class="solution-label">Solution</span>
           <textarea id="solution__1" rows="3">{
@@ -69,14 +69,14 @@
     </div>
   </li>
   <li>
-    <a class="interpretations-list__show">
+    <a class="formulations-list__show">
       <span class="card-list__item__name">
         Good morning <span class="badge">Auto solution</span>
       </span>
     </a>
   </li>
   <li>
-    <a href="#" class="interpretations-list__show">
+    <a href="#" class="formulations-list__show">
       <span class="card-list__item__name">
         How can I help you ?
       </span>
@@ -102,8 +102,8 @@
 <ul id="sortable-list__example" class="card-list">
   <li>
     <div class="card-list__item__draggable"></div>
-    <form action="#" class="interpretations-form">
-      <div class="field interpretations-form__interpretation">
+    <form action="#" class="formulations-form">
+      <div class="field formulations-form__formulation">
         <div class="control trix-control">
           <div class="trix-control__option">
             <div class="trix-control__option__child">
@@ -123,7 +123,7 @@
                 </div>
                 <div class="dropdown__content dropdown__content--hidden">
                   <ul>
-                    <% Interpretation.proximities.each_key do |proximity| %>
+                    <% Formulation.proximities.each_key do |proximity| %>
                       <li>
                         <a href="#" <% if proximity == 'glued' %>class="current"<% end %>
                            data-behavior="replace-trigger-label"
@@ -146,7 +146,7 @@
           <trix-editor input="expression-600ba012-e4bd-4a7d-a62d-97057655d632" placeholder="Add an expression" trix-id="2" toolbar="trix-toolbar-2" contenteditable=""><div><!--block--><a href="{&quot;color&quot;:&quot;intent-brown&quot;,&quot;aliasname&quot;:&quot;where&quot;,&quot;slug&quot;:&quot;olivier/vikipedia/where&quot;,&quot;intent_id&quot;:&quot;8ae3a9fb-f266-401e-919f-bd44a8b279a5&quot;,&quot;nature&quot;:&quot;type_intent&quot;,&quot;id&quot;:&quot;b464a720-0a8a-11e8-a450-0d99b20efd39&quot;,&quot;state&quot;:&quot;new&quot;}">Hello</a> citizen</div></trix-editor>
         </div>
       </div>
-      <div class="aliases interpretations-form__summary">
+      <div class="aliases formulations-form__summary">
         <table>
           <thead>
           <tr>
@@ -185,7 +185,7 @@
           </tbody>
         </table>
       </div>
-      <div class="field interpretations-form__solution">
+      <div class="field formulations-form__solution">
         <div class="control">
           <span class="solution-label">Solution</span>
           <textarea id="solution__123456" rows="3">{
@@ -202,7 +202,7 @@
   </li>
   <li>
     <div class="card-list__item__draggable"></div>
-    <a href="#" class="interpretations-list__show">
+    <a href="#" class="formulations-list__show">
       <span class="card-list__item__name">
         Good morning <span class="badge">Auto solution</span>
       </span>
@@ -210,7 +210,7 @@
   </li>
   <li>
     <div class="card-list__item__draggable"></div>
-    <a href="#" class="interpretations-list__show">
+    <a href="#" class="formulations-list__show">
       <span class="card-list__item__name">
         How can I help you ?
       </span>

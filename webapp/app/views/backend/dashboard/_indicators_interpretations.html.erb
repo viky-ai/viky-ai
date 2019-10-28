@@ -1,9 +1,9 @@
 <div class="card card--indicator">
-  <% interpretations_count = Interpretation.count %>
+  <% interpretations_count = Formulation.count %>
   <% intents_count = Intent.count %>
   <div class="card-main">
     <strong><%= number_with_delimiter(interpretations_count) %></strong>
-    <%= t("views.backend.dashboard.indicators.interpretations", count: interpretations_count) %>
+    <%= t("views.backend.dashboard.indicators.formulations", count: interpretations_count) %>
   </div>
   <div class="card-detail">
     <%= t("views.backend.dashboard.indicators.intents",

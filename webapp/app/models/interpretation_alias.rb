@@ -1,7 +1,7 @@
 class InterpretationAlias < ApplicationRecord
   enum nature: [:type_intent, :type_number, :type_entities_list, :type_regex]
 
-  belongs_to :interpretation, touch: true
+  belongs_to :formulation, touch: true
   belongs_to :interpretation_aliasable, polymorphic: true, optional: true
 
   validates :position_start, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
@@ -29,10 +29,10 @@ class InterpretationAlias < ApplicationRecord
     end
 
     def no_overlap
-      return if interpretation.nil?
-      if interpretation.interpretation_aliases.size > 1
+      return if formulation.nil?
+      if formulation.interpretation_aliases.size > 1
         range = (position_start..position_end)
-         interpretation.interpretation_aliases
+         formulation.interpretation_aliases
           .reject do |ialias|
             if !id.nil? || !ialias.id.nil?
               id == ialias.id
@@ -56,10 +56,10 @@ class InterpretationAlias < ApplicationRecord
     end
 
     def check_aliasname_uniqueness
-      return if interpretation.nil?
-      return if interpretation.interpretation_aliases.size <= 1
+      return if formulation.nil?
+      return if formulation.interpretation_aliases.size <= 1
       dup_found = false
-      list_without_destroy = interpretation.interpretation_aliases.select { |item| !item._destroy }
+      list_without_destroy = formulation.interpretation_aliases.select { |item| !item._destroy }
       for ialias in list_without_destroy
         himself = ialias.position_start == position_start && ialias.position_end == position_end
         unless himself

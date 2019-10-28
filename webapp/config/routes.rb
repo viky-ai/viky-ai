@@ -104,7 +104,7 @@ Rails.application.routes.draw do
 
           resources :aliased_intents, only: :index
 
-          resources :interpretations, only: [:show, :create, :edit, :update, :destroy] do
+          resources :formulations, only: [:show, :create, :edit, :update, :destroy] do
             member do
               get :show_detailed
               post :update_locale

@@ -61,7 +61,7 @@ class EntitiesList < ApplicationRecord
 
   def aliased_intents
     Intent.where(agent_id: agent_id)
-          .joins(interpretations: :interpretation_aliases)
+          .joins(formulations: :interpretation_aliases)
           .where(interpretation_aliases: { interpretation_aliasable: self })
           .distinct
           .order('position desc, created_at desc')

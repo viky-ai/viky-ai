@@ -15,7 +15,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
-  test "Show an interpretation with details" do
+  test "Show an formulation with details" do
     login_as "show_on_agent_weather@viky.ai", "BimBamBoom"
     assert has_text?("admin/weather")
     click_link "My awesome weather bot admin/weather"
@@ -32,7 +32,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
     assert has_link?("What the weather like tomorrow ?")
 
-    within("#interpretations-list") do
+    within("#formulations-list") do
       click_link "What the weather like tomorrow ?"
       assert has_text?("admin/weather/weather_question")
       assert has_link?("admin/weather/weather_question")
@@ -44,7 +44,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
-  test "Used by button in interpretation details" do
+  test "Used by button in formulation details" do
     admin_go_to_intent_show(agents(:terminator), intents(:simple_where))
     assert has_link?("Used by...")
     click_link("Used by...")
@@ -56,7 +56,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
-  test "Create an interpretation" do
+  test "Create an formulation" do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
     within(".card .tabs") do
@@ -76,7 +76,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
-  test "Create an interpretation with intent alias" do
+  test "Create an formulation with intent alias" do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
     within(".card .tabs") do
@@ -84,8 +84,8 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
 
     assert has_link?("What the weather like tomorrow ?")
-    assert has_css?(".interpretation-resume", count: 1)
-    assert_equal "What the weather like", first(".interpretation-resume__alias-blue").text
+    assert has_css?(".formulation-resume", count: 1)
+    assert_equal "What the weather like", first(".formulation-resume__alias-blue").text
 
     first("trix-editor").click.set("Salut Marcel")
     select_text_in_trix("trix-editor", 6, 12)
@@ -100,22 +100,22 @@ class InterpretationsTest < ApplicationSystemTestCase
     click_button "Add"
 
     assert has_text?("Salut Marcel")
-    assert_equal 2, all(".interpretation-resume").count
-    assert_equal "Marcel", first(".interpretation-resume__alias-blue").text
+    assert_equal 2, all(".formulation-resume").count
+    assert_equal "Marcel", first(".formulation-resume__alias-blue").text
 
     first("trix-editor").click.set("Il fait beau ?")
     select_text_in_trix("trix-editor", 9, 12)
     within "#popup-add-tag" do
       find_link("admin/weather/interpretations/weather_question").click
     end
-    within("#interpretations-form .aliases") do
+    within("#formulations-form .aliases") do
       click_link "admin/weather/interpretations/weather_question"
     end
     assert has_text?("Interpretations / weather_question PUBLIC")
   end
 
 
-  test "Create an interpretation with entities_list alias" do
+  test "Create an formulation with entities_list alias" do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
     within(".card .tabs") do
@@ -123,8 +123,8 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
 
     assert has_link?("What the weather like tomorrow ?")
-    assert has_css?(".interpretation-resume", count: 1)
-    assert_equal "What the weather like", first(".interpretation-resume__alias-blue").text
+    assert has_css?(".formulation-resume", count: 1)
+    assert_equal "What the weather like", first(".formulation-resume__alias-blue").text
 
     first("trix-editor").click.set("Y a-t-il du soleil ?")
     select_text_in_trix("trix-editor", 12, 18)
@@ -140,10 +140,10 @@ class InterpretationsTest < ApplicationSystemTestCase
     click_button "Add"
 
     assert has_text?("Y a-t-il du soleil ?")
-    assert has_css?(".interpretation-resume", count: 2)
-    assert_equal "soleil", first(".interpretation-resume__alias-purple").text
+    assert has_css?(".formulation-resume", count: 2)
+    assert_equal "soleil", first(".formulation-resume__alias-purple").text
 
-    within("#interpretations-list") do
+    within("#formulations-list") do
       click_link "Y a-t-il du soleil ?"
     end
     within(".aliases") do
@@ -153,7 +153,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
-  test "Create an interpretation with numbers" do
+  test "Create an formulation with numbers" do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
     within(".card .tabs") do
@@ -161,8 +161,8 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
 
     assert has_link?("What the weather like tomorrow ?")
-    assert has_css?(".interpretation-resume", count: 1)
-    assert_equal "What the weather like", first(".interpretation-resume__alias-blue").text
+    assert has_css?(".formulation-resume", count: 1)
+    assert_equal "What the weather like", first(".formulation-resume__alias-blue").text
 
     first("trix-editor").click.set("Le 01/01/2018 j'achète de l'Aspirine")
     select_text_in_trix("trix-editor", 3, 5)
@@ -190,9 +190,9 @@ class InterpretationsTest < ApplicationSystemTestCase
     click_button "Add"
     assert has_text?("Le 01/01/2018 j'achète de l'Aspirine")
 
-    assert has_css?(".interpretation-resume", count: 2)
+    assert has_css?(".formulation-resume", count: 2)
     expected = ["01", "01", "2018"]
-    assert_equal expected, all(".interpretation-resume__alias-black").collect(&:text)
+    assert_equal expected, all(".formulation-resume__alias-black").collect(&:text)
 
     click_link "Le 01/01/2018 j'achète de l'Aspirine"
     assert has_text?("Cancel")
@@ -202,14 +202,14 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
   end
 
-  test "Create an interpretation with proximity value" do
+  test "Create an formulation with proximity value" do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
     within(".card .tabs") do
       click_link "en"
     end
 
-    within("#interpretations-list") do
+    within("#formulations-list") do
       assert has_text?("What the weather like tomorrow ?")
       assert has_text?("Glued")
     end
@@ -219,7 +219,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     click_link "Glued + Punc"
     click_button "Add"
 
-    within("#interpretations-list") do
+    within("#formulations-list") do
       assert has_text?("Sunny day")
       assert has_text?("Glued + Punc")
     end
@@ -227,7 +227,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
-  test "Errors on interpretation creation" do
+  test "Errors on formulation creation" do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
     assert_equal "0", first("#current-locale-tab-badge").text
@@ -240,7 +240,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
-  test "Errors on interpretation creation with alias" do
+  test "Errors on formulation creation with alias" do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
     within(".card .tabs") do
@@ -248,8 +248,8 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
 
     assert has_link?("What the weather like tomorrow ?")
-    assert has_css?(".interpretation-resume", count: 1)
-    assert_equal "What the weather like", first(".interpretation-resume__alias-blue").text
+    assert has_css?(".formulation-resume", count: 1)
+    assert_equal "What the weather like", first(".formulation-resume__alias-blue").text
 
     first("trix-editor").click.set("Salut Marcel")
     select_text_in_trix("trix-editor", 6, 12)
@@ -267,7 +267,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
-  test "Update an interpretation (simple)" do
+  test "Update an formulation (simple)" do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
     within(".card .tabs") do
@@ -277,12 +277,12 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert has_link?("Quel temps fera-t-il demain ?")
     assert_equal "1", first("#current-locale-tab-badge").text
 
-    within("#interpretations-list") do
+    within("#formulations-list") do
       click_link "Quel temps fera-t-il demain ?"
       assert has_text?("Cancel")
       first("trix-editor").click.set("Salut à tous")
-      check("interpretation[keep_order]")
-      uncheck("interpretation[auto_solution_enabled]")
+      check("formulation[keep_order]")
+      uncheck("formulation[auto_solution_enabled]")
       fill_in_editor_field "10"
       click_button "Update"
     end
@@ -292,7 +292,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
-  test "Update an interpretation (add alias)" do
+  test "Update an formulation (add alias)" do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
     within(".card .tabs") do
@@ -300,17 +300,17 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
     assert has_link?("What the weather like tomorrow ?")
 
-    within("#interpretations-list") do
+    within("#formulations-list") do
       click_link "What the weather like tomorrow ?"
       assert has_text?("Cancel")
-      select_text_in_trix("#interpretations-list trix-editor", 31, 32)
+      select_text_in_trix("#formulations-list trix-editor", 31, 32)
     end
 
     within("#popup-add-tag") do
       find_link("admin/weather/interpretations/weather_question").click
     end
 
-    within("#interpretations-list") do
+    within("#formulations-list") do
       within(".aliases") do
         assert has_text?("tomorrow")
         first('label', text: "List").click
@@ -319,10 +319,10 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
 
     assert has_link?("What the weather like tomorrow ?")
-    assert has_css?(".interpretation-resume", count: 1)
-    assert_equal ["What the weather like", "?"], all(".interpretation-resume__alias-blue").collect(&:text)
+    assert has_css?(".formulation-resume", count: 1)
+    assert_equal ["What the weather like", "?"], all(".formulation-resume__alias-blue").collect(&:text)
 
-    within("#interpretations-list") do
+    within("#formulations-list") do
       click_link "What the weather like tomorrow ?"
       assert has_text?("Cancel")
       assert all("input[name*='is_list']", visible: false)[0].checked?
@@ -331,7 +331,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
-  test "Update an interpretation (remove alias)" do
+  test "Update an formulation (remove alias)" do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
     within(".card .tabs") do
@@ -339,10 +339,10 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
     assert has_link?("What the weather like tomorrow ?")
 
-    within("#interpretations-list") do
+    within("#formulations-list") do
       click_link "What the weather like tomorrow ?"
       assert has_text?("Cancel")
-      select_text_in_trix("#interpretations-list trix-editor", 0, 21)
+      select_text_in_trix("#formulations-list trix-editor", 0, 21)
     end
     within "#popup-remove-tag" do
       find_link("Remove annotation(s)").click
@@ -350,10 +350,10 @@ class InterpretationsTest < ApplicationSystemTestCase
     click_button "Update"
 
     assert has_link?("What the weather like tomorrow ?")
-    assert has_css?(".interpretation-resume", count: 1)
+    assert has_css?(".formulation-resume", count: 1)
   end
 
-  test "Update an interpretation (change proximity)" do
+  test "Update an formulation (change proximity)" do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
     within(".card .tabs") do
@@ -365,11 +365,11 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     assert_equal "1", first("#current-locale-tab-badge").text
 
-    within("#interpretations-list") do
+    within("#formulations-list") do
       click_link "What the weather like tomorrow ?"
       assert has_text?("Cancel")
       first("trix-editor").click.set("What the weather like today ?")
-      check("interpretation[keep_order]")
+      check("formulation[keep_order]")
       all(".dropdown__trigger > .btn")[0].click
       click_link "Far"
       click_button "Update"
@@ -389,7 +389,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
     assert has_link?("What the weather like tomorrow ?")
 
-    within("#interpretations-list") do
+    within("#formulations-list") do
       click_link "What the weather like tomorrow ?"
       within(".aliases") do
         assert has_text?("question")
@@ -400,16 +400,16 @@ class InterpretationsTest < ApplicationSystemTestCase
         assert has_no_text?("dates")
       end
       question = interpretation_aliases(:weather_forecast_tomorrow_question)
-      assert_no_text_selected_in_trix question.interpretation.id, question.aliasname
+      assert_no_text_selected_in_trix question.formulation.id, question.aliasname
       click_button "Update"
     end
 
     assert has_link?("What the weather like tomorrow ?")
-    assert has_no_css?(".interpretation-resume")
+    assert has_no_css?(".formulation-resume")
   end
 
 
-  test "Update an interpretation and cancel" do
+  test "Update an formulation and cancel" do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
     within(".card .tabs") do
@@ -418,7 +418,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     assert has_link?("What the weather like tomorrow ?")
 
-    within("#interpretations-list") do
+    within("#formulations-list") do
       click_link "What the weather like tomorrow ?"
       assert has_text?("Cancel")
       click_link("Cancel")
@@ -437,7 +437,7 @@ class InterpretationsTest < ApplicationSystemTestCase
       click_link "en"
     end
 
-    source = first("#interpretations-list .card-list__item__draggable")
+    source = first("#formulations-list .card-list__item__draggable")
     target = all(".tabs li.js-draggable-locale a")[1]
     source.drag_to(target)
 
@@ -448,7 +448,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
-  test "Delete an interpretation" do
+  test "Delete an formulation" do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
     within(".card .tabs") do
@@ -458,7 +458,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert has_link?("What the weather like tomorrow ?")
     assert_equal "1", first("#current-locale-tab-badge").text
 
-    within("#interpretations-list") do
+    within("#formulations-list") do
       click_link "What the weather like tomorrow ?"
       assert has_text?("Cancel")
       all("a").last.click
@@ -468,7 +468,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
-  test "Create an interpretation with regex" do
+  test "Create an formulation with regex" do
     admin_go_to_intent_show(agents(:terminator), intents(:terminator_find))
 
     assert has_link?("Where is Sarah Connor ?")

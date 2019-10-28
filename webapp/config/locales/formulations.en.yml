@@ -1,6 +1,6 @@
 en:
   views:
-    interpretations:
+    formulations:
       new:
         btn: "Add"
         placeholder: Add an expression

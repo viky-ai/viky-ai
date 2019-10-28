@@ -24,7 +24,7 @@ class AgentArc < ApplicationRecord
           ia.aliasname,
           ia.position_start,
           ia.position_end,
-          ia.interpretation_id,
+          ia.formulation_id,
           ia.interpretation_aliasable_id,
           ia.interpretation_aliasable_type,
           ia.nature,
@@ -32,11 +32,11 @@ class AgentArc < ApplicationRecord
           ia.any_enabled
         FROM interpretation_aliases AS ia
           INNER JOIN intents ON ia.interpretation_aliasable_id = intents.id
-          INNER JOIN interpretations AS pr ON ia.interpretation_id = pr.id
+          INNER JOIN formulations AS pr ON ia.formulation_id = pr.id
         WHERE intents.agent_id = ?
-              AND ia.interpretation_id IN (SELECT interpretations.id
-                                           FROM interpretations
-                                             INNER JOIN intents ON interpretations.intent_id = intents.id
+              AND ia.formulation_id IN (SELECT formulations.id
+                                           FROM formulations
+                                             INNER JOIN intents ON formulations.intent_id = intents.id
                                            WHERE intents.agent_id = ?)", target_id, source_id]
   end
 

@@ -8,7 +8,7 @@ class Intent < ApplicationRecord
   friendly_id :intentname, use: :history, slug_column: 'intentname'
 
   belongs_to :agent, touch: true
-  has_many :interpretations, dependent: :destroy
+  has_many :formulations, dependent: :destroy
   has_many :interpretation_aliases, as: :interpretation_aliasable, dependent: :destroy
 
   enum visibility: [:is_public, :is_private]
@@ -23,8 +23,8 @@ class Intent < ApplicationRecord
     agent.need_nlp_sync
   end
 
-  def interpretations_with_local(locale)
-    interpretations.where(locale: locale)
+  def formulations_with_local(locale)
+    formulations.where(locale: locale)
   end
 
   def slug
@@ -33,7 +33,7 @@ class Intent < ApplicationRecord
 
   def aliased_intents
     Intent.where(agent_id: agent_id)
-          .joins(interpretations: :interpretation_aliases)
+          .joins(formulations: :interpretation_aliases)
           .where(interpretation_aliases: { interpretation_aliasable: self })
           .distinct
           .order('position desc, created_at desc')

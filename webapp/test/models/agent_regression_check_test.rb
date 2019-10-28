@@ -14,7 +14,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
       'root_type' => 'intent',
       'package' => intents(:weather_forecast).agent.id,
       'id' => intents(:weather_forecast).id,
-      'solution' => interpretations(:weather_forecast_tomorrow).solution.to_json.to_s
+      'solution' => formulations(:weather_forecast_tomorrow).solution.to_json.to_s
     }.with_indifferent_access
     agent_regression_check = AgentRegressionCheck.new(
       sentence: 'What the weather like ?',
@@ -92,7 +92,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
       sentence: 'a',
       spellchecking: 'low',
       expected: {
-        interpretations: 'a' * 10_001
+        formulations: 'a' * 10_001
       }.with_indifferent_access
     )
     assert_not agent_regression_check.save
@@ -133,7 +133,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
           'slug' => intents(:weather_forecast).slug,
           'package' => intents(:weather_forecast).agent.id,
           'score' => '1.0',
-          'solution' => interpretations(:weather_forecast_tomorrow).solution
+          'solution' => formulations(:weather_forecast_tomorrow).solution
         }, {
           'id' => intents(:weather_question).id,
           'slug' => intents(:weather_question).slug,
@@ -155,7 +155,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
       'root_type' => 'intent',
       'package' => intents(:weather_forecast).agent.id,
       'id' => intents(:weather_forecast).id,
-      'solution' => interpretations(:weather_forecast_tomorrow).solution.to_json.to_s
+      'solution' => formulations(:weather_forecast_tomorrow).solution.to_json.to_s
     }
     assert_equal expected, agent_regression_check.expected
     assert_equal agent_regression_check.got, agent_regression_check.expected
@@ -171,7 +171,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
           'slug' => intents(:weather_forecast).slug,
           'package' => intents(:weather_forecast).agent.id,
           'score' => '0.3',
-          'solution' => interpretations(:weather_forecast_tomorrow).solution
+          'solution' => formulations(:weather_forecast_tomorrow).solution
         }]
       }
     )

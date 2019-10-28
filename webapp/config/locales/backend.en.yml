@@ -70,7 +70,7 @@ en:
             zero: No public agent
             one: One public agent
             other: "%{total} public agents"
-          interpretations:
+          formulations:
             zero: Interpretation
             one: Interpretation
             other: Interpretations
@@ -111,7 +111,7 @@ en:
             zero: No administrator
             one: One administrator
             other: "%{total} administrators"
-        top_interpretations: Agents with most interpretations
+        top_formulations: Agents with most interpretations
         top_entities: Agents with most entities
         top_predecessors: Agents most used as dependency
         top_tests_failures: Agents with most tests in failure

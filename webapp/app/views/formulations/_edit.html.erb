@@ -1,0 +1,126 @@
+<div class="card-list__item__draggable"></div>
+
+<%= form_with(model: [formulation.intent.agent.owner, formulation.intent.agent, formulation.intent, formulation], class: 'formulations-form') do |f| %>
+
+  <% formulation.interpretation_aliases.select { |ialias| ialias._destroy }.each do |ialias| %>
+    <input type="hidden" name="formulation[interpretation_aliases_attributes][][id]" value="<%= ialias.id %>" />
+    <input type="hidden" name="formulation[interpretation_aliases_attributes][][position_start]"                value="" />
+    <input type="hidden" name="formulation[interpretation_aliases_attributes][][position_end]"                  value="" />
+    <input type="hidden" name="formulation[interpretation_aliases_attributes][][interpretation_aliasable_id]"   value="" />
+    <input type="hidden" name="formulation[interpretation_aliases_attributes][][interpretation_aliasable_type]" value="" />
+    <input type="hidden" name="formulation[interpretation_aliases_attributes][][aliasname]"                     value="" />
+    <input type="hidden" name="formulation[interpretation_aliases_attributes][][nature]"                        value="" />
+    <input type="hidden" name="formulation[interpretation_aliases_attributes][][_destroy]"                      value="1" />
+  <% end %>
+  <div class="field formulations-form__formulation">
+    <div class="control trix-control">
+      <div class="trix-control__option <% if rtl?(formulation.locale) %>trix-control__option--rtl<% end %>">
+        <div class="trix-control__option__child"
+             title="<%= t("views.formulations.keep_order_description") %>">
+          <%= f.check_box :keep_order, id: "keep_order__#{formulation.id}" %>
+          <%= f.label :keep_order, for: "keep_order__#{formulation.id}" %>
+        </div>
+        <div class="trix-control__option__child">
+          <%= f.hidden_field :proximity, id: "proximity__#{formulation.id}" %>
+          <div class="dropdown">
+            <div class="dropdown__trigger">
+              <button class="btn btn--outline btn--small">
+                <span class="btn__label">
+                  <%= t("views.formulations.proximity.#{formulation.proximity}") %>
+                </span>
+                <span class="icon icon--x-small">
+                  <%= icon_arrow_down %>
+                </span>
+              </button>
+            </div>
+            <div class="dropdown__content dropdown__content--hidden">
+              <ul>
+                <% Formulation.proximities.each_key do |proximity| %>
+                  <li>
+                    <a href="#"
+                       <% if proximity == formulation.proximity.to_s %>class="current"<% end %>
+                       data-behavior="populate-input, replace-trigger-label"
+                       data-input-selector="#proximity__<%= formulation.id %>"
+                       data-input-value="<%= proximity %>"
+                       data-replace-selector=".btn__label"
+                       data-replace-with="<%= t("views.formulations.proximity.#{proximity}") %>">
+                      <div class="dropdown__content__item-title">
+                        <%= t("views.formulations.proximity.#{proximity}") %>
+                      </div>
+                      <div class="dropdown__content__item-description">
+                        <%= t("views.formulations.proximity.description.#{proximity}") %>
+                      </div>
+                    </a>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="trix-control__option__child"
+             title="<%= t("views.formulations.auto_solution_description") %>">
+          <%= f.check_box :auto_solution_enabled, id: "auto_solution_enabled__#{formulation.id}" %>
+          <%= f.label :auto_solution_enabled, for: "auto_solution_enabled__#{formulation.id}" %>
+        </div>
+      </div>
+      <textarea name="formulation[expression]" style="display:none;"
+        id="<%= "expression-#{formulation.id}" %>"><%= display_expression_for_trix(formulation) %></textarea>
+      <trix-editor <% if rtl?(formulation.locale) %>dir="rtl"<% end %>
+        input="<%= "expression-#{formulation.id}" %>"
+        placeholder="<%= t('views.formulations.new.placeholder') %>"></trix-editor>
+    </div>
+    <%= display_errors(formulation, :expression) %>
+    <%= display_errors(formulation, :locale) %>
+    <%= display_errors(formulation, :keep_order) %>
+    <%= display_errors(formulation, :proximity) %>
+  </div>
+
+  <div class="aliases <% if rtl?(formulation.locale) %>aliases--rtl<% end %> formulations-form__summary" style="display: none;"></div>
+
+  <div class="formulations-form__aliases-errors">
+    <%= display_errors(formulation, :base) %>
+  </div>
+
+  <div class="field field--for-solution formulations-form__solution"
+      <% if formulation.auto_solution_enabled %>style="display:none;"<% end %>>
+    <div class="control">
+      <span class="solution-label">
+        <%= t('views.formulations.solution_label') %>
+      </span>
+      <%= f.text_area :solution, id: "solution__#{formulation.id}", maxlength: '6000', spellcheck: 'false' %>
+    </div>
+    <%= display_errors(formulation, :solution) %>
+  </div>
+
+  <div class="field field--submit">
+    <div class="control">
+      <%= f.button t('views.formulations.index.update_btn').html_safe, class: 'btn btn--primary',
+            data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span> #{t('loading')}" } %>
+      <%= link_to t('views.formulations.index.cancel_btn'),
+            user_agent_intent_formulation_path(
+              formulation.intent.agent.owner,
+              formulation.intent.agent,
+              formulation.intent,
+              formulation
+            ),
+            remote: true,
+            class: 'btn btn--plain',
+            data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>
+    </div>
+  </div>
+  <div class="field formulations-form__delete">
+    <div class="control">
+      <%= link_to t('views.formulations.index.delete_btn'),
+                  user_agent_intent_formulation_path(
+                      formulation.intent.agent.owner,
+                      formulation.intent.agent,
+                      formulation.intent,
+                      formulation
+                  ),
+                  method: :delete,
+                  remote: true,
+                  class: 'btn btn--small btn--outline btn--destructive',
+                  data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>
+    </div>
+  </div>
+<% end %>

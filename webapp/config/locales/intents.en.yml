@@ -14,7 +14,7 @@ en:
         quick_move_to: "Move to %{agent}"
         move: Move
         delete: Delete
-        interpretations:
+        formulations:
           zero: "0 interpretation"
           one: "1 interpretation"
           other: "%{count} interpretations"

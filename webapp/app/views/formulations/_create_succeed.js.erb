@@ -1,7 +1,7 @@
-$("#interpretations-form").replaceWith("<%= escape_javascript(@html_form) %>");
+$("#formulations-form").replaceWith("<%= escape_javascript(@html_form) %>");
 
 App.CardListHelper.addToList("<%= escape_javascript(@html) %>");
 App.CardListHelper.updateBlankslates();
-App.InterpretationsList.incrementTabBadge();
+App.FormulationsList.incrementTabBadge();
 App.CardListHelper.updateDraggable();
 App.CodeEditor.buildJavaScriptEditor($("#solution__new_interpretation")[0]);

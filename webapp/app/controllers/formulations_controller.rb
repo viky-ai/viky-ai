@@ -1,19 +1,19 @@
-class InterpretationsController < ApplicationController
+class FormulationsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:update_positions, :update_locale]
   before_action :set_owner
   before_action :set_agent
   before_action :check_user_rights
   before_action :set_intent
-  before_action :set_interpretation, except: [:create, :update_positions]
+  before_action :set_formulation, except: [:create, :update_positions]
 
   def create
-    interpretation = Interpretation.new(interpretation_params)
-    interpretation.intent = @intent
-    @current_locale = interpretation.locale
+    formulation = Formulation.new(formulation_params)
+    formulation.intent = @intent
+    @current_locale = formulation.locale
     respond_to do |format|
-      if interpretation.save
+      if formulation.save
         format.js do
-          new_interpretation = Interpretation.new(
+          new_formulation = Formulation.new(
             proximity: 'close',
             keep_order: true,
             auto_solution_enabled: true
@@ -21,11 +21,11 @@ class InterpretationsController < ApplicationController
           @html_form = render_to_string(partial: 'form', locals: {
             intent: @intent,
             agent: @agent,
-            interpretation: new_interpretation,
+            formulation: new_formulation,
             current_locale: @current_locale }
           )
-          @html = render_to_string(partial: 'interpretation', locals: {
-            interpretation: interpretation,
+          @html = render_to_string(partial: 'formulation', locals: {
+            formulation: formulation,
             can_edit: current_user.can?(:edit, @agent),
             intent: @intent,
             agent: @agent,
@@ -38,7 +38,7 @@ class InterpretationsController < ApplicationController
           @html_form = render_to_string(partial: 'form', locals: {
             intent: @intent,
             agent: @agent,
-            interpretation: interpretation,
+            formulation: formulation,
             current_locale: @current_locale }
           )
           render partial: 'create_failed'
@@ -50,8 +50,8 @@ class InterpretationsController < ApplicationController
   def show
     respond_to do |format|
       format.js {
-        @show = render_to_string(partial: 'interpretation', locals: {
-          interpretation: @interpretation,
+        @show = render_to_string(partial: 'formulation', locals: {
+          formulation: @formulation,
           can_edit: current_user.can?(:edit, @agent),
           intent: @intent,
           agent: @agent,
@@ -65,7 +65,7 @@ class InterpretationsController < ApplicationController
   def show_detailed
     respond_to do |format|
       format.js {
-        @show = render_to_string(partial: 'show_detailed.html', locals: { interpretation: @interpretation })
+        @show = render_to_string(partial: 'show_detailed.html', locals: { formulation: @formulation })
         render partial: 'show_detailed'
       }
     end
@@ -74,7 +74,7 @@ class InterpretationsController < ApplicationController
   def edit
     respond_to do |format|
       format.js {
-        @form = render_to_string(partial: 'edit.html', locals: { interpretation: @interpretation })
+        @form = render_to_string(partial: 'edit.html', locals: { formulation: @formulation })
         render partial: 'edit'
       }
     end
@@ -82,10 +82,10 @@ class InterpretationsController < ApplicationController
 
   def update
     respond_to do |format|
-      if @interpretation.update(interpretation_params)
+      if @formulation.update(formulation_params)
         format.js {
-          @show = render_to_string(partial: 'interpretation', locals: {
-            interpretation: @interpretation,
+          @show = render_to_string(partial: 'formulation', locals: {
+            formulation: @formulation,
             can_edit: current_user.can?(:edit, @agent),
             intent: @intent,
             agent: @agent,
@@ -95,7 +95,7 @@ class InterpretationsController < ApplicationController
         }
       else
         format.js do
-          @form = render_to_string(partial: 'edit.html', locals: { interpretation: @interpretation })
+          @form = render_to_string(partial: 'edit.html', locals: { formulation: @formulation })
           render partial: 'edit'
         end
       end
@@ -104,7 +104,7 @@ class InterpretationsController < ApplicationController
 
   def destroy
     respond_to do |format|
-      if @interpretation.destroy
+      if @formulation.destroy
         format.js { render partial: 'destroy_succeed' }
       else
         format.js { render partial: 'destroy_failed' }
@@ -113,11 +113,11 @@ class InterpretationsController < ApplicationController
   end
 
   def update_positions
-    Interpretation.update_positions(@intent, params[:ids])
+    Formulation.update_positions(@intent, params[:ids])
   end
 
   def update_locale
-    previous_locale = @interpretation.update_locale params[:locale]
+    previous_locale = @formulation.update_locale params[:locale]
     redirect_to user_agent_intent_path(@owner, @agent, @intent, { locale: previous_locale })
   end
 
@@ -136,12 +136,12 @@ class InterpretationsController < ApplicationController
       @intent = @agent.intents.friendly.find(params[:intent_id])
     end
 
-    def set_interpretation
-      @interpretation = @intent.interpretations.find(params[:id])
+    def set_formulation
+      @formulation = @intent.formulations.find(params[:id])
     end
 
-    def interpretation_params
-      p = params.require(:interpretation).permit(
+    def formulation_params
+      p = params.require(:formulation).permit(
         :expression, :locale, :keep_order, :proximity, :solution, :auto_solution_enabled,
         :interpretation_aliases_attributes => [
           :id, :nature, :position_start, :position_end,

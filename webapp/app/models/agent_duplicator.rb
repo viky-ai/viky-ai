@@ -78,8 +78,8 @@ class AgentDuplicator
     def extract_aliases_to_fix(new_agent)
       aliases_to_fix = []
       new_agent.intents.each do |intent|
-        intent.interpretations.each do |interpretation|
-          interpretation.interpretation_aliases
+        intent.formulations.each do |formulation|
+          formulation.interpretation_aliases
             .reject { |ialias| ['type_number', 'type_regex'].include? ialias.nature }
             .select { |ialias| ialias.interpretation_aliasable.agent.id == @agent.id }
             .each { |ialias| aliases_to_fix << ialias }
@@ -130,7 +130,7 @@ class EntitiesListsCloner < Clowne::Cloner
 end
 
 class IntentsCloner < Clowne::Cloner
-  include_association :interpretations, clone_with: InterpretationsCloner
+  include_association :formulations, clone_with: InterpretationsCloner
 end
 
 class AgentRegressionChecksCloner < Clowne::Cloner

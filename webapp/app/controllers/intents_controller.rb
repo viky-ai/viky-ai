@@ -6,16 +6,16 @@ class IntentsController < ApplicationController
   before_action :set_intent, except: [:index, :new, :create, :confirm_destroy, :update_positions]
 
   def index
-    @intents = @agent.intents.includes(:interpretations).order('position desc, created_at desc')
+    @intents = @agent.intents.includes(:formulations).order('position desc, created_at desc')
     ui_state = UserUiState.new current_user
     @last_agent = ui_state.last_destination_agent(@agent)
   end
 
   def show
-    @interpretation = Interpretation.new
-    @interpretation.proximity = 'close'
-    @interpretation.keep_order = true
-    @interpretation.auto_solution_enabled = true
+    @formulation = Formulation.new
+    @formulation.proximity = 'close'
+    @formulation.keep_order = true
+    @formulation.auto_solution_enabled = true
 
     ui_state = UserUiState.new(current_user)
     if @agent.locales.include? params[:locale]

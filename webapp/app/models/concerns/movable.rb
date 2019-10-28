@@ -11,7 +11,7 @@ module Movable
 
     if Feature.quota_enabled? && agent_destination.owner.quota_enabled
       if aliasable_name == "intents"
-        expressions_count_addition = self.interpretations.count
+        expressions_count_addition = self.formulations.count
       end
       if aliasable_name == "entities_lists"
         expressions_count_addition = self.entities_count

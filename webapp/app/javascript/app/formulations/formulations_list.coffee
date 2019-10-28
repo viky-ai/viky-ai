@@ -4,7 +4,7 @@ class InterpretationsList
 
     for li in $('.tabs > ul > li.js-draggable-locale')
       Sortable.create(li, {
-        group: "interpretations",
+        group: "formulations",
         animation: 100
         onAdd: (event) ->
           $('.tabs li.js-draggable-locale').removeClass('drag-in')

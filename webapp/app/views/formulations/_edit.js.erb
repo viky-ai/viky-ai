@@ -1,0 +1,5 @@
+App.CardListHelper.updateItem("#formulation-<%= @formulation.id %>", "<%= escape_javascript(@form) %>");
+App.CardListHelper.updateDraggable();
+App.CodeEditor.buildJavaScriptEditor($("#solution__<%= @formulation.id %>")[0]);
+
+$("body").trigger('formulations:edit:complete');

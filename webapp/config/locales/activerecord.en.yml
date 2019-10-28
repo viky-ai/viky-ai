@@ -35,7 +35,7 @@ en:
         one: Agent
         other: Agents
       intent: Intent
-      interpretation: Interpretation
+      formulation: Formulation
       entity:
         zero: entity
         one: entity
@@ -72,7 +72,7 @@ en:
         visibility_is_private: Private
         visibility_is_public: Public
         proximity: Entities proximity
-      interpretation:
+      formulation:
         expression: Expression
         keep_order: Keep order
         auto_solution_enabled: Auto solution
@@ -116,7 +116,7 @@ en:
       unknown_locale: "unknown '%{current_locale}'"
       move_to_unknown_agent: "does not exist anymore"
       move_to_agent_without_enough_quota: "owner does not have enough quota to accept this move"
-    interpretation:
+    formulation:
       invalid_json: "invalid json"
       interpretation_aliases_overlap: position overlap
       only_one_any: Only one annotation with "Any" option is permitted.

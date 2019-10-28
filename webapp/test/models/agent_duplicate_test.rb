@@ -102,14 +102,14 @@ class AgentDuplicateTest < ActiveSupport::TestCase
       position_start: 31,
       position_end: 32,
       aliasname: 'number',
-      interpretation: interpretations(:weather_forecast_tomorrow),
+      formulation: formulations(:weather_forecast_tomorrow),
       nature: 'type_number'
     )
     assert InterpretationAlias.create(
       position_start: 35,
       position_end: 40,
       aliasname: 'regex',
-      interpretation: interpretations(:weather_forecast_tomorrow),
+      formulation: formulations(:weather_forecast_tomorrow),
       nature: 'type_regex',
       reg_exp: 'A'
     )
@@ -145,7 +145,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
         assert_equal alias_agent.is_list, alias_new_agent.is_list
         assert_equal alias_agent.any_enabled, alias_new_agent.any_enabled
         assert_not_equal alias_agent.id, alias_new_agent.id
-        assert_not_equal alias_agent.interpretation.id, alias_new_agent.interpretation.id
+        assert_not_equal alias_agent.formulation.id, alias_new_agent.formulation.id
         assert_not_equal alias_agent.interpretation_aliasable.id, alias_new_agent.interpretation_aliasable.id
       end
     end
@@ -158,8 +158,8 @@ class AgentDuplicateTest < ActiveSupport::TestCase
       assert_equal intent_agent.visibility, intent_new_agent.visibility
       assert_not_equal intent_agent.id, intent_new_agent.id
 
-      assert_equal intent_agent.interpretations.size, intent_new_agent.interpretations.size
-      interpretations = intent_agent.interpretations.zip(intent_new_agent.interpretations)
+      assert_equal intent_agent.formulations.size, intent_new_agent.formulations.size
+      interpretations = intent_agent.formulations.zip(intent_new_agent.formulations)
       interpretations.each do |inter_agent, inter_new_agent|
         assert_equal inter_agent.expression, inter_new_agent.expression
         assert_equal inter_agent.locale, inter_new_agent.locale
@@ -180,7 +180,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
           assert_equal alias_agent.is_list, alias_new_agent.is_list
           assert_equal alias_agent.any_enabled, alias_new_agent.any_enabled
           assert_not_equal alias_agent.id, alias_new_agent.id
-          assert_not_equal alias_agent.interpretation.id, alias_new_agent.interpretation.id
+          assert_not_equal alias_agent.formulation.id, alias_new_agent.formulation.id
           unless ['type_number', 'type_regex'].include? alias_agent.nature
             assert_not_equal alias_agent.interpretation_aliasable.id, alias_new_agent.interpretation_aliasable.id
           end
@@ -202,7 +202,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     @regression_weather_forecast.got = {
       'package' => intents(:weather_forecast).agent.id,
       'id' => intents(:weather_forecast).id,
-      'solution' => interpretations(:weather_forecast_tomorrow).solution.to_json.to_s
+      'solution' => formulations(:weather_forecast_tomorrow).solution.to_json.to_s
     }
     assert @regression_weather_forecast.save
 
@@ -225,7 +225,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     new_expected = {
       'package' => new_agent.id,
       'id' => new_agent.intents.where(intentname: 'weather_question').first.id,
-      'solution' => interpretations(:weather_question_like).solution.to_json.to_s,
+      'solution' => formulations(:weather_question_like).solution.to_json.to_s,
       'root_type' => 'intent'
     }
     assert_equal new_expected, duplicated_tests.second.expected
@@ -255,21 +255,21 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     assert agent.intents.destroy(intents(:weather_question))
 
     intent = intents(:weather_forecast)
-    assert intent.interpretations.destroy_all
+    assert intent.formulations.destroy_all
 
-    interpretation_0 = Interpretation.create(
+    interpretation_0 = Formulation.create(
       expression: 'interpretation_0',
       locale: Locales::ANY,
       position: 0,
       intent: intent
     )
-    interpretation_1 = Interpretation.create(
+    interpretation_1 = Formulation.create(
       expression: 'interpretation_1',
       locale: Locales::ANY,
       position: 1,
       intent: intent
     )
-    interpretation_2 = Interpretation.create(
+    interpretation_2 = Formulation.create(
       expression: 'interpretation_2',
       locale: Locales::ANY,
       position: 2,
@@ -277,7 +277,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     )
 
     new_positions = [interpretation_2.id, interpretation_0.id, interpretation_1.id]
-    Interpretation.update_positions(intent, new_positions)
+    Formulation.update_positions(intent, new_positions)
     force_reset_model_cache([interpretation_0, interpretation_1, interpretation_2])
     assert_equal [2, 1, 0], [interpretation_2.position, interpretation_0.position, interpretation_1.position]
 
@@ -291,8 +291,8 @@ class AgentDuplicateTest < ActiveSupport::TestCase
       assert_equal intent_agent.intentname, intent_new_agent.intentname
       assert_equal intent_agent.position, intent_new_agent.position
 
-      assert_equal intent_agent.interpretations.size, intent_new_agent.interpretations.size
-      interpretations = intent_agent.interpretations.order(:position).zip(intent_new_agent.interpretations.order(:position))
+      assert_equal intent_agent.formulations.size, intent_new_agent.formulations.size
+      interpretations = intent_agent.formulations.order(:position).zip(intent_new_agent.formulations.order(:position))
       interpretations.each do |inter_agent, inter_new_agent|
         assert_equal inter_agent.expression, inter_new_agent.expression
         assert_equal inter_agent.position, inter_new_agent.position

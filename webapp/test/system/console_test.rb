@@ -70,7 +70,7 @@ class ConsoleTest < ApplicationSystemTestCase
                           "expression" => "Hello world",
                           "interpretation_slug" => "weather_forecast",
                           "interpretation_id" => intents(:weather_forecast).id,
-                          "expression_pos" => interpretations(:weather_forecast_tomorrow).position,
+                          "expression_pos" => formulations(:weather_forecast_tomorrow).position,
                         }
                       },
                       {
@@ -182,7 +182,7 @@ class ConsoleTest < ApplicationSystemTestCase
   end
 
 
-  test "Highlighted text should be clickable and should show the matched interpretations" do
+  test "Highlighted text should be clickable and should show the matched formulations" do
     admin_go_to_agents_index
     click_link "My awesome weather bot admin/weather"
 
@@ -210,7 +210,7 @@ class ConsoleTest < ApplicationSystemTestCase
                           "expression" => "weather",
                           "interpretation_slug" => "admin/weather/interpretations/weather_forecast",
                           "interpretation_id" => intents(:weather_forecast).id,
-                          "expression_pos" => interpretations(:weather_forecast_tomorrow).position,
+                          "expression_pos" => formulations(:weather_forecast_tomorrow).position,
                         }
                       }
                     ]
@@ -287,7 +287,7 @@ class ConsoleTest < ApplicationSystemTestCase
                           "expression" => "weather",
                           "interpretation_slug" => "admin/weather/interpretations/weather_forecast",
                           "interpretation_id" => intents(:weather_forecast).id,
-                          "expression_pos" => interpretations(:weather_forecast_tomorrow).position,
+                          "expression_pos" => formulations(:weather_forecast_tomorrow).position,
                         }
                       }
                     ]
@@ -320,7 +320,7 @@ class ConsoleTest < ApplicationSystemTestCase
                           "expression" => "terminator",
                           "interpretation_slug" => "admin/terminator/interpretations/terminator_find",
                           "interpretation_id" => intents(:terminator_find).id,
-                          "expression_pos" => interpretations(:terminator_find_sarah).position,
+                          "expression_pos" => formulations(:terminator_find_sarah).position,
                         }
                       }
                     ]
@@ -400,7 +400,7 @@ class ConsoleTest < ApplicationSystemTestCase
               "solution_location" => {
                 "id" => intents(:weather_forecast).id,
                 "slug" => intents(:weather_forecast).slug,
-                "position" => interpretations(:weather_forecast_tomorrow).position,
+                "position" => formulations(:weather_forecast_tomorrow).position,
                 "line_number" => 1
               },
               "context" => [
@@ -418,8 +418,8 @@ class ConsoleTest < ApplicationSystemTestCase
       click_link "See the offending code"
     end
 
-    interpretation_dom_id = "#interpretation-#{interpretations(:weather_forecast_tomorrow).id}"
-    assert has_css?("#{interpretation_dom_id}.highlight.highlight--alert", count: 1)
+    formulation_dom_id = "#formulation-#{formulations(:weather_forecast_tomorrow).id}"
+    assert has_css?("#{formulation_dom_id}.highlight.highlight--alert", count: 1)
   end
 
 end

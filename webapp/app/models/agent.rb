@@ -147,7 +147,7 @@ class Agent < ApplicationRecord
           .from("entities, jsonb_array_elements(entities.terms)")
           .collect{|e| e['language']}
 
-    interpretations_locales = Interpretation.select(:locale)
+    interpretations_locales = Formulation.select(:locale)
       .where(intent_id: intents.pluck(:id))
       .distinct
       .collect{|i| i.locale}.flatten.uniq
@@ -210,7 +210,7 @@ class Agent < ApplicationRecord
 
   def expressions_count
     entities_count = entities_lists.sum(:entities_count)
-    interpretations_count = Interpretation.joins(intent: :agent).where('agents.id = ?', id).count
+    interpretations_count = Formulation.joins(intent: :agent).where('agents.id = ?', id).count
     entities_count + interpretations_count
   end
 

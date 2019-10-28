@@ -20,11 +20,11 @@ class PlayInterpreterResult
     end
   end
 
-  def interpretations_count
+  def formulations_count
     succeed? ? body['interpretations'].size : 0
   end
 
-  def interpretations_count_per_agent
+  def formulations_count_per_agent
     if succeed?
       body['interpretations'].group_by{ |i| i["package"] }.collect {|k, v| [k, v.size]}.to_h
     else
@@ -32,8 +32,8 @@ class PlayInterpreterResult
     end
   end
 
-  def interpretations_count_for_agent(agent_id)
-    body['interpretations'].select{|interpretation| interpretation["package"] == agent_id }.size
+  def formulations_count_for_agent(agent_id)
+    body['interpretations'].select{|formulation| formulation["package"] == agent_id }.size
   end
 
   def slug_colors

@@ -234,7 +234,7 @@ class AliasesRegexForm
     railroad_addon.replaceWith(@html_railroad())
 
   @setListeners: ->
-    inputs_selector = "textarea[name='interpretation[interpretation_aliases_attributes][][reg_exp]']"
+    inputs_selector = "textarea[name='formulation[interpretation_aliases_attributes][][reg_exp]']"
     autosize(textarea) for textarea in $(inputs_selector)
     $(inputs_selector).on "input", (event) ->
       container = $(event.target).closest('.control')
@@ -291,7 +291,7 @@ class AliasesRegexForm
   html_input: ->
     "<textarea
       maxlength='3000'
-      name='interpretation[interpretation_aliases_attributes][][reg_exp]'
+      name='formulation[interpretation_aliases_attributes][][reg_exp]'
       class='code autosize'
       placeholder='Enter a regular expression'>#{@regexp}</textarea>"
 
@@ -369,7 +369,7 @@ class AliasesForm
 
   update_deletable_ids: ->
     html = []
-    name_prefix = "interpretation[interpretation_aliases_attributes][]"
+    name_prefix = "formulation[interpretation_aliases_attributes][]"
     for id in @deletable_ids()
       html.push "
         <input type='hidden' name='#{name_prefix}[aliasname]'                     value='' />
@@ -384,7 +384,7 @@ class AliasesForm
     @form_container.closest('form').prepend(html.join(''))
 
   build_line: (alias) ->
-    name_prefix = "interpretation[interpretation_aliases_attributes][]"
+    name_prefix = "formulation[interpretation_aliases_attributes][]"
     if alias.state == 'new' || alias.id == undefined
         alias_id_value = ""
       else
@@ -495,7 +495,7 @@ class AliasesForm
         <tr>
           <th>Parameter name</th>
           <th>Interpretation</th>
-          <th>Options <a href='#' data-action='remove-all-interpretation-options'>(<em>Reset</em>)</a></th>
+          <th>Options <a href='#' data-action='remove-all-formulation-options'>(<em>Reset</em>)</a></th>
           <th>Selection</th>
           <th></th>
         </tr>
@@ -585,7 +585,7 @@ class InterpretationTagger
     @syncExpressionInput()
 
   syncExpressionInput: =>
-    input = $(@editor.element).closest('form').find('textarea[name="interpretation[expression]"]')
+    input = $(@editor.element).closest('form').find('textarea[name="formulation[expression]"]')
     input.val(@editor.getDocument().toString().trim())
 
   syncAliasesForm: ->
@@ -649,7 +649,7 @@ class InterpretationTagger
 class InterpretationSolutions
   constructor: ->
     # Initial state on 'turbolinks:load' event
-    if $("input[name='interpretation[auto_solution_enabled]']").is(':checked')
+    if $("input[name='formulation[auto_solution_enabled]']").is(':checked')
       $('.field--for-solution').hide()
     else
       $('.field--for-solution').show()
@@ -682,7 +682,7 @@ class InterpretationOptions
         link = $(event.target)
       else
         link = $(event.target).closest('a')
-        if link.data('action') == 'remove-all-interpretation-options'
+        if link.data('action') == 'remove-all-formulation-options'
           event.preventDefault()
           link.closest('table').find('input[type="radio"]').prop('checked', false)
           link.hide()
@@ -701,10 +701,10 @@ class InterpretationOptions
       @show_none_link(container)
 
   hide_none_link: (container) ->
-    container.find('[data-action="remove-all-interpretation-options"]').hide()
+    container.find('[data-action="remove-all-formulation-options"]').hide()
 
   show_none_link: (container) ->
-    container.find('[data-action="remove-all-interpretation-options"]').show()
+    container.find('[data-action="remove-all-formulation-options"]').show()
 
 
 

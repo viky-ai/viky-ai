@@ -2,12 +2,12 @@ require 'test_helper'
 
 class InterpretationAliasTest < ActiveSupport::TestCase
 
-  test 'belongs to validation on different interpretation alias nature' do
+  test 'belongs to validation on different formulation alias nature' do
     number = InterpretationAlias.new(
       position_start: 8,
       position_end: 21,
       aliasname: 'number',
-      interpretation_id: interpretations(:weather_forecast_demain).id,
+      formulation_id: formulations(:weather_forecast_demain).id,
       nature: 'type_number'
     )
     assert number.save
@@ -16,7 +16,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       position_start: 8,
       position_end: 21,
       aliasname: 'who',
-      interpretation_id: interpretations(:weather_forecast_demain).id,
+      formulation_id: formulations(:weather_forecast_demain).id,
       nature: 'type_intent'
     )
     assert_not type_intent.save
@@ -26,7 +26,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       position_start: 8,
       position_end: 21,
       aliasname: 'who',
-      interpretation_id: interpretations(:weather_forecast_demain).id,
+      formulation_id: formulations(:weather_forecast_demain).id,
       nature: 'type_entities_list'
     )
     assert_not type_entities_list.save
@@ -34,21 +34,21 @@ class InterpretationAliasTest < ActiveSupport::TestCase
   end
 
 
-  test 'remove intent used as alias remove related interpretation alias' do
+  test 'remove intent used as alias remove related formulation alias' do
     weather_question_intent = intents(:weather_question)
-    interpretation = interpretations(:weather_forecast_tomorrow)
+    formulation = formulations(:weather_forecast_tomorrow)
 
-    assert_equal weather_question_intent.id, interpretation.interpretation_aliases.first.interpretation_aliasable.id
-    assert_equal 2, interpretation.interpretation_aliases.count
+    assert_equal weather_question_intent.id, formulation.interpretation_aliases.first.interpretation_aliasable.id
+    assert_equal 2, formulation.interpretation_aliases.count
 
     assert weather_question_intent.destroy
-    assert_equal 1, interpretation.interpretation_aliases.count
+    assert_equal 1, formulation.interpretation_aliases.count
   end
 
 
   test 'aliases no overlap' do
     # Create with 1 range
-    interpretation = Interpretation.new({
+    formulation = Formulation.new({
       expression: 'test',
       intent_id: intents(:weather_forecast).id,
       locale: 'fr',
@@ -61,10 +61,10 @@ class InterpretationAliasTest < ActiveSupport::TestCase
         }
       ]
     })
-    assert interpretation.save
+    assert formulation.save
 
     # Create with 2 ranges without overlap
-    interpretation = Interpretation.new({
+    formulation = Formulation.new({
       expression: 'test',
       intent_id: intents(:weather_forecast).id,
       locale: 'fr',
@@ -83,10 +83,10 @@ class InterpretationAliasTest < ActiveSupport::TestCase
         }
       ]
     })
-    assert interpretation.save
+    assert formulation.save
 
     # Create with 2 ranges with overlap
-    interpretation = Interpretation.new({
+    formulation = Formulation.new({
       expression: 'test',
       intent_id: intents(:weather_forecast).id,
       locale: 'fr',
@@ -105,11 +105,11 @@ class InterpretationAliasTest < ActiveSupport::TestCase
         }
       ]
     })
-    assert_not interpretation.save
-    assert_equal ["Interpretation aliases position overlap"], interpretation.errors.full_messages
+    assert_not formulation.save
+    assert_equal ["Interpretation aliases position overlap"], formulation.errors.full_messages
 
     # Update with 2 ranges with overlap
-    assert_not interpretation.update({
+    assert_not formulation.update({
       interpretation_aliases_attributes: [
         {
           position_start: 8,
@@ -125,11 +125,11 @@ class InterpretationAliasTest < ActiveSupport::TestCase
         }
       ]
     })
-    assert_equal ["Interpretation aliases position overlap"], interpretation.errors.full_messages
+    assert_equal ["Interpretation aliases position overlap"], formulation.errors.full_messages
 
 
     # Update with 3 ranges
-    assert_not interpretation.update({
+    assert_not formulation.update({
       interpretation_aliases_attributes: [
         {
           position_start: 0,
@@ -151,18 +151,18 @@ class InterpretationAliasTest < ActiveSupport::TestCase
         }
       ]
     })
-    assert_equal ["Interpretation aliases position overlap"], interpretation.errors.full_messages
+    assert_equal ["Interpretation aliases position overlap"], formulation.errors.full_messages
   end
 
 
-  test 'Basic alias creation & interpretation association' do
+  test 'Basic alias creation & formulation association' do
     interpretation_alias = InterpretationAlias.new(
       position_start: 8,
       position_end: 21,
       aliasname: 'who'
     )
-    weather_forecast_demain = interpretations(:weather_forecast_demain)
-    interpretation_alias.interpretation = weather_forecast_demain
+    weather_forecast_demain = formulations(:weather_forecast_demain)
+    interpretation_alias.formulation = weather_forecast_demain
 
     weather_who = intents(:weather_question)
     interpretation_alias.interpretation_aliasable = weather_who
@@ -175,7 +175,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     assert_equal 21, interpretation_alias.position_end
     assert_equal 'who', interpretation_alias.aliasname
     assert_not interpretation_alias.is_list
-    assert_equal weather_forecast_demain.id, interpretation_alias.interpretation.id
+    assert_equal weather_forecast_demain.id, interpretation_alias.formulation.id
     assert_equal weather_who.id, interpretation_alias.interpretation_aliasable.id
   end
 
@@ -184,7 +184,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     interpretation_alias = InterpretationAlias.new(
       position_start: 8,
       position_end: 21,
-      interpretation: interpretations(:weather_forecast_demain),
+      formulation: formulations(:weather_forecast_demain),
       interpretation_aliasable: intents(:weather_question)
     )
     assert_not interpretation_alias.save
@@ -199,7 +199,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       position_start: 2,
       position_end: 1
     )
-    interpretation_alias.interpretation = interpretations(:weather_forecast_demain)
+    interpretation_alias.formulation = formulations(:weather_forecast_demain)
     interpretation_alias.interpretation_aliasable = intents(:weather_question)
 
     assert_not interpretation_alias.validate
@@ -214,7 +214,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       position_start: -9,
       position_end: -3
     )
-    interpretation_alias.interpretation = interpretations(:weather_forecast_demain)
+    interpretation_alias.formulation = formulations(:weather_forecast_demain)
     interpretation_alias.interpretation_aliasable = intents(:weather_question)
 
     assert_not interpretation_alias.validate
@@ -229,7 +229,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       position_start: 4,
       position_end: 4
     )
-    interpretation_alias.interpretation = interpretations(:weather_forecast_demain)
+    interpretation_alias.formulation = formulations(:weather_forecast_demain)
     interpretation_alias.interpretation_aliasable = intents(:weather_question)
 
     assert_not interpretation_alias.validate
@@ -239,7 +239,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
 
 
   test 'Check aliasname uniqueness' do
-    interpretation = Interpretation.new({
+    formulation = Formulation.new({
       expression: 'test',
       intent_id: intents(:weather_forecast).id,
       locale: 'fr',
@@ -258,19 +258,19 @@ class InterpretationAliasTest < ActiveSupport::TestCase
         }
       ]
     })
-    assert_not interpretation.save
+    assert_not formulation.save
     expected = ['Interpretation aliases aliasname has already been taken']
-    assert_equal expected, interpretation.errors.full_messages
+    assert_equal expected, formulation.errors.full_messages
   end
 
 
   test 'Redefine deleted aliasname' do
-    interpretation = interpretations(:weather_forecast_tomorrow)
+    formulation = formulations(:weather_forecast_tomorrow)
 
     expected = ["question", "when"]
-    assert_equal expected, interpretation.interpretation_aliases.pluck(:aliasname)
+    assert_equal expected, formulation.interpretation_aliases.pluck(:aliasname)
 
-    assert interpretation.update({
+    assert formulation.update({
       interpretation_aliases_attributes: [
         {
           id: interpretation_aliases(:weather_forecast_tomorrow_question).id,
@@ -289,7 +289,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       ]
     })
     expected = ["when", "who"]
-    assert_equal expected, interpretation.interpretation_aliases.pluck(:aliasname)
+    assert_equal expected, formulation.interpretation_aliases.pluck(:aliasname)
   end
 
 
@@ -337,7 +337,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
 
 
   test 'Invert alias names' do
-    interpretation = Interpretation.new({
+    formulation = Formulation.new({
       expression: 'test',
       intent_id: intents(:weather_forecast).id,
       locale: 'fr',
@@ -356,30 +356,30 @@ class InterpretationAliasTest < ActiveSupport::TestCase
         }
       ]
     })
-    assert interpretation.save
+    assert formulation.save
     expected = ["who1", "who2"]
-    assert_equal expected, interpretation.interpretation_aliases.pluck(:aliasname)
+    assert_equal expected, formulation.interpretation_aliases.pluck(:aliasname)
 
-    assert interpretation.update({
+    assert formulation.update({
        interpretation_aliases_attributes: [
          {
-           id: interpretation.interpretation_aliases.first.id,
+           id: formulation.interpretation_aliases.first.id,
            position_start: 0,
            position_end: 11,
-           aliasname: interpretation.interpretation_aliases.last.aliasname,
+           aliasname: formulation.interpretation_aliases.last.aliasname,
            interpretation_aliasable: intents(:weather_question)
          },
          {
-           id: interpretation.interpretation_aliases.last.id,
+           id: formulation.interpretation_aliases.last.id,
            position_start: 15,
            position_end: 21,
-           aliasname: interpretation.interpretation_aliases.first.aliasname,
+           aliasname: formulation.interpretation_aliases.first.aliasname,
            interpretation_aliasable: intents(:weather_question)
          }
        ]
     })
     expected = ["who2", "who1"]
-    assert_equal expected, interpretation.interpretation_aliases.pluck(:aliasname)
+    assert_equal expected, formulation.interpretation_aliases.pluck(:aliasname)
   end
 
 
@@ -388,7 +388,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       position_start: 0,
       position_end: 5,
       aliasname: 'where',
-      interpretation_id: interpretations(:terminator_find_sarah).id,
+      formulation_id: formulations(:terminator_find_sarah).id,
       nature: 'type_regex'
     )
     assert_not regexp_invalid.save
@@ -400,7 +400,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       position_start: 8,
       position_end: 21,
       aliasname: 'name',
-      interpretation_id: interpretations(:terminator_find_sarah).id,
+      formulation_id: formulations(:terminator_find_sarah).id,
       nature: 'type_regex',
       reg_exp: '[a-b]'
     )
@@ -413,7 +413,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       position_start: 0,
       position_end: 5,
       aliasname: 'where',
-      interpretation_id: interpretations(:terminator_find_sarah).id,
+      formulation_id: formulations(:terminator_find_sarah).id,
       nature: 'type_regex',
       reg_exp: '['
     )
@@ -429,7 +429,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       position_start: 0,
       position_end: 5,
       aliasname: 'where',
-      interpretation_id: interpretations(:terminator_find_sarah).id,
+      formulation_id: formulations(:terminator_find_sarah).id,
       nature: 'type_regex',
       reg_exp: "[a#{'b' * 4097}c]"
     )
@@ -447,7 +447,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       aliasname: "say_my_name",
       position_start: 8,
       position_end: 21,
-      interpretation: interpretations(:weather_forecast_demain),
+      formulation: formulations(:weather_forecast_demain),
       interpretation_aliasable: intents(:weather_question),
       is_list: true,
       any_enabled: true,

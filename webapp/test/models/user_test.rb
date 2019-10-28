@@ -281,9 +281,9 @@ class UserTest < ActiveSupport::TestCase
   end
 
 
-  test 'entities, interpretations, expressions count' do
+  test 'entities, formulations, expressions count' do
     assert_equal 4, users(:admin).entities_count
-    assert_equal 6, users(:admin).interpretations_count
+    assert_equal 6, users(:admin).formulations_count
     assert_equal 10, users(:admin).expressions_count
   end
 
