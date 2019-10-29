@@ -13,8 +13,8 @@ class BackendUsersTest < ApplicationSystemTestCase
 
   test "User index not allowed if user is not admin" do
     login_as "confirmed@viky.ai", "BimBamBoom"
-
     visit backend_users_path
+
     assert has_text?("You do not have permission to access this interface.")
     assert_equal "/agents", current_path
   end
@@ -22,23 +22,23 @@ class BackendUsersTest < ApplicationSystemTestCase
 
   test "Successful login" do
     admin_login
-
     visit backend_users_path
-    assert has_text?("7 users")
+
+    assert has_css?(".backend-users .user", count: 7)
+
     assert_equal "/backend/users", current_path
   end
 
 
   test "Users can be filtered" do
     admin_login
-
-    click_link("Users management")
+    visit backend_users_path
 
     find(".dropdown__trigger", text: "All").click
     all(".dropdown__content li").each do |filter_name|
       next if filter_name.text
       find(".dropdown__content", text: filter_name.text).click
-      assert has_text?("1 user")
+      assert has_css?(".backend-users .user", count: 1)
       assert_equal "/backend/users", current_path
       find(".dropdown__trigger", text: filter_name.text).click
     end
@@ -47,40 +47,36 @@ class BackendUsersTest < ApplicationSystemTestCase
 
   test "Users can be sorted by email" do
     admin_login
-
-    click_link("Users management")
+    visit backend_users_path
 
     find(".dropdown__trigger", text: "Sort by last login").click
     find(".dropdown__content", text: "Sort by email").click
     expected = [
-      "admin",
-      "confirmed",
-      "edit_on_agent_weather",
+      "admin@viky.ai",
+      "confirmed@viky.ai",
+      "edit_on_agent_weather@viky.ai",
       "invited@viky.ai",
-      "locked",
+      "locked@viky.ai",
       "notconfirmed@viky.ai",
-      "show_on_agent_weather"
+      "show_on_agent_weather@viky.ai"
     ]
 
     find(".field .control:last-child .dropdown__trigger a").assert_text "Sort by email"
 
-    assert_equal expected, (all("tbody tr").map {|tr|
-      tr.all("td").first.text.split(" ").first
-    })
+    assert_equal expected, all(".user__info small").collect(&:text)
   end
 
 
   test "Users can be found by search" do
     admin_login
-
-    click_link("Users management")
+    visit backend_users_path
 
     assert has_text?("Backend / User management")
 
     fill_in "search_query", with: "ocked"
     find_button(id: "search").click
 
-    assert has_text?("1 user")
+    assert has_css?(".backend-users .user", count: 1)
     assert has_text?("locked@viky.ai")
 
     assert_equal "/backend/users", current_path
@@ -89,15 +85,14 @@ class BackendUsersTest < ApplicationSystemTestCase
 
   test "Users can be found by search trimmed" do
     admin_login
-
-    click_link("Users management")
+    visit backend_users_path
 
     assert has_text?("Backend / User management")
 
     fill_in "search_query", with: " ocked   "
     find_button(id: "search").click
 
-    assert has_text?("1 user")
+    assert has_css?(".backend-users .user", count: 1)
     assert has_text?("locked@viky.ai")
 
     assert_equal "/backend/users", current_path
@@ -108,9 +103,9 @@ class BackendUsersTest < ApplicationSystemTestCase
     before_count = User.count
 
     admin_login
+    visit backend_users_path
 
-    click_link("Users management")
-    assert has_text?("#{before_count} users")
+    assert has_css?(".backend-users .user", count: before_count)
 
     all("a.btn--destructive").last.click
 
@@ -126,16 +121,16 @@ class BackendUsersTest < ApplicationSystemTestCase
     click_button("Delete")
     assert has_text?("User with the email: notconfirmed@viky.ai has successfully been deleted.")
     assert_equal "/backend/users", current_path
-    assert_equal before_count - 1, User.count
+    assert has_css?(".backend-users .user", count: before_count - 1)
   end
 
 
   test "Destroy user with username" do
     before_count = User.count
     admin_login
+    visit backend_users_path
 
-    click_link("Users management")
-    assert has_text?("#{before_count} users")
+    assert has_css?(".backend-users .user", count: before_count)
 
     all("a.btn--destructive")[2].click
     assert has_text?("Are you sure?")
@@ -144,12 +139,13 @@ class BackendUsersTest < ApplicationSystemTestCase
     click_button("Delete")
     assert has_text?("User with the email: invited@viky.ai has successfully been deleted.")
     assert_equal "/backend/users", current_path
-    assert_equal before_count - 1, User.count
+    assert has_css?(".backend-users .user", count: before_count - 1)
   end
 
 
   test "An invitation can be sent by administrators only" do
     visit new_user_invitation_path
+
     assert has_text? "You need to sign in or sign up before continuing."
 
     login_as "confirmed@viky.ai", "BimBamBoom"
@@ -175,22 +171,19 @@ class BackendUsersTest < ApplicationSystemTestCase
 
   test "Invitations can be resent to not confirmed users only" do
     admin_login
+    visit backend_users_path
 
-    click_link("Users management")
+    assert has_css?(".backend-users .user", count: 7)
 
-    assert has_text?("7 users")
-
-    all("tbody tr").each do |tr|
-      user_line = tr.all("td").map {|td| td.text}.join
-      if user_line.include?("Not confirmed")
-        assert user_line.include?("Re-invite")
+    all(".backend-users > div").collect(&:text).each do |content|
+      if content.include?("Not confirmed")
+        assert content.include?("Re-invite")
       else
-        assert user_line.include?("Confirmed")
-        assert_not user_line.include?("Re-invite")
+        assert_not content.include?("Re-invite")
       end
     end
 
-    first("table .btn--primary", text: "Re-invite").click
+    first(".backend-users .btn--primary", text: "Re-invite").click
     assert has_text?("An invitation email has been sent to")
     assert_equal "/backend/users", current_path
   end
@@ -201,10 +194,10 @@ class BackendUsersTest < ApplicationSystemTestCase
     within("nav") do
       assert has_text?("admin")
     end
+    visit backend_users_path
 
-    click_link("Users management")
     assert has_text?("edit_on_agent_weather@viky.ai")
-    within("table") do
+    within(".backend-users") do
       first(".btn--primary").click
     end
     assert has_text?("Agents")
@@ -227,16 +220,29 @@ class BackendUsersTest < ApplicationSystemTestCase
   test "Quota toggle" do
     Feature.with_quota_enabled do
       admin_login
-
-      click_link("Users management")
-      assert has_text?('7 users')
+      visit backend_users_path
 
       assert has_css?('.btn--toggle.btn--toggle-on', count: 7)
-      within('table') do
+      within('.backend-users') do
         first('.btn--toggle').click
       end
       sleep(0.5)
       assert has_css?('.btn--toggle.btn--toggle-on', count: 6)
+    end
+  end
+
+
+  test "Chatbot toggle" do
+    Feature.with_chatbot_enabled do
+      admin_login
+      visit backend_users_path
+
+      assert has_css?('.btn--toggle.btn--toggle-on', count: 0)
+      within('.backend-users') do
+        first('.btn--toggle').click
+      end
+      sleep(0.5)
+      assert has_css?('.btn--toggle.btn--toggle-on', count: 1)
     end
   end
 

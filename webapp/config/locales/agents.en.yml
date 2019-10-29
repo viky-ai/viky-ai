@@ -20,6 +20,7 @@ en:
           not_found: No agent found
           placeholder: Search agents
         sort_by:
+          popularity: Sort by popularity
           name: Sort by name
           updated_at: Sort by last update
         search_summary:

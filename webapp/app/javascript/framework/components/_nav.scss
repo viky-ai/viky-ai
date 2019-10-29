@@ -1,25 +1,21 @@
-.h-nav,
-.v-nav{
-  background-color: lighten(#0E131A, 5%);
-  color: #fff;
-}
-
 .h-nav{
+  background-color: #fff;
+  color: #000;
   @include display_flex();
   justify-content: space-between;
   flex-wrap: wrap;
   height: 3em;
+  box-shadow: 0 2px 2px rgba($dark-grey-500, .1);
+
+  position: relative;
+  z-index: 100;
 }
 
 .h-nav__header{
   padding: 0;
   a{
     display: block;
-    padding: .75em 1.25em;
-    &:hover,
-    &:focus{
-      background-color: rgba(black, .5);
-    }
+    padding: .75em 2em;
     svg{
       display: block;
     }
@@ -36,28 +32,32 @@
     @include display_flex();
     & > li{
       & > a{
-        display:block;
-        padding: .75em .75em calc(.75em - 4px) .75em;
-        color: rgba(white, .7);
+        display: block;
+        padding: .75rem .5rem calc(.75rem - 4px) .5rem;
+        color: $dark-grey-400;
+        font-weight: 400;
+        font-size: .9em;
         text-decoration: none;
         border-bottom: 4px solid transparent;
         white-space: nowrap;
 
+        @media (min-width: 500px){
+          padding: .75rem 1rem calc(.75rem - 4px) 1rem;
+        }
         &:hover,
         &:focus{
-          color: #fff;
-          background-color: rgba(black, .5);
+          color: $dark-grey-900;
+          border-bottom: 4px solid lighten($primary_color, 20%);
           .icon svg{
-            fill: rgba(white, .6);
+            fill: $dark-grey-900;
           }
         }
         &.current{
-          color: #fff;
+          color: #000;
           border-bottom: 4px solid $primary_color;
-          background-color: rgba(black, .5);
         }
         .icon svg{
-          fill: rgba(white, .4);
+          fill: $dark-grey-500;
         }
       }
     }
@@ -67,44 +67,23 @@
     .dropdown__trigger{
       display: block;
       padding: .75rem 1rem;
-      color: rgba(white, .6);
+      color: $dark-grey-500;
       text-decoration: none;
       .icon svg{
-        fill: rgba(white, .6);
+        fill: $dark-grey-500;
       }
       &:hover,
       &:focus{
-        color: #fff;
-        background-color: rgba(black, .5);
         .icon svg{
-          fill: rgba(white, .9);
+          fill: $primary_color;
         }
       }
     }
     .dropdown__content{
-      background-color: lighten(#0E131A, 5%);
-      a{
-        font-size: 1em;
-        color: rgba(white, .7);
-        .icon svg{
-          fill: rgba(white, .4);
-        }
-        &.current,
-        &:hover,
-        &:focus{
-          background-color: rgba(black, .5);
-          color: #fff;
-          .icon svg{
-            fill: rgba(white, .6);
-          }
-        }
-      }
-      ul li.separator{
-        border-top: 1px solid rgba(#fff, .1);
-        box-shadow: 0 -1px #000;
+      .icon svg{
+        fill: $dark-grey-100;
       }
     }
-
   }
 
   &.h-nav__content--hide-user-data{
@@ -117,6 +96,8 @@
 
 aside.v-nav{
   width: 200px;
+  background-color: lighten(#0E131A, 5%);
+  color: #fff;
 }
 .v-nav__header{
   padding: 2em;

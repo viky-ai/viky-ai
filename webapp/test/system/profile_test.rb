@@ -42,7 +42,6 @@ class ProfileTest < ApplicationSystemTestCase
       click_button "Update"
 
       assert find(".avatar img")["src"].include? "square"
-      assert has_field?("profile[remove_image]")
       check("Remove")
       click_button "Update"
 

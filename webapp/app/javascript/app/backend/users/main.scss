@@ -1,0 +1,80 @@
+@import '../../../framework/abstracts/variables';
+
+.backend-users{
+  margin-top: 2em;
+  display: grid;
+  grid-gap: 2em;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+
+  & > div{
+    border-radius: 4px;
+    box-shadow: 0 0 1px 0 $light-grey-900, 0 2px 3px rgba($dark-grey-500, .15);
+
+    overflow: hidden;
+    background-color: #fff;
+  }
+
+  .user{
+    font-size: 1em;
+    padding: 1.5em 1.25em;
+    border-bottom: 1px solid $light-grey-700;
+    .user__avatar img{
+      width: 42px;
+    }
+  }
+
+  .user-status{
+    padding: .5rem 1.25rem;
+    border-bottom: 1px solid $light-grey-700;
+    background-color: $light-grey-100;
+    p{
+      margin: 0;
+      font-size: .8em;
+    }
+  }
+
+  .user-info{
+    padding: .5rem 1.25rem;
+    font-size: .8em;
+    line-height: 1.5em;
+    border-bottom: 1px solid $light-grey-700;
+    background-color: $light-grey-100;
+
+    display: grid;
+    grid-columns-gap: 1em;
+    grid-row-gap: .5em;
+    grid-template-columns: 1fr 1fr;
+
+    p{
+      margin: 0;
+    }
+
+    em, small{
+      display: block;
+      font-style: normal;
+    }
+    small{
+      color: $dark-grey-200;
+      font-size: .9em;
+    }
+  }
+
+  .user-feature{
+    font-size: .8em;
+    background-color: $light-grey-100;
+    border-bottom: 1px solid $light-grey-700;
+    padding: .25rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    .btn.btn--toggle{
+      transform: scale(.8);
+    }
+  }
+
+  .user-actions{
+    background-color: #fff;
+    padding: 1rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+  }
+}

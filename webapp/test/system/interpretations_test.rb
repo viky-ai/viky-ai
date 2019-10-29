@@ -313,7 +313,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     within("#interpretations-list") do
       within(".aliases") do
         assert has_text?("tomorrow")
-        all("input[name*='is_list']").first.click
+        first('label', text: "List").click
       end
       click_button "Update"
     end
@@ -325,8 +325,8 @@ class InterpretationsTest < ApplicationSystemTestCase
     within("#interpretations-list") do
       click_link "What the weather like tomorrow ?"
       assert has_text?("Cancel")
-      assert all("input[name*='is_list']")[0].checked?
-      assert_not all("input[name*='is_list']")[1].checked?
+      assert all("input[name*='is_list']", visible: false)[0].checked?
+      assert_not all("input[name*='is_list']", visible: false)[1].checked?
     end
   end
 

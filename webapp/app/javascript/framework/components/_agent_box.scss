@@ -1,8 +1,8 @@
 .agent-box{
-  box-shadow: 0 3px 4px rgba(black, .1);
   border-radius: 2px;
   position: relative;
-  background-color: #fbfbfb;
+  background-color: $light-grey-200;
+  box-shadow: 0 0 1px 0 $light-grey-900, 0 2px 3px rgba($dark-grey-500, .15);
 
   .agent-box__header{
     display: block;
@@ -69,13 +69,13 @@
   h2{
     font-weight: 400;
     font-size: 1.075em;
-    padding-top: .7em;
+    padding-top: 1em;
     padding-bottom: .1em;
   }
   h3{
     font-size: .8em;
     color: #999;
-    padding-bottom: .8em;
+    padding-bottom: 1.2em;
   }
 
   .agent-box__content{
@@ -84,16 +84,16 @@
     justify-content: space-between;
 
     min-height: 4em;
-    background-color: #fbfbfb;
+    background-color: $light-grey-200;
+    border-top: 1px solid $light-grey-700;
 
-    border-top: 1px solid #f0f0f0;
     padding: .4em 1em;
     border-bottom-left-radius: 2px;
     border-bottom-right-radius: 2px;
     .agent-box__content__info{
       padding: .2em 0;
       font-size: .75em;
-      color: #999;
+      color: $dark-grey-200;
       line-height: 1.5em;
     }
   }
@@ -136,49 +136,8 @@
 
 .agents-box-grid{
   margin: 1.5em 0;
-  display: -ms-grid;
   display: grid;
-
-  -ms-grid-columns: 1fr;
   grid-template-columns: 1fr;
-
   grid-gap: 2em;
-
-  &.agents-box-grid--full{
-    @media (min-width: 700px){
-      -ms-grid-columns: 1fr 1fr;
-      grid-template-columns: 1fr 1fr;
-    }
-    @media (min-width: 1000px){
-      -ms-grid-columns: 1fr 1fr 1fr;
-      grid-template-columns: 1fr 1fr 1fr;
-    }
-    @media (min-width: 1300px){
-      -ms-grid-columns: 1fr 1fr 1fr 1fr;
-      grid-template-columns: 1fr 1fr 1fr 1fr;
-    }
-  }
-  &.agents-box-grid--with-sidebar{
-    margin: 0;
-    @media (min-width: 700px){
-      -ms-grid-columns: 1fr 1fr;
-      grid-template-columns: 1fr 1fr;
-    }
-    @media (min-width: 1000px){
-      -ms-grid-columns: 1fr;
-      grid-template-columns: 1fr;
-    }
-    @media (min-width: 1100px){
-      -ms-grid-columns: 1fr 1fr;
-      grid-template-columns: 1fr 1fr;
-    }
-    @media (min-width: 1350px){
-      -ms-grid-columns: 1fr 1fr 1fr;
-      grid-template-columns: 1fr 1fr 1fr;
-    }
-    @media (min-width: 1750px){
-      -ms-grid-columns: 1fr 1fr 1fr 1fr;
-      grid-template-columns: 1fr 1fr 1fr 1fr;
-    }
-  }
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }

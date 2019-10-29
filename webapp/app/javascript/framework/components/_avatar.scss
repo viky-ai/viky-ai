@@ -30,11 +30,12 @@
   .user__info{
     margin-left: .75em;
     line-height: 1.5em;
+    color: $dark-grey-900;
     small{
       display: block;
       font-size: .85em;
       line-height: 1.5em;
-      color: #888;
+      color: $dark-grey-200;
     }
   }
 }
