@@ -25,6 +25,11 @@ class Agent < ApplicationRecord
   has_many :predecessors, through: :in_arcs, source: :source
   has_many :successors, through: :out_arcs, source: :target
 
+  before_validation :ensure_api_token, on: :create
+  before_validation :add_owner_id, on: :create
+  before_validation :clean_locales, on: :create
+  before_validation :clean_agentname
+
   validates :name, presence: true
   validates :agentname, uniqueness: { scope: [:owner_id] }, length: { in: 3..25 }, presence: true
   validates :owner_id, presence: true
@@ -34,10 +39,7 @@ class Agent < ApplicationRecord
   validate  :check_locales
   validate  :owner_presence_in_users
 
-  before_validation :ensure_api_token, on: :create
-  before_validation :add_owner_id, on: :create
-  before_validation :clean_locales, on: :create
-  before_validation :clean_agentname
+  before_save :add_slug
   before_destroy :check_collaborators_presence, prepend: true
 
   after_create_commit do
@@ -59,56 +61,90 @@ class Agent < ApplicationRecord
   scope :owned_by, ->(user) { where(owner_id: user.id) }
 
   def self.search(q = {})
-    conditions = where('1 = 1')
-    conditions = conditions.joins(:memberships)
+    user_reachable = where('1 = 1')
+                       .joins(:memberships)
+                       .where(memberships: { user_id: q[:user_id] })
+    public_reachable = where(visibility: Agent.visibilities[:is_public])
 
     case q[:filter_owner]
     when 'owned'
-      conditions = conditions.where(owner_id: q[:user_id])
+      user_reachable = where(owner_id: q[:user_id])
+      public_reachable = nil
     when 'favorites'
-      conditions = conditions.joins(:favorite_agents).where(favorite_agents: { user: q[:user_id] })
-    else
-      conditions = conditions.where(
-        'user_id = ? OR visibility = ?',
-        q[:user_id], Agent.visibilities[:is_public]
-      )
+      user_reachable = user_reachable
+                         .joins(:favorite_agents)
+                         .where(favorite_agents: { user: q[:user_id] })
+      public_reachable = public_reachable
+                           .joins(:favorite_agents)
+                           .where(favorite_agents: { user: q[:user_id] })
     end
 
     case q[:filter_visibility]
     when 'public'
-      conditions = conditions.where(visibility: Agent.visibilities[:is_public])
+      user_reachable = user_reachable.where(visibility: Agent.visibilities[:is_public])
     when 'private'
-      conditions = conditions.where(visibility: Agent.visibilities[:is_private])
-    else
-      conditions
+      user_reachable = user_reachable.where(visibility: Agent.visibilities[:is_private])
+      public_reachable = nil
     end
 
     if q[:query].present?
-      conditions = conditions.where(
-        'lower(name) LIKE lower(?) OR lower(agentname) LIKE lower(?) OR lower(description) LIKE lower(?)',
+      user_reachable = user_reachable.joins(:users).where(
+        'users.username ILIKE ?
+          OR users.name ILIKE ?
+          OR agents.name ILIKE ?
+          OR agentname ILIKE ?
+          OR slug ILIKE ?
+          OR description ILIKE ?',
+        "%#{q[:query]}%",
+        "%#{q[:query]}%",
+        "%#{q[:query]}%",
         "%#{q[:query]}%",
         "%#{q[:query]}%",
         "%#{q[:query]}%"
       )
-    end
-
-    case q[:sort_by]
-    when 'name'
-      conditions = conditions.order(name: :asc)
-    when 'updated_at'
-      conditions = conditions.order(updated_at: :desc)
-    else
-      conditions
+      if public_reachable.present?
+        public_reachable = public_reachable.joins(:users).where(
+          'users.username ILIKE ?
+            OR users.name ILIKE ?
+            OR agents.name ILIKE ?
+            OR agentname ILIKE ?
+            OR slug ILIKE ?
+            OR description ILIKE ?',
+          "%#{q[:query]}%",
+          "%#{q[:query]}%",
+          "%#{q[:query]}%",
+          "%#{q[:query]}%",
+          "%#{q[:query]}%",
+          "%#{q[:query]}%"
+        )
+      end
     end
 
     case q[:selected]
     when 'true'
-      conditions = conditions.where(id: q[:selected_ids])
+      user_reachable = user_reachable.where(id: q[:selected_ids])
+      public_reachable = public_reachable.where(id: q[:selected_ids]) if public_reachable.present?
     when 'false'
-      conditions = conditions.where.not(id: q[:selected_ids])
+      user_reachable = user_reachable.where.not(id: q[:selected_ids])
+      public_reachable = public_reachable.where.not(id: q[:selected_ids]) if public_reachable.present?
     end
 
-    conditions.distinct
+    select_request = public_reachable.present? ? "#{user_reachable.to_sql} UNION #{public_reachable.to_sql}" : user_reachable.to_sql
+    sort_request = Agent.from(Arel.sql "(#{select_request}) AS agents")
+    case q[:sort_by]
+    when 'name'
+      sort_request = sort_request.order(name: :asc)
+    when 'updated_at'
+      sort_request = sort_request.order(updated_at: :desc, name: :asc)
+    when 'popularity'
+      popularity_sort = sort_request
+                          .select(Arel.sql "agents.id, COUNT(agent_arcs.target_id) AS count_agents")
+                          .left_joins(:in_arcs)
+                          .group(:id)
+      sort_request = Agent.from(Arel.sql "agents, (#{popularity_sort.to_sql}) AS ags").where(Arel.sql 'agents.id = ags.id').order('ags.count_agents desc, agents.name asc')
+    end
+
+    sort_request
   end
 
   def available_colors
@@ -184,10 +220,6 @@ class Agent < ApplicationRecord
     begin
       self.api_token = SecureRandom.hex
     end while self.class.exists?(api_token: api_token)
-  end
-
-  def slug
-    "#{User.find(owner_id).username}/#{agentname}"
   end
 
   def expressions_count
@@ -304,6 +336,12 @@ class Agent < ApplicationRecord
 
     def add_owner_id
       self.owner_id = memberships.first.user_id unless memberships.empty?
+    end
+
+    def add_slug
+      if agentname_changed?
+        self.slug = "#{User.find(owner_id).username}/#{agentname}"
+      end
     end
 
     def clean_agentname

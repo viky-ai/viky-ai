@@ -2,6 +2,10 @@
 
 ## Overview
 
+## Enable chatbot feature
+
+The chatbot feature can be activated using the environment variable `VIKYAPP_CHATBOT_ENABLED`. This feature is disabled by default. When activated, chatbot can be activated per user in order to allow chatbot feature for a well-defined list of users.
+
 ### Initiating a session
 
 The viky.ai chatbot starts a session and sends an id token to the bot.

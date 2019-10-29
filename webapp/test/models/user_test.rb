@@ -3,7 +3,7 @@ require 'test_helper'
 class UserTest < ActiveSupport::TestCase
 
   test "non admin user" do
-    assert !User.find_by_email('notconfirmed@viky.ai').admin?
+    assert_not User.find_by_email('notconfirmed@viky.ai').admin?
     assert User.find_by_email('admin@viky.ai').admin?
 
     u = User.new(email: 'not-admin@viky.ai', password: 'Hello baby', username: 'mrwho')
@@ -117,7 +117,7 @@ class UserTest < ActiveSupport::TestCase
     assert s.empty?
 
     s = Backend::UserSearch.new(sort_by: 'email', query: "locked")
-    assert !s.empty?
+    assert_not s.empty?
   end
 
 
@@ -135,8 +135,8 @@ class UserTest < ActiveSupport::TestCase
     User.invite!({email: "tester_nil_1@viky.ai"}, users(:admin))
     User.invite!({email: "tester_nil_2@viky.ai"}, users(:admin))
 
-    assert !User.find_by_email("tester_nil_1@viky.ai").nil?
-    assert !User.find_by_email("tester_nil_2@viky.ai").nil?
+    assert_not_nil User.find_by_email("tester_nil_1@viky.ai")
+    assert_not_nil User.find_by_email("tester_nil_2@viky.ai")
   end
 
 
@@ -303,6 +303,18 @@ class UserTest < ActiveSupport::TestCase
       assert admin.save
       assert users(:admin).quota_exceeded?
     end
+  end
 
+
+  test 'Trigger an NLP sync of every agent when the username change' do
+    Nlp::Package.any_instance.expects(:push).twice
+
+    user = users(:admin)
+    assert_equal 2, user.agents.count
+    user.username = 'administrator'
+    assert user.save
+
+    user.bio = 'My life is amazing !'
+    assert user.save
   end
 end

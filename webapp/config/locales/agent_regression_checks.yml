@@ -1,6 +1,7 @@
 en:
   views:
     agent_regression_checks:
+      tests_suite: Tests Suite
       new:
         failed_message: 'Failed to save new regression test.'
       update:

@@ -82,6 +82,11 @@
 
 }
 
+.btn .icon{
+  svg{
+    fill: $dark-grey-500;
+  }
+}
 .btn--primary .icon,
 .btn--destructive .icon{
   svg{

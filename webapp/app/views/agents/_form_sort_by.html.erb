@@ -11,6 +11,16 @@
   <div class="dropdown__content dropdown__content--hidden">
     <ul>
       <li>
+        <a href="#" <% if @search.sort_by == 'popularity' %>class="current"<% end %>
+           data-behavior="populate-input, submit-form"
+           data-input-selector="input[name='search[sort_by]']"
+           data-input-value="popularity"
+           data-form-selector=".agent_search">
+          <%= t('views.agents.index.sort_by.popularity') %>
+        </a>
+      </li>
+
+      <li>
         <a href="#" <% if @search.sort_by == 'name' %>class="current"<% end %>
            data-behavior="populate-input, submit-form"
            data-input-selector="input[name='search[sort_by]']"
