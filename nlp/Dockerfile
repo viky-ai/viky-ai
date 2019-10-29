@@ -2,7 +2,7 @@
 # https://codefresh.io/blog/node_docker_multistage/
 
 # Run
-# docker build --target run_image -t docker-registry.pertimm.net/viky.ai/platform/nlp .
+# docker build --pull --target run_image -t docker-registry.pertimm.net/viky.ai/platform/nlp .
 # docker run -it --volume "$(pwd)/import:/nls/import" -p "9345:9345" -t docker-registry.pertimm.net/viky.ai/platform/nlp
 
 # Tests
