@@ -22,15 +22,15 @@ module Quota
   end
 
   def self.max_interpret_requests_per_second
-    ENV.fetch("VIKYAPP_QUOTA_INTERPRET_PER_SECOND") { 5 }.to_i
+    ENV.fetch("VIKYAPP_QUOTA_INTERPRET_PER_SECOND") { 3 }.to_i
   end
 
   def self.max_interpret_requests_per_day
-    ENV.fetch("VIKYAPP_QUOTA_INTERPRET_PER_DAY") { 1_000 }.to_i
+    ENV.fetch("VIKYAPP_QUOTA_INTERPRET_PER_DAY") { 400 }.to_i
   end
 
   def self.expressions_limit
-    ENV.fetch('VIKYAPP_QUOTA_EXPRESSION') { 100_000 }.to_i
+    ENV.fetch('VIKYAPP_QUOTA_EXPRESSION') { 3_000 }.to_i
   end
 end
 
