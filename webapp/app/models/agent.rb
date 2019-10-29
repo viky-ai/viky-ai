@@ -90,10 +90,12 @@ class Agent < ApplicationRecord
     if q[:query].present?
       user_reachable = user_reachable.joins(:users).where(
         'users.username ILIKE ?
+          OR users.name ILIKE ?
           OR agents.name ILIKE ?
           OR agentname ILIKE ?
           OR slug ILIKE ?
           OR description ILIKE ?',
+        "%#{q[:query]}%",
         "%#{q[:query]}%",
         "%#{q[:query]}%",
         "%#{q[:query]}%",
@@ -103,10 +105,12 @@ class Agent < ApplicationRecord
       if public_reachable.present?
         public_reachable = public_reachable.joins(:users).where(
           'users.username ILIKE ?
+            OR users.name ILIKE ?
             OR agents.name ILIKE ?
             OR agentname ILIKE ?
             OR slug ILIKE ?
             OR description ILIKE ?',
+          "%#{q[:query]}%",
           "%#{q[:query]}%",
           "%#{q[:query]}%",
           "%#{q[:query]}%",
