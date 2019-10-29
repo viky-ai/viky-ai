@@ -44,17 +44,22 @@ if [[ "$1" == "create_db" ]]; then
 
     export PGPASSWORD="${DB_SU_PASSWORD}"
 
-    # create database if not exist
+    # create DATABASE and USER if not exist
     psql --no-password -h "${VIKYAPP_DB_HOST}" -p ${VIKYAPP_DB_PORT:-5432} -U "${DB_SUPERUSER}" -d "postgres" <<- EOM
 SELECT new.sql FROM (
   SELECT 'CREATE USER "${VIKYAPP_DB_USERNAME}" WITH ENCRYPTED PASSWORD ''${VIKYAPP_DB_PASSWORD}'';' AS sql, 1 as n
   WHERE NOT EXISTS (SELECT FROM pg_user WHERE usename = '${VIKYAPP_DB_USERNAME}')
   UNION
-  SELECT 'CREATE DATABASE "${VIKYAPP_DB_NAME}";' AS sql, 2 as n
+  SELECT 'CREATE DATABASE "${VIKYAPP_DB_NAME}" OWNER "${VIKYAPP_DB_USERNAME}";' AS sql, 2 as n
   WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${VIKYAPP_DB_NAME}')
-  UNION
-  SELECT 'GRANT ALL PRIVILEGES ON DATABASE "${VIKYAPP_DB_NAME}" TO "${VIKYAPP_DB_USERNAME}";' AS sql, 3 as n
-  WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${VIKYAPP_DB_NAME}')
+) AS new
+ORDER BY n ASC\gexec
+EOM
+    # change database schema owner
+    psql --no-password -h "${VIKYAPP_DB_HOST}" -p ${VIKYAPP_DB_PORT:-5432} -U "${DB_SUPERUSER}" -d "${VIKYAPP_DB_NAME}" <<- EOM
+SELECT new.sql FROM (
+  SELECT 'ALTER SCHEMA public OWNER TO "${VIKYAPP_DB_USERNAME}";' AS sql, 1 as n
+  WHERE NOT EXISTS (SELECT FROM information_schema.schemata WHERE schema_name = 'public' AND schema_owner = '${VIKYAPP_DB_USERNAME}')
 ) AS new
 ORDER BY n ASC\gexec
 EOM
