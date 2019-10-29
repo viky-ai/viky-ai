@@ -16,6 +16,7 @@ variables:
   DOCKERHUB_IMAGE_APP: "vikyai/app"
   DOCKERHUB_IMAGE_TOOLS_BACKUP: "vikyai/tools_backup"
   DOCKERHUB_IMAGE_DOC: vikyai/doc
+  SKIP_TEST: "true"
 
 image: vikyai/tools-gitlab-auto-deploy-image:latest
 before_script:
@@ -175,9 +176,9 @@ push_dockerhub:
     # TODO Mouadh HSOUMI must be removed before we merge to master
     - feature/21506_hebergement
   script:
-    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_NLP}:${TAG_TO_PUSH_TO_DOCKERHUB}" "${DOCKERHUB_IMAGE_NLP}"
-    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_APP}:${TAG_TO_PUSH_TO_DOCKERHUB}" "${DOCKERHUB_IMAGE_APP}"
-    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_TOOLS_BACKUP}:${TAG_TO_PUSH_TO_DOCKERHUB}" "${DOCKERHUB_IMAGE_TOOLS_BACKUP}"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_NLP}:${VIKY_DOCKER_TAG}" "${DOCKERHUB_IMAGE_NLP}"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_APP}:${VIKY_DOCKER_TAG}" "${DOCKERHUB_IMAGE_APP}"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_TOOLS_BACKUP}:${VIKY_DOCKER_TAG}" "${DOCKERHUB_IMAGE_TOOLS_BACKUP}"
 
 # Deploy generic job
 
