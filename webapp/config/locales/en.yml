@@ -26,8 +26,11 @@ en:
     no_locale: No language
     fr: French
     en: English
+    de: German
+    it: Italian
     es: Spanish
     pt: Portuguese
+    ro: Romanian
     zh: Chinese
     ar: Arabic
     tr: Turkish
