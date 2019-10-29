@@ -1,4 +1,4 @@
-class InterpretationsList
+class FormulationsList
   constructor: ->
     App.CardListHelper.updateDraggable()
 
@@ -14,7 +14,7 @@ class InterpretationsList
             method: 'POST'
             data: { locale: $(event.target).data('locale') }
       });
-    App.CodeEditor.buildJavaScriptEditor($("#solution__new_interpretation")[0])
+    App.CodeEditor.buildJavaScriptEditor($("#solution__new_formulation")[0])
 
   @incrementTabBadge: ->
     count = $("#current-locale-tab-badge").data('count')
@@ -26,10 +26,10 @@ class InterpretationsList
     $("#current-locale-tab-badge").html(count - 1)
     $("#current-locale-tab-badge").data('count',  count - 1)
 
-module.exports = InterpretationsList
+module.exports = FormulationsList
 
 Setup = ->
   if $('body').data('controller-name') == "intents" && $('body').data('controller-action') == "show"
-    new InterpretationsList()
+    new FormulationsList()
 
 $(document).on('turbolinks:load', Setup)

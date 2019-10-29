@@ -516,7 +516,7 @@ class AliasesForm
     AliasesRegexForm.setListeners()
 
 
-class InterpretationTagger
+class FormulationTagger
   @instances = []
 
   constructor: (editor_element) ->
@@ -525,7 +525,7 @@ class InterpretationTagger
     @editor         = editor_element.editor
     @editor_id      = $(editor_element).attr("trix-id")
     @editor_element = editor_element
-    InterpretationTagger.instances.push(@editor_id)
+    FormulationTagger.instances.push(@editor_id)
     @sync()
 
     $(document).on 'click', (event) =>
@@ -646,7 +646,7 @@ class InterpretationTagger
     return result
 
 
-class InterpretationSolutions
+class FormulationSolutions
   constructor: ->
     # Initial state on 'turbolinks:load' event
     if $("input[name='formulation[auto_solution_enabled]']").is(':checked')
@@ -670,7 +670,7 @@ class InterpretationSolutions
 
 
 
-class InterpretationOptions
+class FormulationOptions
   constructor: ->
     $('body').on 'aliases-form:update', (event, container) =>
       @update(container)
@@ -711,8 +711,8 @@ class InterpretationOptions
 SetupForm = ->
   if $('body').data('controller-name') == "intents" && $('body').data('controller-action') == "show"
     for trix in $("trix-editor")
-      unless InterpretationTagger.instances.includes($(trix).attr("trix-id"))
-        new InterpretationTagger(trix)
+      unless FormulationTagger.instances.includes($(trix).attr("trix-id"))
+        new FormulationTagger(trix)
 
 $(document).on('trix-initialize', SetupForm)
 
@@ -734,8 +734,8 @@ SetupPopUps = ->
   if $('body').data('controller-name') == "intents" && $('body').data('controller-action') == "show"
     popup_add_tag    = new PopupAddTag()
     popup_remove_tag = new PopupRemoveTag()
-    new InterpretationSolutions()
-    new InterpretationOptions()
+    new FormulationSolutions()
+    new FormulationOptions()
 
 $(document).on('turbolinks:load', SetupPopUps)
 

@@ -1,12 +1,12 @@
 class Backend::DashboardController < Backend::ApplicationController
 
   def index
-    @top_interpretations_agents = Agent
+    @top_formulations_agents = Agent
       .select('agents.id, COUNT(formulations.id) as count')
       .joins(intents: :formulations)
       .group(:id)
       .order('count DESC, agents.name')
-      .page(params[:interpretations_page]).per(10)
+      .page(params[:formulations_page]).per(10)
 
     @top_entities_agents = Agent
       .select('agents.id, COUNT(entities.id) as count')

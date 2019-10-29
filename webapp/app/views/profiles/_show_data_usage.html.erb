@@ -1,7 +1,7 @@
 <%
 expressions_count = @profile.expressions_count
 entities_count = @profile.entities_count
-interpretations_count = @profile.formulations_count
+formulations_count = @profile.formulations_count
 if Feature.quota_enabled? && @profile.quota_enabled
   expressions_quota = Quota.expressions_limit
   percentage = (expressions_count.to_f * 100 / expressions_quota).round(1)
@@ -50,7 +50,7 @@ end
           </div>
           <div class="indicator indicator--secondary profile-radial-data__secondary-2">
             <span class="indicator-number">
-              <strong><%= number_with_delimiter(interpretations_count) %></strong>
+              <strong><%= number_with_delimiter(formulations_count) %></strong>
             </span>
             <%= t('views.profile.show_data_use.formulations_label') %>
           </div>

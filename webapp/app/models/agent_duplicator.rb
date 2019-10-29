@@ -89,7 +89,7 @@ class AgentDuplicator
     end
 end
 
-class InterpretationsCloner < Clowne::Cloner
+class FormulationsCloner < Clowne::Cloner
   include_association :formulation_aliases
 end
 
@@ -130,7 +130,7 @@ class EntitiesListsCloner < Clowne::Cloner
 end
 
 class IntentsCloner < Clowne::Cloner
-  include_association :formulations, clone_with: InterpretationsCloner
+  include_association :formulations, clone_with: FormulationsCloner
 end
 
 class AgentRegressionChecksCloner < Clowne::Cloner

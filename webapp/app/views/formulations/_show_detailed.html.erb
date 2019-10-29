@@ -1,6 +1,6 @@
-<div class='interpretations-show'>
+<div class='formulations-show'>
 
-  <div class="interpretations-show__close">
+  <div class="formulations-show__close">
     <%= link_to icon_close.html_safe,
                 user_agent_intent_formulation_path(
                     formulation.intent.agent.owner,
@@ -76,7 +76,7 @@
   </div>
 
   <% unless formulation.auto_solution_enabled %>
-    <div class="field field--for-solution interpretations-show__solution">
+    <div class="field field--for-solution formulations-show__solution">
       <div class="control">
         <span class="solution-label">
           <%= t('views.formulations.solution_label_readonly') %>

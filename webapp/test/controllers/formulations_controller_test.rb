@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class InterpretationsControllerTest < ActionDispatch::IntegrationTest
+class FormulationsControllerTest < ActionDispatch::IntegrationTest
   #
   # Show
   #

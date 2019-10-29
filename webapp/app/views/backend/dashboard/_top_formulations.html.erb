@@ -4,7 +4,7 @@
 
 <table>
   <tbody>
-    <% @top_interpretations_agents.each do |data| %>
+    <% @top_formulations_agents.each do |data| %>
       <% agent = Agent.find(data['id']) %>
       <tr>
         <td>
@@ -27,6 +27,6 @@
 </table>
 
 <div class="top-pagination">
-  <%= paginate @top_interpretations_agents, window: 1, param_name: :interpretations_page %>
-  <p class="pagination-info"><%= page_entries_info @top_interpretations_agents %></p>
+  <%= paginate @top_formulations_agents, window: 1, param_name: :formulations_page %>
+  <p class="pagination-info"><%= page_entries_info @top_formulations_agents %></p>
 </div>

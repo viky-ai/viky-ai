@@ -227,7 +227,7 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
       intentname: 'intent_child',
       agent: child
     )
-    interpretation_child = Formulation.create(
+    formulation_child = Formulation.create(
       expression: 'formulation_child',
       locale: 'en',
       intent: intent_child
@@ -245,7 +245,7 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
       position_start: 0,
       position_end: 16,
       aliasname: 'inter_parent',
-      formulation_id: interpretation_child.id,
+      formulation_id: formulation_child.id,
       formulation_aliasable: entities_list_parent,
       nature: 'type_entities_list'
     )
