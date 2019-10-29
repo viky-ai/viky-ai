@@ -12,9 +12,10 @@ variables:
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
   DOCKER_IMAGE_DOC: docker-registry.pertimm.net/viky.ai/doc
-  DOCKER_HUB_IMAGE_NLP: "vikyai/nlp"
-  DOCKER_HUB_IMAGE_WEBAPP: "vikyai/webapp"
-  DOCKER_HUB_IMAGE_BACKUP: "vikyai/backup"
+  DOCKERHUB_IMAGE_NLP: "vikyai/nlp"
+  DOCKERHUB_IMAGE_APP: "vikyai/app"
+  DOCKERHUB_IMAGE_TOOLS_BACKUP: "vikyai/tools_backup"
+  DOCKERHUB_IMAGE_DOC: vikyai/doc
 
 image: vikyai/tools-gitlab-auto-deploy-image:latest
 before_script:
@@ -159,6 +160,9 @@ tag_backup:
 
 # Push Docker image to Dockerhub only when on Master and it's a Tag
 push_dockerhub:
+  variables:
+    # replace this when on master to latest
+    VIKY_DOCKER_TAG: ${CI_COMMIT_REF_SLUG}
   extends: .kubernetes_runner
   stage: push_dockerhub
   needs:
@@ -171,9 +175,9 @@ push_dockerhub:
     # TODO Mouadh HSOUMI must be removed before we merge to master
     - feature/21506_hebergement
   script:
-    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_NLP}" "vikyai/nlp:latest"
-    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_APP}" "vikyai/webapp:latest"
-    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_TOOLS_BACKUP}" "vikyai/backup:latest"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_NLP}:${TAG_TO_PUSH_TO_DOCKERHUB}" "${DOCKERHUB_IMAGE_NLP}"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_APP}:${TAG_TO_PUSH_TO_DOCKERHUB}" "${DOCKERHUB_IMAGE_APP}"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_TOOLS_BACKUP}:${TAG_TO_PUSH_TO_DOCKERHUB}" "${DOCKERHUB_IMAGE_TOOLS_BACKUP}"
 
 # Deploy generic job
 
