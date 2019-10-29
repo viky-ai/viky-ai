@@ -1,9 +1,64 @@
-$primary_color: #3bb8d7;
+$primary_color: hsl(192, 66, 54);
+.bg-primary { background-color: $primary_color; }
 
 $destructive_color: #ff3860;
+.bg-destructive { background-color: $destructive_color; }
+
 $alert_color: #ff3860;
+.bg-alert { background-color: $alert_color; }
+
 $success_color: #23d160;
+.bg-success { background-color: $success_color; }
+
 $warning_color: #ffa000;
+.bg-warning { background-color: $warning_color; }
+
+
+$light-grey: hsl(hue($primary_color), 20, 96);
+
+$light-grey-100: lighten($light-grey, 1.75%);
+$light-grey-200: lighten($light-grey, 1%);
+$light-grey-300: $light-grey;
+$light-grey-400: darken($light-grey, 1%);
+$light-grey-500: darken($light-grey, 2%);
+$light-grey-600: darken($light-grey, 3%);
+$light-grey-700: darken($light-grey, 4%);
+$light-grey-800: darken($light-grey, 5.5%);
+$light-grey-900: darken($light-grey, 7%);
+
+.bg-light-grey-100 { background-color: $light-grey-100; }
+.bg-light-grey-200 { background-color: $light-grey-200; }
+.bg-light-grey-300 { background-color: $light-grey-300; }
+.bg-light-grey-400 { background-color: $light-grey-400; }
+.bg-light-grey-500 { background-color: $light-grey-500; }
+.bg-light-grey-600 { background-color: $light-grey-600; }
+.bg-light-grey-700 { background-color: $light-grey-700; }
+.bg-light-grey-800 { background-color: $light-grey-800; }
+.bg-light-grey-900 { background-color: $light-grey-900; }
+
+
+$dark-grey: darken(desaturate(adjust-hue($primary_color, 25deg), 45%), 40%);
+
+$dark-grey-100: lighten($dark-grey, 60%);
+$dark-grey-200: lighten($dark-grey, 50%);
+$dark-grey-300: lighten($dark-grey, 40%);
+$dark-grey-400: lighten($dark-grey, 30%);
+$dark-grey-500: lighten($dark-grey, 20%);
+$dark-grey-600: lighten($dark-grey, 10%);
+$dark-grey-700: $dark-grey;
+$dark-grey-800: darken($dark-grey, 5%);
+$dark-grey-900: darken($dark-grey, 10%);
+
+.bg-dark-grey-100 { background-color: $dark-grey-100; }
+.bg-dark-grey-200 { background-color: $dark-grey-200; }
+.bg-dark-grey-300 { background-color: $dark-grey-300; }
+.bg-dark-grey-400 { background-color: $dark-grey-400; }
+.bg-dark-grey-500 { background-color: $dark-grey-500; }
+.bg-dark-grey-600 { background-color: $dark-grey-600; }
+.bg-dark-grey-700 { background-color: $dark-grey-700; }
+.bg-dark-grey-800 { background-color: $dark-grey-800; }
+.bg-dark-grey-900 { background-color: $dark-grey-900; }
+
 
 $colors: (
   black: #444,

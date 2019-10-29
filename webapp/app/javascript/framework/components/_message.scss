@@ -67,10 +67,11 @@
 
   @include display_flex();
 
-  background-color: #222;
-  color: #fff;
+  background-color: #fff;
+  fill: $dark-grey-900;
   max-width: 30em;
   border-radius: 3px;
+  box-shadow: 0 2px 3px rgba(#000, .15);
 
   .message__content{
     padding: 1em 1.5em;
@@ -80,7 +81,12 @@
       display:block;
       padding: 1em;
       .icon svg{
-        fill: #fff;
+        fill: $dark-grey-500;
+      }
+      &:hover{
+        .icon svg{
+          fill: $dark-grey-900;
+        }
       }
     }
   }
@@ -97,8 +103,8 @@
 }
 
 .message--notice{
-  border-left: 7px solid $success_color;
+  border-left: 9px solid $success_color;
 }
 .message--alert{
-  border-left: 7px solid $alert_color;
+  border-left: 9px solid $alert_color;
 }

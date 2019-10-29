@@ -292,7 +292,7 @@ class AgentSearchTest < ActiveSupport::TestCase
       }
     }
     assert user.save
-    assert !AgentSearch.new(user).empty?
+    assert_not AgentSearch.new(user).empty?
 
     user.ui_state = {}
     assert user.save
@@ -302,7 +302,7 @@ class AgentSearchTest < ActiveSupport::TestCase
       'query' => 'weather',
       'sort_by' => 'updated_at'
     }
-    assert !AgentSearch.new(user, criteria).empty?
+    assert_not AgentSearch.new(user, criteria).empty?
   end
 
   test 'Sort agents by popularity' do

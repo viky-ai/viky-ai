@@ -5,7 +5,7 @@ class Task::Backup::Create < Task::Backup
     opts = { env: { 'PGPASSWORD' => pg('password') }, capture_output: true }
     sed_cmd = "sed -e 's/ OWNER TO #{pg('username')};/ OWNER TO superman;/g'"
     psql_cmd = "pg_dump --no-password -h '#{pg('host')}' -p '#{pg('port')}' -U '#{pg('username')}' -d '#{pg('database')}'"
-    full_cmd = " #{psql_cmd} | #{sed_cmd} | gzip > backups/#{name}/#{name}_#{datetime_for_filename}_db-postgresql.dump.gz"
+    full_cmd = " #{psql_cmd} | #{sed_cmd} | gzip > backups/#{name}/#{name}_#{datetime_for_filename}-postgresql.dump.gz"
     Task::Cmd.exec(full_cmd, opts)
   end
 

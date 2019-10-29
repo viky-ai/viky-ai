@@ -186,7 +186,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
         }
       }]
     })
-    assert !log.save
+    assert_not log.save
     assert_not log.persisted?
     expected = [:context_to_s, "is too long (maximum is 1000 characters)"]
     assert_equal expected, log.errors.first

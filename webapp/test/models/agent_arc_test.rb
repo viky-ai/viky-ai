@@ -234,7 +234,7 @@ class AgentArcTest < ActiveSupport::TestCase
       'filter_owner' => 'owned',
       'query' => 'weather'
     }
-    assert !AgentSelectSearch.new(user, criteria).empty?
+    assert_not AgentSelectSearch.new(user, criteria).empty?
   end
 
 

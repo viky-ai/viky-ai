@@ -48,7 +48,7 @@
         }
         &:hover,
         &:focus{
-          background-color: #f5f5f5;
+          background-color: $light-grey-400;
         }
         &.destructive{
           color: darken($destructive_color, 10%);

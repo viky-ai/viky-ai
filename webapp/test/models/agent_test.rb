@@ -24,10 +24,10 @@ class AgentTest < ActiveSupport::TestCase
     assert_equal 'is_public', agent.visibility
     assert_equal 'admin/agenta', agent.slug
     assert agent.is_public?
-    assert !agent.is_private?
-    assert agents(:terminator).id, agent.source_agent[:id]
-    assert agents(:terminator).slug, agent.source_agent[:slug]
-    assert '2017-01-02 12:34:56', agent.source_agent[:date]
+    assert_not agent.is_private?
+    assert_equal agents(:terminator).id, agent.source_agent['id']
+    assert_equal agents(:terminator).slug, agent.source_agent['slug']
+    assert_equal '2017-01-02 12:34:56', agent.source_agent['date']
   end
 
 
@@ -37,7 +37,7 @@ class AgentTest < ActiveSupport::TestCase
       agentname: "agenta",
       description: "Agent A decription"
     )
-    assert !agent.save
+    assert_not agent.save
     expected = [
       "Owner can't be blank",
       "Slug can't be blank",
@@ -87,7 +87,7 @@ class AgentTest < ActiveSupport::TestCase
   test "Add owner as collaborators" do
     agent = agents(:weather)
     agent.memberships << Membership.new(user_id: users(:admin).id, rights: "edit")
-    assert !agent.save
+    assert_not agent.save
     assert_equal ['Memberships is invalid'], agent.errors.full_messages
   end
 
@@ -96,7 +96,7 @@ class AgentTest < ActiveSupport::TestCase
     agent = agents(:weather)
     agent.memberships << Membership.new(user_id: users(:confirmed).id, rights: "edit")
     agent.memberships << Membership.new(user_id: users(:confirmed).id, rights: "show")
-    assert !agent.save
+    assert_not agent.save
     assert_equal ['Memberships is invalid'], agent.errors.full_messages
   end
 
@@ -104,7 +104,7 @@ class AgentTest < ActiveSupport::TestCase
   test "Add collaborator with bad rights" do
     agent = agents(:weather)
     agent.memberships << Membership.new(user_id: users(:confirmed).id, rights: "missing rights")
-    assert !agent.save
+    assert_not agent.save
     assert_equal ['Memberships is invalid'], agent.errors.full_messages
   end
 
@@ -144,7 +144,7 @@ class AgentTest < ActiveSupport::TestCase
   test "Name & agentname nil validation" do
     agent = Agent.new
     agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
-    assert !agent.valid?
+    assert_not agent.valid?
     expected = [
       "Name can't be blank",
       "ID is too short (minimum is 3 characters)",
@@ -160,7 +160,7 @@ class AgentTest < ActiveSupport::TestCase
       agentname: ""
     )
     agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
-    assert !agent.valid?
+    assert_not agent.valid?
     expected = [
       "Name can't be blank",
       "ID is too short (minimum is 3 characters)",
@@ -173,7 +173,7 @@ class AgentTest < ActiveSupport::TestCase
       agentname: ' '
     )
     agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
-    assert !agent.valid?
+    assert_not agent.valid?
     assert_equal expected, agent.errors.full_messages
   end
 
@@ -184,7 +184,7 @@ class AgentTest < ActiveSupport::TestCase
       agentname: "aa"
     )
     agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
-    assert !agent.valid?
+    assert_not agent.valid?
     expected = ["ID is too short (minimum is 3 characters)"]
     assert_equal expected, agent.errors.full_messages
   end
@@ -205,7 +205,7 @@ class AgentTest < ActiveSupport::TestCase
     )
     agent_2.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
 
-    assert !agent_2.valid?
+    assert_not agent_2.valid?
     expected = ["ID has already been taken"]
     assert_equal expected, agent_2.errors.full_messages
   end
@@ -369,7 +369,7 @@ class AgentTest < ActiveSupport::TestCase
     assert_equal 0, (user_confirmed.agents.count { |agent| agent.name == "My awesome weather bot" })
 
     result = weather_agent.transfer_ownership_to(user_confirmed.email)
-    assert !result[:success]
+    assert_not result[:success]
     expected = ["This user already have an agent with this ID"]
     assert_equal expected, result[:errors]
 
@@ -384,7 +384,7 @@ class AgentTest < ActiveSupport::TestCase
     weather_agent = agents(:terminator)
 
     result = weather_agent.transfer_ownership_to(new_owner.id)
-    assert !result[:success]
+    assert_not result[:success]
     expected = ["Please enter a valid username or email of a viky.ai user"]
     assert_equal expected, result[:errors]
   end
@@ -431,7 +431,7 @@ class AgentTest < ActiveSupport::TestCase
     Membership.new(user: users(:admin), agent: agent).save
 
     agent.save
-    assert !agent.api_token.nil?
+    assert_not agent.api_token.nil?
   end
 
 
@@ -466,7 +466,7 @@ class AgentTest < ActiveSupport::TestCase
   test "Destroy validation when collaborators are presents" do
     agent = agents(:weather)
     assert_equal 6, Membership.all.count
-    assert !agent.destroy
+    assert_not agent.destroy
     expected = ["You must remove all collaborators before delete an agent"]
     assert_equal expected, agent.errors.full_messages
     assert_equal 6, Membership.all.count

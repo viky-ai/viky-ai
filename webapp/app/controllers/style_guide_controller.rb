@@ -13,6 +13,7 @@ class StyleGuideController < ApplicationController
   def set_pages
     @pages = [
       { name: "Icons",                  slug: "icon"          },
+      { name: "Colors",                 slug: "colors"        },
       { name: "Logo",                   slug: "logo"          },
       { name: "Robot",                  slug: "robot"         },
       { name: "Typography",             slug: "typography"    },

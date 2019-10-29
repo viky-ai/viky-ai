@@ -32,7 +32,7 @@ class InterpretationTest < ActiveSupport::TestCase
 
   test 'Expression and locale can\'t be blank and must be linked to an intent' do
     interpretation = Interpretation.new(expression: '')
-    assert !interpretation.save
+    assert_not interpretation.save
 
     expected = {
       intent: ['must exist'],
@@ -46,7 +46,7 @@ class InterpretationTest < ActiveSupport::TestCase
   test 'Locale must be in list' do
     interpretation = Interpretation.new(expression: 'Good morning', locale: 'toto')
     interpretation.intent = intents(:weather_forecast)
-    assert !interpretation.save
+    assert_not interpretation.save
 
     expected = {
       locale: ['is not included in the list']
@@ -79,7 +79,7 @@ class InterpretationTest < ActiveSupport::TestCase
   test 'Check interpretation solution is valid' do
     interpretation = interpretations(:weather_forecast_tomorrow)
     interpretation.solution = (['a'] * 8193).join('')
-    assert !interpretation.valid?
+    assert_not interpretation.valid?
     expected = {
       solution: ['(8.001 KB) is too long (maximum is 8 KB)']
     }
@@ -90,7 +90,7 @@ class InterpretationTest < ActiveSupport::TestCase
   test 'Check expression size' do
     interpretation = interpretations(:weather_forecast_tomorrow)
     interpretation.expression = (['À'] * 1025).join('')
-    assert !interpretation.valid?
+    assert_not interpretation.valid?
     expected = {
       expression: ['(2.002 KB) is too long (maximum is 2 KB)']
     }
@@ -294,14 +294,14 @@ class InterpretationTest < ActiveSupport::TestCase
   test 'Limit maximum number of words in an interpretation' do
     interpretation = interpretations(:weather_forecast_demain)
     interpretation.expression = (['a'] * 37).join(' ')
-    assert !interpretation.save
+    assert_not interpretation.save
     expected = {
       expression: ['is too long (maximum is 36 elements), found: 37']
     }
     assert_equal expected, interpretation.errors.messages
 
     interpretation.expression = 'a1.2' * 15
-    assert !interpretation.save
+    assert_not interpretation.save
     expected = {
       expression: ['is too long (maximum is 36 elements), found: 60']
     }
@@ -325,7 +325,7 @@ class InterpretationTest < ActiveSupport::TestCase
       '🏿',  # G_UNICODE_BREAK_EMOJI_MODIFIER (EM)
     ] * 3).join
 
-    assert !interpretation.save
+    assert_not interpretation.save
     expected = {
       expression: ['is too long (maximum is 36 elements), found: 45']
     }
