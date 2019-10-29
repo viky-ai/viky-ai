@@ -49,8 +49,8 @@ module PlayHelper
     warning = false
     if intent.formulations.count == 1
       first_interpretation = intent.formulations.first
-      if first_interpretation.interpretation_aliases.count == 1
-        warning = first_interpretation.interpretation_aliases.first.is_list?
+      if first_interpretation.formulation_aliases.count == 1
+        warning = first_interpretation.formulation_aliases.first.is_list?
       end
     end
     warning

@@ -1,9 +1,9 @@
 require 'test_helper'
 
-class InterpretationAliasTest < ActiveSupport::TestCase
+class FormulationAliasTest < ActiveSupport::TestCase
 
   test 'belongs to validation on different formulation alias nature' do
-    number = InterpretationAlias.new(
+    number = FormulationAlias.new(
       position_start: 8,
       position_end: 21,
       aliasname: 'number',
@@ -12,7 +12,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     )
     assert number.save
 
-    type_intent = InterpretationAlias.new(
+    type_intent = FormulationAlias.new(
       position_start: 8,
       position_end: 21,
       aliasname: 'who',
@@ -22,7 +22,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     assert_not type_intent.save
     assert_equal ["Intent can't be blank"], type_intent.errors.full_messages
 
-    type_entities_list = InterpretationAlias.new(
+    type_entities_list = FormulationAlias.new(
       position_start: 8,
       position_end: 21,
       aliasname: 'who',
@@ -38,11 +38,11 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     weather_question_intent = intents(:weather_question)
     formulation = formulations(:weather_forecast_tomorrow)
 
-    assert_equal weather_question_intent.id, formulation.interpretation_aliases.first.interpretation_aliasable.id
-    assert_equal 2, formulation.interpretation_aliases.count
+    assert_equal weather_question_intent.id, formulation.formulation_aliases.first.formulation_aliasable.id
+    assert_equal 2, formulation.formulation_aliases.count
 
     assert weather_question_intent.destroy
-    assert_equal 1, formulation.interpretation_aliases.count
+    assert_equal 1, formulation.formulation_aliases.count
   end
 
 
@@ -52,12 +52,12 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       expression: 'test',
       intent_id: intents(:weather_forecast).id,
       locale: 'fr',
-      interpretation_aliases_attributes: [
+      formulation_aliases_attributes: [
         {
           position_start: 0,
           position_end: 5,
           aliasname: 'who',
-          interpretation_aliasable: intents(:weather_question)
+          formulation_aliasable: intents(:weather_question)
         }
       ]
     })
@@ -68,18 +68,18 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       expression: 'test',
       intent_id: intents(:weather_forecast).id,
       locale: 'fr',
-      interpretation_aliases_attributes: [
+      formulation_aliases_attributes: [
         {
           position_start: 0,
           position_end: 5,
           aliasname: 'who1',
-          interpretation_aliasable: intents(:weather_question)
+          formulation_aliasable: intents(:weather_question)
         },
         {
           position_start: 6,
           position_end: 10,
           aliasname: 'who2',
-          interpretation_aliasable: intents(:weather_question)
+          formulation_aliasable: intents(:weather_question)
         }
       ]
     })
@@ -90,151 +90,151 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       expression: 'test',
       intent_id: intents(:weather_forecast).id,
       locale: 'fr',
-      interpretation_aliases_attributes: [
+      formulation_aliases_attributes: [
         {
           position_start: 8,
           position_end: 21,
           aliasname: 'who1',
-          interpretation_aliasable: intents(:weather_question)
+          formulation_aliasable: intents(:weather_question)
         },
         {
           position_start: 5,
           position_end: 14,
           aliasname: 'who2',
-          interpretation_aliasable: intents(:weather_question)
+          formulation_aliasable: intents(:weather_question)
         }
       ]
     })
     assert_not formulation.save
-    assert_equal ["Interpretation aliases position overlap"], formulation.errors.full_messages
+    assert_equal ["Formulation aliases position overlap"], formulation.errors.full_messages
 
     # Update with 2 ranges with overlap
     assert_not formulation.update({
-      interpretation_aliases_attributes: [
+      formulation_aliases_attributes: [
         {
           position_start: 8,
           position_end: 21,
           aliasname: 'who1',
-          interpretation_aliasable: intents(:weather_question)
+          formulation_aliasable: intents(:weather_question)
         },
         {
           position_start: 5,
           position_end: 14,
           aliasname: 'who2',
-          interpretation_aliasable: intents(:weather_question)
+          formulation_aliasable: intents(:weather_question)
         }
       ]
     })
-    assert_equal ["Interpretation aliases position overlap"], formulation.errors.full_messages
+    assert_equal ["Formulation aliases position overlap"], formulation.errors.full_messages
 
 
     # Update with 3 ranges
     assert_not formulation.update({
-      interpretation_aliases_attributes: [
+      formulation_aliases_attributes: [
         {
           position_start: 0,
           position_end: 5,
           aliasname: 'who3',
-          interpretation_aliasable: intents(:weather_question)
+          formulation_aliasable: intents(:weather_question)
         },
         {
           position_start: 6,
           position_end: 10,
           aliasname: 'who4',
-          interpretation_aliasable: intents(:weather_question)
+          formulation_aliasable: intents(:weather_question)
         },
         {
           position_start: 8,
           position_end: 12,
           aliasname: 'who5',
-          interpretation_aliasable: intents(:weather_question)
+          formulation_aliasable: intents(:weather_question)
         }
       ]
     })
-    assert_equal ["Interpretation aliases position overlap"], formulation.errors.full_messages
+    assert_equal ["Formulation aliases position overlap"], formulation.errors.full_messages
   end
 
 
   test 'Basic alias creation & formulation association' do
-    interpretation_alias = InterpretationAlias.new(
+    formulation_alias = FormulationAlias.new(
       position_start: 8,
       position_end: 21,
       aliasname: 'who'
     )
     weather_forecast_demain = formulations(:weather_forecast_demain)
-    interpretation_alias.formulation = weather_forecast_demain
+    formulation_alias.formulation = weather_forecast_demain
 
     weather_who = intents(:weather_question)
-    interpretation_alias.interpretation_aliasable = weather_who
+    formulation_alias.formulation_aliasable = weather_who
 
-    assert interpretation_alias.save
-    assert_equal "type_intent", interpretation_alias.nature
-    assert interpretation_alias.type_intent?
-    assert_not interpretation_alias.type_number?
-    assert_equal 8, interpretation_alias.position_start
-    assert_equal 21, interpretation_alias.position_end
-    assert_equal 'who', interpretation_alias.aliasname
-    assert_not interpretation_alias.is_list
-    assert_equal weather_forecast_demain.id, interpretation_alias.formulation.id
-    assert_equal weather_who.id, interpretation_alias.interpretation_aliasable.id
+    assert formulation_alias.save
+    assert_equal "type_intent", formulation_alias.nature
+    assert formulation_alias.type_intent?
+    assert_not formulation_alias.type_number?
+    assert_equal 8, formulation_alias.position_start
+    assert_equal 21, formulation_alias.position_end
+    assert_equal 'who', formulation_alias.aliasname
+    assert_not formulation_alias.is_list
+    assert_equal weather_forecast_demain.id, formulation_alias.formulation.id
+    assert_equal weather_who.id, formulation_alias.formulation_aliasable.id
   end
 
 
   test 'Aliasname must be present' do
-    interpretation_alias = InterpretationAlias.new(
+    formulation_alias = FormulationAlias.new(
       position_start: 8,
       position_end: 21,
       formulation: formulations(:weather_forecast_demain),
-      interpretation_aliasable: intents(:weather_question)
+      formulation_aliasable: intents(:weather_question)
     )
-    assert_not interpretation_alias.save
+    assert_not formulation_alias.save
     expected = ['Parameter name can\'t be blank', 'Parameter name is invalid']
-    assert_equal expected, interpretation_alias.errors.full_messages
+    assert_equal expected, formulation_alias.errors.full_messages
   end
 
 
   test 'Error on start position after end position' do
-    interpretation_alias = InterpretationAlias.new(
+    formulation_alias = FormulationAlias.new(
       aliasname: 'who',
       position_start: 2,
       position_end: 1
     )
-    interpretation_alias.formulation = formulations(:weather_forecast_demain)
-    interpretation_alias.interpretation_aliasable = intents(:weather_question)
+    formulation_alias.formulation = formulations(:weather_forecast_demain)
+    formulation_alias.formulation_aliasable = intents(:weather_question)
 
-    assert_not interpretation_alias.validate
+    assert_not formulation_alias.validate
     expected = ['Position end must be greater than position start']
-    assert_equal expected, interpretation_alias.errors.full_messages
+    assert_equal expected, formulation_alias.errors.full_messages
   end
 
 
   test 'Error on negative start and end positions' do
-    interpretation_alias = InterpretationAlias.new(
+    formulation_alias = FormulationAlias.new(
       aliasname: 'who',
       position_start: -9,
       position_end: -3
     )
-    interpretation_alias.formulation = formulations(:weather_forecast_demain)
-    interpretation_alias.interpretation_aliasable = intents(:weather_question)
+    formulation_alias.formulation = formulations(:weather_forecast_demain)
+    formulation_alias.formulation_aliasable = intents(:weather_question)
 
-    assert_not interpretation_alias.validate
+    assert_not formulation_alias.validate
     expected = ['Position start must be greater than or equal to 0', 'Position end must be greater than 0']
-    assert_equal expected, interpretation_alias.errors.full_messages
+    assert_equal expected, formulation_alias.errors.full_messages
   end
 
 
   test 'Error start and end positions are egals' do
-    interpretation_alias = InterpretationAlias.new(
+    formulation_alias = FormulationAlias.new(
       aliasname: 'who',
       position_start: 4,
       position_end: 4
     )
-    interpretation_alias.formulation = formulations(:weather_forecast_demain)
-    interpretation_alias.interpretation_aliasable = intents(:weather_question)
+    formulation_alias.formulation = formulations(:weather_forecast_demain)
+    formulation_alias.formulation_aliasable = intents(:weather_question)
 
-    assert_not interpretation_alias.validate
+    assert_not formulation_alias.validate
     expected = ['Position end must be greater than position start']
-    assert_equal expected, interpretation_alias.errors.full_messages
+    assert_equal expected, formulation_alias.errors.full_messages
   end
 
 
@@ -243,23 +243,23 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       expression: 'test',
       intent_id: intents(:weather_forecast).id,
       locale: 'fr',
-      interpretation_aliases_attributes: [
+      formulation_aliases_attributes: [
         {
           position_start: 0,
           position_end: 11,
           aliasname: 'who',
-          interpretation_aliasable: intents(:weather_question)
+          formulation_aliasable: intents(:weather_question)
         },
         {
           position_start: 15,
           position_end: 21,
           aliasname: 'who',
-          interpretation_aliasable: intents(:weather_question)
+          formulation_aliasable: intents(:weather_question)
         }
       ]
     })
     assert_not formulation.save
-    expected = ['Interpretation aliases aliasname has already been taken']
+    expected = ['Formulation aliases aliasname has already been taken']
     assert_equal expected, formulation.errors.full_messages
   end
 
@@ -268,71 +268,71 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     formulation = formulations(:weather_forecast_tomorrow)
 
     expected = ["question", "when"]
-    assert_equal expected, formulation.interpretation_aliases.pluck(:aliasname)
+    assert_equal expected, formulation.formulation_aliases.pluck(:aliasname)
 
     assert formulation.update({
-      interpretation_aliases_attributes: [
+      formulation_aliases_attributes: [
         {
-          id: interpretation_aliases(:weather_forecast_tomorrow_question).id,
+          id: formulation_aliases(:weather_forecast_tomorrow_question).id,
           position_start: 6,
           position_end: 11,
           aliasname: 'who',
-          interpretation_aliasable: intents(:weather_question),
+          formulation_aliasable: intents(:weather_question),
           _destroy: true
         },
         {
           position_start: 15,
           position_end: 21,
           aliasname: 'who',
-          interpretation_aliasable: intents(:weather_question)
+          formulation_aliasable: intents(:weather_question)
         }
       ]
     })
     expected = ["when", "who"]
-    assert_equal expected, formulation.interpretation_aliases.pluck(:aliasname)
+    assert_equal expected, formulation.formulation_aliases.pluck(:aliasname)
   end
 
 
   test 'Aliasname must be a valid Javascript variable' do
-    interpretation_alias = interpretation_aliases(:weather_forecast_tomorrow_question)
+    formulation_alias = formulation_aliases(:weather_forecast_tomorrow_question)
 
-    interpretation_alias.aliasname = '7up'
-    assert_not interpretation_alias.validate
+    formulation_alias.aliasname = '7up'
+    assert_not formulation_alias.validate
     expected = ['Parameter name is invalid']
-    assert_equal expected, interpretation_alias.errors.full_messages
+    assert_equal expected, formulation_alias.errors.full_messages
 
-    interpretation_alias.aliasname = 'a-b'
-    assert_not interpretation_alias.validate
+    formulation_alias.aliasname = 'a-b'
+    assert_not formulation_alias.validate
     expected = ['Parameter name is invalid']
-    assert_equal expected, interpretation_alias.errors.full_messages
+    assert_equal expected, formulation_alias.errors.full_messages
 
-    interpretation_alias.aliasname = 'ab('
-    assert_not interpretation_alias.validate
+    formulation_alias.aliasname = 'ab('
+    assert_not formulation_alias.validate
     expected = ['Parameter name is invalid']
-    assert_equal expected, interpretation_alias.errors.full_messages
+    assert_equal expected, formulation_alias.errors.full_messages
 
-    interpretation_alias.aliasname = 'function'
-    assert_not interpretation_alias.validate
+    formulation_alias.aliasname = 'function'
+    assert_not formulation_alias.validate
     expected = ['Parameter name is invalid']
-    assert_equal expected, interpretation_alias.errors.full_messages
+    assert_equal expected, formulation_alias.errors.full_messages
 
-    interpretation_alias.aliasname = 'o_O'
-    assert interpretation_alias.validate
+    formulation_alias.aliasname = 'o_O'
+    assert formulation_alias.validate
 
-    interpretation_alias.aliasname = 'aBBa'
-    assert interpretation_alias.validate
+    formulation_alias.aliasname = 'aBBa'
+    assert formulation_alias.validate
 
-    interpretation_alias.aliasname = 'ab2'
-    assert interpretation_alias.validate
+    formulation_alias.aliasname = 'ab2'
+    assert formulation_alias.validate
   end
 
 
   test 'Aliasname can be of maximum 2048 bytes' do
-    interpretation_alias = interpretation_aliases(:weather_forecast_tomorrow_question)
+    formulation_alias = formulation_aliases(:weather_forecast_tomorrow_question)
 
-    interpretation_alias.aliasname = 'Ò' * 1025
-    assert_not interpretation_alias.validate
-    assert_equal 'Parameter name (2.002 KB) is too long (maximum is 2 KB)', interpretation_alias.errors.full_messages[0]
+    formulation_alias.aliasname = 'Ò' * 1025
+    assert_not formulation_alias.validate
+    assert_equal 'Parameter name (2.002 KB) is too long (maximum is 2 KB)', formulation_alias.errors.full_messages[0]
   end
 
 
@@ -341,50 +341,50 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       expression: 'test',
       intent_id: intents(:weather_forecast).id,
       locale: 'fr',
-      interpretation_aliases_attributes: [
+      formulation_aliases_attributes: [
         {
           position_start: 0,
           position_end: 11,
           aliasname: 'who1',
-          interpretation_aliasable: intents(:weather_question)
+          formulation_aliasable: intents(:weather_question)
         },
         {
           position_start: 15,
           position_end: 21,
           aliasname: 'who2',
-          interpretation_aliasable: intents(:weather_question)
+          formulation_aliasable: intents(:weather_question)
         }
       ]
     })
     assert formulation.save
     expected = ["who1", "who2"]
-    assert_equal expected, formulation.interpretation_aliases.pluck(:aliasname)
+    assert_equal expected, formulation.formulation_aliases.pluck(:aliasname)
 
     assert formulation.update({
-       interpretation_aliases_attributes: [
+       formulation_aliases_attributes: [
          {
-           id: formulation.interpretation_aliases.first.id,
+           id: formulation.formulation_aliases.first.id,
            position_start: 0,
            position_end: 11,
-           aliasname: formulation.interpretation_aliases.last.aliasname,
-           interpretation_aliasable: intents(:weather_question)
+           aliasname: formulation.formulation_aliases.last.aliasname,
+           formulation_aliasable: intents(:weather_question)
          },
          {
-           id: formulation.interpretation_aliases.last.id,
+           id: formulation.formulation_aliases.last.id,
            position_start: 15,
            position_end: 21,
-           aliasname: formulation.interpretation_aliases.first.aliasname,
-           interpretation_aliasable: intents(:weather_question)
+           aliasname: formulation.formulation_aliases.first.aliasname,
+           formulation_aliasable: intents(:weather_question)
          }
        ]
     })
     expected = ["who2", "who1"]
-    assert_equal expected, formulation.interpretation_aliases.pluck(:aliasname)
+    assert_equal expected, formulation.formulation_aliases.pluck(:aliasname)
   end
 
 
   test 'Alias type regex should have a regular expression' do
-    regexp_invalid = InterpretationAlias.new(
+    regexp_invalid = FormulationAlias.new(
       position_start: 0,
       position_end: 5,
       aliasname: 'where',
@@ -396,7 +396,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     expected_msg = ['Regular expression can\'t be blank']
     assert_equal expected_msg, regexp_invalid.errors.full_messages
 
-    regexp_valid = InterpretationAlias.new(
+    regexp_valid = FormulationAlias.new(
       position_start: 8,
       position_end: 21,
       aliasname: 'name',
@@ -409,7 +409,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
 
 
   test 'Regular expression should be valid' do
-    regexp_invalid = InterpretationAlias.new(
+    regexp_invalid = FormulationAlias.new(
       position_start: 0,
       position_end: 5,
       aliasname: 'where',
@@ -425,7 +425,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
 
 
   test 'Regular expression should be less than 4096 bytes' do
-    test_regexp = InterpretationAlias.new(
+    test_regexp = FormulationAlias.new(
       position_start: 0,
       position_end: 5,
       aliasname: 'where',
@@ -443,20 +443,20 @@ class InterpretationAliasTest < ActiveSupport::TestCase
 
 
   test 'Any and List option compability' do
-    interpretation_alias = InterpretationAlias.new(
+    formulation_alias = FormulationAlias.new(
       aliasname: "say_my_name",
       position_start: 8,
       position_end: 21,
       formulation: formulations(:weather_forecast_demain),
-      interpretation_aliasable: intents(:weather_question),
+      formulation_aliasable: intents(:weather_question),
       is_list: true,
       any_enabled: true,
     )
-    assert_not interpretation_alias.save
+    assert_not formulation_alias.save
     expected = ['Options "List" and "Any" are not compatibles on the same annotation.']
-    assert_equal expected, interpretation_alias.errors.full_messages
+    assert_equal expected, formulation_alias.errors.full_messages
 
-    interpretation_alias.any_enabled = false
-    assert interpretation_alias.save
+    formulation_alias.any_enabled = false
+    assert formulation_alias.save
   end
 end

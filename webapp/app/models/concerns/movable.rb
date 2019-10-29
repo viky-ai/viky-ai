@@ -26,8 +26,8 @@ module Movable
     end
 
     self.agent = agent_destination
-    interpretation_aliasable = agent_destination.send(aliasable_name)
-    self.position = interpretation_aliasable.present? ? interpretation_aliasable.maximum(:position) + 1 : 0
+    formulation_aliasable = agent_destination.send(aliasable_name)
+    self.position = formulation_aliasable.present? ? formulation_aliasable.maximum(:position) + 1 : 0
     save
   end
 end

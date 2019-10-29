@@ -101,21 +101,20 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     intent = Intent.find_by_intentname('weather_question')
     formulation = Formulation.find_by_expression('Quel temps fera-t-il demain ?')
 
-    interpretation_alias = InterpretationAlias.new(
+    formulation_alias = FormulationAlias.new(
       position_start: 8,
       position_end: 21,
       aliasname: 'who'
     )
-    interpretation_alias.formulation = formulation
-    interpretation_alias.interpretation_aliasable = intent
+    formulation_alias.formulation = formulation
+    formulation_alias.formulation_aliasable = intent
 
-    interpretation_updated_at_before = formulation.updated_at.to_json
-    intent_updated_at_before         = intent.updated_at.to_json
-    agent_updated_at_before          = agent.updated_at.to_json
-    assert interpretation_alias.save
+    formulation_updated_at_before = formulation.updated_at.to_json
+    agent_updated_at_before       = agent.updated_at.to_json
+    assert formulation_alias.save
 
     force_reset_model_cache([agent, intent, formulation])
-    assert_not_equal interpretation_updated_at_before, formulation.updated_at.to_json
+    assert_not_equal formulation_updated_at_before, formulation.updated_at.to_json
     # assert_not_equal intent_updated_at_before, intent.updated_at.to_json
     assert_not_equal agent_updated_at_before, agent.updated_at.to_json
   end
@@ -126,16 +125,16 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     intent = Intent.find_by_intentname('weather_forecast')
     formulation = intent.formulations.last
 
-    interpretation_updated_at_before = formulation.updated_at.to_json
-    intent_updated_at_before         = intent.updated_at.to_json
-    agent_updated_at_before          = agent.updated_at.to_json
+    formulation_updated_at_before = formulation.updated_at.to_json
+    intent_updated_at_before      = intent.updated_at.to_json
+    agent_updated_at_before       = agent.updated_at.to_json
 
-    interpretation_alias = formulation.interpretation_aliases.first
-    interpretation_alias.aliasname = 'changed'
-    assert interpretation_alias.save
+    formulation_alias = formulation.formulation_aliases.first
+    formulation_alias.aliasname = 'changed'
+    assert formulation_alias.save
 
     force_reset_model_cache([agent, intent, formulation])
-    assert_not_equal interpretation_updated_at_before, formulation.updated_at.to_json
+    assert_not_equal formulation_updated_at_before, formulation.updated_at.to_json
     assert_not_equal intent_updated_at_before, intent.updated_at.to_json
     assert_not_equal agent_updated_at_before, agent.updated_at.to_json
   end
@@ -146,15 +145,15 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     intent = Intent.find_by_intentname('weather_forecast')
     formulation = intent.formulations.last
 
-    interpretation_updated_at_before = formulation.updated_at.to_json
-    intent_updated_at_before         = intent.updated_at.to_json
-    agent_updated_at_before          = agent.updated_at.to_json
+    formulation_updated_at_before = formulation.updated_at.to_json
+    intent_updated_at_before      = intent.updated_at.to_json
+    agent_updated_at_before       = agent.updated_at.to_json
 
-    interpretation_alias = formulation.interpretation_aliases.first
-    assert interpretation_alias.destroy
+    formulation_alias = formulation.formulation_aliases.first
+    assert formulation_alias.destroy
 
     force_reset_model_cache([agent, intent, formulation])
-    assert_not_equal interpretation_updated_at_before, formulation.updated_at.to_json
+    assert_not_equal formulation_updated_at_before, formulation.updated_at.to_json
     assert_not_equal intent_updated_at_before, intent.updated_at.to_json
     assert_not_equal agent_updated_at_before, agent.updated_at.to_json
   end
@@ -201,12 +200,12 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
 
     assert AgentArc.create(source: child, target: parent)
 
-    assert InterpretationAlias.create(
+    assert FormulationAlias.create(
       position_start: 0,
       position_end: 16,
       aliasname: 'inter_parent',
       formulation_id: formulation_child.id,
-      interpretation_aliasable: intent_parent,
+      formulation_aliasable: intent_parent,
       nature: 'type_intent'
     )
 
@@ -242,12 +241,12 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
 
     assert AgentArc.create(source: child, target: parent)
 
-    assert InterpretationAlias.create(
+    assert FormulationAlias.create(
       position_start: 0,
       position_end: 16,
       aliasname: 'inter_parent',
       formulation_id: interpretation_child.id,
-      interpretation_aliasable: entities_list_parent,
+      formulation_aliasable: entities_list_parent,
       nature: 'type_entities_list'
     )
 

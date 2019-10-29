@@ -143,15 +143,15 @@ class FormulationsController < ApplicationController
     def formulation_params
       p = params.require(:formulation).permit(
         :expression, :locale, :keep_order, :proximity, :solution, :auto_solution_enabled,
-        :interpretation_aliases_attributes => [
+        :formulation_aliases_attributes => [
           :id, :nature, :position_start, :position_end,
-          :aliasname, :reg_exp, :interpretation_aliasable_id, :interpretation_aliasable_type,
+          :aliasname, :reg_exp, :formulation_aliasable_id, :formulation_aliasable_type,
           :is_list, :any_enabled,
           :_destroy
         ]
       )
-      unless p[:interpretation_aliases_attributes].nil?
-        for item in p[:interpretation_aliases_attributes]
+      unless p[:formulation_aliases_attributes].nil?
+        for item in p[:formulation_aliases_attributes]
           item[:is_list]     = false if item[:is_list].blank?
           item[:any_enabled] = false if item[:any_enabled].blank?
         end

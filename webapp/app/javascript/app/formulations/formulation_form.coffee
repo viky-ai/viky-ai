@@ -234,7 +234,7 @@ class AliasesRegexForm
     railroad_addon.replaceWith(@html_railroad())
 
   @setListeners: ->
-    inputs_selector = "textarea[name='formulation[interpretation_aliases_attributes][][reg_exp]']"
+    inputs_selector = "textarea[name='formulation[formulation_aliases_attributes][][reg_exp]']"
     autosize(textarea) for textarea in $(inputs_selector)
     $(inputs_selector).on "input", (event) ->
       container = $(event.target).closest('.control')
@@ -291,7 +291,7 @@ class AliasesRegexForm
   html_input: ->
     "<textarea
       maxlength='3000'
-      name='formulation[interpretation_aliases_attributes][][reg_exp]'
+      name='formulation[formulation_aliases_attributes][][reg_exp]'
       class='code autosize'
       placeholder='Enter a regular expression'>#{@regexp}</textarea>"
 
@@ -369,14 +369,14 @@ class AliasesForm
 
   update_deletable_ids: ->
     html = []
-    name_prefix = "formulation[interpretation_aliases_attributes][]"
+    name_prefix = "formulation[formulation_aliases_attributes][]"
     for id in @deletable_ids()
       html.push "
         <input type='hidden' name='#{name_prefix}[aliasname]'                     value='' />
         <input type='hidden' name='#{name_prefix}[position_start]'                value='' />
         <input type='hidden' name='#{name_prefix}[position_end]'                  value='' />
-        <input type='hidden' name='#{name_prefix}[interpretation_aliasable_id]'   value=' ' />
-        <input type='hidden' name='#{name_prefix}[interpretation_aliasable_type]' value='' />
+        <input type='hidden' name='#{name_prefix}[formulation_aliasable_id]'   value=' ' />
+        <input type='hidden' name='#{name_prefix}[formulation_aliasable_type]' value='' />
         <input type='hidden' name='#{name_prefix}[nature]'                        value='' />
         <input type='hidden' name='#{name_prefix}[is_list]'                       value='' />
         <input type='hidden' name='#{name_prefix}[id]'                            value='#{id}' />
@@ -384,7 +384,7 @@ class AliasesForm
     @form_container.closest('form').prepend(html.join(''))
 
   build_line: (alias) ->
-    name_prefix = "formulation[interpretation_aliases_attributes][]"
+    name_prefix = "formulation[formulation_aliases_attributes][]"
     if alias.state == 'new' || alias.id == undefined
         alias_id_value = ""
       else
@@ -427,8 +427,8 @@ class AliasesForm
     line.push "
           <input type='hidden' name='#{name_prefix}[position_start]'                value='#{alias.start}' />
           <input type='hidden' name='#{name_prefix}[position_end]'                  value='#{alias.end}' />
-          <input type='hidden' name='#{name_prefix}[interpretation_aliasable_id]'   value='#{alias.interpretation_aliasable_id}' />
-          <input type='hidden' name='#{name_prefix}[interpretation_aliasable_type]' value='#{alias.interpretation_aliasable_type}' />
+          <input type='hidden' name='#{name_prefix}[formulation_aliasable_id]'   value='#{alias.formulation_aliasable_id}' />
+          <input type='hidden' name='#{name_prefix}[formulation_aliasable_type]' value='#{alias.formulation_aliasable_type}' />
           <input type='hidden' name='#{name_prefix}[nature]'                        value='#{alias.nature}' />
           <input type='hidden' name='#{name_prefix}[id]'                            value='#{alias_id_value}' />
         </div>

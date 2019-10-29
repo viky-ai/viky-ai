@@ -231,7 +231,7 @@ class PackageTest < ActiveSupport::TestCase
 
   test 'Package generation with alias list' do
     weather = agents(:weather)
-    ialias = interpretation_aliases(:weather_forecast_tomorrow_question)
+    ialias = formulation_aliases(:weather_forecast_tomorrow_question)
     ialias.is_list = true
     assert entities_lists(:weather_conditions).destroy
     assert entities_lists(:weather_dates).destroy
@@ -339,7 +339,7 @@ class PackageTest < ActiveSupport::TestCase
     weather = agents(:weather)
     assert entities_lists(:weather_conditions).destroy
     assert entities_lists(:weather_dates).destroy
-    ialias = interpretation_aliases(:weather_forecast_tomorrow_question)
+    ialias = formulation_aliases(:weather_forecast_tomorrow_question)
     ialias.any_enabled = true
     assert ialias.save
 
@@ -545,18 +545,18 @@ class PackageTest < ActiveSupport::TestCase
     expected_expression = '@{route}'
 
     formulation = Formulation.new
-    interpretation_alias = InterpretationAlias.new
+    formulation_alias = FormulationAlias.new
 
-    interpretation_alias.stubs(:position_start).returns(0)
-    interpretation_alias.stubs(:position_end).returns(33)
-    interpretation_alias.stubs(:formulation).returns(formulation)
-    interpretation_alias.stubs(:aliasname).returns('route')
+    formulation_alias.stubs(:position_start).returns(0)
+    formulation_alias.stubs(:position_end).returns(33)
+    formulation_alias.stubs(:formulation).returns(formulation)
+    formulation_alias.stubs(:aliasname).returns('route')
 
     formulation.stubs(:expression).returns('I want to go to Paris from London')
-    array = [interpretation_alias]
-    array.stubs(:order).returns([interpretation_alias])
-    array.stubs(:count).returns([interpretation_alias].size)
-    formulation.stubs(:interpretation_aliases).returns(array)
+    array = [formulation_alias]
+    array.stubs(:order).returns([formulation_alias])
+    array.stubs(:count).returns([formulation_alias].size)
+    formulation.stubs(:formulation_aliases).returns(array)
 
     assert_equal expected_expression, formulation.expression_with_aliases
   end
@@ -566,18 +566,18 @@ class PackageTest < ActiveSupport::TestCase
     expected_expression = '@{want} to go to Paris from London'
 
     formulation = Formulation.new
-    interpretation_alias = InterpretationAlias.new
+    formulation_alias = FormulationAlias.new
 
-    interpretation_alias.stubs(:position_start).returns(0)
-    interpretation_alias.stubs(:position_end).returns(6)
-    interpretation_alias.stubs(:formulation).returns(formulation)
-    interpretation_alias.stubs(:aliasname).returns('want')
+    formulation_alias.stubs(:position_start).returns(0)
+    formulation_alias.stubs(:position_end).returns(6)
+    formulation_alias.stubs(:formulation).returns(formulation)
+    formulation_alias.stubs(:aliasname).returns('want')
 
     formulation.stubs(:expression).returns('I want to go to Paris from London')
-    array = [interpretation_alias]
-    array.stubs(:order).returns([interpretation_alias])
-    array.stubs(:count).returns([interpretation_alias].size)
-    formulation.stubs(:interpretation_aliases).returns(array)
+    array = [formulation_alias]
+    array.stubs(:order).returns([formulation_alias])
+    array.stubs(:count).returns([formulation_alias].size)
+    formulation.stubs(:formulation_aliases).returns(array)
 
     assert_equal expected_expression, formulation.expression_with_aliases
   end
@@ -587,18 +587,18 @@ class PackageTest < ActiveSupport::TestCase
     expected_expression = 'I want to go to Paris from @{london}'
 
     formulation = Formulation.new
-    interpretation_alias = InterpretationAlias.new
+    formulation_alias = FormulationAlias.new
 
-    interpretation_alias.stubs(:position_start).returns(27)
-    interpretation_alias.stubs(:position_end).returns(33)
-    interpretation_alias.stubs(:formulation).returns(formulation)
-    interpretation_alias.stubs(:aliasname).returns('london')
+    formulation_alias.stubs(:position_start).returns(27)
+    formulation_alias.stubs(:position_end).returns(33)
+    formulation_alias.stubs(:formulation).returns(formulation)
+    formulation_alias.stubs(:aliasname).returns('london')
 
     formulation.stubs(:expression).returns('I want to go to Paris from London')
-    array = [interpretation_alias]
-    array.stubs(:order).returns([interpretation_alias])
-    array.stubs(:count).returns([interpretation_alias].size)
-    formulation.stubs(:interpretation_aliases).returns(array)
+    array = [formulation_alias]
+    array.stubs(:order).returns([formulation_alias])
+    array.stubs(:count).returns([formulation_alias].size)
+    formulation.stubs(:formulation_aliases).returns(array)
 
     assert_equal expected_expression, formulation.expression_with_aliases
   end
@@ -608,18 +608,18 @@ class PackageTest < ActiveSupport::TestCase
     expected_expression = 'I want to go @{prep-to} Paris from London'
 
     formulation = Formulation.new
-    interpretation_alias = InterpretationAlias.new
+    formulation_alias = FormulationAlias.new
 
-    interpretation_alias.stubs(:position_start).returns(13)
-    interpretation_alias.stubs(:position_end).returns(15)
-    interpretation_alias.stubs(:formulation).returns(formulation)
-    interpretation_alias.stubs(:aliasname).returns('prep-to')
+    formulation_alias.stubs(:position_start).returns(13)
+    formulation_alias.stubs(:position_end).returns(15)
+    formulation_alias.stubs(:formulation).returns(formulation)
+    formulation_alias.stubs(:aliasname).returns('prep-to')
 
     formulation.stubs(:expression).returns('I want to go to Paris from London')
-    array = [interpretation_alias]
-    array.stubs(:order).returns([interpretation_alias])
-    array.stubs(:count).returns([interpretation_alias].size)
-    formulation.stubs(:interpretation_aliases).returns(array)
+    array = [formulation_alias]
+    array.stubs(:order).returns([formulation_alias])
+    array.stubs(:count).returns([formulation_alias].size)
+    formulation.stubs(:formulation_aliases).returns(array)
 
     assert_equal expected_expression, formulation.expression_with_aliases
   end
@@ -629,24 +629,24 @@ class PackageTest < ActiveSupport::TestCase
     expected_expression = 'I want to go to @{town_from} from @{town_to}'
 
     formulation = Formulation.new
-    interpretation_alias1 = InterpretationAlias.new
-    interpretation_alias2 = InterpretationAlias.new
+    formulation_alias1 = FormulationAlias.new
+    formulation_alias2 = FormulationAlias.new
 
-    interpretation_alias1.stubs(:position_start).returns(16)
-    interpretation_alias1.stubs(:position_end).returns(21)
-    interpretation_alias1.stubs(:formulation).returns(formulation)
-    interpretation_alias1.stubs(:aliasname).returns('town_from')
+    formulation_alias1.stubs(:position_start).returns(16)
+    formulation_alias1.stubs(:position_end).returns(21)
+    formulation_alias1.stubs(:formulation).returns(formulation)
+    formulation_alias1.stubs(:aliasname).returns('town_from')
 
-    interpretation_alias2.stubs(:position_start).returns(27)
-    interpretation_alias2.stubs(:position_end).returns(33)
-    interpretation_alias2.stubs(:formulation).returns(formulation)
-    interpretation_alias2.stubs(:aliasname).returns('town_to')
+    formulation_alias2.stubs(:position_start).returns(27)
+    formulation_alias2.stubs(:position_end).returns(33)
+    formulation_alias2.stubs(:formulation).returns(formulation)
+    formulation_alias2.stubs(:aliasname).returns('town_to')
 
     formulation.stubs(:expression).returns('I want to go to Paris from London')
-    array = [interpretation_alias1, interpretation_alias2]
-    array.stubs(:order).returns([interpretation_alias1, interpretation_alias2])
-    array.stubs(:count).returns([interpretation_alias1, interpretation_alias2].size)
-    formulation.stubs(:interpretation_aliases).returns(array)
+    array = [formulation_alias1, formulation_alias2]
+    array.stubs(:order).returns([formulation_alias1, formulation_alias2])
+    array.stubs(:count).returns([formulation_alias1, formulation_alias2].size)
+    formulation.stubs(:formulation_aliases).returns(array)
 
     assert_equal expected_expression, formulation.expression_with_aliases
   end
@@ -659,7 +659,7 @@ class PackageTest < ActiveSupport::TestCase
     assert formulations(:terminator_where).destroy
     assert intents(:simple_where).destroy
 
-    regex_alias = InterpretationAlias.new(
+    regex_alias = FormulationAlias.new(
       position_start: 9,
       position_end: 21,
       aliasname: 'name',
@@ -703,13 +703,13 @@ class PackageTest < ActiveSupport::TestCase
 
   test 'Package generation with different proximity values' do
     weather = agents(:weather)
-    interpretation_far = formulations(:weather_forecast_demain)
-    interpretation_far.proximity = 'accepts_punctuations'
-    assert interpretation_far.save
+    formulation_far = formulations(:weather_forecast_demain)
+    formulation_far.proximity = 'accepts_punctuations'
+    assert formulation_far.save
 
-    interpretation_very_close = formulations(:weather_question_like)
-    interpretation_very_close.proximity = 'very_close'
-    assert interpretation_very_close.save
+    formulation_very_close = formulations(:weather_question_like)
+    formulation_very_close.proximity = 'very_close'
+    assert formulation_very_close.save
 
     entities_far = entities_lists(:weather_dates)
     entities_far.proximity = 'far'

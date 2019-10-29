@@ -2,15 +2,15 @@
 
 <%= form_with(model: [formulation.intent.agent.owner, formulation.intent.agent, formulation.intent, formulation], class: 'formulations-form') do |f| %>
 
-  <% formulation.interpretation_aliases.select { |ialias| ialias._destroy }.each do |ialias| %>
-    <input type="hidden" name="formulation[interpretation_aliases_attributes][][id]" value="<%= ialias.id %>" />
-    <input type="hidden" name="formulation[interpretation_aliases_attributes][][position_start]"                value="" />
-    <input type="hidden" name="formulation[interpretation_aliases_attributes][][position_end]"                  value="" />
-    <input type="hidden" name="formulation[interpretation_aliases_attributes][][interpretation_aliasable_id]"   value="" />
-    <input type="hidden" name="formulation[interpretation_aliases_attributes][][interpretation_aliasable_type]" value="" />
-    <input type="hidden" name="formulation[interpretation_aliases_attributes][][aliasname]"                     value="" />
-    <input type="hidden" name="formulation[interpretation_aliases_attributes][][nature]"                        value="" />
-    <input type="hidden" name="formulation[interpretation_aliases_attributes][][_destroy]"                      value="1" />
+  <% formulation.formulation_aliases.select { |ialias| ialias._destroy }.each do |ialias| %>
+    <input type="hidden" name="formulation[formulation_aliases_attributes][][id]" value="<%= ialias.id %>" />
+    <input type="hidden" name="formulation[formulation_aliases_attributes][][position_start]"                value="" />
+    <input type="hidden" name="formulation[formulation_aliases_attributes][][position_end]"                  value="" />
+    <input type="hidden" name="formulation[formulation_aliases_attributes][][formulation_aliasable_id]"   value="" />
+    <input type="hidden" name="formulation[formulation_aliases_attributes][][formulation_aliasable_type]" value="" />
+    <input type="hidden" name="formulation[formulation_aliases_attributes][][aliasname]"                     value="" />
+    <input type="hidden" name="formulation[formulation_aliases_attributes][][nature]"                        value="" />
+    <input type="hidden" name="formulation[formulation_aliases_attributes][][_destroy]"                      value="1" />
   <% end %>
   <div class="field formulations-form__formulation">
     <div class="control trix-control">

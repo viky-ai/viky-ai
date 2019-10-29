@@ -118,15 +118,15 @@ class Nlp::Package
         formulations = @cache.read cache_key
         encoder.write_string formulations
       else
-        InterpretationAlias
+        FormulationAlias
           .includes(:formulation)
           .where(is_list: true, formulations: { intent_id: intent.id })
           .order('formulations.position DESC, formulations.locale ASC')
           .order(:position_start).each do |ialias|
 
           formulation_hash = {}
-          formulation_hash['id']   = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
-          formulation_hash['slug'] = "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive"
+          formulation_hash['id']   = "#{ialias.formulation_aliasable.id}_#{ialias.id}_recursive"
+          formulation_hash['slug'] = "#{ialias.formulation_aliasable.slug}_#{ialias.id}_recursive"
           formulation_hash['scope'] = 'hidden'
 
           expressions = []
@@ -186,7 +186,7 @@ class Nlp::Package
 
               encoder.write_object(expression, cache_key)
 
-              formulation.interpretation_aliases
+              formulation.formulation_aliases
                 .where(any_enabled: true, is_list: false)
                 .order(position_start: :asc).each do |ialias|
                 any_node = build_any_node(ialias, expression)
@@ -270,22 +270,22 @@ class Nlp::Package
       if recursive
         {
           'alias': "#{ialias.aliasname}_recursive",
-          'slug': "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive",
-          'id': "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive",
+          'slug': "#{ialias.formulation_aliasable.slug}_#{ialias.id}_recursive",
+          'id': "#{ialias.formulation_aliasable.id}_#{ialias.id}_recursive",
           'package': @agent.id
         }
       else
         {
           'alias': ialias.aliasname,
-          'slug': ialias.interpretation_aliasable.slug,
-          'id': ialias.interpretation_aliasable.id,
+          'slug': ialias.formulation_aliasable.slug,
+          'id': ialias.formulation_aliasable.id,
           'package': @agent.id
         }
       end
     end
 
     def build_aliases(formulation)
-      formulation.interpretation_aliases
+      formulation.formulation_aliases
         .order(:position_start)
         .collect { |ialias| build_alias(ialias) }
     end
@@ -301,18 +301,18 @@ class Nlp::Package
       else
         result['package'] = @agent.id
         if ialias.is_list
-          result['slug'] = "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive"
-          result['id'] = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
+          result['slug'] = "#{ialias.formulation_aliasable.slug}_#{ialias.id}_recursive"
+          result['id'] = "#{ialias.formulation_aliasable.id}_#{ialias.id}_recursive"
         else
-          result['slug'] = ialias.interpretation_aliasable.slug
-          result['id'] = ialias.interpretation_aliasable.id
+          result['slug'] = ialias.formulation_aliasable.slug
+          result['id'] = ialias.formulation_aliasable.id
         end
       end
       result
     end
 
     def build_formulation_solution(formulation)
-      if formulation.auto_solution_enabled and formulation.interpretation_aliases.empty?
+      if formulation.auto_solution_enabled and formulation.formulation_aliases.empty?
         formulation.expression
       elsif formulation.solution.present?
         "`#{formulation.solution}`"

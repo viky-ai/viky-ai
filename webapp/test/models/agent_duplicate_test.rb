@@ -98,14 +98,14 @@ class AgentDuplicateTest < ActiveSupport::TestCase
 
   test 'Duplicate agent deeps relations' do
     agent = agents(:weather)
-    assert InterpretationAlias.create(
+    assert FormulationAlias.create(
       position_start: 31,
       position_end: 32,
       aliasname: 'number',
       formulation: formulations(:weather_forecast_tomorrow),
       nature: 'type_number'
     )
-    assert InterpretationAlias.create(
+    assert FormulationAlias.create(
       position_start: 35,
       position_end: 40,
       aliasname: 'regex',
@@ -135,8 +135,8 @@ class AgentDuplicateTest < ActiveSupport::TestCase
 
       end
 
-      assert_equal elist_agent.interpretation_aliases.size, elist_new_agent.interpretation_aliases.size
-      aliases = elist_agent.interpretation_aliases.zip(elist_new_agent.interpretation_aliases)
+      assert_equal elist_agent.formulation_aliases.size, elist_new_agent.formulation_aliases.size
+      aliases = elist_agent.formulation_aliases.zip(elist_new_agent.formulation_aliases)
       aliases.each do |alias_agent, alias_new_agent|
         assert_equal alias_agent.aliasname, alias_new_agent.aliasname
         assert_equal alias_agent.position_start, alias_new_agent.position_start
@@ -146,7 +146,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
         assert_equal alias_agent.any_enabled, alias_new_agent.any_enabled
         assert_not_equal alias_agent.id, alias_new_agent.id
         assert_not_equal alias_agent.formulation.id, alias_new_agent.formulation.id
-        assert_not_equal alias_agent.interpretation_aliasable.id, alias_new_agent.interpretation_aliasable.id
+        assert_not_equal alias_agent.formulation_aliasable.id, alias_new_agent.formulation_aliasable.id
       end
     end
 
@@ -170,8 +170,8 @@ class AgentDuplicateTest < ActiveSupport::TestCase
         assert_not_equal inter_agent.id, inter_new_agent.id
         assert_not_equal inter_agent.intent.id, inter_new_agent.intent.id
 
-        assert_equal inter_agent.interpretation_aliases.size, inter_new_agent.interpretation_aliases.size
-        aliases = inter_agent.interpretation_aliases.zip(inter_new_agent.interpretation_aliases)
+        assert_equal inter_agent.formulation_aliases.size, inter_new_agent.formulation_aliases.size
+        aliases = inter_agent.formulation_aliases.zip(inter_new_agent.formulation_aliases)
         aliases.each do |alias_agent, alias_new_agent|
           assert_equal alias_agent.aliasname, alias_new_agent.aliasname
           assert_equal alias_agent.position_start, alias_new_agent.position_start
@@ -182,7 +182,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
           assert_not_equal alias_agent.id, alias_new_agent.id
           assert_not_equal alias_agent.formulation.id, alias_new_agent.formulation.id
           unless ['type_number', 'type_regex'].include? alias_agent.nature
-            assert_not_equal alias_agent.interpretation_aliasable.id, alias_new_agent.interpretation_aliasable.id
+            assert_not_equal alias_agent.formulation_aliasable.id, alias_new_agent.formulation_aliasable.id
           end
         end
       end

@@ -12,26 +12,26 @@ class AgentArc < ApplicationRecord
   validate :check_acyclic
 
   before_destroy { source.touch }
-  before_destroy :remove_target_related_interpretation_aliases
+  before_destroy :remove_target_related_formulation_aliases
 
   after_create_commit { sync_nlp_source }
   after_update_commit { sync_nlp_source }
 
-  def target_related_interpretation_aliases
-    InterpretationAlias.find_by_sql ["
+  def target_related_formulation_aliases
+    FormulationAlias.find_by_sql ["
         SELECT
           ia.id,
           ia.aliasname,
           ia.position_start,
           ia.position_end,
           ia.formulation_id,
-          ia.interpretation_aliasable_id,
-          ia.interpretation_aliasable_type,
+          ia.formulation_aliasable_id,
+          ia.formulation_aliasable_type,
           ia.nature,
           ia.is_list,
           ia.any_enabled
-        FROM interpretation_aliases AS ia
-          INNER JOIN intents ON ia.interpretation_aliasable_id = intents.id
+        FROM formulation_aliases AS ia
+          INNER JOIN intents ON ia.formulation_aliasable_id = intents.id
           INNER JOIN formulations AS pr ON ia.formulation_id = pr.id
         WHERE intents.agent_id = ?
               AND ia.formulation_id IN (SELECT formulations.id
@@ -43,8 +43,8 @@ class AgentArc < ApplicationRecord
 
   private
 
-    def remove_target_related_interpretation_aliases
-      related_aliases = target_related_interpretation_aliases
+    def remove_target_related_formulation_aliases
+      related_aliases = target_related_formulation_aliases
       if related_aliases.present?
         related_aliases.each(&:destroy)
         source.need_nlp_sync

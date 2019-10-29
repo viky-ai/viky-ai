@@ -5,9 +5,9 @@ class Formulation < ApplicationRecord
   positionable_ancestor :intent
 
   belongs_to :intent, touch: true
-  has_many :interpretation_aliases, dependent: :destroy
+  has_many :formulation_aliases, dependent: :destroy
 
-  accepts_nested_attributes_for :interpretation_aliases, allow_destroy: true
+  accepts_nested_attributes_for :formulation_aliases, allow_destroy: true
 
   enum proximity: ExpressionProximity::FORMULATION_PROXIMITIES, _prefix: :proximity
   validates :expression, presence: true, byte_size: { maximum: 2048 }
@@ -19,20 +19,20 @@ class Formulation < ApplicationRecord
   before_save :cleanup
 
   def is_minimal
-    interpretation_aliases.count == 0 && auto_solution_enabled
+    formulation_aliases.count == 0 && auto_solution_enabled
   end
 
   def expression_with_aliases
-    return expression if interpretation_aliases.size == 0
-    ordered_aliases = interpretation_aliases.reject(&:_destroy).sort_by(&:position_start)
+    return expression if formulation_aliases.size == 0
+    ordered_aliases = formulation_aliases.reject(&:_destroy).sort_by(&:position_start)
     result = []
     expression.split(//).each_with_index do |character, index|
-      interpretation_alias = ordered_aliases.first
-      if interpretation_alias.nil? || index < interpretation_alias.position_start
+      formulation_alias = ordered_aliases.first
+      if formulation_alias.nil? || index < formulation_alias.position_start
         result << character
       end
-      if !interpretation_alias.nil? && index == interpretation_alias.position_end - 1
-        result << "@{#{interpretation_alias.aliasname}}"
+      if !formulation_alias.nil? && index == formulation_alias.position_end - 1
+        result << "@{#{formulation_alias.aliasname}}"
         ordered_aliases = ordered_aliases.drop 1
       end
     end
@@ -55,7 +55,7 @@ class Formulation < ApplicationRecord
   private
 
     def validate_aliases_any_and_list_options
-      aliases = interpretation_aliases.reject(&:marked_for_destruction?)
+      aliases = formulation_aliases.reject(&:marked_for_destruction?)
       if aliases.size == 1
         if aliases.first.any_enabled
           errors.add(:base, I18n.t('errors.formulation.one_alias_one_any'))

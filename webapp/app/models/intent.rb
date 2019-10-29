@@ -9,7 +9,7 @@ class Intent < ApplicationRecord
 
   belongs_to :agent, touch: true
   has_many :formulations, dependent: :destroy
-  has_many :interpretation_aliases, as: :interpretation_aliasable, dependent: :destroy
+  has_many :formulation_aliases, as: :formulation_aliasable, dependent: :destroy
 
   enum visibility: [:is_public, :is_private]
 
@@ -33,8 +33,8 @@ class Intent < ApplicationRecord
 
   def aliased_intents
     Intent.where(agent_id: agent_id)
-          .joins(formulations: :interpretation_aliases)
-          .where(interpretation_aliases: { interpretation_aliasable: self })
+          .joins(formulations: :formulation_aliases)
+          .where(formulation_aliases: { formulation_aliasable: self })
           .distinct
           .order('position desc, created_at desc')
   end

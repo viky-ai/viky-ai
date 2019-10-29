@@ -84,27 +84,27 @@ class Task::Populate
 
         unless last_intent.nil?
 
-          interpretation_alias = InterpretationAlias.new(
+          formulation_alias = FormulationAlias.new(
             aliasname: 'dummy_a',
             position_start: 0,
             position_end: 6
           )
-          interpretation_alias.formulation = formulation
-          interpretation_alias.interpretation_aliasable = last_intent
-          interpretation_alias.save!
+          formulation_alias.formulation = formulation
+          formulation_alias.formulation_aliasable = last_intent
+          formulation_alias.save!
 
         end
 
         next if before_last.nil?
 
-        interpretation_alias = InterpretationAlias.new(
+        formulation_alias = FormulationAlias.new(
           aliasname: 'dummy_b',
           position_start: 7,
           position_end: 13
         )
-        interpretation_alias.formulation = formulation
-        interpretation_alias.interpretation_aliasable = before_last
-        interpretation_alias.save!
+        formulation_alias.formulation = formulation
+        formulation_alias.formulation_aliasable = before_last
+        formulation_alias.save!
       end
 
       before_last = last_intent

@@ -79,7 +79,7 @@ en:
         solution: Solution
         proximity: Proximity
         base: ""
-      interpretation_alias:
+      formulation_alias:
         base: ""
         aliasname: Parameter name
         reg_exp: Regular expression
@@ -118,7 +118,7 @@ en:
       move_to_agent_without_enough_quota: "owner does not have enough quota to accept this move"
     formulation:
       invalid_json: "invalid json"
-      interpretation_aliases_overlap: position overlap
+      formulation_aliases_overlap: position overlap
       only_one_any: Only one annotation with "Any" option is permitted.
       one_alias_one_any: '"Any" option is not permitted with only one annotation.'
       only_one_list: Only one annotation with "List" option is permitted.
@@ -143,7 +143,7 @@ en:
       missing_column: "Missing column"
       missing_header: "Missing or malformed header (\"Terms,Auto solution,Solution,Case sensitive,Accent sensitive\" is expected)"
       quota_exceeded: "Quota exceeded (maximum is %{maximum} formulations and entities), you will reach %{final} entries"
-    interpretation_alias:
+    formulation_alias:
       end_position_lower_than_start: "must be greater than position start"
       overlap: overlap
       aliasname_uniqueness: "has already been taken"

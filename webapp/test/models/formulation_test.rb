@@ -10,14 +10,14 @@ class FormulationTest < ActiveSupport::TestCase
     )
     formulation.intent = intents(:weather_forecast)
     assert formulation.save
-    interpretation_alias = InterpretationAlias.new(
+    formulation_alias = FormulationAlias.new(
       aliasname: 'who',
       position_start: 0,
       position_end: 12
     )
-    interpretation_alias.formulation = formulation
-    interpretation_alias.interpretation_aliasable = intents(:weather_question)
-    assert interpretation_alias.save
+    formulation_alias.formulation = formulation
+    formulation_alias.formulation_aliasable = intents(:weather_question)
+    assert formulation_alias.save
 
     assert_equal 1, formulation.position
     assert_equal 'Good morning John', formulation.expression
@@ -26,7 +26,7 @@ class FormulationTest < ActiveSupport::TestCase
     assert formulation.proximity_close?
     assert formulation.solution.nil?
     assert_equal 3, intents(:weather_forecast).formulations.count
-    assert_equal interpretation_alias.id, formulation.interpretation_aliases.reload[0].id
+    assert_equal formulation_alias.id, formulation.formulation_aliases.reload[0].id
   end
 
 
@@ -60,10 +60,10 @@ class FormulationTest < ActiveSupport::TestCase
     formulation_id = formulation.id
 
     assert_equal 1, Formulation.where(id: formulation_id).count
-    assert_equal 2, formulation.interpretation_aliases.count
+    assert_equal 2, formulation.formulation_aliases.count
     assert formulation.destroy
     assert_equal 0, Formulation.where(id: formulation_id).count
-    assert_equal 0, formulation.interpretation_aliases.count
+    assert_equal 0, formulation.formulation_aliases.count
   end
 
 
@@ -102,13 +102,13 @@ class FormulationTest < ActiveSupport::TestCase
     formulation = formulations(:weather_forecast_demain)
 
     assert_not formulation.update(
-      interpretation_aliases_attributes: [
+      formulation_aliases_attributes: [
         {
           aliasname: "first",
           position_start: 0,
           position_end: 4,
           formulation: formulations(:weather_forecast_demain),
-          interpretation_aliasable: intents(:weather_question),
+          formulation_aliasable: intents(:weather_question),
           any_enabled: true,
         },
         {
@@ -116,7 +116,7 @@ class FormulationTest < ActiveSupport::TestCase
           position_start: 6,
           position_end: 10,
           formulation: formulations(:weather_forecast_demain),
-          interpretation_aliasable: intents(:weather_question),
+          formulation_aliasable: intents(:weather_question),
           any_enabled: true,
         }
       ]
@@ -129,13 +129,13 @@ class FormulationTest < ActiveSupport::TestCase
   test "Aliases any constraint : one alias one any" do
     formulation = formulations(:weather_forecast_demain)
     assert_not formulation.update(
-      interpretation_aliases_attributes: [
+      formulation_aliases_attributes: [
         {
           aliasname: "first",
           position_start: 0,
           position_end: 4,
           formulation: formulations(:weather_forecast_demain),
-          interpretation_aliasable: intents(:weather_question),
+          formulation_aliasable: intents(:weather_question),
           any_enabled: true,
         }
       ]
@@ -146,13 +146,13 @@ class FormulationTest < ActiveSupport::TestCase
 
     formulation.reload
     assert formulation.update(
-      interpretation_aliases_attributes: [
+      formulation_aliases_attributes: [
         {
           aliasname: "first",
           position_start: 0,
           position_end: 4,
           formulation: formulations(:weather_forecast_demain),
-          interpretation_aliasable: intents(:weather_question),
+          formulation_aliasable: intents(:weather_question),
           any_enabled: true,
         },
         {
@@ -160,16 +160,16 @@ class FormulationTest < ActiveSupport::TestCase
           position_start: 5,
           position_end: 10,
           formulation: formulations(:weather_forecast_demain),
-          interpretation_aliasable: intents(:weather_question),
+          formulation_aliasable: intents(:weather_question),
           any_enabled: false,
         }
       ]
     )
 
     assert_not formulation.update(
-      interpretation_aliases_attributes: [
+      formulation_aliases_attributes: [
         {
-          id: formulation.interpretation_aliases.last.id,
+          id: formulation.formulation_aliases.last.id,
           _destroy:  true,
         }
       ]
@@ -183,13 +183,13 @@ class FormulationTest < ActiveSupport::TestCase
     formulation = formulations(:weather_forecast_demain)
 
     assert_not formulation.update(
-      interpretation_aliases_attributes: [
+      formulation_aliases_attributes: [
         {
           aliasname: "first",
           position_start: 0,
           position_end: 4,
           formulation: formulations(:weather_forecast_demain),
-          interpretation_aliasable: intents(:weather_question),
+          formulation_aliasable: intents(:weather_question),
           is_list: true,
         },
         {
@@ -197,7 +197,7 @@ class FormulationTest < ActiveSupport::TestCase
           position_start: 6,
           position_end: 10,
           formulation: formulations(:weather_forecast_demain),
-          interpretation_aliasable: intents(:weather_question),
+          formulation_aliasable: intents(:weather_question),
           is_list: true,
         }
       ]
@@ -335,12 +335,12 @@ class FormulationTest < ActiveSupport::TestCase
     assert formulation.save
 
     formulation.expression = (['a'] * 35 + ['après demain']).join(' ')
-    assert InterpretationAlias.new(
+    assert FormulationAlias.new(
       aliasname: 'when',
       position_start: 70,
       position_end: 82,
       formulation: formulation,
-      interpretation_aliasable: entities_lists(:weather_dates)
+      formulation_aliasable: entities_lists(:weather_dates)
     ).save
     force_reset_model_cache formulation
     assert formulation.save

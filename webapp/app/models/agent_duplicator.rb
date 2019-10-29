@@ -37,7 +37,7 @@ class AgentDuplicator
         end
       end
     end
-    fix_interpretation_aliases(new_agent.to_record)
+    fix_formulation_aliases(new_agent.to_record)
     ActiveRecord::Base.transaction do
       new_agent.persist
     end
@@ -53,20 +53,20 @@ class AgentDuplicator
       record.name = agent_count.zero? ? "#{source.name} [COPY]" : "#{source.name} [COPY #{agent_count}]"
     end
 
-    def fix_interpretation_aliases(new_agent)
+    def fix_formulation_aliases(new_agent)
       aliases_to_fix = extract_aliases_to_fix(new_agent)
       unless aliases_to_fix.empty?
         aliases_to_fix.each do |alias_to_change|
-          if alias_to_change.interpretation_aliasable_type == 'Intent'
+          if alias_to_change.formulation_aliasable_type == 'Intent'
             new_agent.intents.each do |intent|
-              if intent.intentname == alias_to_change.interpretation_aliasable.intentname
-                alias_to_change.interpretation_aliasable = intent
+              if intent.intentname == alias_to_change.formulation_aliasable.intentname
+                alias_to_change.formulation_aliasable = intent
               end
             end
           else
             new_agent.entities_lists.each do |entities_list|
-              if entities_list.listname == alias_to_change.interpretation_aliasable.listname
-                alias_to_change.interpretation_aliasable = entities_list
+              if entities_list.listname == alias_to_change.formulation_aliasable.listname
+                alias_to_change.formulation_aliasable = entities_list
               end
             end
           end
@@ -79,9 +79,9 @@ class AgentDuplicator
       aliases_to_fix = []
       new_agent.intents.each do |intent|
         intent.formulations.each do |formulation|
-          formulation.interpretation_aliases
+          formulation.formulation_aliases
             .reject { |ialias| ['type_number', 'type_regex'].include? ialias.nature }
-            .select { |ialias| ialias.interpretation_aliasable.agent.id == @agent.id }
+            .select { |ialias| ialias.formulation_aliasable.agent.id == @agent.id }
             .each { |ialias| aliases_to_fix << ialias }
         end
       end
@@ -90,7 +90,7 @@ class AgentDuplicator
 end
 
 class InterpretationsCloner < Clowne::Cloner
-  include_association :interpretation_aliases
+  include_association :formulation_aliases
 end
 
 class EntitiesListsCloner < Clowne::Cloner

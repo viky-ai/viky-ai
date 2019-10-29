@@ -19,7 +19,7 @@
   </div>
 
   <div class="aliases <% if rtl?(formulation.locale) %>aliases--rtl<% end %> formulations-show__summary">
-    <% if formulation.interpretation_aliases.any? %>
+    <% if formulation.formulation_aliases.any? %>
       <table>
         <thead>
           <tr>
@@ -30,7 +30,7 @@
           </tr>
         </thead>
         <tbody>
-        <% formulation.interpretation_aliases.order(position_start: :asc).each do |ia| %>
+        <% formulation.formulation_aliases.order(position_start: :asc).each do |ia| %>
           <% json_alias = JSON.parse(alias_to_json(ia)) %>
           <tr>
             <td>

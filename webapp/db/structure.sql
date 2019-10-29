@@ -226,6 +226,25 @@ CREATE TABLE public.favorite_agents (
 
 
 --
+-- Name: formulation_aliases; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.formulation_aliases (
+    id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    aliasname character varying NOT NULL,
+    position_start integer,
+    position_end integer,
+    formulation_id uuid,
+    formulation_aliasable_id uuid,
+    nature integer DEFAULT 0,
+    is_list boolean DEFAULT false,
+    any_enabled boolean DEFAULT false,
+    formulation_aliasable_type character varying,
+    reg_exp text
+);
+
+
+--
 -- Name: formulations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -291,25 +310,6 @@ CREATE TABLE public.intents (
     "position" integer DEFAULT '-1'::integer,
     color character varying,
     visibility integer DEFAULT 0
-);
-
-
---
--- Name: interpretation_aliases; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.interpretation_aliases (
-    id uuid DEFAULT public.gen_random_uuid() NOT NULL,
-    aliasname character varying NOT NULL,
-    position_start integer,
-    position_end integer,
-    formulation_id uuid,
-    interpretation_aliasable_id uuid,
-    nature integer DEFAULT 0,
-    is_list boolean DEFAULT false,
-    any_enabled boolean DEFAULT false,
-    interpretation_aliasable_type character varying,
-    reg_exp text
 );
 
 
@@ -554,10 +554,10 @@ ALTER TABLE ONLY public.intents
 
 
 --
--- Name: interpretation_aliases interpretation_aliases_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: formulation_aliases interpretation_aliases_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.interpretation_aliases
+ALTER TABLE ONLY public.formulation_aliases
     ADD CONSTRAINT interpretation_aliases_pkey PRIMARY KEY (id);
 
 
@@ -707,6 +707,13 @@ CREATE UNIQUE INDEX index_favorite_agents_on_user_id_and_agent_id ON public.favo
 
 
 --
+-- Name: index_formulation_aliases_on_formulation_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_formulation_aliases_on_formulation_id ON public.formulation_aliases USING btree (formulation_id);
+
+
+--
 -- Name: index_formulations_on_intent_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -745,7 +752,7 @@ CREATE INDEX index_friendly_id_slugs_on_sluggable_type ON public.friendly_id_slu
 -- Name: index_ialiases_on_ialiasable_type_and_ialiasable_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_ialiases_on_ialiasable_type_and_ialiasable_id ON public.interpretation_aliases USING btree (interpretation_aliasable_type, interpretation_aliasable_id);
+CREATE INDEX index_ialiases_on_ialiasable_type_and_ialiasable_id ON public.formulation_aliases USING btree (formulation_aliasable_type, formulation_aliasable_id);
 
 
 --
@@ -760,13 +767,6 @@ CREATE INDEX index_intents_on_agent_id ON public.intents USING btree (agent_id);
 --
 
 CREATE UNIQUE INDEX index_intents_on_intentname_and_agent_id ON public.intents USING btree (intentname, agent_id);
-
-
---
--- Name: index_interpretation_aliases_on_formulation_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_interpretation_aliases_on_formulation_id ON public.interpretation_aliases USING btree (formulation_id);
 
 
 --
@@ -975,10 +975,10 @@ ALTER TABLE ONLY public.readmes
 
 
 --
--- Name: interpretation_aliases fk_rails_bed1931875; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: formulation_aliases fk_rails_bed1931875; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.interpretation_aliases
+ALTER TABLE ONLY public.formulation_aliases
     ADD CONSTRAINT fk_rails_bed1931875 FOREIGN KEY (formulation_id) REFERENCES public.formulations(id) ON DELETE CASCADE;
 
 
@@ -1094,6 +1094,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190925090036'),
 ('20191018130844'),
 ('20191025090323'),
-('20191028091856');
+('20191028091856'),
+('20191029091355');
 
 

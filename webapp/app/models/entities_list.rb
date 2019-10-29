@@ -9,7 +9,7 @@ class EntitiesList < ApplicationRecord
 
   belongs_to :agent, touch: true
   has_many :entities, dependent: :delete_all
-  has_many :interpretation_aliases, as: :interpretation_aliasable, dependent: :destroy
+  has_many :formulation_aliases, as: :formulation_aliasable, dependent: :destroy
   has_many :entities_imports, dependent: :destroy
 
   enum proximity: ExpressionProximity::ENTITY_PROXIMITES, _prefix: :proximity
@@ -61,8 +61,8 @@ class EntitiesList < ApplicationRecord
 
   def aliased_intents
     Intent.where(agent_id: agent_id)
-          .joins(formulations: :interpretation_aliases)
-          .where(interpretation_aliases: { interpretation_aliasable: self })
+          .joins(formulations: :formulation_aliases)
+          .where(formulation_aliases: { formulation_aliasable: self })
           .distinct
           .order('position desc, created_at desc')
   end

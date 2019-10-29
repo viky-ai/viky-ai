@@ -399,7 +399,7 @@ class InterpretationsTest < ApplicationSystemTestCase
         assert has_no_text?("question")
         assert has_no_text?("dates")
       end
-      question = interpretation_aliases(:weather_forecast_tomorrow_question)
+      question = formulation_aliases(:weather_forecast_tomorrow_question)
       assert_no_text_selected_in_trix question.formulation.id, question.aliasname
       click_button "Update"
     end

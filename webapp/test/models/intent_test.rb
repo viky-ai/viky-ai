@@ -222,15 +222,15 @@ class IntentTest < ActiveSupport::TestCase
       expression: 'Where is it raining?'
     )
     formulation.intent = weather_loc_intent
-    interpretation_alias = InterpretationAlias.new(
+    formulation_alias = FormulationAlias.new(
       position_start: 0,
       position_end: 5,
       aliasname: 'Where',
       nature: 'type_intent'
     )
-    interpretation_alias.formulation = formulation
-    interpretation_alias.interpretation_aliasable = current_intent
-    assert interpretation_alias.save
+    formulation_alias.formulation = formulation
+    formulation_alias.formulation_aliasable = current_intent
+    assert formulation_alias.save
 
     expected = [intents(:terminator_find)]
     actual = current_intent.aliased_intents
