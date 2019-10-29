@@ -27,20 +27,19 @@ class Agent < ApplicationRecord
 
   before_validation :ensure_api_token, on: :create
   before_validation :add_owner_id, on: :create
-  before_validation :add_slug, on: [:create, :update]
   before_validation :clean_locales, on: :create
   before_validation :clean_agentname
 
   validates :name, presence: true
   validates :agentname, uniqueness: { scope: [:owner_id] }, length: { in: 3..25 }, presence: true
   validates :owner_id, presence: true
-  validates :slug, presence: true
   validates :api_token, presence: true, uniqueness: true, length: { in: 32..32 }
   validates :color, inclusion: { in: :available_colors }
   validates :locales, presence: true
   validate  :check_locales
   validate  :owner_presence_in_users
 
+  before_save :add_slug
   before_destroy :check_collaborators_presence, prepend: true
 
   after_create_commit do
@@ -336,10 +335,9 @@ class Agent < ApplicationRecord
     end
 
     def add_slug
-      return if self.memberships.none? { |member| member.rights == 'all'}
-
-      username = self.memberships.filter { |member| member.rights == 'all'}.first.user.username
-      self.slug = "#{username}/#{self.agentname}"
+      if agentname_changed?
+        self.slug = "#{User.find(owner_id).username}/#{agentname}"
+      end
     end
 
     def clean_agentname

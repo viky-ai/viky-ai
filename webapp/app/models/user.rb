@@ -27,9 +27,14 @@ class User < ApplicationRecord
 
   before_destroy :check_agents_presence, prepend: true
 
-  after_commit do |record|
-    agents.each(&:need_nlp_sync) if record.previous_changes[:username].present?
-    agents.each(&:save)
+  after_commit do |user|
+    if user.username_previously_changed?
+      Agent.where(owner_id: user.id).each do |agent|
+        agent.need_nlp_sync
+        agent.slug = "#{user.username}/#{agent.agentname}"
+        agent.save
+      end
+    end
   end
 
   def can?(action, agent)
