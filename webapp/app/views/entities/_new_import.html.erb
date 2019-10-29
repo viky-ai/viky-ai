@@ -2,7 +2,7 @@
   <div class="modal__overlay" data-action='close-modal'></div>
   <div class="modal__main">
     <h5 class="modal__main__title">
-      <%= t('views.entities_lists.show.import.select_import.title') %>
+      <%= t('views.entities_lists.show.import.select_import.title_html', listname: @entities_list.listname) %>
       <button class="modal__main__title__close" data-action='close-modal'>
         <%= icon_close %>
       </button>
