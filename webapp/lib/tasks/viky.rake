@@ -7,7 +7,13 @@ namespace :viky do
     # Database related
     connected = ::ActiveRecord::Base.connection_pool.with_connection(&:active?) rescue false
     if connected
-      Rake::Task["db:migrate"].invoke
+      if ::ActiveRecord::SchemaMigration.table_exists?
+        Rake::Task["db:migrate"].invoke
+      else
+        Rake::Task["db:structure:load"].invoke
+        #Rake::Task["db:schema:load"].invoke
+        Rake::Task["db:seed"].invoke
+      end
     else
       Rake::Task["db:setup"].invoke
     end
