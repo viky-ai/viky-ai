@@ -57,17 +57,17 @@ class Task::Populate
   end
 
   def self.formulations(agent, opts)
-    last_intent = nil
+    last_interpretation = nil
     before_last = nil
 
     opts[:nb_interpretation].times do
-      intent = Intent.new(
-        intentname: quick_rand(10),
+      interpretation = Interpretation.new(
+        interpretation_name: quick_rand(10),
         visibility: %w[is_public is_private].sample,
         description: 'Formulation of the world'
       )
-      intent.agent = agent
-      intent.save!
+      interpretation.agent = agent
+      interpretation.save!
 
       opts[:nb_formulation].times do
         expressions = []
@@ -79,10 +79,10 @@ class Task::Populate
           expression: expressions.join(' '),
           locale: ['fr', 'en', '*'].sample
         )
-        formulation.intent = intent
+        formulation.interpretation = interpretation
         formulation.save!
 
-        unless last_intent.nil?
+        unless last_interpretation.nil?
 
           formulation_alias = FormulationAlias.new(
             aliasname: 'dummy_a',
@@ -90,7 +90,7 @@ class Task::Populate
             position_end: 6
           )
           formulation_alias.formulation = formulation
-          formulation_alias.formulation_aliasable = last_intent
+          formulation_alias.formulation_aliasable = last_interpretation
           formulation_alias.save!
 
         end
@@ -107,8 +107,8 @@ class Task::Populate
         formulation_alias.save!
       end
 
-      before_last = last_intent
-      last_intent = intent
+      before_last = last_interpretation
+      last_interpretation = interpretation
     end
   end
 

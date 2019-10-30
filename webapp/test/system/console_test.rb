@@ -37,7 +37,7 @@ class ConsoleTest < ApplicationSystemTestCase
           body: {
             "interpretations" => [
               {
-                "id" => intents(:weather_forecast).id,
+                "id" => interpretations(:weather_forecast).id,
                 "slug" => "admin/weather/weather_forecast",
                 "name" => "weather_forecast",
                 "score" => 1.0
@@ -55,7 +55,7 @@ class ConsoleTest < ApplicationSystemTestCase
           body: {
             "interpretations" => [
               {
-                "id" => intents(:weather_forecast).id,
+                "id" => interpretations(:weather_forecast).id,
                 "slug" => "admin/weather/weather_forecast",
                 "name" => "weather_forecast",
                 "score" => 1.0,
@@ -69,7 +69,7 @@ class ConsoleTest < ApplicationSystemTestCase
                         "match" => {
                           "expression" => "Hello world",
                           "interpretation_slug" => "weather_forecast",
-                          "interpretation_id" => intents(:weather_forecast).id,
+                          "interpretation_id" => interpretations(:weather_forecast).id,
                           "expression_pos" => formulations(:weather_forecast_tomorrow).position,
                         }
                       },
@@ -145,39 +145,39 @@ class ConsoleTest < ApplicationSystemTestCase
     end
 
     #
-    # Add intent
+    # Add interpretation
     #
     click_link "Interpretations"
     click_link "New interpretation"
     within(".modal") do
       assert has_text? "Create a new interpretation"
-      fill_in "ID", with: "my-new-intent"
+      fill_in "ID", with: "my-new-interpretation"
       click_button "Create"
     end
-    assert has_text?("my-new-intent")
+    assert has_text?("my-new-interpretation")
     assert has_text?("No interpretation found.")
 
     #
-    # Edit intent
+    # Edit interpretation
     #
-    within "#intents-list-is_public" do
+    within "#interpretations-list-is_public" do
       first(".dropdown__trigger > button").click
       click_link "Configure"
     end
 
     within(".modal") do
       assert has_text? "Edit interpretation"
-      fill_in "ID", with: "my-new-intent-updated"
+      fill_in "ID", with: "my-new-interpretation-updated"
       click_button "Update"
     end
-    assert has_text?("my-new-intent-updated")
+    assert has_text?("my-new-interpretation-updated")
     assert has_text?("No interpretation found.")
 
     #
-    # Show intent
+    # Show interpretation
     #
-    click_link "my-new-intent-updated"
-    assert has_text?("Interpretations / my-new-intent-updated PUBLIC")
+    click_link "my-new-interpretation-updated"
+    assert has_text?("Interpretations / my-new-interpretation-updated PUBLIC")
     assert has_text?("No interpretation found.")
   end
 
@@ -195,7 +195,7 @@ class ConsoleTest < ApplicationSystemTestCase
           body: {
             "interpretations" => [
               {
-                "id" => intents(:weather_forecast).id,
+                "id" => interpretations(:weather_forecast).id,
                 "slug" => "admin/weather/weather_forecast",
                 "name" => "weather_forecast",
                 "score" => 1.0,
@@ -209,7 +209,7 @@ class ConsoleTest < ApplicationSystemTestCase
                         "match" => {
                           "expression" => "weather",
                           "interpretation_slug" => "admin/weather/interpretations/weather_forecast",
-                          "interpretation_id" => intents(:weather_forecast).id,
+                          "interpretation_id" => interpretations(:weather_forecast).id,
                           "expression_pos" => formulations(:weather_forecast_tomorrow).position,
                         }
                       }
@@ -236,7 +236,7 @@ class ConsoleTest < ApplicationSystemTestCase
       assert has_text?("1 interpretation found.")
       assert has_text?("weather")
 
-      within(".c-intent__highlight") do
+      within(".c-interpretation__highlight") do
         # Show highlight
         find(".highlight-words", text: "weather").click
         assert has_link?("admin/weather/interpretations/weather_forecast")
@@ -272,7 +272,7 @@ class ConsoleTest < ApplicationSystemTestCase
           body: {
             "interpretations" => [
               {
-                "id" => intents(:weather_forecast).id,
+                "id" => interpretations(:weather_forecast).id,
                 "slug" => "admin/weather/weather_forecast",
                 "name" => "weather_forecast",
                 "score" => 1.0,
@@ -286,7 +286,7 @@ class ConsoleTest < ApplicationSystemTestCase
                         "match" => {
                           "expression" => "weather",
                           "interpretation_slug" => "admin/weather/interpretations/weather_forecast",
-                          "interpretation_id" => intents(:weather_forecast).id,
+                          "interpretation_id" => interpretations(:weather_forecast).id,
                           "expression_pos" => formulations(:weather_forecast_tomorrow).position,
                         }
                       }
@@ -305,7 +305,7 @@ class ConsoleTest < ApplicationSystemTestCase
                 }
               },
               {
-                "id" => intents(:terminator_find).id,
+                "id" => interpretations(:terminator_find).id,
                 "slug" => "admin/terminator/terminator_find",
                 "name" => "terminator_find",
                 "score" => 1.0,
@@ -319,7 +319,7 @@ class ConsoleTest < ApplicationSystemTestCase
                         "match" => {
                           "expression" => "terminator",
                           "interpretation_slug" => "admin/terminator/interpretations/terminator_find",
-                          "interpretation_id" => intents(:terminator_find).id,
+                          "interpretation_id" => interpretations(:terminator_find).id,
                           "expression_pos" => formulations(:terminator_find_sarah).position,
                         }
                       }
@@ -398,8 +398,8 @@ class ConsoleTest < ApplicationSystemTestCase
             "errors_javascript" => {
               "message" => "SyntaxError: invalid object literal (line 5)",
               "solution_location" => {
-                "id" => intents(:weather_forecast).id,
-                "slug" => intents(:weather_forecast).slug,
+                "id" => interpretations(:weather_forecast).id,
+                "slug" => interpretations(:weather_forecast).slug,
                 "position" => formulations(:weather_forecast_tomorrow).position,
                 "line_number" => 1
               },

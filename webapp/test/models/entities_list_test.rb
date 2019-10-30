@@ -120,7 +120,7 @@ class EntitiesListTest < ActiveSupport::TestCase
   test 'Test update entities list positions' do
     agent = agents(:weather_confirmed)
     entities_list_0 = EntitiesList.create(
-      listname: 'intent_0',
+      listname: 'interpretation_0',
       position: 1,
       agent: agent
     )
@@ -211,18 +211,18 @@ class EntitiesListTest < ActiveSupport::TestCase
   end
 
 
-  test 'Get intents that are using the current entity (aliased_intents)' do
+  test 'Get interpretations that are using the current entity (aliased_interpretations)' do
     current_entity = entities_lists(:weather_dates)
-    expected = [intents(:weather_forecast)]
-    actual = current_entity.aliased_intents
+    expected = [interpretations(:weather_forecast)]
+    actual = current_entity.aliased_interpretations
     assert_equal expected, actual
   end
 
 
-  test 'No intents that are using the current entity (aliased_intents)' do
+  test 'No interpretations that are using the current entity (aliased_interpretations)' do
     current_entity = entities_lists(:terminator_targets)
     expected = []
-    actual = current_entity.aliased_intents
+    actual = current_entity.aliased_interpretations
     assert_equal expected, actual
   end
 

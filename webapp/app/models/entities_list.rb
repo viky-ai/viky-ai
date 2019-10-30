@@ -59,8 +59,8 @@ class EntitiesList < ApplicationRecord
     io.string
   end
 
-  def aliased_intents
-    Intent.where(agent_id: agent_id)
+  def aliased_interpretations
+    Interpretation.where(agent_id: agent_id)
           .joins(formulations: :formulation_aliases)
           .where(formulation_aliases: { formulation_aliasable: self })
           .distinct

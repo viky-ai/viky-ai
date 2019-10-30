@@ -29,7 +29,7 @@ class FormulationsList
 module.exports = FormulationsList
 
 Setup = ->
-  if $('body').data('controller-name') == "intents" && $('body').data('controller-action') == "show"
+  if $('body').data('controller-name') == "interpretations" && $('body').data('controller-action') == "show"
     new FormulationsList()
 
 $(document).on('turbolinks:load', Setup)

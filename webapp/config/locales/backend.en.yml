@@ -74,10 +74,10 @@ en:
             zero: Interpretation
             one: Interpretation
             other: Interpretations
-          intents:
-            zero: No intent
-            one: One intent
-            other: "%{total} intents"
+          interpretations:
+            zero: No interpretation
+            one: One interpretation
+            other: "%{total} interpretations"
           entities:
             zero: Entity
             one: Entity

@@ -57,7 +57,7 @@ class Nlp::Package
       encoder.write_value('id', @agent.id)
       encoder.write_value('slug', @agent.slug)
       encoder.wrap_array('interpretations') do
-        write_intent(encoder)
+        write_interpretation(encoder)
         write_entities_list(encoder)
       end
     end
@@ -98,11 +98,11 @@ class Nlp::Package
       result
     end
 
-    def write_intent(encoder)
-      @agent.intents.order(position: :desc).each do |intent|
-        cache_key = ['pkg', VERSION, @agent.slug, 'intent'.freeze, intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
-        build_internals_list_nodes(intent, encoder, cache_key)
-        build_intent(intent, encoder, cache_key)
+    def write_interpretation(encoder)
+      @agent.interpretations.order(position: :desc).each do |interpretation|
+        cache_key = ['pkg', VERSION, @agent.slug, 'interpretation'.freeze, interpretation.id, (interpretation.updated_at.to_f * 1000).to_i].join('/')
+        build_internals_list_nodes(interpretation, encoder, cache_key)
+        build_interpretation(interpretation, encoder, cache_key)
       end
     end
 
@@ -112,7 +112,7 @@ class Nlp::Package
       end
     end
 
-    def build_internals_list_nodes(intent, encoder, cache_key)
+    def build_internals_list_nodes(interpretation, encoder, cache_key)
       cache_key = "#{cache_key}/build_internals_list_nodes"
       if @cache.exist? cache_key
         formulations = @cache.read cache_key
@@ -120,7 +120,7 @@ class Nlp::Package
       else
         FormulationAlias
           .includes(:formulation)
-          .where(is_list: true, formulations: { intent_id: intent.id })
+          .where(is_list: true, formulations: { interpretation_id: interpretation.id })
           .order('formulations.position DESC, formulations.locale ASC')
           .order(:position_start).each do |ialias|
 
@@ -160,18 +160,18 @@ class Nlp::Package
       end
     end
 
-    def build_intent(intent, encoder, cache_key)
+    def build_interpretation(interpretation, encoder, cache_key)
       cache_key = "#{cache_key}/build_node"
       encoder.wrap_object do
-        encoder.write_value('id', intent.id)
-        encoder.write_value('slug', intent.slug)
-        encoder.write_value('scope', intent.is_public? ? 'public' : 'private')
+        encoder.write_value('id', interpretation.id)
+        encoder.write_value('slug', interpretation.slug)
+        encoder.write_value('scope', interpretation.is_public? ? 'public' : 'private')
         encoder.wrap_array('expressions') do
           if @cache.exist? cache_key
             expressions = @cache.read cache_key
             encoder.write_string expressions
           else
-            intent.formulations.order(position: :desc, locale: :asc).each do |formulation|
+            interpretation.formulations.order(position: :desc, locale: :asc).each do |formulation|
               expression = {}
               expression['expression']    = formulation.expression_with_aliases
               expression['pos']           = formulation.position

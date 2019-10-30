@@ -1,6 +1,6 @@
 weather_forecast_tomorrow:
   expression: What the weather like tomorrow ?
-  intent: weather_forecast
+  interpretation: weather_forecast
   locale: 'en'
   keep_order: true
   proximity: 'glued'
@@ -10,35 +10,35 @@ weather_forecast_tomorrow:
 
 weather_forecast_demain:
   expression: Quel temps fera-t-il demain ?
-  intent: weather_forecast
+  interpretation: weather_forecast
   locale: 'fr'
   auto_solution_enabled: true
   position: 1
 
 weather_question_like:
   expression: What the weather like
-  intent: weather_question
+  interpretation: weather_question
   locale: 'en'
   auto_solution_enabled: true
   position: 0
 
 terminator_find_sarah:
   expression: Where is Sarah Connor ?
-  intent: terminator_find
+  interpretation: terminator_find
   locale: 'en'
   auto_solution_enabled: true
   position: 0
 
 terminator_where:
   expression: Find Sarah Connor
-  intent: terminator_find
+  interpretation: terminator_find
   locale: 'en'
   auto_solution_enabled: true
   position: 1
 
 terminator_simple_where_1:
   expression: Find
-  intent: simple_where
+  interpretation: simple_where
   locale: 'en'
   auto_solution_enabled: true
   position: 2

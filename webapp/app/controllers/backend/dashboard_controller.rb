@@ -3,7 +3,7 @@ class Backend::DashboardController < Backend::ApplicationController
   def index
     @top_formulations_agents = Agent
       .select('agents.id, COUNT(formulations.id) as count')
-      .joins(intents: :formulations)
+      .joins(interpretations: :formulations)
       .group(:id)
       .order('count DESC, agents.name')
       .page(params[:formulations_page]).per(10)

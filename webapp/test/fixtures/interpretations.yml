@@ -1,26 +1,26 @@
 weather_forecast:
-  intentname: weather_forecast
+  interpretation_name: weather_forecast
   description: Ask futur weather
   agent: weather
   color: red
   position: 1
 
 weather_question:
-  intentname: weather_question
+  interpretation_name: weather_question
   description:
   agent: weather
   color: blue
   position: 0
 
 terminator_find:
-  intentname: terminator_find
+  interpretation_name: terminator_find
   description: Find Sarah Connor
   agent: terminator
   color: green
   position: 0
 
 weather_confirmed_question:
-  intentname: weather_question
+  interpretation_name: weather_question
   description: Another weather question
   agent: weather_confirmed
   color: black
@@ -28,7 +28,7 @@ weather_confirmed_question:
   visibility: 1
 
 simple_where:
-  intentname: simple_where
+  interpretation_name: simple_where
   description: Simple where expressions
   agent: terminator
   color: red

@@ -34,7 +34,7 @@ en:
       agent:
         one: Agent
         other: Agents
-      intent: Intent
+      interpretation: interpretation
       formulation: Formulation
       entity:
         zero: entity
@@ -59,8 +59,8 @@ en:
         visibility_is_private: Private
         visibility_is_public: Public
         locales: Languages
-      intent:
-        intentname: ID
+      interpretation:
+        interpretation_name: ID
         description: Description
         visibility: Visibility
         visibility_is_private: Private
@@ -112,7 +112,7 @@ en:
         collaborators_presence: You must remove all collaborators before delete an agent
     agent_arc:
       cycle_detected: detected, agent addition would cause a cycle in dependency graph
-    intents:
+    interpretations:
       unknown_locale: "unknown '%{current_locale}'"
       move_to_unknown_agent: "does not exist anymore"
       move_to_agent_without_enough_quota: "owner does not have enough quota to accept this move"

@@ -16,9 +16,9 @@ class AgentRegressionChecksControllerTest < ActionDispatch::IntegrationTest
         regression_check: {
           sentence: 'Quel temps fait-il à Paris ?',
           expected: {
-            root_type: 'intent',
+            root_type: 'interpretation',
             package: agents(:weather).id,
-            id: Intent.where(intentname: 'weather_forecast').first.id,
+            id: Interpretation.where(interpretation_name: 'weather_forecast').first.id,
             score: '1.0',
             solution: Formulation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json
           },
@@ -40,9 +40,9 @@ class AgentRegressionChecksControllerTest < ActionDispatch::IntegrationTest
         regression_check: {
           sentence: 'Quel temps fait-il à Paris ?',
           expected: {
-            root_type: 'intent',
+            root_type: 'interpretation',
             package: agents(:weather).id,
-            id: Intent.where(intentname: 'weather_forecast').first.id,
+            id: Interpretation.where(interpretation_name: 'weather_forecast').first.id,
             score: '1.0',
             solution: Formulation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json
           },
@@ -105,9 +105,9 @@ class AgentRegressionChecksControllerTest < ActionDispatch::IntegrationTest
       params: {
         regression_check: {
           expected: {
-            root_type: 'intent',
+            root_type: 'interpretation',
             package: agents(:weather).id,
-            id: Intent.where(intentname: 'weather_forecast').first.id,
+            id: Interpretation.where(interpretation_name: 'weather_forecast').first.id,
             solution: Formulation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json
           }
         },
@@ -122,9 +122,9 @@ class AgentRegressionChecksControllerTest < ActionDispatch::IntegrationTest
       params: {
         regression_check: {
           expected: {
-            root_type: 'intent',
+            root_type: 'interpretation',
             package: agents(:weather).id,
-            id: Intent.where(intentname: 'weather_forecast').first.id,
+            id: Interpretation.where(interpretation_name: 'weather_forecast').first.id,
             solution: Formulation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json
           }
         },

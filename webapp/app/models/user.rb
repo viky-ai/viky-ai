@@ -116,7 +116,7 @@ class User < ApplicationRecord
   end
 
   def formulations_count
-    Formulation.joins(intent: :agent).where('agents.owner_id = ?', id).count
+    Formulation.joins(interpretation: :agent).where('agents.owner_id = ?', id).count
   end
 
   def expressions_count
@@ -144,10 +144,10 @@ class User < ApplicationRecord
         SELECT
           agents.id as agent_id, COUNT(formulations.id) as total
         FROM agents
-        LEFT OUTER JOIN intents
-        ON intents.agent_id = agents.id
+        LEFT OUTER JOIN interpretations
+        ON interpretations.agent_id = agents.id
         LEFT OUTER JOIN formulations
-        ON formulations.intent_id = intents.id
+        ON formulations.interpretation_id = interpretations.id
         GROUP BY agents.id
       ) AS i
     ON e.agent_id = i.agent_id
@@ -180,10 +180,10 @@ class User < ApplicationRecord
           SELECT
             agents.owner_id as id, COUNT(formulations.id) as total
           FROM agents
-          LEFT OUTER JOIN intents
-          ON intents.agent_id = agents.id
+          LEFT OUTER JOIN interpretations
+          ON interpretations.agent_id = agents.id
           LEFT OUTER JOIN formulations
-          ON formulations.intent_id = intents.id
+          ON formulations.interpretation_id = interpretations.id
           GROUP BY agents.owner_id
         ) AS i
         ON e.id = i.id

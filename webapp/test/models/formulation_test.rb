@@ -3,12 +3,12 @@ require 'model_test_helper'
 
 class FormulationTest < ActiveSupport::TestCase
 
-  test 'Basic formulation creation & intent association' do
+  test 'Basic formulation creation & interpretation association' do
     formulation = Formulation.new(
       expression: 'Good morning John',
       locale: 'en'
     )
-    formulation.intent = intents(:weather_forecast)
+    formulation.interpretation = interpretations(:weather_forecast)
     assert formulation.save
     formulation_alias = FormulationAlias.new(
       aliasname: 'who',
@@ -16,26 +16,26 @@ class FormulationTest < ActiveSupport::TestCase
       position_end: 12
     )
     formulation_alias.formulation = formulation
-    formulation_alias.formulation_aliasable = intents(:weather_question)
+    formulation_alias.formulation_aliasable = interpretations(:weather_question)
     assert formulation_alias.save
 
     assert_equal 1, formulation.position
     assert_equal 'Good morning John', formulation.expression
-    assert_equal intents(:weather_forecast).id, formulation.intent.id
+    assert_equal interpretations(:weather_forecast).id, formulation.interpretation.id
     assert_not formulation.keep_order
     assert formulation.proximity_close?
     assert formulation.solution.nil?
-    assert_equal 3, intents(:weather_forecast).formulations.count
+    assert_equal 3, interpretations(:weather_forecast).formulations.count
     assert_equal formulation_alias.id, formulation.formulation_aliases.reload[0].id
   end
 
 
-  test 'Expression and locale can\'t be blank and must be linked to an intent' do
+  test 'Expression and locale can\'t be blank and must be linked to an interpretation' do
     formulation = Formulation.new(expression: '')
     assert_not formulation.save
 
     expected = {
-      intent: ['must exist'],
+      interpretation: ['must exist'],
       expression: ['can\'t be blank'],
       locale: ['is not included in the list', 'can\'t be blank']
     }
@@ -45,7 +45,7 @@ class FormulationTest < ActiveSupport::TestCase
 
   test 'Locale must be in list' do
     formulation = Formulation.new(expression: 'Good morning', locale: 'toto')
-    formulation.intent = intents(:weather_forecast)
+    formulation.interpretation = interpretations(:weather_forecast)
     assert_not formulation.save
 
     expected = {
@@ -68,10 +68,10 @@ class FormulationTest < ActiveSupport::TestCase
 
 
   test 'Filter formulations by locale' do
-    intent = intents(:weather_forecast)
-    en_formulations = intent.formulations_with_local('en')
+    interpretation = interpretations(:weather_forecast)
+    en_formulations = interpretation.formulations_with_local('en')
     assert_equal 1, en_formulations.count
-    fr_formulations = intent.formulations_with_local('fr')
+    fr_formulations = interpretation.formulations_with_local('fr')
     assert_equal 1, fr_formulations.count
   end
 
@@ -108,7 +108,7 @@ class FormulationTest < ActiveSupport::TestCase
           position_start: 0,
           position_end: 4,
           formulation: formulations(:weather_forecast_demain),
-          formulation_aliasable: intents(:weather_question),
+          formulation_aliasable: interpretations(:weather_question),
           any_enabled: true,
         },
         {
@@ -116,7 +116,7 @@ class FormulationTest < ActiveSupport::TestCase
           position_start: 6,
           position_end: 10,
           formulation: formulations(:weather_forecast_demain),
-          formulation_aliasable: intents(:weather_question),
+          formulation_aliasable: interpretations(:weather_question),
           any_enabled: true,
         }
       ]
@@ -135,7 +135,7 @@ class FormulationTest < ActiveSupport::TestCase
           position_start: 0,
           position_end: 4,
           formulation: formulations(:weather_forecast_demain),
-          formulation_aliasable: intents(:weather_question),
+          formulation_aliasable: interpretations(:weather_question),
           any_enabled: true,
         }
       ]
@@ -152,7 +152,7 @@ class FormulationTest < ActiveSupport::TestCase
           position_start: 0,
           position_end: 4,
           formulation: formulations(:weather_forecast_demain),
-          formulation_aliasable: intents(:weather_question),
+          formulation_aliasable: interpretations(:weather_question),
           any_enabled: true,
         },
         {
@@ -160,7 +160,7 @@ class FormulationTest < ActiveSupport::TestCase
           position_start: 5,
           position_end: 10,
           formulation: formulations(:weather_forecast_demain),
-          formulation_aliasable: intents(:weather_question),
+          formulation_aliasable: interpretations(:weather_question),
           any_enabled: false,
         }
       ]
@@ -189,7 +189,7 @@ class FormulationTest < ActiveSupport::TestCase
           position_start: 0,
           position_end: 4,
           formulation: formulations(:weather_forecast_demain),
-          formulation_aliasable: intents(:weather_question),
+          formulation_aliasable: interpretations(:weather_question),
           is_list: true,
         },
         {
@@ -197,7 +197,7 @@ class FormulationTest < ActiveSupport::TestCase
           position_start: 6,
           position_end: 10,
           formulation: formulations(:weather_forecast_demain),
-          formulation_aliasable: intents(:weather_question),
+          formulation_aliasable: interpretations(:weather_question),
           is_list: true,
         }
       ]
@@ -208,71 +208,71 @@ class FormulationTest < ActiveSupport::TestCase
 
 
   test 'Update formulations positions' do
-    intent = intents(:weather_forecast)
-    assert intent.formulations.destroy_all
+    interpretation = interpretations(:weather_forecast)
+    assert interpretation.formulations.destroy_all
 
     formulation_0 = Formulation.create(
       expression: 'formulation_0',
       locale: Locales::ANY,
       position: 0,
-      intent: intent
+      interpretation: interpretation
     )
     formulation_1 = Formulation.create(
       expression: 'formulation_1',
       locale: Locales::ANY,
       position: 1,
-      intent: intent
+      interpretation: interpretation
     )
     formulation_2 = Formulation.create(
       expression: 'formulation_2',
       locale: Locales::ANY,
       position: 2,
-      intent: intent
+      interpretation: interpretation
     )
 
     new_positions = [formulation_1.id, formulation_2.id, formulation_0.id, '132465789']
-    Formulation.update_positions(intent, new_positions)
+    Formulation.update_positions(interpretation, new_positions)
 
     force_reset_model_cache([formulation_0, formulation_1, formulation_2])
     assert_equal [2, 1, 0], [formulation_1.position, formulation_2.position, formulation_0.position]
   end
 
   test 'Reorder formulations positions within the given set of positions only' do
-    intent = intents(:weather_forecast)
-    assert intent.formulations.destroy_all
+    interpretation = interpretations(:weather_forecast)
+    assert interpretation.formulations.destroy_all
 
     formulation_0 = Formulation.create(
       expression: 'formulation_0',
       locale: 'en',
       position: 0,
-      intent: intent
+      interpretation: interpretation
     )
     formulation_1 = Formulation.create(
       expression: 'formulation_1',
       locale: 'fr',
       position: 1,
-      intent: intent
+      interpretation: interpretation
     )
     formulation_2 = Formulation.create(
       expression: 'formulation_2',
       locale: 'en',
       position: 2,
-      intent: intent
+      interpretation: interpretation
     )
     formulation_3 = Formulation.create(
       expression: 'formulation_2',
       locale: 'fr',
       position: 3,
-      intent: intent
+      interpretation: interpretation
     )
 
     new_positions = [formulation_1.id, formulation_3.id]
-    Formulation.update_positions(intent, new_positions)
+    Formulation.update_positions(interpretation, new_positions)
     force_reset_model_cache([formulation_0, formulation_1, formulation_2, formulation_3])
     assert_equal [3, 2, 1, 0], [formulation_1.position, formulation_2.position, formulation_3.position, formulation_0.position]
 
     new_positions = [formulation_0.id, formulation_2.id]
-    Formulation.update_positions(intent, new_positions)
+    Formulation.update_positions(interpretation, new_positions)
     force_reset_model_cache([formulation_0, formulation_1, formulation_2, formulation_3])
     assert_equal [3, 2, 1, 0], [formulation_1.position, formulation_0.position, formulation_3.position, formulation_2.position]
 
@@ -356,20 +356,20 @@ class FormulationTest < ActiveSupport::TestCase
   end
 
   test 'Position formulation in new locale' do
-    intent = intents(:weather_forecast)
-    assert intent.formulations.destroy_all
+    interpretation = interpretations(:weather_forecast)
+    assert interpretation.formulations.destroy_all
 
     Formulation.create(
       expression: 'formulation_0',
       locale: '*',
       position: 0,
-      intent: intent
+      interpretation: interpretation
     )
     formulation_1 = Formulation.create(
       expression: 'formulation_1',
       locale: '*',
       position: 1,
-      intent: intent
+      interpretation: interpretation
     )
 
     previous_locale = ''
@@ -380,34 +380,34 @@ class FormulationTest < ActiveSupport::TestCase
   end
 
   test 'Formulation creation scope position to language' do
-    intent = intents(:weather_forecast)
-    assert intent.formulations.destroy_all
+    interpretation = interpretations(:weather_forecast)
+    assert interpretation.formulations.destroy_all
 
     Formulation.create(
       expression: 'formulation_0',
       locale: '*',
-      intent: intent
+      interpretation: interpretation
     )
     Formulation.create(
       expression: 'formulation_1',
       locale: '*',
-      intent: intent
+      interpretation: interpretation
     )
     english_formulation = Formulation.create(
       expression: 'formulation_3',
       locale: 'en',
-      intent: intent
+      interpretation: interpretation
     )
     assert_equal 0, english_formulation.position
   end
 
   test 'Save formulation with very locales' do
-    intent = intents(:weather_forecast)
+    interpretation = interpretations(:weather_forecast)
     Locales::ALL.each do |locale|
       formulation = Formulation.new(
         expression: "formulation_#{locale}",
         locale: locale,
-        intent: intent
+        interpretation: interpretation
       )
       assert formulation.save
     end
@@ -424,14 +424,14 @@ class FormulationTest < ActiveSupport::TestCase
         expression: 'Sunny tomorrow morning',
         locale: 'en'
       )
-      formulation.intent = intents(:weather_forecast)
+      formulation.interpretation = interpretations(:weather_forecast)
       assert formulation.save
 
       formulation_next = Formulation.new(
         expression: 'Rainy tomorrow afternoon',
         locale: 'en'
       )
-      formulation_next.intent = intents(:weather_forecast)
+      formulation_next.interpretation = interpretations(:weather_forecast)
       assert_not formulation_next.save
       expected = ['Quota exceeded (maximum is 11 formulations and entities)']
       assert_equal expected, formulation_next.errors.full_messages

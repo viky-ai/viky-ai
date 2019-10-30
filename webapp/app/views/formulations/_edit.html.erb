@@ -1,6 +1,6 @@
 <div class="card-list__item__draggable"></div>
 
-<%= form_with(model: [formulation.intent.agent.owner, formulation.intent.agent, formulation.intent, formulation], class: 'formulations-form') do |f| %>
+<%= form_with(model: [formulation.interpretation.agent.owner, formulation.interpretation.agent, formulation.interpretation, formulation], class: 'formulations-form') do |f| %>
 
   <% formulation.formulation_aliases.select { |ialias| ialias._destroy }.each do |ialias| %>
     <input type="hidden" name="formulation[formulation_aliases_attributes][][id]" value="<%= ialias.id %>" />
@@ -97,10 +97,10 @@
       <%= f.button t('views.formulations.index.update_btn').html_safe, class: 'btn btn--primary',
             data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span> #{t('loading')}" } %>
       <%= link_to t('views.formulations.index.cancel_btn'),
-            user_agent_intent_formulation_path(
-              formulation.intent.agent.owner,
-              formulation.intent.agent,
-              formulation.intent,
+            user_agent_interpretation_formulation_path(
+              formulation.interpretation.agent.owner,
+              formulation.interpretation.agent,
+              formulation.interpretation,
               formulation
             ),
             remote: true,
@@ -111,10 +111,10 @@
   <div class="field formulations-form__delete">
     <div class="control">
       <%= link_to t('views.formulations.index.delete_btn'),
-                  user_agent_intent_formulation_path(
-                      formulation.intent.agent.owner,
-                      formulation.intent.agent,
-                      formulation.intent,
+                  user_agent_interpretation_formulation_path(
+                      formulation.interpretation.agent.owner,
+                      formulation.interpretation.agent,
+                      formulation.interpretation,
                       formulation
                   ),
                   method: :delete,

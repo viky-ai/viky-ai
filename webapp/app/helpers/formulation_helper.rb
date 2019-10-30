@@ -4,14 +4,14 @@ module FormulationHelper
     locale == 'ar'
   end
 
-  def intent_to_json(intent)
+  def interpretation_to_json(interpretation)
     JSON.generate(
-      color:  "intent-#{intent.color}",
-      aliasname: intent.intentname,
-      slug: intent.slug,
-      formulation_aliasable_id: intent.id,
-      formulation_aliasable_type: Intent.name,
-      nature: FormulationAlias.natures.key(FormulationAlias.natures[:type_intent])
+      color:  "interpretation-#{interpretation.color}",
+      aliasname: interpretation.interpretation_name,
+      slug: interpretation.slug,
+      formulation_aliasable_id: interpretation.id,
+      formulation_aliasable_type: Interpretation.name,
+      nature: FormulationAlias.natures.key(FormulationAlias.natures[:type_interpretation])
     )
   end
 
@@ -28,7 +28,7 @@ module FormulationHelper
 
   def number_to_json
     JSON.generate({
-      color:  "intent-black",
+      color:  "interpretation-black",
       aliasname: t("views.formulations.number").downcase,
       nature: FormulationAlias.natures.key(FormulationAlias.natures[:type_number])
     })
@@ -36,7 +36,7 @@ module FormulationHelper
 
   def regex_to_json
     JSON.generate({
-      color: "intent-black",
+      color: "interpretation-black",
       aliasname: t("views.formulations.regex").downcase,
       nature: FormulationAlias.natures.key(FormulationAlias.natures[:type_regex]),
       reg_exp: ""
@@ -50,7 +50,7 @@ module FormulationHelper
   def alias_to_json(formulation_alias)
     if formulation_alias.type_number?
       data = {
-        color: "intent-black",
+        color: "interpretation-black",
         aliasname: formulation_alias.aliasname,
         nature: FormulationAlias.natures.key(FormulationAlias.natures[:type_number]),
         is_list: formulation_alias.is_list,
@@ -59,7 +59,7 @@ module FormulationHelper
       }
     elsif formulation_alias.type_regex?
       data = {
-        color: "intent-black",
+        color: "interpretation-black",
         aliasname: formulation_alias.aliasname,
         nature: FormulationAlias.natures.key(FormulationAlias.natures[:type_regex]),
         reg_exp: formulation_alias.reg_exp,
@@ -71,8 +71,8 @@ module FormulationHelper
       current_aliasable = formulation_alias.formulation_aliasable
       url = nil
       if current_user.can?(:show, current_aliasable.agent)
-        if formulation_alias.type_intent?
-          url = user_agent_intent_path(current_aliasable.agent.owner, current_aliasable.agent, current_aliasable)
+        if formulation_alias.type_interpretation?
+          url = user_agent_interpretation_path(current_aliasable.agent.owner, current_aliasable.agent, current_aliasable)
         elsif formulation_alias.type_entities_list?
           url = user_agent_entities_list_path(current_aliasable.agent.owner, current_aliasable.agent, current_aliasable)
         end
@@ -85,10 +85,10 @@ module FormulationHelper
         any_enabled: formulation_alias.any_enabled,
         url: url,
       }
-      if formulation_alias.type_intent?
-        data[:color] = "intent-#{current_aliasable.color}"
-        data[:formulation_aliasable_type] = Intent.name
-        data[:nature] = FormulationAlias.natures.key(FormulationAlias.natures[:type_intent])
+      if formulation_alias.type_interpretation?
+        data[:color] = "interpretation-#{current_aliasable.color}"
+        data[:formulation_aliasable_type] = Interpretation.name
+        data[:nature] = FormulationAlias.natures.key(FormulationAlias.natures[:type_interpretation])
       end
       if formulation_alias.type_entities_list?
         data[:color] = "entities_list-#{current_aliasable.color}"

@@ -12,15 +12,15 @@ class FormulationAliasTest < ActiveSupport::TestCase
     )
     assert number.save
 
-    type_intent = FormulationAlias.new(
+    type_interpretation = FormulationAlias.new(
       position_start: 8,
       position_end: 21,
       aliasname: 'who',
       formulation_id: formulations(:weather_forecast_demain).id,
-      nature: 'type_intent'
+      nature: 'type_interpretation'
     )
-    assert_not type_intent.save
-    assert_equal ["Intent can't be blank"], type_intent.errors.full_messages
+    assert_not type_interpretation.save
+    assert_equal ["Interpretation can't be blank"], type_interpretation.errors.full_messages
 
     type_entities_list = FormulationAlias.new(
       position_start: 8,
@@ -34,14 +34,14 @@ class FormulationAliasTest < ActiveSupport::TestCase
   end
 
 
-  test 'remove intent used as alias remove related formulation alias' do
-    weather_question_intent = intents(:weather_question)
+  test 'remove interpretation used as alias remove related formulation alias' do
+    weather_question_interpretation = interpretations(:weather_question)
     formulation = formulations(:weather_forecast_tomorrow)
 
-    assert_equal weather_question_intent.id, formulation.formulation_aliases.first.formulation_aliasable.id
+    assert_equal weather_question_interpretation.id, formulation.formulation_aliases.first.formulation_aliasable.id
     assert_equal 2, formulation.formulation_aliases.count
 
-    assert weather_question_intent.destroy
+    assert weather_question_interpretation.destroy
     assert_equal 1, formulation.formulation_aliases.count
   end
 
@@ -50,14 +50,14 @@ class FormulationAliasTest < ActiveSupport::TestCase
     # Create with 1 range
     formulation = Formulation.new({
       expression: 'test',
-      intent_id: intents(:weather_forecast).id,
+      interpretation_id: interpretations(:weather_forecast).id,
       locale: 'fr',
       formulation_aliases_attributes: [
         {
           position_start: 0,
           position_end: 5,
           aliasname: 'who',
-          formulation_aliasable: intents(:weather_question)
+          formulation_aliasable: interpretations(:weather_question)
         }
       ]
     })
@@ -66,20 +66,20 @@ class FormulationAliasTest < ActiveSupport::TestCase
     # Create with 2 ranges without overlap
     formulation = Formulation.new({
       expression: 'test',
-      intent_id: intents(:weather_forecast).id,
+      interpretation_id: interpretations(:weather_forecast).id,
       locale: 'fr',
       formulation_aliases_attributes: [
         {
           position_start: 0,
           position_end: 5,
           aliasname: 'who1',
-          formulation_aliasable: intents(:weather_question)
+          formulation_aliasable: interpretations(:weather_question)
         },
         {
           position_start: 6,
           position_end: 10,
           aliasname: 'who2',
-          formulation_aliasable: intents(:weather_question)
+          formulation_aliasable: interpretations(:weather_question)
         }
       ]
     })
@@ -88,20 +88,20 @@ class FormulationAliasTest < ActiveSupport::TestCase
     # Create with 2 ranges with overlap
     formulation = Formulation.new({
       expression: 'test',
-      intent_id: intents(:weather_forecast).id,
+      interpretation_id: interpretations(:weather_forecast).id,
       locale: 'fr',
       formulation_aliases_attributes: [
         {
           position_start: 8,
           position_end: 21,
           aliasname: 'who1',
-          formulation_aliasable: intents(:weather_question)
+          formulation_aliasable: interpretations(:weather_question)
         },
         {
           position_start: 5,
           position_end: 14,
           aliasname: 'who2',
-          formulation_aliasable: intents(:weather_question)
+          formulation_aliasable: interpretations(:weather_question)
         }
       ]
     })
@@ -115,13 +115,13 @@ class FormulationAliasTest < ActiveSupport::TestCase
           position_start: 8,
           position_end: 21,
           aliasname: 'who1',
-          formulation_aliasable: intents(:weather_question)
+          formulation_aliasable: interpretations(:weather_question)
         },
         {
           position_start: 5,
           position_end: 14,
           aliasname: 'who2',
-          formulation_aliasable: intents(:weather_question)
+          formulation_aliasable: interpretations(:weather_question)
         }
       ]
     })
@@ -135,19 +135,19 @@ class FormulationAliasTest < ActiveSupport::TestCase
           position_start: 0,
           position_end: 5,
           aliasname: 'who3',
-          formulation_aliasable: intents(:weather_question)
+          formulation_aliasable: interpretations(:weather_question)
         },
         {
           position_start: 6,
           position_end: 10,
           aliasname: 'who4',
-          formulation_aliasable: intents(:weather_question)
+          formulation_aliasable: interpretations(:weather_question)
         },
         {
           position_start: 8,
           position_end: 12,
           aliasname: 'who5',
-          formulation_aliasable: intents(:weather_question)
+          formulation_aliasable: interpretations(:weather_question)
         }
       ]
     })
@@ -164,12 +164,12 @@ class FormulationAliasTest < ActiveSupport::TestCase
     weather_forecast_demain = formulations(:weather_forecast_demain)
     formulation_alias.formulation = weather_forecast_demain
 
-    weather_who = intents(:weather_question)
+    weather_who = interpretations(:weather_question)
     formulation_alias.formulation_aliasable = weather_who
 
     assert formulation_alias.save
-    assert_equal "type_intent", formulation_alias.nature
-    assert formulation_alias.type_intent?
+    assert_equal "type_interpretation", formulation_alias.nature
+    assert formulation_alias.type_interpretation?
     assert_not formulation_alias.type_number?
     assert_equal 8, formulation_alias.position_start
     assert_equal 21, formulation_alias.position_end
@@ -185,7 +185,7 @@ class FormulationAliasTest < ActiveSupport::TestCase
       position_start: 8,
       position_end: 21,
       formulation: formulations(:weather_forecast_demain),
-      formulation_aliasable: intents(:weather_question)
+      formulation_aliasable: interpretations(:weather_question)
     )
     assert_not formulation_alias.save
     expected = ['Parameter name can\'t be blank', 'Parameter name is invalid']
@@ -200,7 +200,7 @@ class FormulationAliasTest < ActiveSupport::TestCase
       position_end: 1
     )
     formulation_alias.formulation = formulations(:weather_forecast_demain)
-    formulation_alias.formulation_aliasable = intents(:weather_question)
+    formulation_alias.formulation_aliasable = interpretations(:weather_question)
 
     assert_not formulation_alias.validate
     expected = ['Position end must be greater than position start']
@@ -215,7 +215,7 @@ class FormulationAliasTest < ActiveSupport::TestCase
       position_end: -3
     )
     formulation_alias.formulation = formulations(:weather_forecast_demain)
-    formulation_alias.formulation_aliasable = intents(:weather_question)
+    formulation_alias.formulation_aliasable = interpretations(:weather_question)
 
     assert_not formulation_alias.validate
     expected = ['Position start must be greater than or equal to 0', 'Position end must be greater than 0']
@@ -230,7 +230,7 @@ class FormulationAliasTest < ActiveSupport::TestCase
       position_end: 4
     )
     formulation_alias.formulation = formulations(:weather_forecast_demain)
-    formulation_alias.formulation_aliasable = intents(:weather_question)
+    formulation_alias.formulation_aliasable = interpretations(:weather_question)
 
     assert_not formulation_alias.validate
     expected = ['Position end must be greater than position start']
@@ -241,20 +241,20 @@ class FormulationAliasTest < ActiveSupport::TestCase
   test 'Check aliasname uniqueness' do
     formulation = Formulation.new({
       expression: 'test',
-      intent_id: intents(:weather_forecast).id,
+      interpretation_id: interpretations(:weather_forecast).id,
       locale: 'fr',
       formulation_aliases_attributes: [
         {
           position_start: 0,
           position_end: 11,
           aliasname: 'who',
-          formulation_aliasable: intents(:weather_question)
+          formulation_aliasable: interpretations(:weather_question)
         },
         {
           position_start: 15,
           position_end: 21,
           aliasname: 'who',
-          formulation_aliasable: intents(:weather_question)
+          formulation_aliasable: interpretations(:weather_question)
         }
       ]
     })
@@ -277,14 +277,14 @@ class FormulationAliasTest < ActiveSupport::TestCase
           position_start: 6,
           position_end: 11,
           aliasname: 'who',
-          formulation_aliasable: intents(:weather_question),
+          formulation_aliasable: interpretations(:weather_question),
           _destroy: true
         },
         {
           position_start: 15,
           position_end: 21,
           aliasname: 'who',
-          formulation_aliasable: intents(:weather_question)
+          formulation_aliasable: interpretations(:weather_question)
         }
       ]
     })
@@ -339,20 +339,20 @@ class FormulationAliasTest < ActiveSupport::TestCase
   test 'Invert alias names' do
     formulation = Formulation.new({
       expression: 'test',
-      intent_id: intents(:weather_forecast).id,
+      interpretation_id: interpretations(:weather_forecast).id,
       locale: 'fr',
       formulation_aliases_attributes: [
         {
           position_start: 0,
           position_end: 11,
           aliasname: 'who1',
-          formulation_aliasable: intents(:weather_question)
+          formulation_aliasable: interpretations(:weather_question)
         },
         {
           position_start: 15,
           position_end: 21,
           aliasname: 'who2',
-          formulation_aliasable: intents(:weather_question)
+          formulation_aliasable: interpretations(:weather_question)
         }
       ]
     })
@@ -367,14 +367,14 @@ class FormulationAliasTest < ActiveSupport::TestCase
            position_start: 0,
            position_end: 11,
            aliasname: formulation.formulation_aliases.last.aliasname,
-           formulation_aliasable: intents(:weather_question)
+           formulation_aliasable: interpretations(:weather_question)
          },
          {
            id: formulation.formulation_aliases.last.id,
            position_start: 15,
            position_end: 21,
            aliasname: formulation.formulation_aliases.first.aliasname,
-           formulation_aliasable: intents(:weather_question)
+           formulation_aliasable: interpretations(:weather_question)
          }
        ]
     })
@@ -448,7 +448,7 @@ class FormulationAliasTest < ActiveSupport::TestCase
       position_start: 8,
       position_end: 21,
       formulation: formulations(:weather_forecast_demain),
-      formulation_aliasable: intents(:weather_question),
+      formulation_aliasable: interpretations(:weather_question),
       is_list: true,
       any_enabled: true,
     )

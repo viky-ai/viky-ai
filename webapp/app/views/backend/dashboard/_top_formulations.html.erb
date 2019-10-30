@@ -9,7 +9,7 @@
       <tr>
         <td>
           <% if current_user.can? :show, agent %>
-            <a href="<%= user_agent_intents_path(agent.owner, agent) %>">
+            <a href="<%= user_agent_interpretations_path(agent.owner, agent) %>">
               <strong>
                 <%= agent.name %>
               </strong>

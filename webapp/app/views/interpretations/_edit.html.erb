@@ -3,14 +3,14 @@
   <div class="modal__main">
 
     <h5 class="modal__main__title">
-      <%= t('views.intents.new.title') %>
+      <%= t('views.interpretations.edit.title') %>
       <button class="modal__main__title__close" data-action='close-modal'>
         <%= icon_close %>
       </button>
     </h5>
 
     <div class="modal__main__content">
-      <%= render 'form', agent: @agent, intent: @intent %>
+      <%= render 'form', agent: @agent, interpretation: @interpretation %>
     </div>
   </div>
 </div>

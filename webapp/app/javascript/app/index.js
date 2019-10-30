@@ -57,8 +57,8 @@ import './console/console_footer.coffee';
 import './console/console_test_suite.coffee';
 import './console/debug_solution.coffee';
 
-import './intents/main.scss';
-import './intents/intent_form.coffee';
+import './interpretations/main.scss';
+import './interpretations/interpretation_form.coffee';
 
 import './entities_lists/main.scss';
 import './entities_lists/entities_list_form.coffee';
@@ -71,7 +71,7 @@ import './formulations/formulation_form.coffee';
 
 import './entities/main.scss';
 
-import './aliased_intents/main.scss';
+import './aliased_interpretations/main.scss';
 
 import './readme/form.coffee';
 

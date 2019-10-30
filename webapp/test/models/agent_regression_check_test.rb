@@ -11,9 +11,9 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     assert_equal 3, agents(:weather).agent_regression_checks.count
 
     expected_nlp = {
-      'root_type' => 'intent',
-      'package' => intents(:weather_forecast).agent.id,
-      'id' => intents(:weather_forecast).id,
+      'root_type' => 'interpretation',
+      'package' => interpretations(:weather_forecast).agent.id,
+      'id' => interpretations(:weather_forecast).id,
       'solution' => formulations(:weather_forecast_tomorrow).solution.to_json.to_s
     }.with_indifferent_access
     agent_regression_check = AgentRegressionCheck.new(
@@ -129,15 +129,15 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
       status: 200,
       body: {
         'interpretations' => [{
-          'id' => intents(:weather_forecast).id,
-          'slug' => intents(:weather_forecast).slug,
-          'package' => intents(:weather_forecast).agent.id,
+          'id' => interpretations(:weather_forecast).id,
+          'slug' => interpretations(:weather_forecast).slug,
+          'package' => interpretations(:weather_forecast).agent.id,
           'score' => '1.0',
           'solution' => formulations(:weather_forecast_tomorrow).solution
         }, {
-          'id' => intents(:weather_question).id,
-          'slug' => intents(:weather_question).slug,
-          'package' => intents(:weather_question).agent.id,
+          'id' => interpretations(:weather_question).id,
+          'slug' => interpretations(:weather_question).slug,
+          'package' => interpretations(:weather_question).agent.id,
           'score' => '0.3',
           'solution' => { 'question' => 'what' }
         }]
@@ -152,9 +152,9 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     assert_not agent_regression_check.unknown?
     assert_not agent_regression_check.running?
     expected = {
-      'root_type' => 'intent',
-      'package' => intents(:weather_forecast).agent.id,
-      'id' => intents(:weather_forecast).id,
+      'root_type' => 'interpretation',
+      'package' => interpretations(:weather_forecast).agent.id,
+      'id' => interpretations(:weather_forecast).id,
       'solution' => formulations(:weather_forecast_tomorrow).solution.to_json.to_s
     }
     assert_equal expected, agent_regression_check.expected
@@ -167,9 +167,9 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
       status: 200,
       body: {
         'interpretations' => [{
-          'id' => intents(:weather_forecast).id,
-          'slug' => intents(:weather_forecast).slug,
-          'package' => intents(:weather_forecast).agent.id,
+          'id' => interpretations(:weather_forecast).id,
+          'slug' => interpretations(:weather_forecast).slug,
+          'package' => interpretations(:weather_forecast).agent.id,
           'score' => '0.3',
           'solution' => formulations(:weather_forecast_tomorrow).solution
         }]

@@ -251,7 +251,7 @@ CREATE TABLE public.formulation_aliases (
 CREATE TABLE public.formulations (
     id uuid DEFAULT public.gen_random_uuid() NOT NULL,
     expression character varying,
-    intent_id uuid,
+    interpretation_id uuid,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     locale character varying,
@@ -297,12 +297,12 @@ ALTER SEQUENCE public.friendly_id_slugs_id_seq OWNED BY public.friendly_id_slugs
 
 
 --
--- Name: intents; Type: TABLE; Schema: public; Owner: -
+-- Name: interpretations; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.intents (
+CREATE TABLE public.interpretations (
     id uuid DEFAULT public.gen_random_uuid() NOT NULL,
-    intentname character varying,
+    interpretation_name character varying,
     description text,
     agent_id uuid,
     created_at timestamp without time zone NOT NULL,
@@ -542,14 +542,14 @@ ALTER TABLE ONLY public.entities
 --
 
 ALTER TABLE ONLY public.formulations
-    ADD CONSTRAINT index_interpretations_on_intent_id_locale_and_position UNIQUE (intent_id, locale, "position") DEFERRABLE;
+    ADD CONSTRAINT index_interpretations_on_intent_id_locale_and_position UNIQUE (interpretation_id, locale, "position") DEFERRABLE;
 
 
 --
--- Name: intents intents_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: interpretations intents_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.intents
+ALTER TABLE ONLY public.interpretations
     ADD CONSTRAINT intents_pkey PRIMARY KEY (id);
 
 
@@ -714,10 +714,10 @@ CREATE INDEX index_formulation_aliases_on_formulation_id ON public.formulation_a
 
 
 --
--- Name: index_formulations_on_intent_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_formulations_on_interpretation_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_formulations_on_intent_id ON public.formulations USING btree (intent_id);
+CREATE INDEX index_formulations_on_interpretation_id ON public.formulations USING btree (interpretation_id);
 
 
 --
@@ -756,17 +756,17 @@ CREATE INDEX index_ialiases_on_ialiasable_type_and_ialiasable_id ON public.formu
 
 
 --
--- Name: index_intents_on_agent_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_interpretations_on_agent_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_intents_on_agent_id ON public.intents USING btree (agent_id);
+CREATE INDEX index_interpretations_on_agent_id ON public.interpretations USING btree (agent_id);
 
 
 --
--- Name: index_intents_on_intentname_and_agent_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_interpretations_on_interpretation_name_and_agent_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_intents_on_intentname_and_agent_id ON public.intents USING btree (intentname, agent_id);
+CREATE UNIQUE INDEX index_interpretations_on_interpretation_name_and_agent_id ON public.interpretations USING btree (interpretation_name, agent_id);
 
 
 --
@@ -911,10 +911,10 @@ ALTER TABLE ONLY public.chat_sessions
 
 
 --
--- Name: intents fk_rails_799ec70975; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: interpretations fk_rails_799ec70975; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.intents
+ALTER TABLE ONLY public.interpretations
     ADD CONSTRAINT fk_rails_799ec70975 FOREIGN KEY (agent_id) REFERENCES public.agents(id) ON DELETE CASCADE;
 
 
@@ -931,7 +931,7 @@ ALTER TABLE ONLY public.entities_lists
 --
 
 ALTER TABLE ONLY public.formulations
-    ADD CONSTRAINT fk_rails_7c761fd9bc FOREIGN KEY (intent_id) REFERENCES public.intents(id) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_rails_7c761fd9bc FOREIGN KEY (interpretation_id) REFERENCES public.interpretations(id) ON DELETE CASCADE;
 
 
 --
@@ -1095,6 +1095,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191018130844'),
 ('20191025090323'),
 ('20191028091856'),
-('20191029091355');
+('20191029091355'),
+('20191029145256');
 
 

@@ -2,7 +2,7 @@
   <div class="modal__overlay" data-action='close-modal'></div>
   <div class="modal__main">
     <h5 class="modal__main__title">
-      <%= t('views.intents.add_locale.title') %>
+      <%= t('views.interpretations.add_locale.title') %>
       <button class="modal__main__title__close" data-action='close-modal'>
         <%= icon_close %>
       </button>
@@ -10,7 +10,7 @@
     <% if available_locales.empty? %>
       <div class="modal__main__content">
         <p>
-          <%= t('views.intents.add_locale.empty_message') %>
+          <%= t('views.interpretations.add_locale.empty_message') %>
         </p>
       </div>
     <% else %>
@@ -25,7 +25,7 @@
             <li>
               <%= link_to(
                 name.html_safe,
-                user_agent_intent_add_locale_path(locale_to_add: possible_locale),
+                user_agent_interpretation_add_locale_path(locale_to_add: possible_locale),
                 method: :post,
                 remote: true,
                 data: {action: 'close-modal'}

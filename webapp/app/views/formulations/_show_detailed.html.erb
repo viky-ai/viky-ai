@@ -2,10 +2,10 @@
 
   <div class="formulations-show__close">
     <%= link_to icon_close.html_safe,
-                user_agent_intent_formulation_path(
-                    formulation.intent.agent.owner,
-                    formulation.intent.agent,
-                    formulation.intent,
+                user_agent_interpretation_formulation_path(
+                    formulation.interpretation.agent.owner,
+                    formulation.interpretation.agent,
+                    formulation.interpretation,
                     formulation
                 ),
                 remote: true,
@@ -37,7 +37,7 @@
               <%= json_alias['aliasname'] %>
             </td>
             <td>
-              <% if ['type_intent', 'type_entities_list'].include? json_alias['nature'] %>
+              <% if ['type_interpretation', 'type_entities_list'].include? json_alias['nature'] %>
                 <% slug = "#{json_alias['slug'].split('/').first}/#{json_alias['slug'].split('/').second}/" %>
                 <span class='<%= json_alias['color'] %>'>
                   <% if json_alias['url'].blank? %>

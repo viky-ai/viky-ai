@@ -45,7 +45,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test "Used by button in formulation details" do
-    admin_go_to_intent_show(agents(:terminator), intents(:simple_where))
+    admin_go_to_interpretation_show(agents(:terminator), interpretations(:simple_where))
     assert has_link?("Used by...")
     click_link("Used by...")
     within(".modal__main") do
@@ -57,7 +57,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test "Create an formulation" do
-    admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
+    admin_go_to_interpretation_show(agents(:weather), interpretations(:weather_forecast))
 
     within(".card .tabs") do
       click_link "en"
@@ -76,8 +76,8 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
-  test "Create an formulation with intent alias" do
-    admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
+  test "Create an formulation with interpretation alias" do
+    admin_go_to_interpretation_show(agents(:weather), interpretations(:weather_forecast))
 
     within(".card .tabs") do
       click_link "en"
@@ -116,7 +116,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test "Create an formulation with entities_list alias" do
-    admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
+    admin_go_to_interpretation_show(agents(:weather), interpretations(:weather_forecast))
 
     within(".card .tabs") do
       click_link "en"
@@ -154,7 +154,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test "Create an formulation with numbers" do
-    admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
+    admin_go_to_interpretation_show(agents(:weather), interpretations(:weather_forecast))
 
     within(".card .tabs") do
       click_link "en"
@@ -203,7 +203,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
   test "Create an formulation with proximity value" do
-    admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
+    admin_go_to_interpretation_show(agents(:weather), interpretations(:weather_forecast))
 
     within(".card .tabs") do
       click_link "en"
@@ -228,7 +228,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test "Errors on formulation creation" do
-    admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
+    admin_go_to_interpretation_show(agents(:weather), interpretations(:weather_forecast))
 
     assert_equal "0", first("#current-locale-tab-badge").text
 
@@ -241,7 +241,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test "Errors on formulation creation with alias" do
-    admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
+    admin_go_to_interpretation_show(agents(:weather), interpretations(:weather_forecast))
 
     within(".card .tabs") do
       click_link "en"
@@ -268,7 +268,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test "Update an formulation (simple)" do
-    admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
+    admin_go_to_interpretation_show(agents(:weather), interpretations(:weather_forecast))
 
     within(".card .tabs") do
       click_link "fr"
@@ -293,7 +293,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test "Update an formulation (add alias)" do
-    admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
+    admin_go_to_interpretation_show(agents(:weather), interpretations(:weather_forecast))
 
     within(".card .tabs") do
       click_link "en"
@@ -332,7 +332,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test "Update an formulation (remove alias)" do
-    admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
+    admin_go_to_interpretation_show(agents(:weather), interpretations(:weather_forecast))
 
     within(".card .tabs") do
       click_link "en"
@@ -354,7 +354,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
   test "Update an formulation (change proximity)" do
-    admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
+    admin_go_to_interpretation_show(agents(:weather), interpretations(:weather_forecast))
 
     within(".card .tabs") do
       click_link "en"
@@ -382,7 +382,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test "Remove alias from summary board" do
-    admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
+    admin_go_to_interpretation_show(agents(:weather), interpretations(:weather_forecast))
 
     within(".card .tabs") do
       click_link "en"
@@ -410,7 +410,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test "Update an formulation and cancel" do
-    admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
+    admin_go_to_interpretation_show(agents(:weather), interpretations(:weather_forecast))
 
     within(".card .tabs") do
       click_link "en"
@@ -428,7 +428,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test "change locale via drag & drop" do
-    admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
+    admin_go_to_interpretation_show(agents(:weather), interpretations(:weather_forecast))
 
     expected = ["No language 0", "en 1", "fr 1", "es 0", "+"]
     assert_equal expected, all(".card > .tabs ul li").collect(&:text)
@@ -449,7 +449,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test "Delete an formulation" do
-    admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
+    admin_go_to_interpretation_show(agents(:weather), interpretations(:weather_forecast))
 
     within(".card .tabs") do
       click_link "en"
@@ -469,7 +469,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test "Create an formulation with regex" do
-    admin_go_to_intent_show(agents(:terminator), intents(:terminator_find))
+    admin_go_to_interpretation_show(agents(:terminator), interpretations(:terminator_find))
 
     assert has_link?("Where is Sarah Connor ?")
 
@@ -505,7 +505,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
   test "List every languages available" do
-    admin_go_to_intent_show(agents(:terminator), intents(:terminator_find))
+    admin_go_to_interpretation_show(agents(:terminator), interpretations(:terminator_find))
     click_link "+"
 
     within ".modal__main__chooser" do
@@ -523,11 +523,11 @@ class InterpretationsTest < ApplicationSystemTestCase
 
   private
 
-    def admin_go_to_intent_show(agent, intent)
+    def admin_go_to_interpretation_show(agent, interpretation)
       admin_login
-      visit user_agent_intent_path(agent.owner, agent, intent)
-      visibility = intent.is_public? ? "PUBLIC" : "PRIVATE"
-      assert has_text?("Interpretations / #{intent.intentname} #{visibility}")
+      visit user_agent_interpretation_path(agent.owner, agent, interpretation)
+      visibility = interpretation.is_public? ? "PUBLIC" : "PRIVATE"
+      assert has_text?("Interpretations / #{interpretation.interpretation_name} #{visibility}")
     end
 
     def fill_in_editor_field(text)

@@ -3,12 +3,12 @@ class FormulationsController < ApplicationController
   before_action :set_owner
   before_action :set_agent
   before_action :check_user_rights
-  before_action :set_intent
+  before_action :set_interpretation
   before_action :set_formulation, except: [:create, :update_positions]
 
   def create
     formulation = Formulation.new(formulation_params)
-    formulation.intent = @intent
+    formulation.interpretation = @interpretation
     @current_locale = formulation.locale
     respond_to do |format|
       if formulation.save
@@ -19,7 +19,7 @@ class FormulationsController < ApplicationController
             auto_solution_enabled: true
           )
           @html_form = render_to_string(partial: 'form', locals: {
-            intent: @intent,
+            interpretation: @interpretation,
             agent: @agent,
             formulation: new_formulation,
             current_locale: @current_locale }
@@ -27,7 +27,7 @@ class FormulationsController < ApplicationController
           @html = render_to_string(partial: 'formulation', locals: {
             formulation: formulation,
             can_edit: current_user.can?(:edit, @agent),
-            intent: @intent,
+            interpretation: @interpretation,
             agent: @agent,
             owner: @owner
           })
@@ -36,7 +36,7 @@ class FormulationsController < ApplicationController
       else
         format.js do
           @html_form = render_to_string(partial: 'form', locals: {
-            intent: @intent,
+            interpretation: @interpretation,
             agent: @agent,
             formulation: formulation,
             current_locale: @current_locale }
@@ -53,7 +53,7 @@ class FormulationsController < ApplicationController
         @show = render_to_string(partial: 'formulation', locals: {
           formulation: @formulation,
           can_edit: current_user.can?(:edit, @agent),
-          intent: @intent,
+          interpretation: @interpretation,
           agent: @agent,
           owner: @owner
         })
@@ -87,7 +87,7 @@ class FormulationsController < ApplicationController
           @show = render_to_string(partial: 'formulation', locals: {
             formulation: @formulation,
             can_edit: current_user.can?(:edit, @agent),
-            intent: @intent,
+            interpretation: @interpretation,
             agent: @agent,
             owner: @owner
           })
@@ -113,12 +113,12 @@ class FormulationsController < ApplicationController
   end
 
   def update_positions
-    Formulation.update_positions(@intent, params[:ids])
+    Formulation.update_positions(@interpretation, params[:ids])
   end
 
   def update_locale
     previous_locale = @formulation.update_locale params[:locale]
-    redirect_to user_agent_intent_path(@owner, @agent, @intent, { locale: previous_locale })
+    redirect_to user_agent_interpretation_path(@owner, @agent, @interpretation, { locale: previous_locale })
   end
 
 
@@ -132,12 +132,12 @@ class FormulationsController < ApplicationController
       @agent = Agent.owned_by(@owner).friendly.find(params[:agent_id])
     end
 
-    def set_intent
-      @intent = @agent.intents.friendly.find(params[:intent_id])
+    def set_interpretation
+      @interpretation = @agent.interpretations.friendly.find(params[:interpretation_id])
     end
 
     def set_formulation
-      @formulation = @intent.formulations.find(params[:id])
+      @formulation = @interpretation.formulations.find(params[:id])
     end
 
     def formulation_params

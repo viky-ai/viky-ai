@@ -1,5 +1,5 @@
 class FormulationAlias < ApplicationRecord
-  enum nature: [:type_intent, :type_number, :type_entities_list, :type_regex]
+  enum nature: [:type_interpretation, :type_number, :type_entities_list, :type_regex]
 
   belongs_to :formulation, touch: true
   belongs_to :formulation_aliasable, polymorphic: true, optional: true
@@ -21,8 +21,8 @@ class FormulationAlias < ApplicationRecord
 
     def formulation_aliasable_present
       return unless formulation_aliasable.nil?
-      if type_intent?
-        errors.add(:intent, I18n.t('errors.formulation_alias.nature_blank'))
+      if type_interpretation?
+        errors.add(:interpretation, I18n.t('errors.formulation_alias.nature_blank'))
       else
         errors.add(:entities_list, I18n.t('errors.formulation_alias.nature_blank'))
       end

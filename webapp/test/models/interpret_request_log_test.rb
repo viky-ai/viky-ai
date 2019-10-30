@@ -4,7 +4,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
 
   test 'Save a basic interpretation log' do
     weather_agent = agents(:weather)
-    intent_weather = intents(:weather_question)
+    interpretation_weather = interpretations(:weather_question)
     log = InterpretRequestLog.new(
       timestamp: '2018-07-04T14:25:14.053+02:00',
       sentence: "What 's the weather like ?",
@@ -13,9 +13,9 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
       agents: [weather_agent],
     ).with_response('200', {
       'interpretations' => [{
-        'id' => intent_weather.id,
-        'slug' => intent_weather.slug,
-        'name' => intent_weather.intentname,
+        'id' => interpretation_weather.id,
+        'slug' => interpretation_weather.slug,
+        'name' => interpretation_weather.interpretation_name,
         'score' => '0.83',
         'solution' => 'forecast.today'
       }]
@@ -27,7 +27,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
 
   test 'Find an interpretation log by id' do
     weather_agent = agents(:weather)
-    intent_weather = intents(:weather_question)
+    interpretation_weather = interpretations(:weather_question)
     log = InterpretRequestLog.new(
       timestamp: '2018-07-04T14:25:14+02:00',
       sentence: "What 's the weather like ?",
@@ -37,9 +37,9 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
       agents: [weather_agent],
     ).with_response('200', {
       'interpretations' => [{
-        'id' => intent_weather.id,
-        'slug' => intent_weather.slug,
-        'name' => intent_weather.intentname,
+        'id' => interpretation_weather.id,
+        'slug' => interpretation_weather.slug,
+        'name' => interpretation_weather.interpretation_name,
         'score' => '0.83',
         'solution' => 'forecast.today'
       }]
@@ -58,8 +58,8 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
 
   test 'Count how much interpret request in a specific time frame' do
     weather_agent = agents(:weather)
-    intent_weather_question = intents(:weather_question)
-    intent_weather_forecast = intents(:weather_forecast)
+    interpretation_weather_question = interpretations(:weather_question)
+    interpretation_weather_forecast = interpretations(:weather_forecast)
     log = InterpretRequestLog.new(
       timestamp: '2018-07-04T08:00:00.200+02:00',
       sentence: 'What the weather like today ?',
@@ -68,9 +68,9 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
       agents: [weather_agent],
     ).with_response('200', {
       'interpretations' => [{
-        'id' => intent_weather_question.id,
-        'slug' => intent_weather_question.slug,
-        'name' => intent_weather_question.intentname,
+        'id' => interpretation_weather_question.id,
+        'slug' => interpretation_weather_question.slug,
+        'name' => interpretation_weather_question.interpretation_name,
         'score' => '0.83',
         'solution' => 'forecast.today'
       }]
@@ -84,9 +84,9 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
       agents: [weather_agent],
     ).with_response('200', {
       'interpretations' => [{
-        'id' => intent_weather_forecast.id,
-        'slug' => intent_weather_forecast.slug,
-        'name' => intent_weather_forecast.intentname,
+        'id' => interpretation_weather_forecast.id,
+        'slug' => interpretation_weather_forecast.slug,
+        'name' => interpretation_weather_forecast.interpretation_name,
         'score' => '0.83',
         'solution' => {
           'date' => 'tomorrow'

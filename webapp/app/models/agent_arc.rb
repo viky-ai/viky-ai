@@ -31,13 +31,13 @@ class AgentArc < ApplicationRecord
           ia.is_list,
           ia.any_enabled
         FROM formulation_aliases AS ia
-          INNER JOIN intents ON ia.formulation_aliasable_id = intents.id
+          INNER JOIN interpretations ON ia.formulation_aliasable_id = interpretations.id
           INNER JOIN formulations AS pr ON ia.formulation_id = pr.id
-        WHERE intents.agent_id = ?
+        WHERE interpretations.agent_id = ?
               AND ia.formulation_id IN (SELECT formulations.id
                                            FROM formulations
-                                             INNER JOIN intents ON formulations.intent_id = intents.id
-                                           WHERE intents.agent_id = ?)", target_id, source_id]
+                                             INNER JOIN interpretations ON formulations.interpretation_id = interpretations.id
+                                           WHERE interpretations.agent_id = ?)", target_id, source_id]
   end
 
 

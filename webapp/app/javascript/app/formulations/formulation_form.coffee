@@ -709,7 +709,7 @@ class FormulationOptions
 
 
 SetupForm = ->
-  if $('body').data('controller-name') == "intents" && $('body').data('controller-action') == "show"
+  if $('body').data('controller-name') == "interpretations" && $('body').data('controller-action') == "show"
     for trix in $("trix-editor")
       unless FormulationTagger.instances.includes($(trix).attr("trix-id"))
         new FormulationTagger(trix)
@@ -731,7 +731,7 @@ popup_add_tag = null
 popup_remove_tag = null
 
 SetupPopUps = ->
-  if $('body').data('controller-name') == "intents" && $('body').data('controller-action') == "show"
+  if $('body').data('controller-name') == "interpretations" && $('body').data('controller-action') == "show"
     popup_add_tag    = new PopupAddTag()
     popup_remove_tag = new PopupRemoveTag()
     new FormulationSolutions()

@@ -63,7 +63,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     assert page.has_text?("Agents")
   end
 
-  def go_to_agent_intents(agent)
+  def go_to_agent_interpretations(agent)
     visit user_agent_path(agent.owner, agent)
     assert page.has_link?('Interpretations')
     click_link 'Interpretations'

@@ -3,40 +3,40 @@ require 'model_test_helper'
 
 class AgentUpdatedAtTest < ActiveSupport::TestCase
 
-  test 'Change updated_at agent date after intent addition' do
+  test 'Change updated_at agent date after interpretation addition' do
     agent = Agent.find_by_agentname('weather')
     updated_at_before = agent.updated_at.to_json
 
-    intent = Intent.new(
-      intentname: 'greeting',
+    interpretation = Interpretation.new(
+      interpretation_name: 'greeting',
       description: 'Hello random citizen !'
     )
-    intent.agent = agent
+    interpretation.agent = agent
 
-    assert intent.save
+    assert interpretation.save
     force_reset_model_cache(agent)
     assert_not_equal updated_at_before, agent.updated_at.to_json
   end
 
 
-  test 'Change updated_at agent date after intent modification' do
+  test 'Change updated_at agent date after interpretation modification' do
     agent = Agent.find_by_agentname('weather')
     updated_at_before = agent.updated_at.to_json
 
-    intent = agent.intents.first
-    intent.description = 'New description'
-    assert intent.save
+    interpretation = agent.interpretations.first
+    interpretation.description = 'New description'
+    assert interpretation.save
     force_reset_model_cache(agent)
     assert_not_equal updated_at_before, agent.updated_at.to_json
   end
 
 
-  test 'Change updated_at agent date after intent deletion' do
+  test 'Change updated_at agent date after interpretation deletion' do
     agent = Agent.find_by_agentname('weather')
     updated_at_before = agent.updated_at.to_json
 
-    intent = agent.intents.first
-    assert intent.destroy
+    interpretation = agent.interpretations.first
+    assert interpretation.destroy
     force_reset_model_cache(agent)
     assert_not_equal updated_at_before, agent.updated_at.to_json
   end
@@ -51,15 +51,15 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
       expression: 'Good morning John',
       locale: 'en'
     )
-    intent = Intent.find_by_intentname('weather_forecast')
-    intent_updated_at_before = intent.updated_at.to_json
+    interpretation = Interpretation.find_by_interpretation_name('weather_forecast')
+    interpretation_updated_at_before = interpretation.updated_at.to_json
 
-    formulation.intent = intent
+    formulation.interpretation = interpretation
     assert formulation.save
 
-    force_reset_model_cache([agent, intent])
+    force_reset_model_cache([agent, interpretation])
     assert_not_equal agent_updated_at_before, agent.updated_at.to_json
-    assert_not_equal intent_updated_at_before, intent.updated_at.to_json
+    assert_not_equal interpretation_updated_at_before, interpretation.updated_at.to_json
   end
 
 
@@ -67,16 +67,16 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     agent = Agent.find_by_agentname('weather')
     agent_updated_at_before = agent.updated_at.to_json
 
-    intent = Intent.find_by_intentname('weather_forecast')
-    intent_updated_at_before = intent.updated_at.to_json
+    interpretation = Interpretation.find_by_interpretation_name('weather_forecast')
+    interpretation_updated_at_before = interpretation.updated_at.to_json
 
-    formulation = intent.formulations.last
+    formulation = interpretation.formulations.last
     formulation.locale = 'fr'
     assert formulation.save
 
-    force_reset_model_cache([agent, intent])
+    force_reset_model_cache([agent, interpretation])
     assert_not_equal agent_updated_at_before, agent.updated_at.to_json
-    assert_not_equal intent_updated_at_before, intent.updated_at.to_json
+    assert_not_equal interpretation_updated_at_before, interpretation.updated_at.to_json
   end
 
 
@@ -84,21 +84,21 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     agent = Agent.find_by_agentname('weather')
     agent_updated_at_before = agent.updated_at.to_json
 
-    intent = Intent.find_by_intentname('weather_forecast')
-    intent_updated_at_before = intent.updated_at.to_json
+    interpretation = Interpretation.find_by_interpretation_name('weather_forecast')
+    interpretation_updated_at_before = interpretation.updated_at.to_json
 
-    formulation = intent.formulations.first
+    formulation = interpretation.formulations.first
     assert formulation.destroy
 
-    force_reset_model_cache([agent, intent])
+    force_reset_model_cache([agent, interpretation])
     assert_not_equal agent_updated_at_before, agent.updated_at.to_json
-    assert_not_equal intent_updated_at_before, intent.updated_at.to_json
+    assert_not_equal interpretation_updated_at_before, interpretation.updated_at.to_json
   end
 
 
   test 'Change updated_at agent date after aliases addition' do
     agent = Agent.find_by_agentname('weather')
-    intent = Intent.find_by_intentname('weather_question')
+    interpretation = Interpretation.find_by_interpretation_name('weather_question')
     formulation = Formulation.find_by_expression('Quel temps fera-t-il demain ?')
 
     formulation_alias = FormulationAlias.new(
@@ -107,54 +107,54 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
       aliasname: 'who'
     )
     formulation_alias.formulation = formulation
-    formulation_alias.formulation_aliasable = intent
+    formulation_alias.formulation_aliasable = interpretation
 
     formulation_updated_at_before = formulation.updated_at.to_json
     agent_updated_at_before       = agent.updated_at.to_json
     assert formulation_alias.save
 
-    force_reset_model_cache([agent, intent, formulation])
+    force_reset_model_cache([agent, interpretation, formulation])
     assert_not_equal formulation_updated_at_before, formulation.updated_at.to_json
-    # assert_not_equal intent_updated_at_before, intent.updated_at.to_json
+    # assert_not_equal interpretation_updated_at_before, interpretation.updated_at.to_json
     assert_not_equal agent_updated_at_before, agent.updated_at.to_json
   end
 
 
   test 'Change updated_at agent date after aliases modification' do
     agent = Agent.find_by_agentname('weather')
-    intent = Intent.find_by_intentname('weather_forecast')
-    formulation = intent.formulations.last
+    interpretation = Interpretation.find_by_interpretation_name('weather_forecast')
+    formulation = interpretation.formulations.last
 
-    formulation_updated_at_before = formulation.updated_at.to_json
-    intent_updated_at_before      = intent.updated_at.to_json
-    agent_updated_at_before       = agent.updated_at.to_json
+    formulation_updated_at_before    = formulation.updated_at.to_json
+    interpretation_updated_at_before = interpretation.updated_at.to_json
+    agent_updated_at_before          = agent.updated_at.to_json
 
     formulation_alias = formulation.formulation_aliases.first
     formulation_alias.aliasname = 'changed'
     assert formulation_alias.save
 
-    force_reset_model_cache([agent, intent, formulation])
+    force_reset_model_cache([agent, interpretation, formulation])
     assert_not_equal formulation_updated_at_before, formulation.updated_at.to_json
-    assert_not_equal intent_updated_at_before, intent.updated_at.to_json
+    assert_not_equal interpretation_updated_at_before, interpretation.updated_at.to_json
     assert_not_equal agent_updated_at_before, agent.updated_at.to_json
   end
 
 
   test 'Change updated_at agent date after aliases deletion' do
     agent = Agent.find_by_agentname('weather')
-    intent = Intent.find_by_intentname('weather_forecast')
-    formulation = intent.formulations.last
+    interpretation = Interpretation.find_by_interpretation_name('weather_forecast')
+    formulation = interpretation.formulations.last
 
-    formulation_updated_at_before = formulation.updated_at.to_json
-    intent_updated_at_before      = intent.updated_at.to_json
-    agent_updated_at_before       = agent.updated_at.to_json
+    formulation_updated_at_before    = formulation.updated_at.to_json
+    interpretation_updated_at_before = interpretation.updated_at.to_json
+    agent_updated_at_before          = agent.updated_at.to_json
 
     formulation_alias = formulation.formulation_aliases.first
     assert formulation_alias.destroy
 
-    force_reset_model_cache([agent, intent, formulation])
+    force_reset_model_cache([agent, interpretation, formulation])
     assert_not_equal formulation_updated_at_before, formulation.updated_at.to_json
-    assert_not_equal intent_updated_at_before, intent.updated_at.to_json
+    assert_not_equal interpretation_updated_at_before, interpretation.updated_at.to_json
     assert_not_equal agent_updated_at_before, agent.updated_at.to_json
   end
 
@@ -180,21 +180,21 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
   end
 
 
-  test 'Change updated_at agent date after delete intent in parent' do
+  test 'Change updated_at agent date after delete interpretation in parent' do
     child = create_agent("Agent A")
-    intent_child = Intent.create(
-      intentname: 'intent_child',
+    interpretation_child = Interpretation.create(
+      interpretation_name: 'interpretation_child',
       agent: child
     )
     formulation_child = Formulation.create(
       expression: 'formulation_child',
       locale: 'en',
-      intent: intent_child
+      interpretation: interpretation_child
     )
 
     parent = create_agent("Agent B")
-    intent_parent = Intent.create(
-      intentname: 'intent_parent',
+    interpretation_parent = Interpretation.create(
+      interpretation_name: 'interpretation_parent',
       agent: parent
     )
 
@@ -205,32 +205,32 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
       position_end: 16,
       aliasname: 'inter_parent',
       formulation_id: formulation_child.id,
-      formulation_aliasable: intent_parent,
-      nature: 'type_intent'
+      formulation_aliasable: interpretation_parent,
+      nature: 'type_interpretation'
     )
 
-    force_reset_model_cache([child, intent_child])
+    force_reset_model_cache([child, interpretation_child])
     updated_at_a = child.updated_at.to_json
-    updated_at_intent_child = intent_child.updated_at.to_json
+    updated_at_interpretation_child = interpretation_child.updated_at.to_json
 
-    assert intent_parent.destroy
+    assert interpretation_parent.destroy
 
-    force_reset_model_cache([child, intent_child])
-    assert_not_equal updated_at_intent_child, intent_child.updated_at.to_json
+    force_reset_model_cache([child, interpretation_child])
+    assert_not_equal updated_at_interpretation_child, interpretation_child.updated_at.to_json
     assert_not_equal updated_at_a, child.updated_at.to_json
   end
 
 
   test 'Change updated_at agent date after delete entities list in parent' do
     child = create_agent("Agent A")
-    intent_child = Intent.create(
-      intentname: 'intent_child',
+    interpretation_child = Interpretation.create(
+      interpretation_name: 'interpretation_child',
       agent: child
     )
     formulation_child = Formulation.create(
       expression: 'formulation_child',
       locale: 'en',
-      intent: intent_child
+      interpretation: interpretation_child
     )
 
     parent = create_agent("Agent B")
@@ -250,14 +250,14 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
       nature: 'type_entities_list'
     )
 
-    force_reset_model_cache([child, intent_child])
+    force_reset_model_cache([child, interpretation_child])
     updated_at_a = child.updated_at.to_json
-    updated_at_intent_child = intent_child.updated_at.to_json
+    updated_at_interpretation_child = interpretation_child.updated_at.to_json
 
     assert entities_list_parent.destroy
 
-    force_reset_model_cache([child, intent_child])
-    assert_not_equal updated_at_intent_child, intent_child.updated_at.to_json
+    force_reset_model_cache([child, interpretation_child])
+    assert_not_equal updated_at_interpretation_child, interpretation_child.updated_at.to_json
     assert_not_equal updated_at_a, child.updated_at.to_json
   end
 end

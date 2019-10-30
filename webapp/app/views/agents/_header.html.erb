@@ -26,11 +26,11 @@
         <%= link_to t('views.agents.show.sections.overview'), user_agent_path(agent.owner, agent), class: css_class %>
       </li>
       <li>
-        <% css_class   = controller_name == 'intents' ? 'current' : '' %>
-        <% badge_class = controller_name == 'intents' ? 'badge--primary' : '' %>
-        <% text  = t('views.agents.show.sections.intents')%>
-        <% text += " <span class='badge badge--small #{badge_class}'>#{agent.intents.count}</span>" %>
-        <%= link_to text.html_safe, user_agent_intents_path(agent.owner, agent), class: css_class %>
+        <% css_class   = controller_name == 'interpretations' ? 'current' : '' %>
+        <% badge_class = controller_name == 'interpretations' ? 'badge--primary' : '' %>
+        <% text  = t('views.agents.show.sections.interpretations')%>
+        <% text += " <span class='badge badge--small #{badge_class}'>#{agent.interpretations.count}</span>" %>
+        <%= link_to text.html_safe, user_agent_interpretations_path(agent.owner, agent), class: css_class %>
       </li>
       <li>
         <% css_class   = controller_name == 'entities_lists' ? 'current' : '' %>

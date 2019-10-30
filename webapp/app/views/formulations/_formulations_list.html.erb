@@ -1,13 +1,13 @@
 <ul id="formulations-list" class="card-list"
     data-behavior="sortable"
-    data-update-positions-path="<%= update_positions_user_agent_intent_formulations_path(@agent.owner, @agent, @intent) %>"
+    data-update-positions-path="<%= update_positions_user_agent_interpretation_formulations_path(@agent.owner, @agent, @interpretation) %>"
     data-key='ids'
     data-group="formulations">
   <%= render partial: '/formulations/formulation',
-             collection: @intent.formulations_with_local(@current_locale).order(position: :desc, created_at: :desc),
+             collection: @interpretation.formulations_with_local(@current_locale).order(position: :desc, created_at: :desc),
              locals: {
                  can_edit: current_user.can?(:edit, @agent),
-                 intent: @intent,
+                 interpretation: @interpretation,
                  agent: @agent,
                  owner: @agent.owner
              } %>

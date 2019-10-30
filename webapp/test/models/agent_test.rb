@@ -478,69 +478,69 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
-  test 'Delete agent with intents' do
+  test 'Delete agent with interpretations' do
     agent = agents(:weather)
     agent_id = agent.id
-    assert_equal 2, Intent.where(agent_id: agent_id).count
+    assert_equal 2, Interpretation.where(agent_id: agent_id).count
     agent.memberships.where.not(rights: 'all').each do |m|
       assert m.destroy
     end
     assert agent.destroy
-    assert_equal 0, Intent.where(agent_id: agent_id).count
-    assert_equal 0, agent.intents.count
+    assert_equal 0, Interpretation.where(agent_id: agent_id).count
+    assert_equal 0, agent.interpretations.count
   end
 
 
-  test 'List reachable intents for agent' do
+  test 'List reachable interpretations for agent' do
     agent_weather = agents(:weather)
-    current_intent = Intent.create(
-      intentname: 'current_intent',
+    current_interpretation = Interpretation.create(
+      interpretation_name: 'current_interpretation',
       agent: agent_weather
     )
-    assert_equal 2, agent_weather.reachable_intents(current_intent).count
-    assert_equal ['weather_forecast', 'weather_question'], agent_weather.reachable_intents(current_intent).collect(&:intentname)
+    assert_equal 2, agent_weather.reachable_interpretations(current_interpretation).count
+    assert_equal ['weather_forecast', 'weather_question'], agent_weather.reachable_interpretations(current_interpretation).collect(&:interpretation_name)
 
     agent_successor = agents(:weather_confirmed)
-    assert Intent.create(
-      intentname: 'greeting',
+    assert Interpretation.create(
+      interpretation_name: 'greeting',
       agent: agent_successor
     )
     assert AgentArc.create(source: agent_weather, target: agent_successor)
     force_reset_model_cache(agent_weather)
-    assert_equal 3, agent_weather.reload.reachable_intents(intents(:weather_question)).count
-    assert_equal ['current_intent', 'weather_forecast', 'greeting'], agent_weather.reachable_intents(intents(:weather_question)).collect(&:intentname)
+    assert_equal 3, agent_weather.reload.reachable_interpretations(interpretations(:weather_question)).count
+    assert_equal ['current_interpretation', 'weather_forecast', 'greeting'], agent_weather.reachable_interpretations(interpretations(:weather_question)).collect(&:interpretation_name)
   end
 
 
-  test 'List reachable public/private intents for agent' do
+  test 'List reachable public/private interpretations for agent' do
     agent_weather = agents(:weather)
-    current_intent = Intent.create(
-      intentname: 'current_intent',
+    current_interpretation = Interpretation.create(
+      interpretation_name: 'current_interpretation',
       agent: agent_weather
     )
-    intent_greetings = intents(:weather_forecast)
-    intent_greetings.visibility = 'is_public'
-    assert intent_greetings.save
-    intent_who = intents(:weather_question)
-    intent_who.visibility = 'is_private'
-    assert intent_who.save
+    interpretation_greetings = interpretations(:weather_forecast)
+    interpretation_greetings.visibility = 'is_public'
+    assert interpretation_greetings.save
+    inteerpretation_who = interpretations(:weather_question)
+    inteerpretation_who.visibility = 'is_private'
+    assert inteerpretation_who.save
 
     agent_successor = agents(:weather_confirmed)
-    assert Intent.create(
-      intentname: 'greeting_public',
+    assert Interpretation.create(
+      interpretation_name: 'greeting_public',
       agent: agent_successor,
       visibility: 'is_public'
     )
-    assert Intent.create(
-      intentname: 'greeting_private',
+    assert Interpretation.create(
+      interpretation_name: 'greeting_private',
       agent: agent_successor,
       visibility: 'is_private'
     )
     assert AgentArc.create(source: agent_weather, target: agent_successor)
 
     force_reset_model_cache(agent_weather)
-    assert_equal 3, agent_weather.reload.reachable_intents(current_intent).count
-    assert_equal ['weather_forecast', 'weather_question', 'greeting_public'], agent_weather.reachable_intents(current_intent).collect(&:intentname)
+    assert_equal 3, agent_weather.reload.reachable_interpretations(current_interpretation).count
+    assert_equal ['weather_forecast', 'weather_question', 'greeting_public'], agent_weather.reachable_interpretations(current_interpretation).collect(&:interpretation_name)
   end
 
 

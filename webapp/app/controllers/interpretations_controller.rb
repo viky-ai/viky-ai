@@ -1,12 +1,12 @@
-class IntentsController < ApplicationController
+class InterpretationsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:update_positions]
   before_action :set_owner
   before_action :set_agent
   before_action :check_user_rights
-  before_action :set_intent, except: [:index, :new, :create, :confirm_destroy, :update_positions]
+  before_action :set_interpretation, except: [:index, :new, :create, :confirm_destroy, :update_positions]
 
   def index
-    @intents = @agent.intents.includes(:formulations).order('position desc, created_at desc')
+    @interpretations = @agent.interpretations.includes(:formulations).order('position desc, created_at desc')
     ui_state = UserUiState.new current_user
     @last_agent = ui_state.last_destination_agent(@agent)
   end
@@ -28,18 +28,18 @@ class IntentsController < ApplicationController
   end
 
   def new
-    @intent = Intent.new(visibility: Intent.visibilities.key(Intent.visibilities[:is_private]))
+    @interpretation = Interpretation.new(visibility: Interpretation.visibilities.key(Interpretation.visibilities[:is_private]))
     render partial: 'new'
   end
 
   def create
-    @intent = Intent.new(intent_params)
-    @intent.agent = @agent
+    @interpretation = Interpretation.new(interpretation_params)
+    @interpretation.agent = @agent
     respond_to do |format|
-      if @intent.save
+      if @interpretation.save
         format.json do
-          redirect_to user_agent_intents_path(@agent.owner, @agent),
-            notice: t('views.intents.new.success_message')
+          redirect_to user_agent_interpretations_path(@agent.owner, @agent),
+            notice: t('views.interpretations.new.success_message')
         end
       else
         format.json do
@@ -57,10 +57,10 @@ class IntentsController < ApplicationController
 
   def update
     respond_to do |format|
-      if @intent.update(intent_params)
+      if @interpretation.update(interpretation_params)
         format.json {
-          redirect_to user_agent_intents_path(@owner, @agent),
-            notice: t('views.intents.edit.success_message')
+          redirect_to user_agent_interpretations_path(@owner, @agent),
+            notice: t('views.interpretations.edit.success_message')
         }
       else
         format.json {
@@ -73,23 +73,23 @@ class IntentsController < ApplicationController
   end
 
   def update_positions
-    Intent.update_positions(@agent, params[:is_public], params[:is_private])
+    Interpretation.update_positions(@agent, params[:is_public], params[:is_private])
   end
 
   def confirm_destroy
-    @intent = @agent.intents.friendly.find(params[:intent_id])
-    render partial: 'confirm_destroy', locals: { intent: @intent }
+    @interpretation = @agent.interpretations.friendly.find(params[:interpretation_id])
+    render partial: 'confirm_destroy', locals: { interpretation: @interpretation }
   end
 
   def destroy
-    if @intent.destroy
-      redirect_to user_agent_intents_path(@owner, @agent), notice: t(
-        'views.intents.destroy.success_message', name: @intent.intentname
+    if @interpretation.destroy
+      redirect_to user_agent_interpretations_path(@owner, @agent), notice: t(
+        'views.interpretations.destroy.success_message', name: @interpretation.interpretation_name
       )
     else
-      redirect_to user_agent_intents_path(@owner, @agent), alert: t(
-        'views.intents.destroy.errors_message',
-        errors: @intent.errors.full_messages.join(', ')
+      redirect_to user_agent_interpretations_path(@owner, @agent), alert: t(
+        'views.interpretations.destroy.errors_message',
+        errors: @interpretation.errors.full_messages.join(', ')
       )
     end
   end
@@ -104,32 +104,32 @@ class IntentsController < ApplicationController
     @agent.locales << locale_to_add
 
     if @agent.save
-      redirect_to user_agent_intent_path(@owner, @agent, @intent, locale: locale_to_add)
+      redirect_to user_agent_interpretation_path(@owner, @agent, @interpretation, locale: locale_to_add)
     else
-      redirect_to user_agent_intent_path(@owner, @agent, @intent, locale: @intent.locales.first), alert: t(
-          'views.intents.add_locale.errors_message',
+      redirect_to user_agent_interpretation_path(@owner, @agent, @interpretation, locale: @interpretation.locales.first), alert: t(
+          'views.interpretations.add_locale.errors_message',
           errors: @agent.errors.full_messages.join(', ')
       )
     end
   end
 
   def move_to_agent
-    if @intent.move_to_agent(@agent_destination)
+    if @interpretation.move_to_agent(@agent_destination)
       ui_state = UserUiState.new current_user
       ui_state.last_destination_agent = @agent_destination.id
       ui_state.save
-      redirect_to user_agent_intents_path(@owner, @agent), notice: {
-        i18n_key: 'views.intents.move_to.success_message_html',
+      redirect_to user_agent_interpretations_path(@owner, @agent), notice: {
+        i18n_key: 'views.interpretations.move_to.success_message_html',
         locals: {
-          name: @intent.intentname,
+          name: @interpretation.interpretation_name,
           agent_name: @agent_destination.name,
-          agent_link: user_agent_intents_path(@agent_destination.owner, @agent_destination)
+          agent_link: user_agent_interpretations_path(@agent_destination.owner, @agent_destination)
         }
       }
     else
-      redirect_to user_agent_intents_path(@owner, @agent), alert: t(
-        'views.intents.move_to.errors_message',
-        errors: @intent.errors.full_messages.join(', ')
+      redirect_to user_agent_interpretations_path(@owner, @agent), alert: t(
+        'views.interpretations.move_to.errors_message',
+        errors: @interpretation.errors.full_messages.join(', ')
       )
     end
   end
@@ -137,8 +137,8 @@ class IntentsController < ApplicationController
 
   private
 
-    def intent_params
-      params.require(:intent).permit(:intentname, :description, :visibility)
+    def interpretation_params
+      params.require(:interpretation).permit(:interpretation_name, :description, :visibility)
     end
 
     def set_owner
@@ -149,9 +149,9 @@ class IntentsController < ApplicationController
       @agent = Agent.owned_by(@owner).friendly.find(params[:agent_id])
     end
 
-    def set_intent
-      intent_id = params[:intent_id]|| params[:id]
-      @intent = @agent.intents.friendly.find(intent_id)
+    def set_interpretation
+      interpretation_id = params[:interpretation_id]|| params[:id]
+      @interpretation = @agent.interpretations.friendly.find(interpretation_id)
     end
 
     def check_user_rights

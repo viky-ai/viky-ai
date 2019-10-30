@@ -16,7 +16,7 @@ class AgentDuplicator
       include_association :memberships, Proc.new { where(rights: 'all') }
       include_association :readme
       include_association :entities_lists, clone_with: EntitiesListsCloner
-      include_association :intents, clone_with: IntentsCloner
+      include_association :interpretations, clone_with: InterpretationsCloner
       include_association :out_arcs
       include_association :agent_regression_checks, clone_with: AgentRegressionChecksCloner
 
@@ -57,10 +57,10 @@ class AgentDuplicator
       aliases_to_fix = extract_aliases_to_fix(new_agent)
       unless aliases_to_fix.empty?
         aliases_to_fix.each do |alias_to_change|
-          if alias_to_change.formulation_aliasable_type == 'Intent'
-            new_agent.intents.each do |intent|
-              if intent.intentname == alias_to_change.formulation_aliasable.intentname
-                alias_to_change.formulation_aliasable = intent
+          if alias_to_change.formulation_aliasable_type == 'Interpretation'
+            new_agent.interpretations.each do |interpretation|
+              if interpretation.interpretation_name == alias_to_change.formulation_aliasable.interpretation_name
+                alias_to_change.formulation_aliasable = interpretation
               end
             end
           else
@@ -77,8 +77,8 @@ class AgentDuplicator
 
     def extract_aliases_to_fix(new_agent)
       aliases_to_fix = []
-      new_agent.intents.each do |intent|
-        intent.formulations.each do |formulation|
+      new_agent.interpretations.each do |interpretation|
+        interpretation.formulations.each do |formulation|
           formulation.formulation_aliases
             .reject { |ialias| ['type_number', 'type_regex'].include? ialias.nature }
             .select { |ialias| ialias.formulation_aliasable.agent.id == @agent.id }
@@ -129,7 +129,7 @@ class EntitiesListsCloner < Clowne::Cloner
   end
 end
 
-class IntentsCloner < Clowne::Cloner
+class InterpretationsCloner < Clowne::Cloner
   include_association :formulations, clone_with: FormulationsCloner
 end
 
@@ -140,7 +140,7 @@ class AgentRegressionChecksCloner < Clowne::Cloner
     if origin.expected['root_type'] == 'entities_list'
       origin_reference = origin.agent.entities_lists.find(clone.expected['id'])
     else
-      origin_reference = origin.agent.intents.find(clone.expected['id'])
+      origin_reference = origin.agent.interpretations.find(clone.expected['id'])
     end
     clone.expected['id'] = mapper.clone_of(origin_reference).id
     clone.expected['package'] = clone.agent.id

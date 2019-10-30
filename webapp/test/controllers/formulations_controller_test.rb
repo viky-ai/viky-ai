@@ -6,7 +6,7 @@ class FormulationsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Show forbidden' do
     sign_in users(:confirmed)
-    get user_agent_intent_formulation_url(users(:admin), agents(:weather), intents(:weather_forecast), formulations(:weather_forecast_tomorrow)),
+    get user_agent_interpretation_formulation_url(users(:admin), agents(:weather), interpretations(:weather_forecast), formulations(:weather_forecast_tomorrow)),
         params: {
           format: :js
         }
@@ -19,7 +19,7 @@ class FormulationsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Show formulation details forbidden' do
     sign_in users(:confirmed)
-    get show_detailed_user_agent_intent_formulation_url(users(:admin), agents(:weather), intents(:weather_forecast), formulations(:weather_forecast_tomorrow)),
+    get show_detailed_user_agent_interpretation_formulation_url(users(:admin), agents(:weather), interpretations(:weather_forecast), formulations(:weather_forecast_tomorrow)),
         params: {
           format: :js
         }
@@ -32,7 +32,7 @@ class FormulationsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Create formulation access' do
     sign_in users(:edit_on_agent_weather)
-    post user_agent_intent_formulations_url(users(:admin), agents(:weather), intents(:weather_forecast)),
+    post user_agent_interpretation_formulations_url(users(:admin), agents(:weather), interpretations(:weather_forecast)),
          params: {
            formulation: { expression: 'Hello citizen' },
            format: :js
@@ -43,7 +43,7 @@ class FormulationsControllerTest < ActionDispatch::IntegrationTest
 
   test 'Create formulation forbidden' do
     sign_in users(:show_on_agent_weather)
-    post user_agent_intent_formulations_url(users(:admin), agents(:weather), intents(:weather_forecast)),
+    post user_agent_interpretation_formulations_url(users(:admin), agents(:weather), interpretations(:weather_forecast)),
          params: {
            formulation: { expression: 'Hello citizen' },
            format: :js
@@ -57,7 +57,7 @@ class FormulationsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Edit formulation forbidden' do
     sign_in users(:show_on_agent_weather)
-    get edit_user_agent_intent_formulation_url(users(:admin), agents(:weather), intents(:weather_forecast), formulations(:weather_forecast_tomorrow)),
+    get edit_user_agent_interpretation_formulation_url(users(:admin), agents(:weather), interpretations(:weather_forecast), formulations(:weather_forecast_tomorrow)),
         params: {
           format: :js
         }
@@ -70,7 +70,7 @@ class FormulationsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Update formulation access' do
     sign_in users(:edit_on_agent_weather)
-    patch user_agent_intent_formulation_url(users(:admin), agents(:weather), intents(:weather_forecast), formulations(:weather_forecast_tomorrow)),
+    patch user_agent_interpretation_formulation_url(users(:admin), agents(:weather), interpretations(:weather_forecast), formulations(:weather_forecast_tomorrow)),
           params: {
             formulation: { expression: 'Hello citizen' },
             format: :js
@@ -81,7 +81,7 @@ class FormulationsControllerTest < ActionDispatch::IntegrationTest
 
   test 'Update formulation forbidden' do
     sign_in users(:show_on_agent_weather)
-    patch user_agent_intent_formulation_url(users(:admin), agents(:weather), intents(:weather_forecast), formulations(:weather_forecast_tomorrow)),
+    patch user_agent_interpretation_formulation_url(users(:admin), agents(:weather), interpretations(:weather_forecast), formulations(:weather_forecast_tomorrow)),
           params: {
             formulation: { expression: 'Hello citizen' },
             format: :js
@@ -95,7 +95,7 @@ class FormulationsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Delete formulation access' do
     sign_in users(:admin)
-    delete user_agent_intent_formulation_url(users(:admin), agents(:weather), intents(:weather_forecast), formulations(:weather_forecast_tomorrow)),
+    delete user_agent_interpretation_formulation_url(users(:admin), agents(:weather), interpretations(:weather_forecast), formulations(:weather_forecast_tomorrow)),
            params: {
              format: :js
            }
@@ -105,7 +105,7 @@ class FormulationsControllerTest < ActionDispatch::IntegrationTest
 
   test 'Delete formulation forbidden' do
     sign_in users(:show_on_agent_weather)
-    delete user_agent_intent_formulation_url(users(:admin), agents(:weather), intents(:weather_forecast), formulations(:weather_forecast_tomorrow)),
+    delete user_agent_interpretation_formulation_url(users(:admin), agents(:weather), interpretations(:weather_forecast), formulations(:weather_forecast_tomorrow)),
            params: {
              format: :js
            }
@@ -119,7 +119,7 @@ class FormulationsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Formulation agent scoped on current user' do
     sign_in users(:confirmed)
-    post user_agent_intent_formulations_url(users(:confirmed), agents(:weather_confirmed), intents(:weather_confirmed_question)),
+    post user_agent_interpretation_formulations_url(users(:confirmed), agents(:weather_confirmed), interpretations(:weather_confirmed_question)),
          params: {
            formulation: { expression: 'Hello citizen' },
            format: :js

@@ -9,10 +9,10 @@
         <% end %>
         <li data-locale="<%= agent_locale %>"
           <% if @current_locale != agent_locale %>class="js-draggable-locale"<% end %>>
-          <a href="<%= user_agent_intent_path(@agent.owner, @agent, @intent, locale: agent_locale) %>"
+          <a href="<%= user_agent_interpretation_path(@agent.owner, @agent, @interpretation, locale: agent_locale) %>"
              <% if @current_locale == agent_locale %>class="current"<% end %>>
             <%= link_name %>
-            <% count = @intent.formulations_with_local(agent_locale).count%>
+            <% count = @interpretation.formulations_with_local(agent_locale).count%>
             <span class="badge" data-count="<%= count %>" <% if @current_locale == agent_locale %>id="current-locale-tab-badge"<% end %>>
               <%= count %>
             </span>
@@ -22,7 +22,7 @@
       <% if current_user.can? :edit, @agent %>
         <% if @agent.locales.count != Locales::ALL.count %>
           <li>
-            <a href="<%= user_agent_intent_select_new_locale_path(@agent.owner, @agent, @intent) %>"
+            <a href="<%= user_agent_interpretation_select_new_locale_path(@agent.owner, @agent, @interpretation) %>"
                 data-action="open-remote-modal">
               +
             </a>
@@ -35,7 +35,7 @@
   <% if current_user.can? :edit, @agent %>
     <%= render partial: 'formulations/form', locals: {
       agent: @agent,
-      intent: @intent,
+      interpretation: @interpretation,
       formulation: @formulation,
       current_locale: @current_locale
     } %>
@@ -44,13 +44,13 @@
 
 <%= render partial: '/formulations/formulations_list', locals: {
     agent: @agent,
-    intent: @intent,
+    interpretation: @interpretation,
     current_locale: @current_locale
 } %>
 
 <%= render partial: 'formulations/blankslate_start', locals: {
     agent: @agent,
-    intent: @intent,
+    interpretation: @interpretation,
     current_locale: @current_locale
 } %>
 
@@ -62,10 +62,10 @@
       <input type="text" value="" placeholder="<%= t('views.formulations.popup.add-tag.search_placeholder') %>" />
     </div>
     <ul>
-      <% @agent.reachable_intents(@intent).each do |intent| %>
-        <li data-search="<%= intent.slug %>" class="enabled">
+      <% @agent.reachable_interpretations(@interpretation).each do |interpretation| %>
+        <li data-search="<%= interpretation.slug %>" class="enabled">
           <a href="#" data-action="add-tag"
-             data-data='<%= intent_to_json(intent) %>'><%= intent.slug %></a>
+             data-data='<%= interpretation_to_json(interpretation) %>'><%= interpretation.slug %></a>
         </li>
       <% end %>
       <% @agent.reachable_entities_lists.each do |elist| %>

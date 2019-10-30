@@ -1,4 +1,4 @@
-class AliasedIntentsController < ApplicationController
+class AliasedInterpretationsController < ApplicationController
   before_action :set_owner
   before_action :set_agent
   before_action :check_user_rights
@@ -9,10 +9,10 @@ class AliasedIntentsController < ApplicationController
 
     if referrer[:controller] == 'entities_lists'
       @entities_list = @agent.entities_lists.friendly.find(params[:entities_list_id])
-      @intents = @entities_list.aliased_intents
+      @interpretations = @entities_list.aliased_interpretations
     else
-      @intent = @agent.intents.friendly.find(params[:intent_id])
-      @intents = @intent.aliased_intents
+      @interpretation = @agent.interpretations.friendly.find(params[:interpretation_id])
+      @interpretations = @interpretation.aliased_interpretations
     end
 
     render layout: false

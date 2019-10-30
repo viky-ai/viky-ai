@@ -61,7 +61,7 @@ class ReadmesController < ApplicationController
         'views.readme.destroy.success_message'
       )
     else
-      redirect_to user_agent_intents_path(@agent.owner, @agent), alert: t(
+      redirect_to user_agent_interpretations_path(@agent.owner, @agent), alert: t(
         'views.readme.destroy.errors_message',
         errors: @readme.errors.full_messages.join(', ')
       )

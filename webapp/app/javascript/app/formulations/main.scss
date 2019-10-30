@@ -300,7 +300,7 @@
 
 trix-editor{
   @each $name, $color in $colors{
-    a[href*='intent-#{$name}'],
+    a[href*='interpretation-#{$name}'],
     a[href*='entities_list-#{$name}']{
       color: $color;
       text-decoration: none;
@@ -314,7 +314,7 @@ trix-editor{
 
 .aliases{
   @each $name, $color in $colors{
-    .intent-#{$name},
+    .interpretation-#{$name},
     .entities_list-#{$name}{
       color: $color;
       a{

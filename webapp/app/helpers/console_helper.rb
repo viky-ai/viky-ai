@@ -8,8 +8,8 @@ module ConsoleHelper
     line_number = body["errors_javascript"]["solution_location"]["line_number"]
 
     if slug.split('/')[2] == "interpretations"
-      formulation = Formulation.find_by_position_and_intent_id(position, parent_id)
-      agent = formulation.intent.agent
+      formulation = Formulation.find_by_position_and_interpretation_id(position, parent_id)
+      agent = formulation.interpretation.agent
       href = "/agents/#{slug}?locale=#{formulation.locale}"
       href << "&debug[type]=formulations"
       href << "&debug[id]=#{formulation.id}"
@@ -71,8 +71,8 @@ module ConsoleHelper
         href << "?search=#{entity.terms.first['term']}" if list.entities_count > 100
         href << "#smooth-scroll-to-entity-#{entity.id}"
       else
-        formulation = Formulation.find_by_position_and_intent_id(position, parent_id)
-        agent = formulation.intent.agent
+        formulation = Formulation.find_by_position_and_interpretation_id(position, parent_id)
+        agent = formulation.interpretation.agent
         href = "/agents/#{matches['interpretation_slug']}"
         href << "?locale=#{formulation.locale}"
         href << "#smooth-scroll-to-formulation-#{formulation.id}"

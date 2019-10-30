@@ -11,7 +11,7 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/weather",
       "interpretations" => [
         {
-          "id"    => intents(:weather_forecast).id,
+          "id"    => interpretations(:weather_forecast).id,
           "slug"  => "admin/weather/interpretations/weather_forecast",
           'scope' => 'public',
           "expressions" => [
@@ -29,7 +29,7 @@ class PackageTest < ActiveSupport::TestCase
                 {
                   "alias"   => "question",
                   "slug"    => "admin/weather/interpretations/weather_question",
-                  "id"      => intents(:weather_question).id,
+                  "id"      => interpretations(:weather_question).id,
                   "package" => weather.id
                 },
                 {
@@ -47,7 +47,7 @@ class PackageTest < ActiveSupport::TestCase
           ]
         },
         {
-          "id"    => intents(:weather_question).id,
+          "id"    => interpretations(:weather_question).id,
           "slug"  => "admin/weather/interpretations/weather_question",
           'scope' => 'public',
           "expressions" => [
@@ -155,15 +155,15 @@ class PackageTest < ActiveSupport::TestCase
 
   test 'Package generation with locale any' do
     weather = agents(:weather)
-    intent = intents(:weather_forecast)
+    interpretation = interpretations(:weather_forecast)
     formulation = formulations(:weather_forecast_demain)
     formulation.locale = Locales::ANY
     formulation.save
     assert entities_lists(:weather_conditions).destroy
     assert entities_lists(:weather_dates).destroy
-    intent.formulations = [formulation]
-    intent.save
-    assert intents(:weather_question).destroy
+    interpretation.formulations = [formulation]
+    interpretation.save
+    assert interpretations(:weather_question).destroy
 
     p = Nlp::Package.new(weather)
 
@@ -172,7 +172,7 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/weather",
       "interpretations" => [
         {
-          "id"    => intent.id,
+          "id"    => interpretation.id,
           "slug"  => "admin/weather/interpretations/weather_forecast",
           'scope' => 'public',
           "expressions" => [
@@ -192,14 +192,14 @@ class PackageTest < ActiveSupport::TestCase
   end
 
 
-  test 'Package generation with private intent' do
+  test 'Package generation with private interpretation' do
     weather = agents(:weather)
-    intent = intents(:weather_question)
-    intent.visibility = Intent.visibilities[:is_private]
-    intent.save
+    interpretation = interpretations(:weather_question)
+    interpretation.visibility = Interpretation.visibilities[:is_private]
+    interpretation.save
     assert entities_lists(:weather_conditions).destroy
     assert entities_lists(:weather_dates).destroy
-    assert intents(:weather_forecast).destroy
+    assert interpretations(:weather_forecast).destroy
 
     p = Nlp::Package.new(weather)
 
@@ -208,7 +208,7 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/weather",
       "interpretations" => [
         {
-          "id"    => intents(:weather_question).id,
+          "id"    => interpretations(:weather_question).id,
           "slug"  => "admin/weather/interpretations/weather_question",
           'scope' => 'private',
           "expressions" => [
@@ -244,7 +244,7 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/weather",
       "interpretations" => [
         {
-          "id"          => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
+          "id"          => "#{interpretations(:weather_question).id}_#{ialias.id}_recursive",
           "slug"        => "admin/weather/interpretations/weather_question_#{ialias.id}_recursive",
           "scope"       => "hidden",
           "expressions" => [
@@ -255,7 +255,7 @@ class PackageTest < ActiveSupport::TestCase
                 {
                   "alias"   => "question",
                   "slug"    => "admin/weather/interpretations/weather_question",
-                  "id"      => intents(:weather_question).id,
+                  "id"      => interpretations(:weather_question).id,
                   "package" => weather.id
                 }
               ],
@@ -269,13 +269,13 @@ class PackageTest < ActiveSupport::TestCase
                 {
                   "alias"   => "question",
                   "slug"    => "admin/weather/interpretations/weather_question",
-                  "id"      => intents(:weather_question).id,
+                  "id"      => interpretations(:weather_question).id,
                   "package" => weather.id
                 },
                 {
                   "alias"   => "question_recursive",
                   "slug"    => "admin/weather/interpretations/weather_question_#{ialias.id}_recursive",
-                  "id"      => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
+                  "id"      => "#{interpretations(:weather_question).id}_#{ialias.id}_recursive",
                   "package" => weather.id
                 }
               ],
@@ -285,7 +285,7 @@ class PackageTest < ActiveSupport::TestCase
           ]
         },
         {
-          "id"    => intents(:weather_forecast).id,
+          "id"    => interpretations(:weather_forecast).id,
           "slug"  => "admin/weather/interpretations/weather_forecast",
           'scope' => 'public',
           "expressions" => [
@@ -303,7 +303,7 @@ class PackageTest < ActiveSupport::TestCase
                 {
                   "alias"   => "question",
                   "slug"    => "admin/weather/interpretations/weather_question_#{ialias.id}_recursive",
-                  "id"      => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
+                  "id"      => "#{interpretations(:weather_question).id}_#{ialias.id}_recursive",
                   "package" => weather.id
                 }
               ],
@@ -315,7 +315,7 @@ class PackageTest < ActiveSupport::TestCase
           ]
         },
         {
-          "id"    => intents(:weather_question).id,
+          "id"    => interpretations(:weather_question).id,
           "slug"  => "admin/weather/interpretations/weather_question",
           'scope' => 'public',
           "expressions" => [
@@ -350,7 +350,7 @@ class PackageTest < ActiveSupport::TestCase
       'slug' => 'admin/weather',
       'interpretations' => [
         {
-          'id'    => intents(:weather_forecast).id,
+          'id'    => interpretations(:weather_forecast).id,
           'slug'  => 'admin/weather/interpretations/weather_forecast',
           'scope' => 'public',
           'expressions' => [
@@ -368,7 +368,7 @@ class PackageTest < ActiveSupport::TestCase
                 {
                   'alias'   => 'question',
                   'slug'    => 'admin/weather/interpretations/weather_question',
-                  'id'      => intents(:weather_question).id,
+                  'id'      => interpretations(:weather_question).id,
                   'package' => weather.id
                 }
               ],
@@ -394,7 +394,7 @@ class PackageTest < ActiveSupport::TestCase
           ]
         },
         {
-          'id'    => intents(:weather_question).id,
+          'id'    => interpretations(:weather_question).id,
           'slug'  => 'admin/weather/interpretations/weather_question',
           'scope' => 'public',
           'expressions' => [
@@ -429,7 +429,7 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/weather",
       "interpretations" => [
         {
-          "id"          => intents(:weather_forecast).id,
+          "id"          => interpretations(:weather_forecast).id,
           "slug"        => "admin/weather/interpretations/weather_forecast",
           'scope'       => 'public',
           "expressions" => [
@@ -447,7 +447,7 @@ class PackageTest < ActiveSupport::TestCase
                 {
                   "alias"   => "question",
                   "slug"    => "admin/weather/interpretations/weather_question",
-                  "id"      => intents(:weather_question).id,
+                  "id"      => interpretations(:weather_question).id,
                   "package" => weather.id
                 }
               ],
@@ -459,7 +459,7 @@ class PackageTest < ActiveSupport::TestCase
           ]
         },
         {
-          "id"    => intents(:weather_question).id,
+          "id"    => interpretations(:weather_question).id,
           "slug"  => "admin/weather/interpretations/weather_question",
           'scope' => 'public',
           "expressions" => [
@@ -478,7 +478,7 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/terminator",
       "interpretations" => [
         {
-          "id"    => intents(:simple_where).id,
+          "id"    => interpretations(:simple_where).id,
           "slug"  => "admin/terminator/interpretations/simple_where",
           "scope" => "private",
           "expressions"=>  [
@@ -492,7 +492,7 @@ class PackageTest < ActiveSupport::TestCase
             ]
         },
         {
-          "id"    => intents(:terminator_find).id,
+          "id"    => interpretations(:terminator_find).id,
           "slug"  => "admin/terminator/interpretations/terminator_find",
           "scope" => "public",
           "expressions" => [
@@ -503,7 +503,7 @@ class PackageTest < ActiveSupport::TestCase
                 {
                   "alias"   => "find",
                   "slug"    => "admin/terminator/interpretations/simple_where",
-                  "id"      => intents(:simple_where).id,
+                  "id"      => interpretations(:simple_where).id,
                   "package" => terminator.id
                 }
               ],
@@ -657,7 +657,7 @@ class PackageTest < ActiveSupport::TestCase
     formulation = formulations(:terminator_find_sarah)
     assert entities_lists(:terminator_targets).destroy
     assert formulations(:terminator_where).destroy
-    assert intents(:simple_where).destroy
+    assert interpretations(:simple_where).destroy
 
     regex_alias = FormulationAlias.new(
       position_start: 9,
@@ -675,7 +675,7 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/terminator",
       "interpretations" => [
         {
-          "id"    => formulation.intent.id,
+          "id"    => formulation.interpretation.id,
           "slug"  => "admin/terminator/interpretations/terminator_find",
           'scope' => 'public',
           "expressions" => [
@@ -723,7 +723,7 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/weather",
       "interpretations" => [
         {
-          "id"    => intents(:weather_forecast).id,
+          "id"    => interpretations(:weather_forecast).id,
           "slug"  => "admin/weather/interpretations/weather_forecast",
           'scope' => 'public',
           "expressions" => [
@@ -738,7 +738,7 @@ class PackageTest < ActiveSupport::TestCase
           ]
         },
         {
-          "id"    => intents(:weather_question).id,
+          "id"    => interpretations(:weather_question).id,
           "slug"  => "admin/weather/interpretations/weather_question",
           'scope' => 'public',
           "expressions" => [
@@ -850,7 +850,7 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/weather",
       "interpretations" => [
         {
-          "id"    => intents(:weather_forecast).id,
+          "id"    => interpretations(:weather_forecast).id,
           "slug"  => "admin/weather/interpretations/weather_forecast",
           'scope' => 'public',
           "expressions" => [
@@ -868,7 +868,7 @@ class PackageTest < ActiveSupport::TestCase
                 {
                   "alias"   => "question",
                   "slug"    => "admin/weather/interpretations/weather_question",
-                  "id"      => intents(:weather_question).id,
+                  "id"      => interpretations(:weather_question).id,
                   "package" => weather.id
                 },
                 {
@@ -886,7 +886,7 @@ class PackageTest < ActiveSupport::TestCase
           ]
         },
         {
-          "id"    => intents(:weather_question).id,
+          "id"    => interpretations(:weather_question).id,
           "slug"  => "admin/weather/interpretations/weather_question",
           'scope' => 'public',
           "expressions" => [
@@ -1004,7 +1004,7 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/weather",
       "interpretations" => [
         {
-          "id"    => intents(:weather_forecast).id,
+          "id"    => interpretations(:weather_forecast).id,
           "slug"  => "admin/weather/interpretations/weather_forecast",
           'scope' => 'public',
           "expressions" => [
@@ -1015,7 +1015,7 @@ class PackageTest < ActiveSupport::TestCase
                 {
                   "alias"   => "question",
                   "slug"    => "admin/weather/interpretations/weather_question",
-                  "id"      => intents(:weather_question).id,
+                  "id"      => interpretations(:weather_question).id,
                   "package" => weather.id
                 },
                 {
@@ -1040,7 +1040,7 @@ class PackageTest < ActiveSupport::TestCase
           ]
         },
         {
-          "id"    => intents(:weather_question).id,
+          "id"    => interpretations(:weather_question).id,
           "slug"  => "admin/weather/interpretations/weather_question",
           'scope' => 'public',
           "expressions" => [

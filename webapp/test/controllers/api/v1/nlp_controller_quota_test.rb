@@ -6,15 +6,15 @@ class NlsControllerQuotaTest < ActionDispatch::IntegrationTest
     super
     Quota.reset_cache
 
-    intent = intents(:weather_forecast)
-    @agent = intent.agent
+    interpretation = interpretations(:weather_forecast)
+    @agent = interpretation.agent
     Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
       status: '200',
       body: {
         'interpretations' => [
           {
             'package' => @agent.id,
-            'id'      => intent.id,
+            'id'      => interpretation.id,
             'slug'    => 'weather_forecast',
             'score'   => 1.0
           }

@@ -2,9 +2,9 @@ require 'unicode/emoji'
 
 class Formulation < ApplicationRecord
   include Positionable
-  positionable_ancestor :intent
+  positionable_ancestor :interpretation
 
-  belongs_to :intent, touch: true
+  belongs_to :interpretation, touch: true
   has_many :formulation_aliases, dependent: :destroy
 
   accepts_nested_attributes_for :formulation_aliases, allow_destroy: true
@@ -46,7 +46,7 @@ class Formulation < ApplicationRecord
   def update_locale(new_locale)
     previous_locale = locale
     self.locale = new_locale
-    max_position = intent.formulations.where(locale: new_locale).maximum(:position)
+    max_position = interpretation.formulations.where(locale: new_locale).maximum(:position)
     self.position = max_position.nil? ? 0 : max_position + 1
     save
     previous_locale
@@ -100,8 +100,8 @@ class Formulation < ApplicationRecord
     end
 
     def validate_owner_quota
-      unless intent.nil?
-        owner = User.find(intent.agent.owner_id)
+      unless interpretation.nil?
+        owner = User.find(interpretation.agent.owner_id)
         if owner.quota_exceeded?
           errors.add(:quota, I18n.t('errors.formulation.quota', maximum: Quota.expressions_limit))
         end
