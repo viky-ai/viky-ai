@@ -162,7 +162,7 @@ tag_backup:
 # Push Docker image to Dockerhub only when on Master and it's a Tag
 push_dockerhub:
   variables:
-    # replace this when on master to latest
+    # TODO Mouadh HSOUMI replace this when on master to latest
     VIKY_DOCKER_TAG: ${CI_COMMIT_REF_SLUG}
   extends: .kubernetes_runner
   stage: push_dockerhub
