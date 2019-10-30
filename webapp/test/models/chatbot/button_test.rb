@@ -16,8 +16,8 @@ class Chatbot::ButtonTest < ActiveSupport::TestCase
       chat_session: chat_sessions(:one)
     )
     assert statement.save
-    assert !statement.component.is_disabled?
-    assert !statement.component.is_selected?
+    assert_not statement.component.is_disabled?
+    assert_not statement.component.is_selected?
   end
 
 

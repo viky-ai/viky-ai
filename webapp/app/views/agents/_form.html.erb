@@ -84,10 +84,10 @@
       <div class="agent-locales">
         <% Locales::ALL.each do |locale| %>
           <% if used_locales.include? locale %>
+            <input type="hidden" value="<%= locale %>" name="agent[locales][]" />
+            <input type="checkbox" name="agent[locales][]" value="<%= locale %>"
+              <% if agent.locales.include? locale %>checked<% end %> disabled />
             <span class="label">
-              <input type="hidden" value="<%= locale %>" name="agent[locales][]" />
-              <input type="checkbox" name="agent[locales][]" value="<%= locale %>"
-                <% if agent.locales.include? locale %>checked<% end %> disabled />
               <% if locale == Locales::ANY %>
                 <%= t('locales.no_locale') %>
               <% else %>
@@ -99,9 +99,9 @@
               </span>
             </span>
           <% else %>
-            <label>
-              <input type="checkbox" name="agent[locales][]" value="<%= locale %>"
-                <% if agent.locales.include? locale %>checked<% end %> />
+            <input type="checkbox" name="agent[locales][]" value="<%= locale %>" id="locale-<%= locale %>"
+              <% if agent.locales.include? locale %>checked<% end %> />
+            <label for="locale-<%= locale %>">
               <% if locale == Locales::ANY %>
                 <%= t('locales.no_locale') %>
               <% else %>

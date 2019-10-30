@@ -75,6 +75,8 @@ import './aliased_intents/main.scss';
 
 import './readme/form.coffee';
 
+import './backend/users/main.scss';
+
 import './dashboard/main.scss';
 import './dashboard/dashboard.coffee';
 

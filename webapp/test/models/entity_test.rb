@@ -17,7 +17,7 @@ class EntityTest < ActiveSupport::TestCase
     )
     assert entity.save
     assert_equal "{gender: 'male'}", entity.solution
-    assert !entity.auto_solution_enabled
+    assert_not entity.auto_solution_enabled
     assert_equal 2, entity.terms.size
     assert_equal 'Éric', entity.terms.first['term']
     assert_equal 'fr', entity.terms.first['locale']
@@ -33,7 +33,7 @@ class EntityTest < ActiveSupport::TestCase
 
   test 'term and entities_list are mandatory' do
     entity = Entity.new
-    assert !entity.save
+    assert_not entity.save
     expected = [
       "Entities list must exist",
       "Solution can't be blank",
@@ -189,7 +189,7 @@ class EntityTest < ActiveSupport::TestCase
     assert_equal "soleil", entity.terms_to_s
 
     entity.terms = ":\nsoleil\n:fr\n:"
-    assert !entity.save
+    assert_not entity.save
     assert_equal "soleil\n:fr", entity.terms_to_s
   end
 

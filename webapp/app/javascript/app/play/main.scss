@@ -2,7 +2,6 @@
 
 $play_small_breakpoint: 500px;
 $play_breakpoint: 1000px;
-$play_form_color: #fafafa;
 
 body[data-controller-name="play"] main > .blankslate{
   margin-top: 3.5em;
@@ -81,7 +80,7 @@ body[data-controller-name="play"]{
       width: 300px;
       overflow: auto;
       background-color: #fff;
-      box-shadow: 2px 0 3px rgba(#000, .05);
+      box-shadow: 2px 0 2px rgba(#000, .075);
     }
 
     h2{
@@ -91,7 +90,7 @@ body[data-controller-name="play"]{
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background-color: $play_form_color;
+      background-color: $light-grey-200;
       span{
         text-transform: uppercase;
         font-size: .7em;
@@ -101,9 +100,9 @@ body[data-controller-name="play"]{
         font-size: .7em;
       }
       @media (min-width: $play_breakpoint){
-        background-color: #fcfcfc;
+        background-color: $light-grey-200;
         padding: 1em;
-        border-bottom: 1px solid rgba(#000, .05);
+        border-bottom: 1px solid $light-grey-700;
         span{
           text-transform: none;
           font-size: 1em;
@@ -183,12 +182,13 @@ body[data-controller-name="play"]{
 
 
 .play-main{
-  background-color: $play_form_color;
-  border-bottom: 1px solid rgba(#000, .1);
+  background-color: $light-grey-200;
 
   @media (min-width: $play_breakpoint){
     border-radius: 3px;
     border: 1px solid rgba(#000, .1);
+    border: 1px solid $light-grey-900;
+
     margin-bottom: 2em;
     box-shadow: 0 3px 3px rgba(#000, .05);
     max-width: 66em;
@@ -266,15 +266,15 @@ body[data-controller-name="play"]{
   .play-main__result__wrapper{
     background-color: #fff;
     padding: 1.5em;
-    border-top: 1px solid rgba(#000, .1);
+    border-top: 1px solid $light-grey-900;
     border-bottom-left-radius: 3px;
     border-bottom-right-radius: 3px;
     h2{
       font-size: .9em;
       margin: -1.5rem -1.5rem 1.5rem -1.5rem;
       padding: 1rem 1.5rem;
-      background-color: #fcfcfc;
-      border-bottom: 1px solid rgba(#000, .075);
+      background-color: $light-grey-100;
+      border-bottom: 1px solid $light-grey-800;
       @media (min-width: $play_breakpoint){
         margin: -1.75rem -2rem 1.5rem -2rem;
         padding: 1rem 2rem;

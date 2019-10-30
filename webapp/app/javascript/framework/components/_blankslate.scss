@@ -20,20 +20,10 @@
       }
     }
   }
-
   .blankslate__content{
-    .separator{
-      margin: 2em 0;
-      border-top: 1px solid #ddd;
-      position: relative;
-      span{
-        position: absolute;
-        padding: 0 1em;
-        top: -.9em;
-        left: calc(50% - 30px);
-        background-color: #fff;
-        color: #aaa;
-      }
+    color: $dark-grey-500;
+    h2{
+      color: $dark-grey-700;
     }
   }
 }

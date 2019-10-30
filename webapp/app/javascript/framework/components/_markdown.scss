@@ -1,6 +1,6 @@
 .markdown{
   code{
-    background-color: #f9f9f9;
+    background-color: $light-grey-200;
     padding: .1em .25em;
     color: #444;
     font-size: .9em;
@@ -9,7 +9,7 @@
   }
 
   pre{
-    background-color: #f9f9f9;
+    background-color: $light-grey-200;
     padding: 1em;
     font-size: .9em;
     color: #444;
@@ -18,18 +18,19 @@
   }
 
   blockquote{
-    border-left: 4px solid #eee;
-    background-color: #f9f9f9;
+    border-left: 4px solid $light-grey-900;
+    background-color: $light-grey-200;
     margin: 1em 0;
     padding: 25px 60px;
     font-size: 1.1em;
+    color: $dark-grey-800;
     p{
       margin: .5em 0;
     }
     cite{
       font-size: 0.9em;
       font-style: normal;
-      color: #888;
+      color: $dark-grey-400;
     }
     &:before {
       font-family: Georgia, Garamond, 'Times New Roman', Times, serif;
