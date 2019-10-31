@@ -1,3 +1,2 @@
 ignored_endpoints:
   - HealthCheck
-  - Api::V1::NlpController#interpret
