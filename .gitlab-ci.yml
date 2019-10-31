@@ -245,6 +245,7 @@ push_dockerhub:
     - HELM_OPTIONS="--install ${HELM_EXTRA_OPTIONS} --timeout ${HELM_TIMEOUT}  --values ${HELM_VALUES}"
     - echo "helm upgrade ${HELM_OPTIONS} "${RELEASE_NAME}" ./viky/"
     - helm upgrade ${HELM_OPTIONS} "${RELEASE_NAME}" ./viky/
+    - notify_deployment
 
 # Deploy any branches on dev
 
