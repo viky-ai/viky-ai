@@ -15,9 +15,9 @@ en:
         move: Move
         delete: Delete
         formulations:
-          zero: "0 interpretation"
-          one: "1 interpretation"
-          other: "%{count} interpretations"
+          zero: "0 formulation"
+          one: "1 formulation"
+          other: "%{count} formulations"
         empty_list:
           private: No private interpretation. You can drag a public interpretation here or create one.
           public: No public interpretation. You can drag a private interpretation here or create one.
