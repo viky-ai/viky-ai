@@ -22,6 +22,7 @@ class AgentTransfer
         new_ownership = create_new_ownership
         if new_ownership.save
           @agent.owner_id = @new_owner.id
+          @agent.slug = "#{@new_owner.username}/#{@agent.agentname}"
           unless @agent.save
             @errors << @agent.errors.full_messages
             raise ActiveRecord::Rollback

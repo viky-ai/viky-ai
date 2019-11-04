@@ -5,7 +5,7 @@ en:
         import:
           btn: CSV Import
           select_import:
-            title: Import entities
+            title_html: <strong>Import entities</strong> in "%{listname}" entities list
             wait_message: Uploading file, please wait...
             max_file_size: "The maximum file size allowed is 30Mo."
             mode:

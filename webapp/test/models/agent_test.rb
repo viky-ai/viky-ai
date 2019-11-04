@@ -22,6 +22,7 @@ class AgentTest < ActiveSupport::TestCase
     assert_equal 'admin', agent.owner.username
     assert_equal ['agenta', 'terminator', 'weather'], users(:admin).agents.collect(&:agentname).sort
     assert_equal 'is_public', agent.visibility
+    assert_equal 'admin/agenta', agent.slug
     assert agent.is_public?
     assert_not agent.is_private?
     assert_equal agents(:terminator).id, agent.source_agent['id']
@@ -305,9 +306,11 @@ class AgentTest < ActiveSupport::TestCase
   test "Test agent slug" do
     agent = Agent.owned_by(users(:admin)).friendly.find("weather")
     assert_equal "My awesome weather bot", agent.name
+    assert_equal "admin/weather", agent.slug
 
     agent.agentname = 'new-weather'
     assert agent.save
+    assert_equal "admin/new-weather", agent.slug
     agent = Agent.owned_by(users(:admin)).friendly.find("weather")
     assert_equal "My awesome weather bot", agent.name
     agent = Agent.owned_by(users(:admin)).friendly.find("new-weather")
@@ -315,6 +318,7 @@ class AgentTest < ActiveSupport::TestCase
 
     agent.agentname = 'new-new-weather'
     assert agent.save
+    assert_equal "admin/new-new-weather", agent.slug
     agent = Agent.owned_by(users(:admin)).friendly.find("weather")
     assert_equal "My awesome weather bot", agent.name
     agent = Agent.owned_by(users(:admin)).friendly.find("new-weather")
@@ -348,6 +352,7 @@ class AgentTest < ActiveSupport::TestCase
     user_confirmed = users(:confirmed)
     terminator_agent = agents(:terminator)
 
+    assert_equal "admin/terminator", terminator_agent.slug
     assert_equal user_admin.id, terminator_agent.owner_id
     assert terminator_agent.users.one? { |user| user.id == user_admin.id }
     assert terminator_agent.users.none? { |user| user.id == user_confirmed.id }
@@ -355,6 +360,7 @@ class AgentTest < ActiveSupport::TestCase
     result = terminator_agent.transfer_ownership_to(user_confirmed.email)
     assert result[:success]
 
+    assert_equal "confirmed/terminator", terminator_agent.slug
     assert_equal user_confirmed.id, terminator_agent.owner_id
     assert Membership.where(user_id: user_admin.id, agent_id: terminator_agent.id, rights: 'edit').one?
     assert terminator_agent.users.one? { |user| user.id == user_confirmed.id }
@@ -747,5 +753,25 @@ class AgentTest < ActiveSupport::TestCase
   test 'New agent must sync with NLP' do
     Nlp::Package.any_instance.expects(:push)
     create_agent('Agent A')
+  end
+
+
+  test 'Keep agent slug in sync when changing its agentname'do
+    agent = agents(:weather)
+    assert_equal 'admin/weather', agent.slug
+    agent.agentname = 'forecast'
+    assert agent.save
+    assert_equal 'admin/forecast', agent.slug
+  end
+
+
+  test 'Keep agent slug in sync when changing its user name'do
+    user = users(:admin)
+    agent = agents(:weather)
+    assert_equal 'admin/weather', agent.slug
+    user.username = 'administrator'
+    assert user.save
+    force_reset_model_cache agent
+    assert_equal 'administrator/weather', agent.slug
   end
 end
