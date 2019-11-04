@@ -102,7 +102,7 @@ class Agent < ApplicationRecord
         "%#{q[:query]}%",
         "%#{q[:query]}%"
       )
-      if public_reachable.present?
+      unless public_reachable.nil?
         public_reachable = public_reachable.joins(:users).where(
           'users.username ILIKE ?
             OR users.name ILIKE ?
@@ -123,13 +123,13 @@ class Agent < ApplicationRecord
     case q[:selected]
     when 'true'
       user_reachable = user_reachable.where(id: q[:selected_ids])
-      public_reachable = public_reachable.where(id: q[:selected_ids]) if public_reachable.present?
+      public_reachable = public_reachable.where(id: q[:selected_ids]) unless public_reachable.nil?
     when 'false'
       user_reachable = user_reachable.where.not(id: q[:selected_ids])
-      public_reachable = public_reachable.where.not(id: q[:selected_ids]) if public_reachable.present?
+      public_reachable = public_reachable.where.not(id: q[:selected_ids]) unless public_reachable.nil?
     end
 
-    select_request = public_reachable.present? ? "#{user_reachable.to_sql} UNION #{public_reachable.to_sql}" : user_reachable.to_sql
+    select_request = !public_reachable.nil? ? "#{user_reachable.to_sql} UNION #{public_reachable.to_sql}" : user_reachable.to_sql
     sort_request = Agent.from(Arel.sql "(#{select_request}) AS agents")
     case q[:sort_by]
     when 'name'

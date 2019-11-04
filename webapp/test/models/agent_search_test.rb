@@ -225,6 +225,17 @@ class AgentSearchTest < ActiveSupport::TestCase
   end
 
 
+  test 'Search agent result uniqueness' do
+    user = users(:admin)
+    s = AgentSearch.new(user, query: 'weather', sort_by: 'agentname')
+    assert_equal 1, Agent.search(s.options).count
+    expected = [
+      'weather'
+    ]
+    assert_equal expected, Agent.search(s.options).all.collect(&:agentname)
+  end
+
+
   test 'Init agent search with user state' do
     user = users(:admin)
     user.ui_state = {
