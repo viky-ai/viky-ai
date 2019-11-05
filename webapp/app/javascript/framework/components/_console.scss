@@ -294,12 +294,12 @@
   }
 }
 
-.c-intents{
+.c-interpretations{
   list-style: none;
   padding: 0;
 }
 
-.c-intent{
+.c-interpretation{
   display: block;
   padding: .5em 1em;
   text-decoration: none;
@@ -312,17 +312,17 @@
     border-left: 4px solid $primary-color;
   }
 
-  .c-intent__header{
+  .c-interpretation__header{
     position: relative;
     margin-right: 2em;
-    .c-intent__header__name{
+    .c-interpretation__header__name{
       text-decoration: underline;
     }
-    .c-intent__header__slug{
+    .c-interpretation__header__slug{
       color: #aaa;
       font-size: .8em;
     }
-    .c-intent__header__score{
+    .c-interpretation__header__score{
       position: absolute;
       right: -2em;
     }
@@ -341,7 +341,7 @@
     }
   }
 
-  .c-intent__label{
+  .c-interpretation__label{
     color: #888;
     text-transform: uppercase;
     font-size: .65em;
@@ -349,12 +349,12 @@
     margin-bottom: .15em;
   }
 
-  .c-intent__scores{
+  .c-interpretation__scores{
     white-space: normal;
     line-height: 1.5em;
   }
 
-  .c-intent__highlight{
+  .c-interpretation__highlight{
     color: #666;
     font-size: .7em;
     font-family: $family-monospace;
@@ -426,18 +426,18 @@
     }
   }
 
-  .c-intent__footer{
+  .c-interpretation__footer{
     @include display_flex();
     justify-content: space-between;
     align-items: center;
     margin-top: .5em;
-    .c-intent__footer__status{
+    .c-interpretation__footer__status{
       font-size: .8em;
       .ts-status{
         vertical-align: unset;
       }
     }
-    .c-intent__footer__action__note{
+    .c-interpretation__footer__action__note{
       font-size: .8em;
       color: #666;
     }

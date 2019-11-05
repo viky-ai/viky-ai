@@ -1,6 +1,6 @@
 en:
   views:
-    intents:
+    interpretations:
       index:
         list_title: Interpretations
         list_public_title_html: <span class="badge badge--success badge--medium">PUBLIC</span> interpretations
@@ -14,13 +14,13 @@ en:
         quick_move_to: "Move to %{agent}"
         move: Move
         delete: Delete
-        interpretations:
+        formulations:
           zero: "0 interpretation"
           one: "1 interpretation"
           other: "%{count} interpretations"
         empty_list:
-          private: No private interpretation. You can drag a public intent here or create one.
-          public: No public interpretation. You can drag a private intent here or create one.
+          private: No private interpretation. You can drag a public interpretation here or create one.
+          public: No public interpretation. You can drag a private interpretation here or create one.
       new:
         title: Create a new interpretation
         btn: Create
@@ -41,8 +41,8 @@ en:
         empty_message: The interpretation already contains every available languages.
         errors_message: "Add language failed: %{errors}."
       move_to:
-        success_message_html: 'Intent %{name} moved to agent <a href="%{agent_link}">%{agent_name}</a>.'
-        errors_message: "Move intent to agent failed: %{errors}."
+        success_message_html: 'interpretation %{name} moved to agent <a href="%{agent_link}">%{agent_name}</a>.'
+        errors_message: "Move interpretation to agent failed: %{errors}."
       blankslate:
         message_edit_html: >
           No interpretation entered for the "%{agent}" agent.<br />

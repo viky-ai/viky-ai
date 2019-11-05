@@ -1,0 +1,94 @@
+<%= form_with model: [agent.owner, agent, interpretation, formulation],
+              id: 'formulations-form',
+              class: 'formulations-form' do |f| %>
+
+  <%= f.hidden_field :locale, value: @current_locale %>
+  <%= f.hidden_field :proximity, id: "proximity__new_formulation", value: formulation.proximity %>
+
+  <div class="field formulations-form__formulation">
+    <div class="control trix-control">
+      <div class="trix-control__option  <% if rtl?(@current_locale) %>trix-control__option--rtl<% end %>">
+        <div class="trix-control__option__child"
+             title="<%= t("views.formulations.keep_order_description") %>">
+          <%= f.check_box :keep_order, id: "keep_order__new_formulation" %>
+          <%= f.label :keep_order, for: "keep_order__new_formulation" %>
+        </div>
+        <div class="trix-control__option__child">
+          <div class="dropdown">
+            <div class="dropdown__trigger">
+              <button class="btn btn--outline btn--small" type="button">
+                <span class="btn__label">
+                  <%= t("views.formulations.proximity.#{formulation.proximity}") %>
+                </span>
+                <span class="icon icon--x-small">
+                  <%= icon_arrow_down %>
+                </span>
+              </button>
+            </div>
+            <div class="dropdown__content dropdown__content--hidden">
+              <ul>
+                <% Formulation.proximities.each_key do |proximity| %>
+                  <li>
+                    <% label = t("expression.proximity.#{proximity}") %>
+                    <a href="#"
+                       <% if proximity == formulation.proximity.to_s %>class="current"<% end %>
+                       data-behavior="populate-input, replace-trigger-label"
+                       data-input-selector="#proximity__new_formulation"
+                       data-input-value="<%= proximity %>"
+                       data-replace-selector=".btn__label"
+                       data-replace-with="<%= t("views.formulations.proximity.#{proximity}") %>">
+                      <div class="dropdown__content__item-title">
+                        <%= t("views.formulations.proximity.#{proximity}") %>
+                      </div>
+                      <div class="dropdown__content__item-description">
+                        <%= t("views.formulations.proximity.description.#{proximity}") %>
+                      </div>
+                    </a>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="trix-control__option__child"
+             title="<%= t("views.formulations.auto_solution_description") %>">
+          <%= f.check_box :auto_solution_enabled, id: "auto_solution_enabled__new_formulation" %>
+          <%= f.label :auto_solution_enabled, for: "auto_solution_enabled__new_formulation" %>
+        </div>
+      </div>
+      <textarea name="formulation[expression]" style="display:none;"
+        id="expression-new"><%= display_expression_for_trix(formulation) %></textarea>
+      <trix-editor autofocus <% if rtl?(@current_locale) %>dir="rtl"<% end %>
+        input="expression-new"
+        placeholder="<%= t('views.formulations.new.placeholder') %>"></trix-editor>
+    </div>
+    <%= display_errors(formulation, :expression) %>
+    <%= display_errors(formulation, :locale) %>
+    <%= display_errors(formulation, :keep_order) %>
+    <%= display_errors(formulation, :proximity) %>
+    <%= display_errors(formulation, :quota) %>
+  </div>
+
+  <div class="aliases <% if rtl?(@current_locale) %>aliases--rtl<% end %> formulations-form__summary" style="display:none;"></div>
+
+  <div class="formulations-form__aliases-errors">
+    <%= display_errors(formulation, :base) %>
+  </div>
+
+  <div class="field field--for-solution formulations-form__solution" style="display:none;">
+    <div class="control">
+      <span class="solution-label">Solution</span>
+      <%= f.text_area :solution, id: "solution__new_formulation", maxlength: '6000', spellcheck: 'false' %>
+    </div>
+    <%= display_errors(formulation, :solution) %>
+  </div>
+
+  <div class="field field--submit">
+    <div class="control">
+      <%= f.button t('views.formulations.new.btn'), class: 'btn btn--primary formulations-form__submit',
+                   data: {
+                       disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+                   } %>
+    </div>
+  </div>
+<% end %>

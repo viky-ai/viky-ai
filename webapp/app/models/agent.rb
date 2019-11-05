@@ -14,7 +14,7 @@ class Agent < ApplicationRecord
   has_many :users, through: :memberships
   has_many :favorite_agents, dependent: :destroy
   has_many :fans, through: :favorite_agents, source: :user
-  has_many :intents, dependent: :destroy
+  has_many :interpretations, dependent: :destroy
   has_many :entities_lists, dependent: :destroy
   has_many :bots, dependent: :destroy
   has_many :agent_regression_checks, dependent: :destroy
@@ -165,12 +165,12 @@ class Agent < ApplicationRecord
           .from("entities, jsonb_array_elements(entities.terms)")
           .collect{|e| e['language']}
 
-    interpretations_locales = Interpretation.select(:locale)
-      .where(intent_id: intents.pluck(:id))
+    formulations_locales = Formulation.select(:locale)
+      .where(interpretation_id: interpretations.pluck(:id))
       .distinct
       .collect{|i| i.locale}.flatten.uniq
 
-    all_used_locales = (entities_locales + interpretations_locales).flatten.uniq
+    all_used_locales = (entities_locales + formulations_locales).flatten.uniq
     Locales::ALL.select { |l| all_used_locales.include?(l) }
   end
 
@@ -224,15 +224,15 @@ class Agent < ApplicationRecord
 
   def expressions_count
     entities_count = entities_lists.sum(:entities_count)
-    interpretations_count = Interpretation.joins(intent: :agent).where('agents.id = ?', id).count
-    entities_count + interpretations_count
+    formulations_count = Formulation.joins(interpretation: :agent).where('agents.id = ?', id).count
+    entities_count + formulations_count
   end
 
-  def reachable_intents(current_intent)
-    result = [] + intents
-                    .where.not(id: current_intent)
+  def reachable_interpretations(current_interpretation)
+    result = [] + interpretations
+                    .where.not(id: current_interpretation)
                     .order(position: :desc, created_at: :desc)
-    result + Intent
+    result + Interpretation
              .where(visibility: :is_public)
              .where(agent_id: successors.ids)
              .order(position: :desc, created_at: :desc)

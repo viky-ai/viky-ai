@@ -46,7 +46,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
 
 
   test "Agent token can be specified in the request header and in the request parameters" do
-    intent = intents(:weather_forecast)
+    interpretation = interpretations(:weather_forecast)
     agent = agents(:weather)
 
     Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
@@ -55,7 +55,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
         "interpretations" => [
           {
             "package" => agent.id,
-            "id"      => intent.id,
+            "id"      => interpretation.id,
             "slug"    => "weather_forecast",
             "score"   => 1.0
           }
@@ -69,7 +69,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     expected = {
       'interpretations' => [
         {
-          "id"    => intent.id,
+          "id"    => interpretation.id,
           "slug"  => "weather_forecast",
           "name"  => "weather_forecast",
           "score" => 1.0
@@ -87,7 +87,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
 
 
   test "Agent token in the request parameters overloads agent token in the request header" do
-    intent = intents(:weather_forecast)
+    interpretation = interpretations(:weather_forecast)
     agent = agents(:weather)
     Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
       status: '200',
@@ -95,7 +95,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
         "interpretations" => [
           {
             "package" => agent.id,
-            "id"      => intent.id,
+            "id"      => interpretation.id,
             "slug"    => "weather_forecast",
             "score"   => 1.0
           }
@@ -126,7 +126,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
 
   test 'Provide statistics contexts with the sentence' do
     sentence = "test context #{SecureRandom.uuid}"
-    intent = intents(:weather_forecast)
+    interpretation = interpretations(:weather_forecast)
     agent = agents(:weather)
     Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
       status: '200',
@@ -134,7 +134,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
         'interpretations' => [
           {
             'package' => agent.id,
-            'id'      => intent.id,
+            'id'      => interpretation.id,
             'slug'    => 'weather_forecast',
             'score'   => 1.0
           }
@@ -155,7 +155,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     expected = {
       'interpretations' => [
         {
-          'id'    => intent.id,
+          'id'    => interpretation.id,
           'slug'  => 'weather_forecast',
           'name'  => 'weather_forecast',
           'score' => 1.0
@@ -173,15 +173,15 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
 
 
   test 'Set spellchecking' do
-    intent = intents(:weather_forecast)
-    agent = intent.agent
+    interpretation = interpretations(:weather_forecast)
+    agent = interpretation.agent
     Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
       status: '200',
       body: {
         'interpretations' => [
           {
             'package' => agent.id,
-            'id'      => intent.id,
+            'id'      => interpretation.id,
             'slug'    => 'weather_forecast',
             'score'   => 1.0
           }

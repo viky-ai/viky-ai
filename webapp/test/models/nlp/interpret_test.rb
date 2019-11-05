@@ -58,7 +58,7 @@ class InterpretTest < ActiveSupport::TestCase
   end
 
 
-  test 'Test a long interpretation sentence' do
+  test 'Test a long formulation sentence' do
     weather = agents(:weather)
     interpret = Nlp::Interpret.new(
       agents: [weather],

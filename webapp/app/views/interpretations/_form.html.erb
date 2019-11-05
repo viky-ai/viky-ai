@@ -1,94 +1,60 @@
-<%= form_with model: [agent.owner, agent, intent, interpretation],
-              id: 'interpretations-form',
-              class: 'interpretations-form' do |f| %>
-
-  <%= f.hidden_field :locale, value: @current_locale %>
-  <%= f.hidden_field :proximity, id: "proximity__new_interpretation", value: interpretation.proximity %>
-
-  <div class="field interpretations-form__interpretation">
-    <div class="control trix-control">
-      <div class="trix-control__option  <% if rtl?(@current_locale) %>trix-control__option--rtl<% end %>">
-        <div class="trix-control__option__child"
-             title="<%= t("views.interpretations.keep_order_description") %>">
-          <%= f.check_box :keep_order, id: "keep_order__new_interpretation" %>
-          <%= f.label :keep_order, for: "keep_order__new_interpretation" %>
-        </div>
-        <div class="trix-control__option__child">
-          <div class="dropdown">
-            <div class="dropdown__trigger">
-              <button class="btn btn--outline btn--small" type="button">
-                <span class="btn__label">
-                  <%= t("views.interpretations.proximity.#{interpretation.proximity}") %>
-                </span>
-                <span class="icon icon--x-small">
-                  <%= icon_arrow_down %>
-                </span>
-              </button>
-            </div>
-            <div class="dropdown__content dropdown__content--hidden">
-              <ul>
-                <% Interpretation.proximities.each_key do |proximity| %>
-                  <li>
-                    <% label = t("expression.proximity.#{proximity}") %>
-                    <a href="#"
-                       <% if proximity == interpretation.proximity.to_s %>class="current"<% end %>
-                       data-behavior="populate-input, replace-trigger-label"
-                       data-input-selector="#proximity__new_interpretation"
-                       data-input-value="<%= proximity %>"
-                       data-replace-selector=".btn__label"
-                       data-replace-with="<%= t("views.interpretations.proximity.#{proximity}") %>">
-                      <div class="dropdown__content__item-title">
-                        <%= t("views.interpretations.proximity.#{proximity}") %>
-                      </div>
-                      <div class="dropdown__content__item-description">
-                        <%= t("views.interpretations.proximity.description.#{proximity}") %>
-                      </div>
-                    </a>
-                  </li>
-                <% end %>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="trix-control__option__child"
-             title="<%= t("views.interpretations.auto_solution_description") %>">
-          <%= f.check_box :auto_solution_enabled, id: "auto_solution_enabled__new_interpretation" %>
-          <%= f.label :auto_solution_enabled, for: "auto_solution_enabled__new_interpretation" %>
-        </div>
+<%= form_with model: [@owner, @agent, @interpretation], data: { type: 'json' }, class: 'js-interpretation-form' do |f| %>
+  <div class="interpretation-name-and-visibility">
+    <div class="field">
+      <%= f.label :interpretation_name %>
+      <span class="badge badge--small badge--outline"><%= t('required') %></span>
+      <div class="control">
+        <%= f.text_field :interpretation_name, id: :interpretation_interpretation_name %>
       </div>
-      <textarea name="interpretation[expression]" style="display:none;"
-        id="expression-new"><%= display_expression_for_trix(interpretation) %></textarea>
-      <trix-editor autofocus <% if rtl?(@current_locale) %>dir="rtl"<% end %>
-        input="expression-new"
-        placeholder="<%= t('views.interpretations.new.placeholder') %>"></trix-editor>
+      <%= display_errors(@interpretation, :interpretation_name) %>
     </div>
-    <%= display_errors(interpretation, :expression) %>
-    <%= display_errors(interpretation, :locale) %>
-    <%= display_errors(interpretation, :keep_order) %>
-    <%= display_errors(interpretation, :proximity) %>
-    <%= display_errors(interpretation, :quota) %>
+
+    <div class="field">
+      <div class="control">
+        <%= f.label :visibility %>
+        &nbsp;<span class="badge badge--small badge--outline"><%= t('required') %></span>
+        <%= f.hidden_field :visibility %>
+        <br />
+        <div class="btn-group">
+          <button class="btn <% if @interpretation.is_private? %>btn--primary<% end %>" type="button"
+                  data-behavior="populate-input"
+                  data-input-selector="input[name='interpretation[visibility]']"
+                  data-input-value="is_private">
+            <%= t('activerecord.attributes.interpretation.visibility_is_private') %>
+          </button>
+          <button class="btn <% if @interpretation.is_public? %>btn--primary<% end %>" type="button"
+                  data-behavior="populate-input"
+                  data-input-selector="input[name='interpretation[visibility]']"
+                  data-input-value="is_public">
+            <%= t('activerecord.attributes.interpretation.visibility_is_public') %>
+          </button>
+        </div>
+        <%= display_errors(@interpretation, :visibility) %>
+      </div>
+    </div>
   </div>
 
-  <div class="aliases <% if rtl?(@current_locale) %>aliases--rtl<% end %> interpretations-form__summary" style="display:none;"></div>
-
-  <div class="interpretations-form__aliases-errors">
-    <%= display_errors(interpretation, :base) %>
-  </div>
-
-  <div class="field field--for-solution interpretations-form__solution" style="display:none;">
+  <div class="field">
+    <%= f.label :description %>
     <div class="control">
-      <span class="solution-label">Solution</span>
-      <%= f.text_area :solution, id: "solution__new_interpretation", maxlength: '6000', spellcheck: 'false' %>
+      <%= f.text_area :description, id: :interpretation_description %>
     </div>
-    <%= display_errors(interpretation, :solution) %>
+    <%= display_errors(@interpretation, :description) %>
   </div>
 
-  <div class="field field--submit">
-    <div class="control">
-      <%= f.button t('views.interpretations.new.btn'), class: 'btn btn--primary interpretations-form__submit',
-                   data: {
-                       disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
-                   } %>
-    </div>
+  <div class="actions">
+    <% if ["edit", "update"].include? action_name %>
+      <% btn_label = t('views.interpretations.edit.btn') %>
+    <% else %>
+      <% btn_label = t('views.interpretations.new.btn') %>
+    <% end %>
+
+    <%= f.button btn_label, class: "btn btn--primary",
+                 data: {
+                     disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+                 }
+    %>
+    <button class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></button>
   </div>
 <% end %>
+

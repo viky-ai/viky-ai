@@ -144,16 +144,16 @@
     <div class="c-explain" id="console-explain">
       <p>
         <span class="badge badge--success">200</span>
-        <%= t('views.console.intent_found', count: 1) %>
+        <%= t('views.console.interpretation_found', count: 1) %>
       </p>
-      <ul class="c-intents">
-        <li class="c-intent">
-          <div class="c-intent__header">
+      <ul class="c-interpretations">
+        <li class="c-interpretation">
+          <div class="c-interpretation__header">
             <a href="#">Interpretation</a>
-            <span class="c-intent__header__slug">
+            <span class="c-interpretation__header__slug">
               user/agent
             </span>
-            <span class="c-intent__header__score">
+            <span class="c-interpretation__header__score">
               <span class="badge badge--grey badge--small badge--outline">
                 0.99
               </span>
@@ -161,7 +161,7 @@
           </div>
           <ul>
             <li>
-              <div class="c-intent__label">Solution</div>
+              <div class="c-interpretation__label">Solution</div>
               <pre><code class='language-javascript'>{
   "type": "query",
   "joke": {
@@ -171,12 +171,12 @@
 }</code></pre>
             </li>
           </ul>
-          <div class="c-intent__footer">
-            <div class="c-intent__footer__status">
+          <div class="c-interpretation__footer">
+            <div class="c-interpretation__footer__status">
               <span class="ts-status ts-status--success"></span>
               Succeed
             </div>
-            <div class="c-intent__footer__action">
+            <div class="c-interpretation__footer__action">
               <a href="#" class="btn btn--small btn--primary">Update test</a>
             </div>
           </div>

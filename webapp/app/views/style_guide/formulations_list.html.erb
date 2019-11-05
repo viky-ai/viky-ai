@@ -1,0 +1,435 @@
+<div class="sg-intro">
+  <h1>Formulations list</h1>
+  <p>
+    Displayed in interpretation main page.
+  </p>
+</div>
+
+<section>
+  <h2>Show detailed</h2>
+  <p>
+    Click on an item will show details.
+  </p>
+  <%= highlight_html('bg-light-grey-300') do %>
+<ul class="card-list">
+  <li>
+    <div class='formulations-show'>
+      <div class="formulations-show__close">
+        <a href="#" class="close">
+          <%= icon_close %>
+        </a>
+      </div>
+      <div class="field formulations-show__formulation">
+        <div class="control">
+          <span class="formulation-resume">
+            <span class="formulation-resume__alias-brown" title="viky/shopping/greetings">Hello</span>
+            citizen
+          </span>
+          <span class="merged-badges">
+            <span class="badge">Proximity</span>
+            <span class="badge badge--grey">Glued</span>
+          </span>
+        </div>
+      </div>
+      <div class="aliases formulations-show__summary">
+        <table>
+          <thead>
+          <tr>
+            <th>Parameter name</th>
+            <th>Interpretation</th>
+            <th>Options</th>
+            <th>Selection</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>
+              greetings
+            </td>
+            <td>
+                <span class="interpretation-brown" title="viky/shopping/greetings">
+                  <a href="#"><small>viky/shopping/</small>greetings</a>
+                </span>
+            </td>
+            <td class='options'>
+            </td>
+            <td>Hello</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="field formulations-show__solution">
+        <div class="control">
+          <span class="solution-label">Solution</span>
+          <textarea id="solution__1" rows="3">{
+  "who": "greeting.who"
+}</textarea>
+        </div>
+      </div>
+    </div>
+  </li>
+  <li>
+    <a class="formulations-list__show">
+      <span class="card-list__item__name">
+        Good morning <span class="badge">Auto solution</span>
+      </span>
+    </a>
+  </li>
+  <li>
+    <a href="#" class="formulations-list__show">
+      <span class="card-list__item__name">
+        How can I help you ?
+      </span>
+    </a>
+  </li>
+</ul>
+<script>
+  App.CodeEditor.buildJavaScriptEditor($("#solution__1")[0], true);
+</script>
+  <% end %>
+</section>
+
+
+<section>
+  <h2>Update item state</h2>
+  <p>
+    Click on an item will switch to update state.
+  </p>
+  <p>
+    JS library <a href="http://rubaxa.github.io/Sortable/">Sortable</a> is used in order to setup Drag&Drop functionality.
+  </p>
+  <%= highlight_html('bg-light-grey-300') do %>
+<ul id="sortable-list__example" class="card-list">
+  <li>
+    <div class="card-list__item__draggable"></div>
+    <form action="#" class="formulations-form">
+      <div class="field formulations-form__formulation">
+        <div class="control trix-control">
+          <div class="trix-control__option">
+            <div class="trix-control__option__child">
+              <input id="keep_order__123" value="1" type="checkbox">
+              <label for="keep_order__123">Keep order</label>
+            </div>
+            <div class="trix-control__option__child">
+              <label>Proximity</label>
+              <div class="dropdown">
+                <div class="dropdown__trigger">
+                  <button class="btn btn--small">
+                    <span class="btn__label">Glued</span>
+                    <span class="icon icon--x-small">
+                      <%= icon_arrow_down %>
+                    </span>
+                  </button>
+                </div>
+                <div class="dropdown__content dropdown__content--hidden">
+                  <ul>
+                    <% Formulation.proximities.each_key do |proximity| %>
+                      <li>
+                        <a href="#" <% if proximity == 'glued' %>class="current"<% end %>
+                           data-behavior="replace-trigger-label"
+                           data-replace-selector=".btn__label"
+                           data-replace-with="<%= t("expression.proximity.#{proximity}") %>">
+                          <%= t("expression.proximity.#{proximity}") %>
+                        </a>
+                      </li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="trix-control__option__child">
+              <input id="auto_solution_enabled__789" value="1" type="checkbox">
+              <label for="auto_solution_enabled__789">Auto solution</label>
+            </div>
+          </div>
+
+          <trix-editor input="expression-600ba012-e4bd-4a7d-a62d-97057655d632" placeholder="Add an expression" trix-id="2" toolbar="trix-toolbar-2" contenteditable=""><div><!--block--><a href="{&quot;color&quot;:&quot;interpretation-brown&quot;,&quot;aliasname&quot;:&quot;where&quot;,&quot;slug&quot;:&quot;olivier/vikipedia/where&quot;,&quot;interpretation_id&quot;:&quot;8ae3a9fb-f266-401e-919f-bd44a8b279a5&quot;,&quot;nature&quot;:&quot;type_interpretation&quot;,&quot;id&quot;:&quot;b464a720-0a8a-11e8-a450-0d99b20efd39&quot;,&quot;state&quot;:&quot;new&quot;}">Hello</a> citizen</div></trix-editor>
+        </div>
+      </div>
+      <div class="aliases formulations-form__summary">
+        <table>
+          <thead>
+          <tr>
+            <th>Parameter name</th>
+            <th>Interpretation</th>
+            <th>Options</th>
+            <th>Selection</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="field">
+                  <input value="greetings" type="text"/>
+                </div>
+              </td>
+              <td>
+                <span class="interpretation-brown" title="viky/shopping/greetings">
+                  <a href="#"><small>viky/shopping/</small>greetings</a>
+                </span>
+              </td>
+              <td class='options'>
+                <input value="true" type="radio"/> <label>List</label>
+                <input value="true" type="radio"/> <label>Any</label>
+              </td>
+              <td>Hello</td>
+              <td>
+                <a href="#">
+                  <span class="icon icon--small">
+                    <%= icon_close %>
+                  </span>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="field formulations-form__solution">
+        <div class="control">
+          <span class="solution-label">Solution</span>
+          <textarea id="solution__123456" rows="3">{
+"who": "greeting.who"
+}</textarea>
+        </div>
+      </div>
+      <div class="field field--submit">
+        <div class="control">
+          <button class="btn btn--primary">Update</button>
+        </div>
+      </div>
+    </form>
+  </li>
+  <li>
+    <div class="card-list__item__draggable"></div>
+    <a href="#" class="formulations-list__show">
+      <span class="card-list__item__name">
+        Good morning <span class="badge">Auto solution</span>
+      </span>
+    </a>
+  </li>
+  <li>
+    <div class="card-list__item__draggable"></div>
+    <a href="#" class="formulations-list__show">
+      <span class="card-list__item__name">
+        How can I help you ?
+      </span>
+    </a>
+  </li>
+</ul>
+<script>
+  Sortable.create($('#sortable-list__example')[0], {
+    handle: '.card-list__item__draggable',
+    animation: 100
+  });
+  App.CodeEditor.buildJavaScriptEditor($("#solution__123456")[0]);
+</script>
+  <% end %>
+</section>
+
+
+
+<section>
+  <h2>Aliases table</h2>
+  <h3>Editable</h3>
+  <%= highlight_html do %>
+<div class="aliases">
+  <table>
+    <thead>
+    <tr>
+      <th>Parameter name</th>
+      <th>Interpretation</th>
+      <th>Options</th>
+      <th>Selection</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td>
+          <div class="field">
+            <input value="greetings" type="text"/>
+          </div>
+        </td>
+        <td>
+          <span class="interpretation-red" title="viky/shopping/greetings">
+            <a href="#"><small>viky/shopping/</small>greetings</a>
+          </span>
+        </td>
+        <td class='options'>
+          <input value="true" type="radio"/> <label>List</label>
+          <input value="true" type="radio"/> <label>Any</label>
+        </td>
+        <td>Hello</td>
+        <td>
+          <a href="#">
+            <span class="icon icon--small">
+              <%= icon_close %>
+            </span>
+          </a>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <div class="field">
+            <input value="age" type="text"/>
+          </div>
+        </td>
+        <td>
+          <span class="interpretation-black">Number</span>
+        </td>
+        <td class='options'></td>
+        <td>12</td>
+        <td>
+          <a href="#">
+            <span class="icon icon--small">
+              <%= icon_close %>
+            </span>
+          </a>
+        </td>
+      </tr>
+      </tr>
+
+      <tr class="regex-header">
+        <td>
+          <div class="field">
+            <input value="hex_value" type="text"/>
+          </div>
+        </td>
+        <td>
+          <span><span class="interpretation-black">Regex</span></span>
+        </td>
+        <td class='options'></td>
+        <td>#000</td>
+        <td>
+          <a href="#">
+            <span class="icon icon--small">
+              <%= icon_close %>
+            </span>
+          </a>
+        </td>
+      </tr>
+
+      <tr class="regex-form">
+        <td colspan="5">
+          <div>
+            <div class="field">
+              <div class="control control--merged">
+                <span class="addon addon--success">
+                  <span class="icon icon--x-small"><%= icon_check %></span>
+                  Valid Regex
+                </span>
+                <input type="text" value="^#?([a-f0-9]{6}|[a-f0-9]{3})$" />
+                <span class="addon">
+                  <a href="#">
+                    <span class="icon icon--x-small">
+                      <%= icon_open_in_new %>
+                    </span>
+                    <span>Railroad Diagram</span>
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <div class="field">
+            <input value="joke" type="text"/>
+          </div>
+        </td>
+        <td>
+          <span class="interpretation-green" title="viky/shopping/greetings">
+            <a href="#"><small>viky/shopping/</small>joke</a>
+          </span>
+        </td>
+        <td class='options'>
+          <input value="true" type="radio"/> <label>List</label>
+          <input value="true" type="radio"/> <label>Any</label>
+        </td>
+        <td>Blague</td>
+        <td>
+          <a href="#">
+            <span class="icon icon--small">
+              <%= icon_close %>
+            </span>
+          </a>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+  <% end %>
+
+
+
+  <h3>Not editable</h3>
+  <%= highlight_html do %>
+<div class="aliases">
+  <table>
+    <thead>
+    <tr>
+      <th>Parameter name</th>
+      <th>Interpretation</th>
+      <th>Options</th>
+      <th>Selection</th>
+    </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td>greetings</td>
+        <td>
+          <span class="interpretation-red" title="viky/shopping/greetings">
+            <a href="#"><small>viky/shopping/</small>greetings</a>
+          </span>
+        </td>
+        <td class='options'>
+        </td>
+        <td>Hello</td>
+      </tr>
+
+      <tr>
+        <td>age</td>
+        <td>
+          <span class="interpretation-black">Number</span>
+        </td>
+        <td class='options'></td>
+        <td>12</td>
+      </tr>
+      </tr>
+
+      <tr>
+        <td>hex_value</td>
+        <td>
+          <span class="interpretation-black">Regex</span>
+          <code>^#?([a-f0-9]{6}|[a-f0-9]{3})$</code>
+        </td>
+        <td class='options'></td>
+        <td>#000</td>
+      </tr>
+
+      <tr>
+        <td>joke</td>
+        <td>
+          <span class="interpretation-green" title="viky/shopping/greetings">
+            <a href="#"><small>viky/shopping/</small>joke</a>
+          </span>
+        </td>
+        <td class='options'>
+        </td>
+        <td>Blague</td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+  <% end %>
+
+
+</section>

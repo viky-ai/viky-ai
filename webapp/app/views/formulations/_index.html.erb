@@ -1,0 +1,101 @@
+<div class="card">
+  <div class="tabs <% unless current_user.can? :edit, @agent %>tabs--empty<% end %>">
+    <ul>
+      <% for agent_locale in @agent.ordered_locales %>
+        <% if agent_locale == Locales::ANY %>
+          <% link_name = t('locales.no_locale') %>
+        <% else %>
+          <% link_name = agent_locale %>
+        <% end %>
+        <li data-locale="<%= agent_locale %>"
+          <% if @current_locale != agent_locale %>class="js-draggable-locale"<% end %>>
+          <a href="<%= user_agent_interpretation_path(@agent.owner, @agent, @interpretation, locale: agent_locale) %>"
+             <% if @current_locale == agent_locale %>class="current"<% end %>>
+            <%= link_name %>
+            <% count = @interpretation.formulations_with_local(agent_locale).count%>
+            <span class="badge" data-count="<%= count %>" <% if @current_locale == agent_locale %>id="current-locale-tab-badge"<% end %>>
+              <%= count %>
+            </span>
+          </a>
+        </li>
+      <% end %>
+      <% if current_user.can? :edit, @agent %>
+        <% if @agent.locales.count != Locales::ALL.count %>
+          <li>
+            <a href="<%= user_agent_interpretation_select_new_locale_path(@agent.owner, @agent, @interpretation) %>"
+                data-action="open-remote-modal">
+              +
+            </a>
+          </li>
+        <% end %>
+      <% end %>
+    </ul>
+  </div>
+
+  <% if current_user.can? :edit, @agent %>
+    <%= render partial: 'formulations/form', locals: {
+      agent: @agent,
+      interpretation: @interpretation,
+      formulation: @formulation,
+      current_locale: @current_locale
+    } %>
+  <% end %>
+</div>
+
+<%= render partial: '/formulations/formulations_list', locals: {
+    agent: @agent,
+    interpretation: @interpretation,
+    current_locale: @current_locale
+} %>
+
+<%= render partial: 'formulations/blankslate_start', locals: {
+    agent: @agent,
+    interpretation: @interpretation,
+    current_locale: @current_locale
+} %>
+
+<% if current_user.can? :edit, @agent %>
+  <div class="popup-overlay" id="popup-add-tag-overlay" style="display:none;"></div>
+  <div class="popup-highlight" id="highlight" style="display:none;"></div>
+  <div class="popup" id="popup-add-tag" style="display:none;">
+    <div class="popup__search">
+      <input type="text" value="" placeholder="<%= t('views.formulations.popup.add-tag.search_placeholder') %>" />
+    </div>
+    <ul>
+      <% @agent.reachable_interpretations(@interpretation).each do |interpretation| %>
+        <li data-search="<%= interpretation.slug %>" class="enabled">
+          <a href="#" data-action="add-tag"
+             data-data='<%= interpretation_to_json(interpretation) %>'><%= interpretation.slug %></a>
+        </li>
+      <% end %>
+      <% @agent.reachable_entities_lists.each do |elist| %>
+        <li data-search="<%= elist.slug %>" class="enabled">
+          <a href="#" data-action="add-tag"
+             data-data='<%= entities_list_to_json(elist) %>'><%= elist.slug %></a>
+        </li>
+      <% end %>
+      <li data-search="number" class="enabled">
+        <a href="#" data-action="add-tag"
+           data-data='<%= number_to_json() %>'> <%= t('views.formulations.number') %></a>
+      </li>
+      <li data-search="regex" class="enabled">
+        <a href="#" data-action="add-tag"
+           data-data='<%= regex_to_json() %>'> <%= t('views.formulations.regex') %></a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="popup-overlay" id="popup-remove-tag-overlay" style="display:none;"></div>
+  <div class="popup" id="popup-remove-tag" style="display:none;">
+    <ul>
+      <li class="enabled">
+        <a href="#" data-action="remove-tags">
+          <span class="icon icon--small">
+            <%= icon_close %>
+          </span>
+          <%= t('views.formulations.popup.remove-tags.msg') %>
+        </a>
+      </li>
+    </ul>
+  </div>
+<% end %>

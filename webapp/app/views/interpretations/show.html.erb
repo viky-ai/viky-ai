@@ -1,0 +1,38 @@
+<%= render '/agents/header', agent: @agent %>
+
+<div class="header">
+  <div class="header__breadcrumb">
+    <%= link_to t('views.agents.breadcrumb.interpretations'), user_agent_interpretations_path(@agent.owner, @agent) %> /
+    <strong>
+      <%= @interpretation.interpretation_name %>
+    </strong>
+    <% if @interpretation.is_public? %>
+      <span class="badge badge--success badge--small">
+        <%= t('activerecord.attributes.interpretation.visibility_is_public').upcase %>
+      </span>
+    <% end %>
+    <% if @interpretation.is_private? %>
+      <span class="badge badge--warning badge--small">
+        <%= t('activerecord.attributes.interpretation.visibility_is_private').upcase %>
+      </span>
+    <% end %>
+  </div>
+  <div class="header__tools">
+  <% if @interpretation.aliased_interpretations.any? %>
+    <a href="<%= user_agent_interpretation_aliased_interpretations_path(@agent.owner, @agent, @interpretation) %>"
+       class="btn btn--small"
+       title="<%= t('views.interpretations.index.used_by_title')  %>"
+       data-action="open-remote-modal">
+        <%= t('views.interpretations.index.used_by')  %>
+    </a>
+  <% else %>
+    <small><%= t('views.interpretations.index.not_used_by_title') %></small>
+  <% end %>
+  </div>
+</div>
+
+<%= render 'formulations/index', current_locale: @locale %>
+
+<% content_for :right_aside do %>
+  <%= render '/console/base' %>
+<% end %>

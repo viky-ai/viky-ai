@@ -71,7 +71,7 @@ if test.expected.present?
         value: JSON.parse(test.expected['solution'])
       }
       diff_rows << {
-        error: t("views.agent_regression_checks.result.error_no_intent_html", icon: icon_close)
+        error: t("views.agent_regression_checks.result.error_no_interpretation_html", icon: icon_close)
       }
     end
   elsif test.running? || test.unknown?

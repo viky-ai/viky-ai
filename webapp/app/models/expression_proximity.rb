@@ -1,6 +1,6 @@
 class ExpressionProximity
 
-  INTERPRETATION_PROXIMITIES = %w(glued accepts_punctuations very_close close far).freeze
+  FORMULATION_PROXIMITIES = %w(glued accepts_punctuations very_close close far).freeze
   ENTITY_PROXIMITES = %w(glued very_close close far).freeze
 
   def initialize(proximity)

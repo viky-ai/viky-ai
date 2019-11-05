@@ -2,9 +2,9 @@ import Vue from 'vue/dist/vue.esm'
 
 class ConsoleExplainFooter
   constructor: ->
-    if $('#console-intent-footer').length == 1
+    if $('#console-interpretation-footer').length == 1
       App.ConsoleExplainFooter = new Vue({
-        el: '#console-intent-footer',
+        el: '#console-interpretation-footer',
         data: {
           test: regression_check
         },

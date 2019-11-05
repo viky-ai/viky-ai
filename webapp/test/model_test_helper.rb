@@ -27,10 +27,10 @@ def create_agent_regression_check_fixtures
     state: 4,
     position: 0,
     expected: {
-      root_type: 'intent',
+      root_type: 'interpretation',
       package: agents(:weather).id,
-      id: intents(:weather_forecast).id,
-      solution: interpretations(:weather_forecast_tomorrow).solution.to_json.to_s
+      id: interpretations(:weather_forecast).id,
+      solution: formulations(:weather_forecast_tomorrow).solution.to_json.to_s
     }
   })
   @regression_weather_forecast.save!
@@ -44,10 +44,10 @@ def create_agent_regression_check_fixtures
     state: 2,
     position: 1,
     expected: {
-      root_type: 'intent',
+      root_type: 'interpretation',
       package: agents(:weather).id,
-      id: intents(:weather_question).id,
-      solution: interpretations(:weather_question_like).solution.to_json.to_s
+      id: interpretations(:weather_question).id,
+      solution: formulations(:weather_question_like).solution.to_json.to_s
     }
   })
   @regression_weather_question.save!

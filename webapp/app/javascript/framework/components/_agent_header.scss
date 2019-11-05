@@ -96,6 +96,9 @@
       padding: 1em;
       grid-area: actions;
       text-align: right;
+      .btn{
+        margin-bottom: .2em;
+      }
     }
 
     .agent-header__content__description{
