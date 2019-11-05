@@ -162,8 +162,7 @@ tag_backup:
 # Push Docker image to Dockerhub only when on Master and it's a Tag
 push_dockerhub:
   variables:
-    # TODO Mouadh HSOUMI replace this when on master to latest
-    VIKY_DOCKER_TAG: ${CI_COMMIT_REF_SLUG}
+    VIKY_DOCKER_TAG: latest
   extends: .kubernetes_runner
   stage: push_dockerhub
   needs:
@@ -184,17 +183,12 @@ push_dockerhub:
 
 .deploy_dev:
   needs:
-    # TODO Mouadh HSOUMI, set back build_backup, test_webapp, test_nlp and remove push_dockerhub
-    # - build_backup
-    # - test_webapp
-    # - test_nlp
-    - "push_dockerhub"
+    - build_backup
+    - test_webapp
+    - test_nlp
   except:
     - master
     - tags
-  # TODO Mouadh HSOUMI must be removed before we merge to master
-  only:
-    - feature/21506_hebergement
   environment:
     name: dev-${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
@@ -205,30 +199,36 @@ push_dockerhub:
     HELM_VALUES: "viky/custom-values/production.yaml,custom-values.yml"
     KUBE_NAMESPACE: viky-ai-production
 
-.deploy_preprod:
+.deploy_production:
   needs:
     - "push_dockerhub"
   only:
     - master
+    # TODO Mouadh HSOUMI must be removed before we merge to master
+    - feature/21506_hebergement
   except:
     - tags
   environment:
-    name: viky-beta
-    url: https://viky-beta.viky.ai
+    name: viky-ai-production
+    # TODO BRU change default viky.ai URL
+    url: "https://hello.viky.ai"
+    #url: https://www.viky.ai
   variables:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
+    VIKY_DOCKER_TAG: "latest"
+    VIKY_USE_DOCKERHUB_IMAGE: "true"
     VIKYAPP_AUTO_BACKUP: "true"
-    HELM_RELEASE_NAME: "viky-beta"
-    HELM_VALUES: "viky/custom-values/preproduction.yaml,custom-values.yml"
-    KUBE_NAMESPACE: viky-beta
+    HELM_RELEASE_NAME: "viky-prod"
+    HELM_VALUES: "viky/custom-values/production.yaml,custom-values.yml"
+    KUBE_NAMESPACE: viky-ai-production
 
 .deploy:
   extends: .kubernetes_runner
   stage: deploy
   variables:
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
-    HELM_TIMEOUT: "900"
+    HELM_TIMEOUT: "600"
     HELM_EXTRA_OPTIONS: "--wait"
   script:
     - kube_setup
@@ -267,15 +267,15 @@ deploy_dev_forced:
     HELM_EXTRA_OPTIONS: "--force"
 
 # Deploy master on preprod
-deploy_preprod:
+deploy_production:
   extends:
     - .deploy
-    - .deploy_preprod
+    - .deploy_production
   variables:
     BACKUP_BEFORE_DEPLOY: "true"
 
-deploy_preprod_forced:
-  extends: deploy_preprod
+deploy_production_forced:
+  extends: deploy_production
   when: manual
   variables:
     HELM_EXTRA_OPTIONS: "--force"
@@ -318,16 +318,10 @@ delete_env:
   when: manual
   allow_failure: true
 
-invite_admin_dev:
+invite_admin:
   extends:
     - .kubernetes_runner
     - .deploy_dev
-    - .invite_admin
-
-invite_admin_preprod:
-  extends:
-    - .kubernetes_runner
-    - .deploy_preprod
     - .invite_admin
 
 # backup
@@ -348,10 +342,10 @@ backup_dev:
     - .deploy_dev
     - .backup
 
-backup_preprod:
+backup_production:
   extends:
     - .kubernetes_runner
-    - .deploy_preprod
+    - .deploy_production
     - .backup
 
 # backup restore only for dev
@@ -400,10 +394,10 @@ update_doc_dev:
     - .deploy_dev
     - .update_doc
 
-update_doc_preprod:
+update_doc_production:
   extends:
     - .kubernetes_runner
-    - .deploy_preprod
+    - .deploy_production
     - .update_doc
 
 # Get deployment status
@@ -427,8 +421,8 @@ deploy_status_dev:
     - .deploy_dev
     - .deploy_status
 
-deploy_status_preprod:
+deploy_status_production:
   extends:
     - .kubernetes_runner
-    - .deploy_preprod
+    - .deploy_production
     - .deploy_status
