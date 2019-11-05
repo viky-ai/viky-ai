@@ -141,9 +141,9 @@ push_dockerhub:
   script:
     - export VIKY_GITLAB_TAG="${CI_COMMIT_REF_SLUG:-latest}"
     - export VIKY_DOCKERHUB_TAG="latest"
-    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_NLP}:${VIKY_DOCKER_TAG}"          "${DOCKERHUB_IMAGE_NLP}:${VIKY_DOCKERHUB_TAG}"
-    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_APP}:${VIKY_DOCKER_TAG}"          "${DOCKERHUB_IMAGE_APP}:${VIKY_DOCKERHUB_TAG}"
-    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_TOOLS_BACKUP}:${VIKY_DOCKER_TAG}" "${DOCKERHUB_IMAGE_TOOLS_BACKUP}:${VIKY_DOCKERHUB_TAG}"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_NLP}:${VIKY_GITLAB_TAG}"          "${DOCKERHUB_IMAGE_NLP}:${VIKY_DOCKERHUB_TAG}"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_APP}:${VIKY_GITLAB_TAG}"          "${DOCKERHUB_IMAGE_APP}:${VIKY_DOCKERHUB_TAG}"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_TOOLS_BACKUP}:${VIKY_GITLAB_TAG}" "${DOCKERHUB_IMAGE_TOOLS_BACKUP}:${VIKY_DOCKERHUB_TAG}"
 
 # Deploy generic job
 
