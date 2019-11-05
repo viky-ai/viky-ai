@@ -3,438 +3,251 @@ require 'model_test_helper'
 
 class InterpretationTest < ActiveSupport::TestCase
 
-  test 'Basic interpretation creation & intent association' do
+  test 'Basic interpretation creation & agent association' do
+    assert_equal 2, agents(:weather).interpretations.count
+
     interpretation = Interpretation.new(
-      expression: 'Good morning John',
-      locale: 'en'
+      interpretation_name: 'greeting',
+      description: 'Hello random citizen !',
+      visibility: 'is_private'
     )
-    interpretation.intent = intents(:weather_forecast)
+    interpretation.agent = agents(:weather)
     assert interpretation.save
-    interpretation_alias = InterpretationAlias.new(
-      aliasname: 'who',
-      position_start: 0,
-      position_end: 12
+
+    assert_equal 2, interpretation.position
+    assert_equal 'greeting', interpretation.interpretation_name
+    assert_equal agents(:weather).id, interpretation.agent.id
+    assert_equal 3, agents(:weather).interpretations.count
+    assert Interpretation::AVAILABLE_COLORS.one? { |color| color == interpretation.color }
+    assert_equal 'is_private', interpretation.visibility
+    assert_not interpretation.is_public?
+    assert interpretation.is_private?
+  end
+
+
+  test 'interpretation_name, agent and locales are mandatory' do
+    interpretation = Interpretation.new(description: 'Hello random citizen !')
+    assert_not interpretation.save
+
+    expected = [
+      "Agent must exist",
+      "ID is too short (minimum is 3 characters)",
+      "ID can't be blank"
+    ]
+    assert_equal expected, interpretation.errors.full_messages
+  end
+
+
+  test 'Unique interpretation_name per agent' do
+    interpretation = Interpretation.new(
+      interpretation_name: 'hello',
+      description: 'Hello random citizen !'
     )
-    interpretation_alias.interpretation = interpretation
-    interpretation_alias.interpretation_aliasable = intents(:weather_question)
-    assert interpretation_alias.save
+    interpretation.agent = agents(:weather)
+    assert interpretation.save
 
-    assert_equal 1, interpretation.position
-    assert_equal 'Good morning John', interpretation.expression
-    assert_equal intents(:weather_forecast).id, interpretation.intent.id
-    assert_equal false, interpretation.keep_order
-    assert interpretation.proximity_close?
-    assert interpretation.solution.nil?
-    assert_equal 3, intents(:weather_forecast).interpretations.count
-    assert_equal interpretation_alias.id, interpretation.interpretation_aliases.reload[0].id
+    other_interpretation = Interpretation.new(
+      interpretation_name: 'hello',
+      description: 'Another way to greet you...'
+    )
+    other_interpretation.agent = agents(:weather)
+    assert_not other_interpretation.save
+
+    expected = ['ID has already been taken']
+    assert_equal expected, other_interpretation.errors.full_messages
   end
 
 
-  test 'Expression and locale can\'t be blank and must be linked to an intent' do
-    interpretation = Interpretation.new(expression: '')
+  test 'Check interpretation_name minimal length' do
+    interpretation = Interpretation.new(
+      interpretation_name: 'h',
+      description: 'Hello random citizen !'
+    )
+    interpretation.agent = agents(:weather)
     assert_not interpretation.save
 
-    expected = {
-      intent: ['must exist'],
-      expression: ['can\'t be blank'],
-      locale: ['is not included in the list', 'can\'t be blank']
-    }
-    assert_equal expected, interpretation.errors.messages
+    expected = ['ID is too short (minimum is 3 characters)']
+    assert_equal expected, interpretation.errors.full_messages
   end
 
 
-  test 'Locale must be in list' do
-    interpretation = Interpretation.new(expression: 'Good morning', locale: 'toto')
-    interpretation.intent = intents(:weather_forecast)
-    assert_not interpretation.save
+  test 'Check interpretation_name is cleaned' do
+    interpretation = Interpretation.new(
+      interpretation_name: "H3ll-#'!o",
+      description: 'Hello random citizen !'
+    )
+    interpretation.agent = agents(:weather)
+    assert interpretation.save
 
-    expected = {
-      locale: ['is not included in the list']
-    }
-    assert_equal expected, interpretation.errors.messages
+    assert_equal 'h3ll-o', interpretation.interpretation_name
   end
 
 
-  test 'Interpretation destroy' do
-    interpretation = interpretations(:weather_forecast_tomorrow)
+  test 'Check interpretation slug' do
+    interpretation = interpretations(:weather_forecast)
+    original_interpretation_name = interpretation.interpretation_name
+    interpretation.interpretation_name = 'bonjour'
+    assert interpretation.save
+
+    assert_equal interpretation.id, Interpretation.friendly.find(original_interpretation_name).id
+  end
+
+
+  test 'interpretation destroy' do
+    interpretation = interpretations(:weather_forecast)
     interpretation_id = interpretation.id
 
     assert_equal 1, Interpretation.where(id: interpretation_id).count
-    assert_equal 2, interpretation.interpretation_aliases.count
     assert interpretation.destroy
     assert_equal 0, Interpretation.where(id: interpretation_id).count
-    assert_equal 0, interpretation.interpretation_aliases.count
   end
 
 
-  test 'Filter interpretations by locale' do
-    intent = intents(:weather_forecast)
-    en_interpretations = intent.interpretations_with_local('en')
-    assert_equal 1, en_interpretations.count
-    fr_interpretations = intent.interpretations_with_local('fr')
-    assert_equal 1, fr_interpretations.count
-  end
-
-
-  test 'Check interpretation solution is valid' do
-    interpretation = interpretations(:weather_forecast_tomorrow)
-    interpretation.solution = (['a'] * 8193).join('')
-    assert_not interpretation.valid?
-    expected = {
-      solution: ['(8.001 KB) is too long (maximum is 8 KB)']
-    }
-    assert_equal expected, interpretation.errors.messages
-  end
-
-
-  test 'Check expression size' do
-    interpretation = interpretations(:weather_forecast_tomorrow)
-    interpretation.expression = (['À'] * 1025).join('')
-    assert_not interpretation.valid?
-    expected = {
-      expression: ['(2.002 KB) is too long (maximum is 2 KB)']
-    }
-    assert_equal expected, interpretation.errors.messages
-  end
-
-
-  test "Aliases any constraint : only one any" do
-    interpretation = interpretations(:weather_forecast_demain)
-
-    assert_not interpretation.update(
-      interpretation_aliases_attributes: [
-        {
-          aliasname: "first",
-          position_start: 0,
-          position_end: 4,
-          interpretation: interpretations(:weather_forecast_demain),
-          interpretation_aliasable: intents(:weather_question),
-          any_enabled: true,
-        },
-        {
-          aliasname: "second",
-          position_start: 6,
-          position_end: 10,
-          interpretation: interpretations(:weather_forecast_demain),
-          interpretation_aliasable: intents(:weather_question),
-          any_enabled: true,
-        }
-      ]
+  test 'Do not override color at creation if already set' do
+    interpretation = Interpretation.new(
+      interpretation_name: 'greeting',
+      color: 'blue'
     )
-    expected = ["Only one annotation with \"Any\" option is permitted."]
-    assert_equal expected, interpretation.errors.full_messages
+    interpretation.agent = agents(:weather)
+    assert interpretation.save
+    assert_equal 'blue', interpretation.color
   end
 
 
-  test "Aliases any constraint : one alias one any" do
-    interpretation = interpretations(:weather_forecast_demain)
-    assert_not interpretation.update(
-      interpretation_aliases_attributes: [
-        {
-          aliasname: "first",
-          position_start: 0,
-          position_end: 4,
-          interpretation: interpretations(:weather_forecast_demain),
-          interpretation_aliasable: intents(:weather_question),
-          any_enabled: true,
-        }
-      ]
-    )
-    expected = ["\"Any\" option is not permitted with only one annotation."]
-    assert_equal expected, interpretation.errors.full_messages
-
-
-    interpretation.reload
-    assert interpretation.update(
-      interpretation_aliases_attributes: [
-        {
-          aliasname: "first",
-          position_start: 0,
-          position_end: 4,
-          interpretation: interpretations(:weather_forecast_demain),
-          interpretation_aliasable: intents(:weather_question),
-          any_enabled: true,
-        },
-        {
-          aliasname: "second",
-          position_start: 5,
-          position_end: 10,
-          interpretation: interpretations(:weather_forecast_demain),
-          interpretation_aliasable: intents(:weather_question),
-          any_enabled: false,
-        }
-      ]
-    )
-
-    assert_not interpretation.update(
-      interpretation_aliases_attributes: [
-        {
-          id: interpretation.interpretation_aliases.last.id,
-          _destroy:  true,
-        }
-      ]
-    )
-    expected = ["\"Any\" option is not permitted with only one annotation."]
-    assert_equal expected, interpretation.errors.full_messages
+  test 'Test interpretation generation' do
+    interpretation = interpretations(:weather_forecast)
+    assert_equal 'admin/weather/interpretations/weather_forecast', interpretation.slug
   end
 
 
-  test "Aliases any constraint : only one list" do
-    interpretation = interpretations(:weather_forecast_demain)
-
-    assert_not interpretation.update(
-      interpretation_aliases_attributes: [
-        {
-          aliasname: "first",
-          position_start: 0,
-          position_end: 4,
-          interpretation: interpretations(:weather_forecast_demain),
-          interpretation_aliasable: intents(:weather_question),
-          is_list: true,
-        },
-        {
-          aliasname: "second",
-          position_start: 6,
-          position_end: 10,
-          interpretation: interpretations(:weather_forecast_demain),
-          interpretation_aliasable: intents(:weather_question),
-          is_list: true,
-        }
-      ]
-    )
-    expected = ["Only one annotation with \"List\" option is permitted."]
-    assert_equal expected, interpretation.errors.full_messages
-  end
-
-
-  test 'Update interpretations positions' do
-    intent = intents(:weather_forecast)
-    assert intent.interpretations.destroy_all
-
+  test 'Test update interpretations positions' do
+    agent = agents(:weather_confirmed)
     interpretation_0 = Interpretation.create(
-      expression: 'interpretation_0',
-      locale: Locales::ANY,
-      position: 0,
-      intent: intent
+      interpretation_name: 'interpretation_0',
+      position: 1,
+      agent: agent
     )
     interpretation_1 = Interpretation.create(
-      expression: 'interpretation_1',
-      locale: Locales::ANY,
-      position: 1,
-      intent: intent
+      interpretation_name: 'interpretation_1',
+      position: 2,
+      agent: agent
     )
     interpretation_2 = Interpretation.create(
-      expression: 'interpretation_2',
-      locale: Locales::ANY,
-      position: 2,
-      intent: intent
+      interpretation_name: 'interpretation_2',
+      position: 3,
+      agent: agent
     )
 
     new_positions = [interpretation_1.id, interpretation_2.id, interpretation_0.id, '132465789']
-    Interpretation.update_positions(intent, new_positions)
+
+    Interpretation.update_positions(agent, [], new_positions)
 
     force_reset_model_cache([interpretation_0, interpretation_1, interpretation_2])
-    assert_equal [2, 1, 0], [interpretation_1.position, interpretation_2.position, interpretation_0.position]
-  end
-
-  test 'Reorder interpretations positions within the given set of positions only' do
-    intent = intents(:weather_forecast)
-    assert intent.interpretations.destroy_all
-
-    interpretation_0 = Interpretation.create(
-      expression: 'interpretation_0',
-      locale: 'en',
-      position: 0,
-      intent: intent
-    )
-    interpretation_1 = Interpretation.create(
-      expression: 'interpretation_1',
-      locale: 'fr',
-      position: 1,
-      intent: intent
-    )
-    interpretation_2 = Interpretation.create(
-      expression: 'interpretation_2',
-      locale: 'en',
-      position: 2,
-      intent: intent
-    )
-    interpretation_3 = Interpretation.create(
-      expression: 'interpretation_2',
-      locale: 'fr',
-      position: 3,
-      intent: intent
-    )
-
-    new_positions = [interpretation_1.id, interpretation_3.id]
-    Interpretation.update_positions(intent, new_positions)
-    force_reset_model_cache([interpretation_0, interpretation_1, interpretation_2, interpretation_3])
-    assert_equal [3, 2, 1, 0], [interpretation_1.position, interpretation_2.position, interpretation_3.position, interpretation_0.position]
-
-    new_positions = [interpretation_0.id, interpretation_2.id]
-    Interpretation.update_positions(intent, new_positions)
-    force_reset_model_cache([interpretation_0, interpretation_1, interpretation_2, interpretation_3])
-    assert_equal [3, 2, 1, 0], [interpretation_1.position, interpretation_0.position, interpretation_3.position, interpretation_2.position]
-
+    assert_equal [3, 2, 1], [interpretation_1.position, interpretation_2.position, interpretation_0.position]
+    assert_equal %w(is_private is_private is_private), [interpretation_1.visibility, interpretation_2.visibility, interpretation_0.visibility]
   end
 
 
-  test 'Sanitize HTML expression' do
-    interpretation = interpretations(:weather_forecast_tomorrow)
-    interpretation.expression = '<div><strong>themselves</strong></div>'
-    assert interpretation.save
-    assert_equal 'themselves', interpretation.expression
-
-    interpretation.expression = '<script>javascript:alert("Hello")</script>'
-    assert interpretation.save
-    assert_equal '', interpretation.expression
+  test 'Move interpretation to an agent' do
+    weather = interpretations(:terminator_find)
+    assert weather.move_to_agent(agents(:weather))
+    assert_equal agents(:weather).id, weather.agent.id
+    assert_equal 'is_public', weather.visibility
+    assert_equal 2, weather.position
   end
 
 
-  test 'Limit maximum number of words in an interpretation' do
-    interpretation = interpretations(:weather_forecast_demain)
-    interpretation.expression = (['a'] * 37).join(' ')
-    assert_not interpretation.save
-    expected = {
-      expression: ['is too long (maximum is 36 elements), found: 37']
-    }
-    assert_equal expected, interpretation.errors.messages
+  test 'Move interpretation to an unknown agent' do
+    weather = interpretations(:weather_forecast)
+    assert_not weather.move_to_agent(nil)
+    expected = ['Agent does not exist anymore']
 
-    interpretation.expression = 'a1.2' * 15
-    assert_not interpretation.save
-    expected = {
-      expression: ['is too long (maximum is 36 elements), found: 60']
-    }
-    assert_equal expected, interpretation.errors.messages
-
-    interpretation.expression = ([
-      '²', # G_UNICODE_OTHER_NUMBER (No)
-      '_', # G_UNICODE_CONNECT_PUNCTUATION (Pc)
-      '-', # G_UNICODE_DASH_PUNCTUATION (Pd)
-      '(', # G_UNICODE_OPEN_PUNCTUATION (Ps)
-      ')', # G_UNICODE_CLOSE_PUNCTUATION (Pe)
-      '«', # G_UNICODE_INITIAL_PUNCTUATION (Pi)
-      '”', # G_UNICODE_FINAL_PUNCTUATION (Pf)
-      '&', # G_UNICODE_OTHER_PUNCTUATION (Po)
-      '€', # G_UNICODE_CURRENCY_SYMBOL (Sc)
-      '^', # G_UNICODE_MODIFIER_SYMBOL (Sk)
-      '=', # G_UNICODE_MATH_SYMBOL (Sm)
-      '©', # G_UNICODE_OTHER_SYMBOL (So)
-      '力', # G_UNICODE_BREAK_IDEOGRAPHIC (ID)
-      '😀', # G_UNICODE_BREAK_EMOJI_BASE (EB)
-      '🏿',  # G_UNICODE_BREAK_EMOJI_MODIFIER (EM)
-    ] * 3).join
-
-    assert_not interpretation.save
-    expected = {
-      expression: ['is too long (maximum is 36 elements), found: 45']
-    }
-    assert_equal expected, interpretation.errors.messages
-
-    interpretation.expression = (['a'] * 36 + ['؀' * 2]).join(' ')
-    assert interpretation.save
-
-    interpretation.expression = (['a'] * 35 + ['après demain']).join(' ')
-    assert InterpretationAlias.new(
-      aliasname: 'when',
-      position_start: 70,
-      position_end: 82,
-      interpretation: interpretation,
-      interpretation_aliasable: entities_lists(:weather_dates)
-    ).save
-    force_reset_model_cache interpretation
-    assert interpretation.save
+    assert_equal expected, weather.errors.full_messages
+    assert_equal weather.agent.id, agents(:weather).id
   end
 
-  test 'Change interpretation locale' do
-    forecast = interpretations(:weather_forecast_tomorrow)
-    previous_locale = ''
-    assert_difference "Interpretation.where(locale: '*').count" do
-      previous_locale = forecast.update_locale '*'
-    end
-    assert_equal 'en', previous_locale
-  end
 
-  test 'Position interpretation in new locale' do
-    intent = intents(:weather_forecast)
-    assert intent.interpretations.destroy_all
-
-    Interpretation.create(
-      expression: 'interpretation_0',
-      locale: '*',
-      position: 0,
-      intent: intent
-    )
-    interpretation_1 = Interpretation.create(
-      expression: 'interpretation_1',
-      locale: '*',
-      position: 1,
-      intent: intent
-    )
-
-    previous_locale = ''
-    assert_difference "Interpretation.where(locale: 'en').count" do
-      previous_locale = interpretation_1.update_locale 'en'
-    end
-    assert_equal '*', previous_locale
-  end
-
-  test 'Interpretation creation scope position to language' do
-    intent = intents(:weather_forecast)
-    assert intent.interpretations.destroy_all
-
-    Interpretation.create(
-      expression: 'interpretation_0',
-      locale: '*',
-      intent: intent
-    )
-    Interpretation.create(
-      expression: 'interpretation_1',
-      locale: '*',
-      intent: intent
-    )
-    english_interpretation = Interpretation.create(
-      expression: 'interpretation_3',
-      locale: 'en',
-      intent: intent
-    )
-    assert_equal 0, english_interpretation.position
-  end
-
-  test 'Save interpretation with very locales' do
-    intent = intents(:weather_forecast)
-    Locales::ALL.each do |locale|
-      interpretation = Interpretation.new(
-        expression: "interpretation_#{locale}",
-        locale: locale,
-        intent: intent
-      )
-      assert interpretation.save
-    end
-  end
-
-  test 'Quota for interpretation and entities' do
+  test 'Move interpretation without enough quota' do
     Feature.with_quota_enabled do
+      interpretation = interpretations(:weather_forecast)
+      destination_agent = agents(:terminator)
+
+      assert_equal 2, interpretation.formulations.count
+      assert_equal 10, destination_agent.owner.expressions_count
+
       Quota.stubs(:expressions_limit).returns(11)
+      assert_not interpretation.move_to_agent(destination_agent)
 
-      user = users(:admin)
-      assert_equal 10, user.expressions_count
+      expected = ["Agent owner does not have enough quota to accept this move"]
+      assert_equal expected, interpretation.errors.full_messages
 
-      interpretation = Interpretation.new(
-        expression: 'Sunny tomorrow morning',
-        locale: 'en'
-      )
-      interpretation.intent = intents(:weather_forecast)
-      assert interpretation.save
-
-      interpretation_next = Interpretation.new(
-        expression: 'Rainy tomorrow afternoon',
-        locale: 'en'
-      )
-      interpretation_next.intent = intents(:weather_forecast)
-      assert_not interpretation_next.save
-      expected = ['Quota exceeded (maximum is 11 formulations and entities)']
-      assert_equal expected, interpretation_next.errors.full_messages
+      Quota.stubs(:expressions_limit).returns(12)
+      assert interpretation.move_to_agent(destination_agent)
     end
+  end
+
+
+  test 'Get interpretations that are using the current interpretation (aliased_interpretations)' do
+    current_interpretation = interpretations(:simple_where)
+    expected = [interpretations(:terminator_find)]
+    actual = current_interpretation.aliased_interpretations
+    assert_equal expected, actual
+  end
+
+
+  test 'No interpretations that are using the current interpretation (aliased_interpretations)' do
+    current_interpretation = interpretations(:weather_forecast)
+    expected = []
+    actual = current_interpretation.aliased_interpretations
+    assert_equal expected, actual
+  end
+
+
+  test 'Get interpretations of another agent that are using the current interpretation' do
+    current_interpretation = interpretations(:simple_where)
+
+    dependent_agent = create_agent("Where weather")
+    target_agent = agents(:terminator)
+    AgentArc.create(source: dependent_agent, target: target_agent)
+
+    weather_loc_interpretation = Interpretation.new(
+      interpretation_name: 'weather_location',
+      description: 'Find locations with similar weather',
+      visibility: 'is_private'
+    )
+    weather_loc_interpretation.agent = dependent_agent
+    assert weather_loc_interpretation.save
+
+    formulation = Formulation.new(
+      expression: 'Where is it raining?'
+    )
+    formulation.interpretation = weather_loc_interpretation
+    formulation_alias = FormulationAlias.new(
+      position_start: 0,
+      position_end: 5,
+      aliasname: 'Where',
+      nature: 'type_interpretation'
+    )
+    formulation_alias.formulation = formulation
+    formulation_alias.formulation_aliasable = current_interpretation
+    assert formulation_alias.save
+
+    expected = [interpretations(:terminator_find)]
+    actual = current_interpretation.aliased_interpretations
+    assert_equal expected, actual
+    assert_not_includes actual, weather_loc_interpretation
+  end
+
+
+  test 'Adding an formulation trigger an NLP sync' do
+    interpretation = interpretations(:weather_forecast)
+    interpretation.agent.expects(:sync_nlp).once
+
+    formulation = Formulation.new(
+      expression: 'Good morning John',
+      locale: 'en',
+      interpretation: interpretation
+    )
+    assert formulation.save
   end
 end

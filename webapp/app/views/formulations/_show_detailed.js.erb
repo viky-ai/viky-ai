@@ -1,0 +1,4 @@
+App.CardListHelper.showItemDetails("#formulation-<%= @formulation.id %>", "<%= escape_javascript(@show) %>");
+App.CodeEditor.buildJavaScriptEditor($("#solution__<%= @formulation.id %>")[0], true);
+
+$("body").trigger('formulations:show-detailed:complete');

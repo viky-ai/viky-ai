@@ -1,0 +1,54 @@
+<div class="modal" style="display: none;">
+  <div class="modal__overlay" data-action='close-modal'></div>
+  <div class="modal__main">
+    <h5 class="modal__main__title">
+      <% if @entities_list.nil? %>
+        <%= t('views.interpretations.used_by_list.title_html', name: @interpretation.interpretation_name) %>
+      <% else %>
+        <%= t('views.interpretations.used_by_list.title_html', name: @entities_list.listname) %>
+      <% end %>
+      <button class="modal__main__title__close" data-action='close-modal'>
+        <%= icon_close %>
+      </button>
+    </h5>
+      <% private_interpretations = @interpretations.is_private %>
+      <% public_interpretations = @interpretations.is_public %>
+      <div class="aliased-interpretations-list">
+        <ul class="<% if @interpretations.count == 0 %>card-list--empty<% end %>"
+            data-empty-content="<%= t('views.interpretations.used_by_list.empty_list.public') %>"
+            id="interpretations-list-is_public">
+
+          <% public_interpretations.each do |interpretation| %>
+            <li>
+              <% href_link = @user_comes_from_index ? user_agent_interpretations_path(@owner, @agent, anchor: "smooth-scroll-to-interpretation-#{interpretation.id}") : user_agent_interpretation_path(@owner, @agent, interpretation) %>
+              <a href="<%= href_link %>">
+                <h6>
+                  <span><%= interpretation.interpretation_name %></span>
+                  <span class="badge badge--success badge--small">
+                    <%= t('activerecord.attributes.entities_list.visibility_is_public').upcase %>
+                  </span>
+                </h6>
+                <p><%= interpretation.slug %></p>
+              </a>
+            </li>
+          <% end %>
+
+          <% private_interpretations.each do |interpretation| %>
+            <li>
+              <% href_link = @user_comes_from_index ? user_agent_interpretations_path(@owner, @agent, anchor: "smooth-scroll-to-interpretation-#{interpretation.id}") : user_agent_interpretation_path(@owner, @agent, interpretation) %>
+              <a href="<%= href_link %>">
+                <h6>
+                  <span><%= interpretation.interpretation_name %></span>
+                  <span class="badge badge--warning badge--small">
+                  <%= t('activerecord.attributes.entities_list.visibility_is_private').upcase %>
+                  </span>
+                </h6>
+                <p><%= interpretation.slug %></p>
+              </a>
+            </li>
+          <% end %>
+
+        </ul>
+      </div>
+  </div>
+</div>

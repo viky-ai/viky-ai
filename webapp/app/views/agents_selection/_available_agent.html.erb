@@ -2,8 +2,8 @@
   <div class="agent-compact agent-compact--without-actions">
     <% if from == 'entities_lists' %>
       <% link = move_to_agent_user_agent_entities_list_path(@agent.owner, @agent, id: current_id, user: agent_to_select.owner, agent: agent_to_select) %>
-    <% elsif from == 'intents' %>
-      <% link = move_to_agent_user_agent_intent_path(@agent.owner, @agent, id: current_id, user: agent_to_select.owner, agent: agent_to_select) %>
+    <% elsif from == 'interpretations' %>
+      <% link = move_to_agent_user_agent_interpretation_path(@agent.owner, @agent, id: current_id, user: agent_to_select.owner, agent: agent_to_select) %>
     <% else %>
       <% link = user_agent_dependencies_path(@agent.owner, @agent.agentname, { id: agent_to_select.id }) %>
     <% end %>

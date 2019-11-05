@@ -171,7 +171,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
   end
 
 
-  test "aliased intents" do
+  test "aliased interpretations" do
     admin_go_to_agent_entities_lists(agents("weather"))
 
     within "#entities_lists-list-is_public" do
@@ -186,7 +186,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
       click_link("weather_forecast")
     end
 
-    expected = "/agents/admin/weather/interpretations#smooth-scroll-to-intent-#{intents(:weather_forecast).id}"
+    expected = "/agents/admin/weather/interpretations#smooth-scroll-to-interpretation-#{interpretations(:weather_forecast).id}"
     assert current_url.include?(expected)
 
     assert_equal 1, all('.highlight').size

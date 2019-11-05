@@ -30,7 +30,7 @@
           <button class="btn btn--toggle <% if interpreter.agents.collect(&:id).include? agent.id %>btn--toggle-on<% end %>">
             <span>
               <% if interpreter.agents.collect(&:id).include?(agent.id) && r.present? && r.succeed? %>
-                <%= r.interpretations_count_for_agent(agent.id) %>
+                <%= r.formulations_count_for_agent(agent.id) %>
               <% end %>
             </span>
           </button>

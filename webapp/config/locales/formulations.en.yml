@@ -1,0 +1,38 @@
+en:
+  views:
+    formulations:
+      new:
+        btn: "Add"
+        placeholder: Add a formulation
+      index:
+        delete_btn: "Delete"
+        update_btn: "Update"
+        cancel_btn: "Cancel"
+      delete_failed: "Ooops, delete failed."
+      blankslate:
+        no_expression: No formulation entered for the "%{language}" tab.
+        start: Start adding formulations using the form below.
+      popup:
+        add-tag:
+          search_placeholder: Find interpretation by slug
+        remove-tags:
+          msg: Remove annotation(s)
+      number: Number
+      regex: Regex
+      solution_label: Define the solution using JavaScript code
+      solution_label_readonly: Solution using JavaScript code
+      proximity:
+        glued: Glued
+        accepts_punctuations: Glued + Punc
+        very_close: Very close
+        close: Close
+        far: Far
+        description:
+          glued: Terms must be glued.
+          accepts_punctuations: Terms must be glued but viky.ai accepts punctuations.
+          very_close: Terms must be very close.
+          close: Terms must be close.
+          far: Terms can be far.
+      keep_order_description: Terms must be in the same order.
+      auto_solution_description: The solution is deduced automatically.
+

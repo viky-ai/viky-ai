@@ -21,34 +21,34 @@ class PlayInterpreterResultTest < ActiveSupport::TestCase
 
   test 'interpretations_count' do
     r = PlayInterpreterResult.new(200, sample_body)
-    assert_equal 3, r.interpretations_count
+    assert_equal 3, r.formulations_count
 
     r = PlayInterpreterResult.new(200, blank_body)
-    assert_equal 0, r.interpretations_count
+    assert_equal 0, r.formulations_count
   end
 
 
   test 'interpretations_count_per_agent' do
     r = PlayInterpreterResult.new(200, blank_body)
     expected = {}
-    assert_equal expected, r.interpretations_count_per_agent
+    assert_equal expected, r.formulations_count_per_agent
 
     r = PlayInterpreterResult.new(200, sample_body)
     expected = {
       agents(:weather).id => 2,
       agents(:terminator).id => 1,
     }
-    assert_equal expected, r.interpretations_count_per_agent
+    assert_equal expected, r.formulations_count_per_agent
   end
 
 
   test 'interpretations_count_for_agent' do
     r = PlayInterpreterResult.new(200, blank_body)
-    assert_equal 0, r.interpretations_count_for_agent(agents(:weather).id)
+    assert_equal 0, r.formulations_count_for_agent(agents(:weather).id)
 
     r = PlayInterpreterResult.new(200, sample_body)
-    assert_equal 2, r.interpretations_count_for_agent(agents(:weather).id)
-    assert_equal 1, r.interpretations_count_for_agent(agents(:terminator).id)
+    assert_equal 2, r.formulations_count_for_agent(agents(:weather).id)
+    assert_equal 1, r.formulations_count_for_agent(agents(:terminator).id)
   end
 
 
@@ -78,7 +78,7 @@ class PlayInterpreterResultTest < ActiveSupport::TestCase
       'interpretations' => [
         {
           "package" => agents(:weather).id,
-          "id" => intents(:weather_forecast).id,
+          "id" => interpretations(:weather_forecast).id,
           "slug" => "admin/weather/weather_forecast",
           "name" => "weather_forecast",
           "score" => 1.0,
@@ -88,7 +88,7 @@ class PlayInterpreterResultTest < ActiveSupport::TestCase
         },
         {
           "package" => agents(:weather).id,
-          "id" => intents(:weather_question).id,
+          "id" => interpretations(:weather_question).id,
           "slug" => "admin/weather/weather_question",
           "name" => "weather_question",
           "score" => 1.0,
@@ -98,7 +98,7 @@ class PlayInterpreterResultTest < ActiveSupport::TestCase
         },
         {
           "package" => agents(:terminator).id,
-          "id" => intents(:terminator_find).id,
+          "id" => interpretations(:terminator_find).id,
           "slug" => "admin/terminator/terminator_find",
           "name" => "terminator_find",
           "score" => 1.0,

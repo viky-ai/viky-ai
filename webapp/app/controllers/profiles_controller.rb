@@ -10,20 +10,20 @@ class ProfilesController < ApplicationController
     @to = DateTime.now
     @from = (DateTime.now - 30.days).beginning_of_day
 
-    @requests_count =  InterpretRequestReporter.new
+    @requests_count = InterpretRequestReporter.new
       .with_owner(@profile.id)
       .between(@from, @to)
       .from_api
       .count
 
     if Feature.quota_enabled? && @profile.quota_enabled
-      @requests_under_count =  InterpretRequestReporter.new
+      @requests_under_count = InterpretRequestReporter.new
         .with_owner(@profile.id)
         .between(@from, @to)
         .under_quota
         .count
 
-      @requests_over_count =  InterpretRequestReporter.new
+      @requests_over_count = InterpretRequestReporter.new
         .with_owner(@profile.id)
         .between(@from, @to)
         .over_quota

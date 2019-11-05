@@ -4,7 +4,7 @@
     <title>
       viky.ai
       <% unless @agent.nil? %>
-        - <%= @agent.slug %><% unless @intent.nil? %>/<%= @intent.intentname %><% end %>
+        - <%= @agent.slug %><% unless @interpretation.nil? %>/<%= @interpretation.interpretation_name %><% end %>
       <% end %>
       <% if controller_path == "profiles" %>
         - <%= t('views.profile.breadcrumb') %>

@@ -52,7 +52,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
       click_link "Cancel"
     end
 
-    # Edit an interpretation
+    # Edit an formulation
     assert has_link?("Interpretations")
     click_link "Interpretations"
     click_link "weather_forecast"
@@ -76,10 +76,10 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     click_button "Add"
 
     assert has_text?("Salut Marcel")
-    assert has_css?(".interpretation-resume", count: 2)
+    assert has_css?(".formulation-resume", count: 2)
     assert has_css?('span[title="admin/terminator/interpretations/terminator_find"]', count: 1)
 
-    # Return to interpretation list
+    # Return to formulation list
     click_link "Overview"
 
     # Delete dependency
@@ -91,7 +91,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     end
     assert has_no_text?("T-800 admin/terminator")
 
-    # Edit an interpretation
+    # Edit an formulation
     assert has_link?("Interpretations")
     click_link "Interpretations"
     click_link "weather_forecast"
@@ -101,7 +101,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     end
 
     assert has_text?("Salut Marcel")
-    assert has_css?(".interpretation-resume", count: 1)
+    assert has_css?(".formulation-resume", count: 1)
     assert has_no_css?('span[title="admin/terminator/interpretations/terminator_find"]')
   end
 

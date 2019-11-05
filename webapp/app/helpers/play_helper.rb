@@ -9,8 +9,8 @@ module PlayHelper
     colors = interpreter.result.slug_colors
 
     interpreter.text.each_char do |c|
-      start_highlight = interpretations.find { |interpretation| interpretation["start_position"] == pos }
-      stop_highlight  = interpretations.find { |interpretation| interpretation["end_position"] == pos }
+      start_highlight = interpretations.find { |formulation| formulation["start_position"] == pos }
+      stop_highlight  = interpretations.find { |formulation| formulation["end_position"] == pos }
       unless stop_highlight.nil?
         text_decorated << "</div>"
         closed_tag = closed_tag + 1
@@ -22,7 +22,7 @@ module PlayHelper
         text_decorated << "  <div x-arrow></div>"
         text_decorated << "  <div class='highlight-pop__content'>"
         if start_highlight["slug"].include? "/interpretations/"
-          if intent_has_unsuitable_list_pattern?(Intent.find(start_highlight["id"]))
+          if interpretation_has_unsuitable_list_pattern?(Interpretation.find(start_highlight["id"]))
             text_decorated << "  <p class='warning'>"
             text_decorated << "    <span class='icon icon--small icon--white'>#{icon_alert}</span>"
             text_decorated << "    #{t('views.play.warning.bad_list_pattern')}"
@@ -45,22 +45,21 @@ module PlayHelper
     text_decorated.html_safe
   end
 
-  def intent_has_unsuitable_list_pattern?(intent)
+  def interpretation_has_unsuitable_list_pattern?(interpretation)
     warning = false
-    intent =
-    if intent.interpretations.count == 1
-      first_interpretation = intent.interpretations.first
-      if first_interpretation.interpretation_aliases.count == 1
-        warning = first_interpretation.interpretation_aliases.first.is_list?
+    if interpretation.formulations.count == 1
+      first_formulation = interpretation.formulations.first
+      if first_formulation.formulation_aliases.count == 1
+        warning = first_formulation.formulation_aliases.first.is_list?
       end
     end
     warning
   end
 
   def agent_has_unsuitable_list_pattern?(agent)
-    if agent.intents.is_public.count == 1
-      intent = agent.intents.is_public.first
-      warning = intent_has_unsuitable_list_pattern?(intent)
+    if agent.interpretations.is_public.count == 1
+      interpretation = agent.interpretations.is_public.first
+      warning = interpretation_has_unsuitable_list_pattern?(interpretation)
     end
   end
 

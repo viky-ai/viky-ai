@@ -57,7 +57,7 @@ class Nlp::Package
       encoder.write_value('id', @agent.id)
       encoder.write_value('slug', @agent.slug)
       encoder.wrap_array('interpretations') do
-        write_intent(encoder)
+        write_interpretation(encoder)
         write_entities_list(encoder)
       end
     end
@@ -98,11 +98,11 @@ class Nlp::Package
       result
     end
 
-    def write_intent(encoder)
-      @agent.intents.order(position: :desc).each do |intent|
-        cache_key = ['pkg', VERSION, @agent.slug, 'intent'.freeze, intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
-        build_internals_list_nodes(intent, encoder, cache_key)
-        build_intent(intent, encoder, cache_key)
+    def write_interpretation(encoder)
+      @agent.interpretations.order(position: :desc).each do |interpretation|
+        cache_key = ['pkg', VERSION, @agent.slug, 'interpretation'.freeze, interpretation.id, (interpretation.updated_at.to_f * 1000).to_i].join('/')
+        build_internals_list_nodes(interpretation, encoder, cache_key)
+        build_interpretation(interpretation, encoder, cache_key)
       end
     end
 
@@ -112,81 +112,81 @@ class Nlp::Package
       end
     end
 
-    def build_internals_list_nodes(intent, encoder, cache_key)
+    def build_internals_list_nodes(interpretation, encoder, cache_key)
       cache_key = "#{cache_key}/build_internals_list_nodes"
       if @cache.exist? cache_key
-        interpretations = @cache.read cache_key
-        encoder.write_string interpretations
+        formulations = @cache.read cache_key
+        encoder.write_string formulations
       else
-        InterpretationAlias
-          .includes(:interpretation)
-          .where(is_list: true, interpretations: { intent_id: intent.id })
-          .order('interpretations.position DESC, interpretations.locale ASC')
+        FormulationAlias
+          .includes(:formulation)
+          .where(is_list: true, formulations: { interpretation_id: interpretation.id })
+          .order('formulations.position DESC, formulations.locale ASC')
           .order(:position_start).each do |ialias|
 
-          interpretation_hash = {}
-          interpretation_hash['id']   = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
-          interpretation_hash['slug'] = "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive"
-          interpretation_hash['scope'] = 'hidden'
+          formulation_hash = {}
+          formulation_hash['id']   = "#{ialias.formulation_aliasable.id}_#{ialias.id}_recursive"
+          formulation_hash['slug'] = "#{ialias.formulation_aliasable.slug}_#{ialias.id}_recursive"
+          formulation_hash['scope'] = 'hidden'
 
           expressions = []
 
           expression = {}
           expression['expression'] = "@{#{ialias.aliasname}}"
-          expression['pos'] = ialias.interpretation.position
+          expression['pos'] = ialias.formulation.position
           expression['aliases'] = []
           expression['aliases'] << build_internal_alias(ialias)
-          expression['keep-order'] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
-          expression['glue-distance'] = ialias.interpretation.proximity.get_distance
-          expression['glue-strength'] = 'punctuation'.freeze if ialias.interpretation.proximity_accepts_punctuations?
+          expression['keep-order'] = ialias.formulation.keep_order if ialias.formulation.keep_order
+          expression['glue-distance'] = ialias.formulation.proximity.get_distance
+          expression['glue-strength'] = 'punctuation'.freeze if ialias.formulation.proximity_accepts_punctuations?
           expressions << expression
 
           expression = {}
           expression['expression'] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
-          expression['pos'] = ialias.interpretation.position
+          expression['pos'] = ialias.formulation.position
           expression['aliases'] = []
           expression['aliases'] << build_internal_alias(ialias)
           expression['aliases'] << build_internal_alias(ialias, true)
-          expression['keep-order'] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
-          expression['glue-distance'] = ialias.interpretation.proximity.get_distance
-          expression['glue-strength'] = 'punctuation'.freeze if ialias.interpretation.proximity_accepts_punctuations?
+          expression['keep-order'] = ialias.formulation.keep_order if ialias.formulation.keep_order
+          expression['glue-distance'] = ialias.formulation.proximity.get_distance
+          expression['glue-strength'] = 'punctuation'.freeze if ialias.formulation.proximity_accepts_punctuations?
           expressions << expression
 
-          interpretation_hash[:expressions] = expressions
-          encoder.write_object(interpretation_hash, cache_key)
+          formulation_hash[:expressions] = expressions
+          encoder.write_object(formulation_hash, cache_key)
         end
         payload = encoder.withdraw_cache_payload(cache_key)
         @cache.write(cache_key, payload) if payload.present?
       end
     end
 
-    def build_intent(intent, encoder, cache_key)
+    def build_interpretation(interpretation, encoder, cache_key)
       cache_key = "#{cache_key}/build_node"
       encoder.wrap_object do
-        encoder.write_value('id', intent.id)
-        encoder.write_value('slug', intent.slug)
-        encoder.write_value('scope', intent.is_public? ? 'public' : 'private')
+        encoder.write_value('id', interpretation.id)
+        encoder.write_value('slug', interpretation.slug)
+        encoder.write_value('scope', interpretation.is_public? ? 'public' : 'private')
         encoder.wrap_array('expressions') do
           if @cache.exist? cache_key
             expressions = @cache.read cache_key
             encoder.write_string expressions
           else
-            intent.interpretations.order(position: :desc, locale: :asc).each do |interpretation|
+            interpretation.formulations.order(position: :desc, locale: :asc).each do |formulation|
               expression = {}
-              expression['expression']    = interpretation.expression_with_aliases
-              expression['pos']           = interpretation.position
-              aliases = build_aliases(interpretation)
+              expression['expression']    = formulation.expression_with_aliases
+              expression['pos']           = formulation.position
+              aliases = build_aliases(formulation)
               expression['aliases']       = aliases unless aliases.empty?
-              expression['locale']        = interpretation.locale unless interpretation.locale == Locales::ANY
-              expression['keep-order']    = interpretation.keep_order if interpretation.keep_order
-              expression['glue-distance'] = interpretation.proximity.get_distance
-              expression['glue-strength'] = 'punctuation'.freeze if interpretation.proximity_accepts_punctuations?
-              solution = build_interpretation_solution(interpretation)
+              expression['locale']        = formulation.locale unless formulation.locale == Locales::ANY
+              expression['keep-order']    = formulation.keep_order if formulation.keep_order
+              expression['glue-distance'] = formulation.proximity.get_distance
+              expression['glue-strength'] = 'punctuation'.freeze if formulation.proximity_accepts_punctuations?
+              solution = build_formulation_solution(formulation)
               expression['solution']      = solution unless solution.blank?
 
               encoder.write_object(expression, cache_key)
 
-              interpretation.interpretation_aliases
+              formulation.formulation_aliases
                 .where(any_enabled: true, is_list: false)
                 .order(position_start: :asc).each do |ialias|
                 any_node = build_any_node(ialias, expression)
@@ -270,22 +270,22 @@ class Nlp::Package
       if recursive
         {
           'alias': "#{ialias.aliasname}_recursive",
-          'slug': "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive",
-          'id': "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive",
+          'slug': "#{ialias.formulation_aliasable.slug}_#{ialias.id}_recursive",
+          'id': "#{ialias.formulation_aliasable.id}_#{ialias.id}_recursive",
           'package': @agent.id
         }
       else
         {
           'alias': ialias.aliasname,
-          'slug': ialias.interpretation_aliasable.slug,
-          'id': ialias.interpretation_aliasable.id,
+          'slug': ialias.formulation_aliasable.slug,
+          'id': ialias.formulation_aliasable.id,
           'package': @agent.id
         }
       end
     end
 
-    def build_aliases(interpretation)
-      interpretation.interpretation_aliases
+    def build_aliases(formulation)
+      formulation.formulation_aliases
         .order(:position_start)
         .collect { |ialias| build_alias(ialias) }
     end
@@ -301,21 +301,21 @@ class Nlp::Package
       else
         result['package'] = @agent.id
         if ialias.is_list
-          result['slug'] = "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive"
-          result['id'] = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
+          result['slug'] = "#{ialias.formulation_aliasable.slug}_#{ialias.id}_recursive"
+          result['id'] = "#{ialias.formulation_aliasable.id}_#{ialias.id}_recursive"
         else
-          result['slug'] = ialias.interpretation_aliasable.slug
-          result['id'] = ialias.interpretation_aliasable.id
+          result['slug'] = ialias.formulation_aliasable.slug
+          result['id'] = ialias.formulation_aliasable.id
         end
       end
       result
     end
 
-    def build_interpretation_solution(interpretation)
-      if interpretation.auto_solution_enabled and interpretation.interpretation_aliases.empty?
-        interpretation.expression
-      elsif interpretation.solution.present?
-        "`#{interpretation.solution}`"
+    def build_formulation_solution(formulation)
+      if formulation.auto_solution_enabled and formulation.formulation_aliases.empty?
+        formulation.expression
+      elsif formulation.solution.present?
+        "`#{formulation.solution}`"
       else
         ''
       end

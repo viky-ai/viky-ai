@@ -39,7 +39,7 @@ en:
         error_error_html:
           <span class='icon icon--x-small icon--alert'>%{icon}</span>
           Error while requesting NLP.
-        error_no_intent_html:
+        error_no_interpretation_html:
           <span class='icon icon--x-small icon--alert'>%{icon}</span>
           No interpretation found.
       send: Send

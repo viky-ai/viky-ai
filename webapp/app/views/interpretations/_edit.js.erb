@@ -1,5 +1,0 @@
-App.CardListHelper.updateItem("#interpretation-<%= @interpretation.id %>", "<%= escape_javascript(@form) %>");
-App.CardListHelper.updateDraggable();
-App.CodeEditor.buildJavaScriptEditor($("#solution__<%= @interpretation.id %>")[0]);
-
-$("body").trigger('interpretations:edit:complete');

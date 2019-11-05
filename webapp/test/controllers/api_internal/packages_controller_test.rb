@@ -26,14 +26,14 @@ class ApiInternalTest < ActionDispatch::IntegrationTest
 
     assert_equal '200', response.code
 
-    intent_question = intents(:weather_confirmed_question)
+    interpretation_question = interpretations(:weather_confirmed_question)
     entities_list_dates = entities_lists(:weather_confirmed_dates)
     expected = {
       "id"              => agent.id ,
       "slug"            => agent.slug,
       "interpretations" =>
-        [{ "id"          => intent_question.id,
-           "slug"        => intent_question.slug,
+        [{ "id"          => interpretation_question.id,
+           "slug"        => interpretation_question.slug,
            "scope"       => 'private',
            "expressions" => []
          },

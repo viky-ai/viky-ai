@@ -8,13 +8,13 @@ class DebugSolution
       id   = searchParams.get("debug[id]")
       line = parseInt(searchParams.get("debug[line]"), 10) - 1
 
-      if type == 'interpretations'
-        item = $("#interpretation-#{id}")
+      if type == 'formulations'
+        item = $("#formulation-#{id}")
         item.find('a')[0].click()
-        $("body").on 'interpretations:edit:complete interpretations:show-detailed:complete', =>
+        $("body").on 'formulations:edit:complete formulations:show-detailed:complete', =>
           @highlight(item, $("#solution__#{id}"), line)
-          $("body").off 'interpretations:edit:complete'
-          $("body").off 'interpretations:show-detailed:complete'
+          $("body").off 'formulations:edit:complete'
+          $("body").off 'formulations:show-detailed:complete'
 
       if type == 'entities'
         item = $("#entity-#{id}")

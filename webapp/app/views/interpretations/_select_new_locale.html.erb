@@ -1,0 +1,39 @@
+<div class="modal" style="display: none;">
+  <div class="modal__overlay" data-action='close-modal'></div>
+  <div class="modal__main">
+    <h5 class="modal__main__title">
+      <%= t('views.interpretations.add_locale.title') %>
+      <button class="modal__main__title__close" data-action='close-modal'>
+        <%= icon_close %>
+      </button>
+    </h5>
+    <% if available_locales.empty? %>
+      <div class="modal__main__content">
+        <p>
+          <%= t('views.interpretations.add_locale.empty_message') %>
+        </p>
+      </div>
+    <% else %>
+      <div class="modal__main__chooser">
+        <ul>
+          <% for possible_locale in available_locales %>
+            <% if possible_locale == Locales::ANY %>
+              <% name = t('locales.no_locale') %>
+            <% else %>
+              <% name = possible_locale + " <small>(" + t("locales.#{possible_locale}") + ")</small>" %>
+            <% end %>
+            <li>
+              <%= link_to(
+                name.html_safe,
+                user_agent_interpretation_add_locale_path(locale_to_add: possible_locale),
+                method: :post,
+                remote: true,
+                data: {action: 'close-modal'}
+              ) %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+</div>

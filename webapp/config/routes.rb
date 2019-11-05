@@ -89,7 +89,7 @@ Rails.application.routes.draw do
           get :confirm_destroy
         end
 
-        resources :intents, path: 'interpretations' do
+        resources :interpretations, path: 'interpretations' do
           member do
             post :move_to_agent
           end
@@ -102,9 +102,9 @@ Rails.application.routes.draw do
             post :update_positions
           end
 
-          resources :aliased_intents, only: :index
+          resources :aliased_interpretations, only: :index
 
-          resources :interpretations, only: [:show, :create, :edit, :update, :destroy] do
+          resources :formulations, only: [:show, :create, :edit, :update, :destroy] do
             member do
               get :show_detailed
               post :update_locale
@@ -127,7 +127,7 @@ Rails.application.routes.draw do
             post :update_positions
           end
 
-          resources :aliased_intents, only: :index
+          resources :aliased_interpretations, only: :index
 
           resources :entities, only: [:show, :create, :edit, :update, :destroy] do
             member do

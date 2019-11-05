@@ -22,15 +22,15 @@
     </span>
   </div>
   <div class="header__tools">
-    <% if @entities_list.aliased_intents.any? %>
-      <a href="<%= user_agent_entities_list_aliased_intents_path(@agent.owner, @agent, @entities_list) %>"
+    <% if @entities_list.aliased_interpretations.any? %>
+      <a href="<%= user_agent_entities_list_aliased_interpretations_path(@agent.owner, @agent, @entities_list) %>"
          class="btn btn--small"
-         title="<%= t('views.intents.index.used_by_title')  %>"
+         title="<%= t('views.interpretations.index.used_by_title')  %>"
          data-action="open-remote-modal">
-          <%= t('views.intents.index.used_by')  %>
+          <%= t('views.interpretations.index.used_by')  %>
       </a>
     <% else %>
-      <small><%= t('views.intents.index.not_used_by_title') %></small>
+      <small><%= t('views.interpretations.index.not_used_by_title') %></small>
     <% end %>
     <% if current_user.can?(:edit, @agent) %>
       <a href="<%= new_import_user_agent_entities_list_entities_path(@agent.owner, @agent, @entities_list) %>"

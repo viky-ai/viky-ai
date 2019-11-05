@@ -27,7 +27,7 @@ viky.ai (chatbot) -----------------> bot
    |                                  | -----------------------------> viky.ai (interpret)
    |                                  |                                   |
    |                                  | <-------------------------------- |
-   |                                  |            (an intent)
+   |                                  |            (an interpretation)
    |                                  |
    |                                  |   (request another service)
    |                                  | -----------------------------> external service

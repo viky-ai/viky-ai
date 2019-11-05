@@ -10,7 +10,7 @@ class AgentsSelectionController < ApplicationController
       @available_agents = @agent.available_successors(@search.options).order(name: :asc)
     else
       @available_agents = @agent.available_destinations(@search.options).order(name: :asc)
-      name = params[:from] == 'intents' ? Intent.find(params[:current_id]).intentname : EntitiesList.find(params[:current_id]).listname
+      name = params[:from] == 'interpretations' ? Interpretation.find(params[:current_id]).interpretation_name : EntitiesList.find(params[:current_id]).listname
     end
     render partial: 'select_available_agent', locals: {
       name: name,

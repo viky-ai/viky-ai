@@ -99,9 +99,8 @@ class InterpretRequestReporter
   end
 
   def count
-    @query["from"] = 0
-    @query["size"] = 0
-    proceed["hits"]["total"]["value"]
+    client = InterpretRequestLogClient.build_client
+    client.count_documents(@query)
   end
 
 

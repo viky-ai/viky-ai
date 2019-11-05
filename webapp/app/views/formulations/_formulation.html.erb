@@ -1,0 +1,31 @@
+<li id="formulation-<%= formulation.id %>"
+    data-id="<%= formulation.id %>"
+    data-update-locale-path="<%= update_locale_user_agent_interpretation_formulation_path(owner, agent, interpretation, formulation) %>">
+  <% dir = rtl?(formulation.locale) ? "rtl" : "ltr" %>
+  <% if can_edit %>
+    <div class="card-list__item__draggable"></div>
+    <% link = edit_user_agent_interpretation_formulation_path(owner, agent, interpretation, formulation) %>
+  <% else %>
+    <% if formulation.is_minimal %>
+      <% link = "#" %>
+    <% else %>
+      <% link = show_detailed_user_agent_interpretation_formulation_path(owner, agent, interpretation, formulation) %>
+    <% end %>
+  <% end %>
+
+  <% if link == "#" %>
+    <span class="formulations-list__show">
+      <span class="card-list__item__name" dir="<%= dir %>">
+        <%= display_expression(formulation) %>
+      </span>
+    </span>
+  <% else %>
+    <a href="<%= link %>"
+       class="formulations-list__show"
+       data-remote="true">
+      <span class="card-list__item__name" dir="<%= dir %>">
+        <%= display_expression(formulation) %>
+      </span>
+    </a>
+  <% end %>
+</li>

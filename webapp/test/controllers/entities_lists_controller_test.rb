@@ -152,7 +152,7 @@ class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
 
 
   #
-  # Move intent to an other agent
+  # Move interpretation to an other agent
   #
   test 'Allow to move an entities list' do
     sign_in users(:admin)

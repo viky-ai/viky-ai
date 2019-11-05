@@ -25,11 +25,11 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       body: {
         "interpretations" => [
           {
-            "id" => intents(:weather_forecast).id,
-            "slug" => intents(:weather_forecast).slug,
-            "package" => intents(:weather_forecast).agent.id,
+            "id" => interpretations(:weather_forecast).id,
+            "slug" => interpretations(:weather_forecast).slug,
+            "package" => interpretations(:weather_forecast).agent.id,
             "score" => "1.0",
-            "solution" => interpretations(:weather_forecast_tomorrow).solution
+            "solution" => formulations(:weather_forecast_tomorrow).solution
           }
         ]
       }
@@ -102,11 +102,11 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       body: {
         "interpretations" => [
           {
-            "id" => intents(:weather_forecast).id,
-            "slug" => intents(:weather_forecast).slug,
-            "package" => intents(:weather_forecast).agent.id,
+            "id" => interpretations(:weather_forecast).id,
+            "slug" => interpretations(:weather_forecast).slug,
+            "package" => interpretations(:weather_forecast).agent.id,
             "score" => "1.0",
-            "solution" => interpretations(:weather_forecast_tomorrow).solution
+            "solution" => formulations(:weather_forecast_tomorrow).solution
           }
         ]
       }
@@ -160,11 +160,11 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       body: {
         "interpretations" => [
           {
-            "id" => intents(:weather_forecast).id,
-            "slug" => intents(:weather_forecast).slug,
-            "package" => intents(:weather_forecast).agent.id,
+            "id" => interpretations(:weather_forecast).id,
+            "slug" => interpretations(:weather_forecast).slug,
+            "package" => interpretations(:weather_forecast).agent.id,
             "score" => "1.0",
-            "solution" => interpretations(:weather_forecast_tomorrow).solution
+            "solution" => formulations(:weather_forecast_tomorrow).solution
           }
         ]
       }
@@ -177,24 +177,24 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
   end
 
 
-  test "Can only add test for the first intent" do
+  test "Can only add test for the first interpretation" do
     isolate_actioncable_and_go_to_ui
 
     Nlp::Interpret.any_instance.stubs("send_nlp_request").returns(
       status: 200,
       body: {
         "interpretations" => [{
-          "id" => intents(:terminator_find).id,
-          "slug" => intents(:terminator_find).slug,
-          "package" => intents(:terminator_find).agent.id,
+          "id" => interpretations(:terminator_find).id,
+          "slug" => interpretations(:terminator_find).slug,
+          "package" => interpretations(:terminator_find).agent.id,
           "score" => "1.0",
-          "solution" => interpretations(:terminator_find_sarah).solution
+          "solution" => formulations(:terminator_find_sarah).solution
         }, {
-          "id" => intents(:weather_forecast).id,
-          "slug" => intents(:weather_forecast).slug,
-          "package" => intents(:weather_forecast).agent.id,
+          "id" => interpretations(:weather_forecast).id,
+          "slug" => interpretations(:weather_forecast).slug,
+          "package" => interpretations(:weather_forecast).agent.id,
           "score" => "1.0",
-          "solution" => interpretations(:weather_forecast_tomorrow).solution
+          "solution" => formulations(:weather_forecast_tomorrow).solution
         }]
       }
     )
@@ -203,24 +203,24 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       click_button "console-send-sentence"
       assert has_text? "2 interpretations found."
       assert has_button? "Add to tests suite"
-      assert has_css?(".c-intents button", count: 1)
-      assert has_css?(".c-intents > li:first-child button", count: 1)
+      assert has_css?(".c-interpretations button", count: 1)
+      assert has_css?(".c-interpretations > li:first-child button", count: 1)
     end
   end
 
 
-  test "Detect interpretation already tested" do
+  test "Detect formulation already tested" do
     isolate_actioncable_and_go_to_ui
 
     Nlp::Interpret.any_instance.stubs("send_nlp_request").returns(
       status: 200,
       body: {
         "interpretations" => [{
-          "id" => intents(:weather_forecast).id,
-          "slug" => intents(:weather_forecast).slug,
-          "package" => intents(:weather_forecast).agent.id,
+          "id" => interpretations(:weather_forecast).id,
+          "slug" => interpretations(:weather_forecast).slug,
+          "package" => interpretations(:weather_forecast).agent.id,
           "score" => "1.0",
-          "solution" => interpretations(:weather_forecast_tomorrow).solution
+          "solution" => formulations(:weather_forecast_tomorrow).solution
         }]
       }
     )
@@ -334,11 +334,11 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       status: 200,
       body: {
         "interpretations" => [{
-          "id" => intents(:weather_forecast).id,
-          "slug" => intents(:weather_forecast).slug,
-          "package" => intents(:weather_forecast).agent.id,
+          "id" => interpretations(:weather_forecast).id,
+          "slug" => interpretations(:weather_forecast).slug,
+          "package" => interpretations(:weather_forecast).agent.id,
           "score" => "1.0",
-          "solution" => interpretations(:weather_question_like).solution
+          "solution" => formulations(:weather_question_like).solution
         }]
       }
     )
@@ -382,11 +382,11 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
   test "Regression check fail when different slugs but same solutions" do
     @regression_weather_condition.got = {
-      "root_type" => "intent",
-      "package"   => intents(:weather_question).agent.id,
-      "id"        => intents(:weather_question).id,
-      "slug"      => intents(:weather_question).slug,
-      "solution"  => interpretations(:weather_question_like).solution.to_json.to_s
+      "root_type" => "interpretation",
+      "package"   => interpretations(:weather_question).agent.id,
+      "id"        => interpretations(:weather_question).id,
+      "slug"      => interpretations(:weather_question).slug,
+      "solution"  => formulations(:weather_question_like).solution.to_json.to_s
     }
     @regression_weather_condition.state = "failure"
     assert @regression_weather_condition.save

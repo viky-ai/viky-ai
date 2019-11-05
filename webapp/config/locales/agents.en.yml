@@ -4,7 +4,7 @@ en:
       breadcrumb:
         base: Agents
         overview: Overview
-        intents: Interpretations
+        interpretations: Interpretations
         entities_lists: Entities lists
         new_btn: New agent
       index:
@@ -110,7 +110,7 @@ en:
         sharing_overview: Sharing overview
         sections:
           overview: Overview
-          intents: Interpretations
+          interpretations: Interpretations
           entities_lists: Entities
           bots: Bots
       agents_selection:
