@@ -55,6 +55,7 @@ class AgentRegressionCheck < ApplicationRecord
   end
 
   def to_json
+    agent.regression_checks_clear_cache
     ApplicationController.render(
       template: 'agent_regression_checks/_regression_check',
       locals: { test: self, agent: self.agent, owner: self.agent.owner }

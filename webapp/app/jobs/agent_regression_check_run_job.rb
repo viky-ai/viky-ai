@@ -24,6 +24,7 @@ class AgentRegressionCheckRunJob < ApplicationJob
   private
 
     def notify(agent)
+      agent.regression_checks_clear_cache
       ActionCable.server.broadcast(
         "agent_console_channel_#{agent.id}",
         agent_id: agent.id,

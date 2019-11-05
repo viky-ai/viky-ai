@@ -263,10 +263,16 @@ class Agent < ApplicationRecord
   end
 
   def regression_checks_to_json
-    ApplicationController.render(
-      template: 'agent_regression_checks/index',
-      assigns: { agent: self }
-    )
+    Rails.cache.fetch(regression_checks_cache_key) do
+      ApplicationController.render(
+        template: 'agent_regression_checks/index',
+        assigns: { agent: self }
+      )
+    end
+  end
+
+  def regression_checks_clear_cache
+    Rails.cache.delete(regression_checks_cache_key)
   end
 
   def regression_checks_global_state
@@ -366,7 +372,12 @@ class Agent < ApplicationRecord
       end
     end
 
+    def regression_checks_cache_key
+      "regression_checks_#{self.id}"
+    end
+
     def notify_tests_suite_ui
+      regression_checks_clear_cache
       ActionCable.server.broadcast(
         "agent_console_channel_#{self.id}",
         agent_id: self.id,
