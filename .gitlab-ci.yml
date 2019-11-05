@@ -114,55 +114,42 @@ test_nlp:
         - "reports/TEST-*.xml"
 
 # Tag docker image to lasted
-tag_webapp:
+.tag_latest:
   extends: .kubernetes_runner
   stage: docker_tag
-  needs:
-    - "build_webapp"
-    - "test_webapp"
+  variables:
+    GIT_STRATEGY: none
   only:
     - master
     # TODO Mouadh HSOUMI must be removed before we merge to master
     - feature/21506_hebergement
-  variables:
-    GIT_STRATEGY: none
+
+tag_webapp:
+  extends: .tag_latest
+  needs:
+    - "build_webapp"
+    - "test_webapp"
   script:
     - docker_tag_latest ${DOCKER_IMAGE_APP}
     - docker_tag_latest ${DOCKER_IMAGE_APP}_test
 
 tag_nlp:
-  extends: .kubernetes_runner
-  stage: docker_tag
+  extends: .tag_latest
   needs:
     - "build_nlp"
     - "test_nlp"
-  only:
-    - master
-    # TODO Mouadh HSOUMI must be removed before we merge to master
-    - feature/21506_hebergement
-  variables:
-    GIT_STRATEGY: none
   script:
     - docker_tag_latest ${DOCKER_IMAGE_NLP}
 
 tag_backup:
-  extends: .kubernetes_runner
-  stage: docker_tag
+  extends: .tag_latest
   needs:
     - "build_backup"
-  only:
-    - master
-    # TODO Mouadh HSOUMI must be removed before we merge to master
-    - feature/21506_hebergement
-  variables:
-    GIT_STRATEGY: none
   script:
     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_BACKUP}
 
 # Push Docker image to Dockerhub only when on Master and it's a Tag
 push_dockerhub:
-  variables:
-    VIKY_DOCKER_TAG: latest
   extends: .kubernetes_runner
   stage: push_dockerhub
   needs:
@@ -175,6 +162,7 @@ push_dockerhub:
     # TODO Mouadh HSOUMI must be removed before we merge to master
     - feature/21506_hebergement
   script:
+    - export VIKY_DOCKER_TAG=latest
     - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_NLP}:${VIKY_DOCKER_TAG}" "${DOCKERHUB_IMAGE_NLP}"
     - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_APP}:${VIKY_DOCKER_TAG}" "${DOCKERHUB_IMAGE_APP}"
     - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_TOOLS_BACKUP}:${VIKY_DOCKER_TAG}" "${DOCKERHUB_IMAGE_TOOLS_BACKUP}"
@@ -189,6 +177,8 @@ push_dockerhub:
   except:
     - master
     - tags
+    # TODO Mouadh HSOUMI must be removed before we merge to master
+    - feature/21506_hebergement
   environment:
     name: dev-${CI_COMMIT_REF_NAME}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
