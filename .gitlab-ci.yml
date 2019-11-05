@@ -139,9 +139,7 @@ push_dockerhub:
   extends: .kubernetes_runner
   stage: push_dockerhub
   needs:
-    - "tag_webapp"
-    - "tag_nlp"
-    - "tag_backup"
+    - "tag_latest"
   only:
     - tags
     - master
