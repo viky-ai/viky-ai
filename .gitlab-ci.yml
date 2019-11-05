@@ -114,7 +114,7 @@ test_nlp:
         - "reports/TEST-*.xml"
 
 # Tag docker image to lasted
-.tag_latest:
+tag_latest:
   extends: .kubernetes_runner
   stage: docker_tag
   variables:
@@ -123,29 +123,15 @@ test_nlp:
     - master
     # TODO Mouadh HSOUMI must be removed before we merge to master
     - feature/21506_hebergement
-
-tag_webapp:
-  extends: .tag_latest
-  needs:
-    - "build_webapp"
-    - "test_webapp"
-  script:
-    - docker_tag_latest ${DOCKER_IMAGE_APP}
-    - docker_tag_latest ${DOCKER_IMAGE_APP}_test
-
-tag_nlp:
-  extends: .tag_latest
-  needs:
-    - "build_nlp"
-    - "test_nlp"
-  script:
-    - docker_tag_latest ${DOCKER_IMAGE_NLP}
-
-tag_backup:
-  extends: .tag_latest
   needs:
     - "build_backup"
+    - "build_webapp"
+    - "build_nlp"
+    - "test_webapp"
+    - "test_nlp"
   script:
+    - docker_tag_latest ${DOCKER_IMAGE_APP}
+    - docker_tag_latest ${DOCKER_IMAGE_NLP}
     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_BACKUP}
 
 # Push Docker image to Dockerhub only when on Master and it's a Tag
@@ -163,9 +149,9 @@ push_dockerhub:
     - feature/21506_hebergement
   script:
     - export VIKY_DOCKER_TAG=latest
-    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_NLP}:${VIKY_DOCKER_TAG}" "${DOCKERHUB_IMAGE_NLP}"
-    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_APP}:${VIKY_DOCKER_TAG}" "${DOCKERHUB_IMAGE_APP}"
-    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_TOOLS_BACKUP}:${VIKY_DOCKER_TAG}" "${DOCKERHUB_IMAGE_TOOLS_BACKUP}"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_NLP}:latest"          "${DOCKERHUB_IMAGE_NLP}"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_APP}:latest"          "${DOCKERHUB_IMAGE_APP}"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_TOOLS_BACKUP}:latest" "${DOCKERHUB_IMAGE_TOOLS_BACKUP}"
 
 # Deploy generic job
 
