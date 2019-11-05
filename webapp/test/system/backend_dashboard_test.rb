@@ -36,7 +36,7 @@ class BackendDashboardTest < ApplicationSystemTestCase
     assert has_text?("7\nUsers")
     assert has_text?("One administrator")
 
-    assert has_text?("Agents with most interpretations")
+    assert has_text?("Agents with most formulations")
     assert has_text?("Agents with most entities")
     assert has_text?("Agents most used as dependency")
     assert has_text?("Agents with most tests in failure")
