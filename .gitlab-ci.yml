@@ -2,7 +2,6 @@ stages:
   - build
   - test
   - docker_tag
-  - push_dockerhub
   - deploy
   - admin
 
@@ -123,12 +122,6 @@ tag_latest:
     - master
     # TODO Mouadh HSOUMI must be removed before we merge to master
     - feature/21506_hebergement
-  needs:
-    - "build_backup"
-    - "build_webapp"
-    - "build_nlp"
-    - "test_webapp"
-    - "test_nlp"
   script:
     - docker_tag_latest ${DOCKER_IMAGE_APP}
     - docker_tag_latest ${DOCKER_IMAGE_NLP}
@@ -137,19 +130,18 @@ tag_latest:
 # Push Docker image to Dockerhub only when on Master and it's a Tag
 push_dockerhub:
   extends: .kubernetes_runner
-  stage: push_dockerhub
-  needs:
-    - "tag_latest"
+  stage: docker_tag
   only:
     - tags
     - master
     # TODO Mouadh HSOUMI must be removed before we merge to master
     - feature/21506_hebergement
+  environment:
+    name: viky-ai-production
   script:
-    - export VIKY_DOCKER_TAG=latest
-    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_NLP}:latest"          "${DOCKERHUB_IMAGE_NLP}"
-    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_APP}:latest"          "${DOCKERHUB_IMAGE_APP}"
-    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_TOOLS_BACKUP}:latest" "${DOCKERHUB_IMAGE_TOOLS_BACKUP}"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_NLP}:${CI_COMMIT_REF_NAME}"          "${DOCKERHUB_IMAGE_NLP}:latest"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_APP}:${CI_COMMIT_REF_NAME}"          "${DOCKERHUB_IMAGE_APP}:latest"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_TOOLS_BACKUP}:${CI_COMMIT_REF_NAME}" "${DOCKERHUB_IMAGE_TOOLS_BACKUP}:latest"
 
 # Deploy generic job
 
