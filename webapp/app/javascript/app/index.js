@@ -57,8 +57,8 @@ import './console/console_footer.coffee';
 import './console/console_test_suite.coffee';
 import './console/debug_solution.coffee';
 
-import './intents/main.scss';
-import './intents/intent_form.coffee';
+import './interpretations/main.scss';
+import './interpretations/interpretation_form.coffee';
 
 import './entities_lists/main.scss';
 import './entities_lists/entities_list_form.coffee';
@@ -66,12 +66,12 @@ import './entities_lists/entities_import_form.coffee';
 
 window.App.EntitiesImport = require('./entities_lists/entities_import');
 
-import './interpretations/main.scss';
-import './interpretations/interpretation_form.coffee';
+import './formulations/main.scss';
+import './formulations/formulation_form.coffee';
 
 import './entities/main.scss';
 
-import './aliased_intents/main.scss';
+import './aliased_interpretations/main.scss';
 
 import './readme/form.coffee';
 
@@ -80,5 +80,5 @@ import './backend/users/main.scss';
 import './dashboard/main.scss';
 import './dashboard/dashboard.coffee';
 
-window.App.InterpretationsList = require('./interpretations/interpretations_list');
+window.App.FormulationsList = require('./formulations/formulations_list');
 window.App.EntityForm = require('./entities/entity_form');

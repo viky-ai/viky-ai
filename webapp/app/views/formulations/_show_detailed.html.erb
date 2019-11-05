@@ -1,0 +1,89 @@
+<div class='formulations-show'>
+
+  <div class="formulations-show__close">
+    <%= link_to icon_close.html_safe,
+                user_agent_interpretation_formulation_path(
+                    formulation.interpretation.agent.owner,
+                    formulation.interpretation.agent,
+                    formulation.interpretation,
+                    formulation
+                ),
+                remote: true,
+                class: 'close' %>
+  </div>
+
+  <div class="field formulations-show__formulation">
+    <div class="control">
+      <%= display_expression(formulation) %>
+    </div>
+  </div>
+
+  <div class="aliases <% if rtl?(formulation.locale) %>aliases--rtl<% end %> formulations-show__summary">
+    <% if formulation.formulation_aliases.any? %>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter name</th>
+            <th>Interpretation</th>
+            <th>Options</th>
+            <th>Selection</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% formulation.formulation_aliases.order(position_start: :asc).each do |ia| %>
+          <% json_alias = JSON.parse(alias_to_json(ia)) %>
+          <tr>
+            <td>
+              <%= json_alias['aliasname'] %>
+            </td>
+            <td>
+              <% if ['type_interpretation', 'type_entities_list'].include? json_alias['nature'] %>
+                <% slug = "#{json_alias['slug'].split('/').first}/#{json_alias['slug'].split('/').second}/" %>
+                <span class='<%= json_alias['color'] %>'>
+                  <% if json_alias['url'].blank? %>
+                    <small><%= slug %></small><%= json_alias['slug'].split('/').last %>
+                  <% else %>
+                    <a href='<%= json_alias['url'] %>'>
+                      <small><%= slug %></small><%= json_alias['slug'].split('/').last %>
+                    </a>
+                  <% end %>
+                </span>
+              <% elsif json_alias['nature'] == 'type_number' %>
+                <span class='<%= json_alias['color'] %>'>
+                  <%= json_alias['slug'] %>
+                </span>
+              <% elsif json_alias['nature'] == 'type_regex' %>
+                <span class='<%= json_alias['color'] %>'>
+                  <%= json_alias['slug'] %>
+                  <code title="<%= json_alias['reg_exp'] %>"><%= truncate(json_alias['reg_exp'], length: 80) %></code>
+                </span>
+              <% end %>
+            </td>
+            <td class='options'>
+              <label>
+                <% if json_alias['is_list'] %>List<% end %>
+                <% if json_alias['any_enabled'] %>Any<% end %>
+              </label>
+            </td>
+            <td>
+              <%= ia.formulation.expression[ia.position_start..ia.position_end-1] %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+
+  <% unless formulation.auto_solution_enabled %>
+    <div class="field field--for-solution formulations-show__solution">
+      <div class="control">
+        <span class="solution-label">
+          <%= t('views.formulations.solution_label_readonly') %>
+        </span>
+        <% %>
+        <%= text_area_tag("solution__#{formulation.id}", formulation.solution, readonly: true) %>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,23 @@
+weather_forecast_tomorrow_question:
+  aliasname: question
+  position_start: 0
+  position_end: 21
+  formulation: weather_forecast_tomorrow
+  formulation_aliasable: weather_question(Interpretation)
+  nature: <%= FormulationAlias.natures[:type_interpretation] %>
+
+weather_forecast_tomorrow_when:
+  aliasname: when
+  position_start: 22
+  position_end: 30
+  formulation: weather_forecast_tomorrow
+  formulation_aliasable: weather_dates(EntitiesList)
+  nature: <%= FormulationAlias.natures[:type_entities_list] %>
+
+terminator_find_where:
+  aliasname: find
+  position_start: 0
+  position_end: 4
+  formulation: terminator_where
+  formulation_aliasable: simple_where(Interpretation)
+  nature: <%= FormulationAlias.natures[:type_interpretation] %>

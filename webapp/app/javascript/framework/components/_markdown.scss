@@ -7,6 +7,9 @@
     border-radius: 2px;
     font-family: $family-monospace;
   }
+  pre code{
+    padding: 0;
+  }
 
   pre{
     background-color: $light-grey-200;

@@ -25,7 +25,7 @@ class BackendDashboardTest < ApplicationSystemTestCase
     assert has_text?("4\nAgents")
     assert has_text?("One public agent")
     assert has_text?("6\nInterpretations")
-    assert has_text?("5 intents")
+    assert has_text?("5 interpretations")
     assert has_text?("8\nEntities")
     assert has_text?("5 entities lists")
     assert has_text?("0\nTest")
@@ -36,7 +36,7 @@ class BackendDashboardTest < ApplicationSystemTestCase
     assert has_text?("7\nUsers")
     assert has_text?("One administrator")
 
-    assert has_text?("Agents with most interpretations")
+    assert has_text?("Agents with most formulations")
     assert has_text?("Agents with most entities")
     assert has_text?("Agents most used as dependency")
     assert has_text?("Agents with most tests in failure")

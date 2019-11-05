@@ -126,12 +126,12 @@ class User < ApplicationRecord
     EntitiesList.joins(:agent).where('agents.owner_id = ?', id).sum(:entities_count)
   end
 
-  def interpretations_count
-    Interpretation.joins(intent: :agent).where('agents.owner_id = ?', id).count
+  def formulations_count
+    Formulation.joins(interpretation: :agent).where('agents.owner_id = ?', id).count
   end
 
   def expressions_count
-    entities_count + interpretations_count
+    entities_count + formulations_count
   end
 
   def agents_by_expressions_count
@@ -153,12 +153,12 @@ class User < ApplicationRecord
       JOIN
       (
         SELECT
-          agents.id as agent_id, COUNT(interpretations.id) as total
+          agents.id as agent_id, COUNT(formulations.id) as total
         FROM agents
-        LEFT OUTER JOIN intents
-        ON intents.agent_id = agents.id
         LEFT OUTER JOIN interpretations
-        ON interpretations.intent_id = intents.id
+        ON interpretations.agent_id = agents.id
+        LEFT OUTER JOIN formulations
+        ON formulations.interpretation_id = interpretations.id
         GROUP BY agents.id
       ) AS i
     ON e.agent_id = i.agent_id
@@ -189,12 +189,12 @@ class User < ApplicationRecord
         JOIN
         (
           SELECT
-            agents.owner_id as id, COUNT(interpretations.id) as total
+            agents.owner_id as id, COUNT(formulations.id) as total
           FROM agents
-          LEFT OUTER JOIN intents
-          ON intents.agent_id = agents.id
           LEFT OUTER JOIN interpretations
-          ON interpretations.intent_id = intents.id
+          ON interpretations.agent_id = agents.id
+          LEFT OUTER JOIN formulations
+          ON formulations.interpretation_id = interpretations.id
           GROUP BY agents.owner_id
         ) AS i
         ON e.id = i.id

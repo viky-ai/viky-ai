@@ -127,7 +127,7 @@ class PlayTest < ApplicationSystemTestCase
       body: {
         "interpretations" => [
           {
-            "id" => intents(:weather_forecast).id,
+            "id" => interpretations(:weather_forecast).id,
             "slug" => "admin/weather/weather_forecast",
             "name" => "weather_forecast",
             "score" => 1.0,

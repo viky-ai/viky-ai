@@ -204,7 +204,7 @@ class AgentsShowTest < ApplicationSystemTestCase
 
     assert has_link?("What the weather like tomorrow ?")
 
-    within("#interpretations-list") do
+    within("#formulations-list") do
       click_link "What the weather like tomorrow ?"
       assert has_text?("admin/weather-copy/interpretations/weather_question")
       assert has_link?("admin/weather-copy/interpretations/weather_question")

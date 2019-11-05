@@ -9,7 +9,7 @@ two:
 
 three:
   slug: weather_forecast
-  sluggable: weather_forecast (Intent)
+  sluggable: weather_forecast (Interpretation)
 
 four:
   slug: weather_conditions

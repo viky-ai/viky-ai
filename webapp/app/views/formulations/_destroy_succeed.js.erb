@@ -1,0 +1,8 @@
+App.CardListHelper.removeFromList("#formulation-<%= @formulation.id %>")
+
+setTimeout(function(){
+  App.CardListHelper.updateBlankslates();
+  App.CardListHelper.updateDraggable();
+}, 200);
+
+App.FormulationsList.decrementTabBadge();

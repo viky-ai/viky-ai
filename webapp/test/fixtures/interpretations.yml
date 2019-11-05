@@ -1,45 +1,36 @@
-weather_forecast_tomorrow:
-  expression: What the weather like tomorrow ?
-  intent: weather_forecast
-  locale: 'en'
-  keep_order: true
-  proximity: 'glued'
-  auto_solution_enabled: false
-  solution: 'forecast.tomorrow'
-  position: 0
-
-weather_forecast_demain:
-  expression: Quel temps fera-t-il demain ?
-  intent: weather_forecast
-  locale: 'fr'
-  auto_solution_enabled: true
+weather_forecast:
+  interpretation_name: weather_forecast
+  description: Ask futur weather
+  agent: weather
+  color: red
   position: 1
 
-weather_question_like:
-  expression: What the weather like
-  intent: weather_question
-  locale: 'en'
-  auto_solution_enabled: true
+weather_question:
+  interpretation_name: weather_question
+  description:
+  agent: weather
+  color: blue
   position: 0
 
-terminator_find_sarah:
-  expression: Where is Sarah Connor ?
-  intent: terminator_find
-  locale: 'en'
-  auto_solution_enabled: true
+terminator_find:
+  interpretation_name: terminator_find
+  description: Find Sarah Connor
+  agent: terminator
+  color: green
   position: 0
 
-terminator_where:
-  expression: Find Sarah Connor
-  intent: terminator_find
-  locale: 'en'
-  auto_solution_enabled: true
+weather_confirmed_question:
+  interpretation_name: weather_question
+  description: Another weather question
+  agent: weather_confirmed
+  color: black
+  position: 0
+  visibility: 1
+
+simple_where:
+  interpretation_name: simple_where
+  description: Simple where expressions
+  agent: terminator
+  color: red
   position: 1
-
-terminator_simple_where_1:
-  expression: Find
-  intent: simple_where
-  locale: 'en'
-  auto_solution_enabled: true
-  position: 2
-
+  visibility: 1

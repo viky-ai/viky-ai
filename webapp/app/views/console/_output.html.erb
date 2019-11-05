@@ -4,7 +4,7 @@
     <% if json['interpretations'].empty? %>
       <p>
         <span class="badge badge--success"><%= status %></span>
-        <%= t('views.console.no_intent_found') %>
+        <%= t('views.console.no_interpretation_found') %>
       </p>
     <% else %>
       <p>
@@ -14,39 +14,39 @@
             <%= t('views.console.warnings', count: json['warnings'].count) %>
           </span>
         <% end %>
-        <%= t('views.console.intent_found', count: json['interpretations'].count) %>
+        <%= t('views.console.interpretation_found', count: json['interpretations'].count) %>
       </p>
-      <ul class="c-intents">
+      <ul class="c-interpretations">
         <% json['interpretations'].each_with_index do |aliasable, interpretation_index| %>
-          <li id="<%= aliasable["id"] %>" class="c-intent">
-            <div class="c-intent__header">
-              <a href="/agents/<%= aliasable["slug"] %>" class="intent__header__name"><%= aliasable["name"] %></a>
+          <li id="<%= aliasable["id"] %>" class="c-interpretation">
+            <div class="c-interpretation__header">
+              <a href="/agents/<%= aliasable["slug"] %>" class="interpretation__header__name"><%= aliasable["name"] %></a>
               <% if aliasable['scope'] == 'public' %>
                 <span class="badge badge--success badge--small">
-                  <%= t('activerecord.attributes.intent.visibility_is_public').upcase %>
+                  <%= t('activerecord.attributes.interpretation.visibility_is_public').upcase %>
                 </span>
               <% end %>
               <% if aliasable['scope'] == 'private' %>
                 <span class="badge badge--warning badge--small">
-                  <%= t('activerecord.attributes.intent.visibility_is_private').upcase %>
+                  <%= t('activerecord.attributes.interpretation.visibility_is_private').upcase %>
                 </span>
               <% end %>
-              <span class="c-intent__header__slug">
+              <span class="c-interpretation__header__slug">
                 (<%= "#{aliasable["slug"].split('/').first}/#{aliasable["slug"].split('/').second}" %>)
               </span>
-              <span class="c-intent__header__score">
+              <span class="c-interpretation__header__score">
                 <span class="badge badge--grey badge--small badge--outline"><%= aliasable["score"] %></span>
               </span>
             </div>
             <ul>
               <% unless aliasable["explanation"].nil? %>
                 <li>
-                  <div class="c-intent__label"><%= t('views.console.scores') %></div>
-                  <pre class="c-intent__scores"><%= aliasable["explanation"]["scores"] %></pre>
+                  <div class="c-interpretation__label"><%= t('views.console.scores') %></div>
+                  <pre class="c-interpretation__scores"><%= aliasable["explanation"]["scores"] %></pre>
                 </li>
                 <li>
-                  <div class="c-intent__label"><%= t('views.console.highlight') %></div>
-                  <div class="c-intent__highlight">
+                  <div class="c-interpretation__label"><%= t('views.console.highlight') %></div>
+                  <div class="c-interpretation__highlight">
                     <%= highlight(aliasable["explanation"]["highlight"]["words"], interpretation_index) %>
                     <% aliasable["explanation"]["highlight"]["words"].each_with_index do |word, word_index| %>
                       <% unless word["match"].nil? %>
@@ -65,20 +65,20 @@
               <% end %>
               <% unless aliasable["solution"].nil? %>
                 <li>
-                  <div class="c-intent__label"><%= t('views.console.solution') %></div>
+                  <div class="c-interpretation__label"><%= t('views.console.solution') %></div>
                     <pre><code class='language-javascript'><%= JSON.pretty_generate(aliasable["solution"]) %></code></pre>
                 </li>
               <% end %>
             </ul>
             <% if interpretation_index.zero? %>
-              <div class="c-intent__footer" id="console-intent-footer">
-                <div class="c-intent__footer__status">
+              <div class="c-interpretation__footer" id="console-interpretation-footer">
+                <div class="c-interpretation__footer__status">
                   <template v-if="exists">
                     <span :class="'ts-status ts-status--' + test.state"></span>
                     {{ test.state_i18n }}
                   </template>
                 </div>
-                <div class="c-intent__footer__action">
+                <div class="c-interpretation__footer__action">
                   <% if current_user.can?(:edit, agent) %>
                     <% result = AgentRegressionCheck::prepare_result(aliasable) %>
                     <button class="btn btn--small btn--primary"
@@ -91,7 +91,7 @@
                       v-on:click="updateTest('<%= escape_javascript(result.to_json) %>')">
                       <%= t('views.console.regression_check.update') %>
                     </button>
-                    <div v-if="tooLong" class="c-intent__footer__action__note">
+                    <div v-if="tooLong" class="c-interpretation__footer__action__note">
                       <span class="icon icon--x-small icon--orange"><%= icon_alert %></span>
                       <%= t('views.console.regression_check.sentence_too_long') %>
                     </div>

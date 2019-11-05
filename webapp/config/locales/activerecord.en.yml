@@ -34,8 +34,8 @@ en:
       agent:
         one: Agent
         other: Agents
-      intent: Intent
-      interpretation: Interpretation
+      interpretation: interpretation
+      formulation: Formulation
       entity:
         zero: entity
         one: entity
@@ -59,8 +59,8 @@ en:
         visibility_is_private: Private
         visibility_is_public: Public
         locales: Languages
-      intent:
-        intentname: ID
+      interpretation:
+        interpretation_name: ID
         description: Description
         visibility: Visibility
         visibility_is_private: Private
@@ -72,14 +72,14 @@ en:
         visibility_is_private: Private
         visibility_is_public: Public
         proximity: Entities proximity
-      interpretation:
+      formulation:
         expression: Expression
         keep_order: Keep order
         auto_solution_enabled: Auto solution
         solution: Solution
         proximity: Proximity
         base: ""
-      interpretation_alias:
+      formulation_alias:
         base: ""
         aliasname: Parameter name
         reg_exp: Regular expression
@@ -112,13 +112,13 @@ en:
         collaborators_presence: You must remove all collaborators before delete an agent
     agent_arc:
       cycle_detected: detected, agent addition would cause a cycle in dependency graph
-    intents:
+    interpretations:
       unknown_locale: "unknown '%{current_locale}'"
       move_to_unknown_agent: "does not exist anymore"
       move_to_agent_without_enough_quota: "owner does not have enough quota to accept this move"
-    interpretation:
+    formulation:
       invalid_json: "invalid json"
-      interpretation_aliases_overlap: position overlap
+      formulation_aliases_overlap: position overlap
       only_one_any: Only one annotation with "Any" option is permitted.
       one_alias_one_any: '"Any" option is not permitted with only one annotation.'
       only_one_list: Only one annotation with "List" option is permitted.
@@ -143,7 +143,7 @@ en:
       missing_column: "Missing column"
       missing_header: "Missing or malformed header (\"Terms,Auto solution,Solution,Case sensitive,Accent sensitive\" is expected)"
       quota_exceeded: "Quota exceeded (maximum is %{maximum} formulations and entities), you will reach %{final} entries"
-    interpretation_alias:
+    formulation_alias:
       end_position_lower_than_start: "must be greater than position start"
       overlap: overlap
       aliasname_uniqueness: "has already been taken"

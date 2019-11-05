@@ -55,6 +55,7 @@ class AgentRegressionCheck < ApplicationRecord
   end
 
   def to_json
+    agent.regression_checks_clear_cache
     ApplicationController.render(
       template: 'agent_regression_checks/_regression_check',
       locals: { test: self, agent: self.agent, owner: self.agent.owner }
@@ -66,8 +67,8 @@ class AgentRegressionCheck < ApplicationRecord
       type = 'entities_list'
       interpret_root = EntitiesList.find_by_id(interpretation['id'])
     else
-      type = 'intent'
-      interpret_root = Intent.find_by_id(interpretation['id'])
+      type = 'interpretation'
+      interpret_root = Interpretation.find_by_id(interpretation['id'])
     end
 
     if interpret_root.nil?
@@ -113,6 +114,6 @@ class AgentRegressionCheck < ApplicationRecord
     end
 
     def typed_interpret(type)
-      type == 'entities_list' ? EntitiesList : Intent
+      type == 'entities_list' ? EntitiesList : Interpretation
     end
 end

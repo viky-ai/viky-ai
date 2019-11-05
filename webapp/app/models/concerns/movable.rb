@@ -10,8 +10,8 @@ module Movable
     end
 
     if Feature.quota_enabled? && agent_destination.owner.quota_enabled
-      if aliasable_name == "intents"
-        expressions_count_addition = self.interpretations.count
+      if aliasable_name == "interpretations"
+        expressions_count_addition = self.formulations.count
       end
       if aliasable_name == "entities_lists"
         expressions_count_addition = self.entities_count
@@ -26,8 +26,8 @@ module Movable
     end
 
     self.agent = agent_destination
-    interpretation_aliasable = agent_destination.send(aliasable_name)
-    self.position = interpretation_aliasable.present? ? interpretation_aliasable.maximum(:position) + 1 : 0
+    formulation_aliasable = agent_destination.send(aliasable_name)
+    self.position = formulation_aliasable.present? ? formulation_aliasable.maximum(:position) + 1 : 0
     save
   end
 end

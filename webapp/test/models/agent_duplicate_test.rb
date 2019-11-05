@@ -86,8 +86,8 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     assert_equal agent.entities_lists.first.listname, new_agent.entities_lists.first.listname
     assert_not_equal agent.entities_lists.first.id, new_agent.entities_lists.first.id
 
-    assert_equal agent.intents.first.intentname, new_agent.intents.first.intentname
-    assert_not_equal agent.intents.first.id, new_agent.intents.first.id
+    assert_equal agent.interpretations.first.interpretation_name, new_agent.interpretations.first.interpretation_name
+    assert_not_equal agent.interpretations.first.id, new_agent.interpretations.first.id
 
     assert_not_equal agent.out_arcs.first.source.id, new_agent.out_arcs.first.source.id
     assert_equal agent.out_arcs.first.target.id, new_agent.out_arcs.first.target.id
@@ -98,18 +98,18 @@ class AgentDuplicateTest < ActiveSupport::TestCase
 
   test 'Duplicate agent deeps relations' do
     agent = agents(:weather)
-    assert InterpretationAlias.create(
+    assert FormulationAlias.create(
       position_start: 31,
       position_end: 32,
       aliasname: 'number',
-      interpretation: interpretations(:weather_forecast_tomorrow),
+      formulation: formulations(:weather_forecast_tomorrow),
       nature: 'type_number'
     )
-    assert InterpretationAlias.create(
+    assert FormulationAlias.create(
       position_start: 35,
       position_end: 40,
       aliasname: 'regex',
-      interpretation: interpretations(:weather_forecast_tomorrow),
+      formulation: formulations(:weather_forecast_tomorrow),
       nature: 'type_regex',
       reg_exp: 'A'
     )
@@ -135,8 +135,8 @@ class AgentDuplicateTest < ActiveSupport::TestCase
 
       end
 
-      assert_equal elist_agent.interpretation_aliases.size, elist_new_agent.interpretation_aliases.size
-      aliases = elist_agent.interpretation_aliases.zip(elist_new_agent.interpretation_aliases)
+      assert_equal elist_agent.formulation_aliases.size, elist_new_agent.formulation_aliases.size
+      aliases = elist_agent.formulation_aliases.zip(elist_new_agent.formulation_aliases)
       aliases.each do |alias_agent, alias_new_agent|
         assert_equal alias_agent.aliasname, alias_new_agent.aliasname
         assert_equal alias_agent.position_start, alias_new_agent.position_start
@@ -145,22 +145,22 @@ class AgentDuplicateTest < ActiveSupport::TestCase
         assert_equal alias_agent.is_list, alias_new_agent.is_list
         assert_equal alias_agent.any_enabled, alias_new_agent.any_enabled
         assert_not_equal alias_agent.id, alias_new_agent.id
-        assert_not_equal alias_agent.interpretation.id, alias_new_agent.interpretation.id
-        assert_not_equal alias_agent.interpretation_aliasable.id, alias_new_agent.interpretation_aliasable.id
+        assert_not_equal alias_agent.formulation.id, alias_new_agent.formulation.id
+        assert_not_equal alias_agent.formulation_aliasable.id, alias_new_agent.formulation_aliasable.id
       end
     end
 
 
-    assert_equal agent.intents.size, new_agent.intents.size
-    intents = agent.intents.zip(new_agent.intents)
-    intents.each do |intent_agent, intent_new_agent|
-      assert_equal intent_agent.intentname, intent_new_agent.intentname
-      assert_equal intent_agent.visibility, intent_new_agent.visibility
-      assert_not_equal intent_agent.id, intent_new_agent.id
+    assert_equal agent.interpretations.size, new_agent.interpretations.size
+    interpretations = agent.interpretations.zip(new_agent.interpretations)
+    interpretations.each do |interpretation_agent, interpretation_new_agent|
+      assert_equal interpretation_agent.interpretation_name, interpretation_new_agent.interpretation_name
+      assert_equal interpretation_agent.visibility, interpretation_new_agent.visibility
+      assert_not_equal interpretation_agent.id, interpretation_new_agent.id
 
-      assert_equal intent_agent.interpretations.size, intent_new_agent.interpretations.size
-      interpretations = intent_agent.interpretations.zip(intent_new_agent.interpretations)
-      interpretations.each do |inter_agent, inter_new_agent|
+      assert_equal interpretation_agent.formulations.size, interpretation_new_agent.formulations.size
+      formulations = interpretation_agent.formulations.zip(interpretation_new_agent.formulations)
+      formulations.each do |inter_agent, inter_new_agent|
         assert_equal inter_agent.expression, inter_new_agent.expression
         assert_equal inter_agent.locale, inter_new_agent.locale
         assert_equal inter_agent.keep_order, inter_new_agent.keep_order
@@ -168,10 +168,10 @@ class AgentDuplicateTest < ActiveSupport::TestCase
         assert_equal inter_agent.auto_solution_enabled, inter_new_agent.auto_solution_enabled
         assert inter_agent.solution == inter_new_agent.solution
         assert_not_equal inter_agent.id, inter_new_agent.id
-        assert_not_equal inter_agent.intent.id, inter_new_agent.intent.id
+        assert_not_equal inter_agent.interpretation.id, inter_new_agent.interpretation.id
 
-        assert_equal inter_agent.interpretation_aliases.size, inter_new_agent.interpretation_aliases.size
-        aliases = inter_agent.interpretation_aliases.zip(inter_new_agent.interpretation_aliases)
+        assert_equal inter_agent.formulation_aliases.size, inter_new_agent.formulation_aliases.size
+        aliases = inter_agent.formulation_aliases.zip(inter_new_agent.formulation_aliases)
         aliases.each do |alias_agent, alias_new_agent|
           assert_equal alias_agent.aliasname, alias_new_agent.aliasname
           assert_equal alias_agent.position_start, alias_new_agent.position_start
@@ -180,9 +180,9 @@ class AgentDuplicateTest < ActiveSupport::TestCase
           assert_equal alias_agent.is_list, alias_new_agent.is_list
           assert_equal alias_agent.any_enabled, alias_new_agent.any_enabled
           assert_not_equal alias_agent.id, alias_new_agent.id
-          assert_not_equal alias_agent.interpretation.id, alias_new_agent.interpretation.id
+          assert_not_equal alias_agent.formulation.id, alias_new_agent.formulation.id
           unless ['type_number', 'type_regex'].include? alias_agent.nature
-            assert_not_equal alias_agent.interpretation_aliasable.id, alias_new_agent.interpretation_aliasable.id
+            assert_not_equal alias_agent.formulation_aliasable.id, alias_new_agent.formulation_aliasable.id
           end
         end
       end
@@ -194,15 +194,15 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     create_agent_regression_check_fixtures
     agent = agents(:weather)
     @regression_weather_forecast.expected = {
-      root_type: 'intent',
+      root_type: 'interpretation',
       package: agents(:weather_confirmed).id,
-      id: intents(:weather_confirmed_question).id,
+      id: interpretations(:weather_confirmed_question).id,
       solution: ''
     }
     @regression_weather_forecast.got = {
-      'package' => intents(:weather_forecast).agent.id,
-      'id' => intents(:weather_forecast).id,
-      'solution' => interpretations(:weather_forecast_tomorrow).solution.to_json.to_s
+      'package' => interpretations(:weather_forecast).agent.id,
+      'id' => interpretations(:weather_forecast).id,
+      'solution' => formulations(:weather_forecast_tomorrow).solution.to_json.to_s
     }
     assert @regression_weather_forecast.save
 
@@ -224,9 +224,9 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     assert_equal @regression_weather_question.language, duplicated_tests.second.language
     new_expected = {
       'package' => new_agent.id,
-      'id' => new_agent.intents.where(intentname: 'weather_question').first.id,
-      'solution' => interpretations(:weather_question_like).solution.to_json.to_s,
-      'root_type' => 'intent'
+      'id' => new_agent.interpretations.where(interpretation_name: 'weather_question').first.id,
+      'solution' => formulations(:weather_question_like).solution.to_json.to_s,
+      'root_type' => 'interpretation'
     }
     assert_equal new_expected, duplicated_tests.second.expected
     assert_nil duplicated_tests.second.got
@@ -252,52 +252,52 @@ class AgentDuplicateTest < ActiveSupport::TestCase
   test 'The order of agent associations with property position should be maintained' do
     agent = agents(:weather)
     assert agent.entities_lists.destroy_all
-    assert agent.intents.destroy(intents(:weather_question))
+    assert agent.interpretations.destroy(interpretations(:weather_question))
 
-    intent = intents(:weather_forecast)
-    assert intent.interpretations.destroy_all
+    interpretation = interpretations(:weather_forecast)
+    assert interpretation.formulations.destroy_all
 
-    interpretation_0 = Interpretation.create(
-      expression: 'interpretation_0',
+    formulation_0 = Formulation.create(
+      expression: 'formulation_0',
       locale: Locales::ANY,
       position: 0,
-      intent: intent
+      interpretation: interpretation
     )
-    interpretation_1 = Interpretation.create(
-      expression: 'interpretation_1',
+    formulation_1 = Formulation.create(
+      expression: 'formulation_1',
       locale: Locales::ANY,
       position: 1,
-      intent: intent
+      interpretation: interpretation
     )
-    interpretation_2 = Interpretation.create(
-      expression: 'interpretation_2',
+    formulation_2 = Formulation.create(
+      expression: 'formulation_2',
       locale: Locales::ANY,
       position: 2,
-      intent: intent
+      interpretation: interpretation
     )
 
-    new_positions = [interpretation_2.id, interpretation_0.id, interpretation_1.id]
-    Interpretation.update_positions(intent, new_positions)
-    force_reset_model_cache([interpretation_0, interpretation_1, interpretation_2])
-    assert_equal [2, 1, 0], [interpretation_2.position, interpretation_0.position, interpretation_1.position]
+    new_positions = [formulation_2.id, formulation_0.id, formulation_1.id]
+    Formulation.update_positions(interpretation, new_positions)
+    force_reset_model_cache([formulation_0, formulation_1, formulation_2])
+    assert_equal [2, 1, 0], [formulation_2.position, formulation_0.position, formulation_1.position]
 
     new_agent = AgentDuplicator.new(agent, users(:admin)).duplicate
     assert new_agent.persisted?
 
-    assert_equal agent.intents.size, new_agent.intents.size
-    intents = agent.intents.zip(new_agent.intents)
-    intents.each do |intent_agent, intent_new_agent|
-      assert_not_equal intent_agent.id, intent_new_agent.id
-      assert_equal intent_agent.intentname, intent_new_agent.intentname
-      assert_equal intent_agent.position, intent_new_agent.position
+    assert_equal agent.interpretations.size, new_agent.interpretations.size
+    interpretations = agent.interpretations.zip(new_agent.interpretations)
+    interpretations.each do |interpretation_agent, interpretation_new_agent|
+      assert_not_equal interpretation_agent.id, interpretation_new_agent.id
+      assert_equal interpretation_agent.interpretation_name, interpretation_new_agent.interpretation_name
+      assert_equal interpretation_agent.position, interpretation_new_agent.position
 
-      assert_equal intent_agent.interpretations.size, intent_new_agent.interpretations.size
-      interpretations = intent_agent.interpretations.order(:position).zip(intent_new_agent.interpretations.order(:position))
-      interpretations.each do |inter_agent, inter_new_agent|
+      assert_equal interpretation_agent.formulations.size, interpretation_new_agent.formulations.size
+      formulations = interpretation_agent.formulations.order(:position).zip(interpretation_new_agent.formulations.order(:position))
+      formulations.each do |inter_agent, inter_new_agent|
         assert_equal inter_agent.expression, inter_new_agent.expression
         assert_equal inter_agent.position, inter_new_agent.position
         assert_not_equal inter_agent.id, inter_new_agent.id
-        assert_not_equal inter_agent.intent.id, inter_new_agent.intent.id
+        assert_not_equal inter_agent.interpretation.id, inter_new_agent.interpretation.id
       end
     end
   end

@@ -100,11 +100,11 @@ class Console
 
     if action == 'console-explain-highlighted-word'
       event.preventDefault()
-      $('.c-intent__highlight ul').hide()
+      $('.c-interpretation__highlight ul').hide()
       if link.hasClass('current')
-        $('.c-intent__highlight match').removeClass('current')
+        $('.c-interpretation__highlight match').removeClass('current')
       else
-        $('.c-intent__highlight match').removeClass('current')
+        $('.c-interpretation__highlight match').removeClass('current')
         link.addClass('current')
         $(link.data('target')).show()
 

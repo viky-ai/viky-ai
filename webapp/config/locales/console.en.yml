@@ -7,8 +7,8 @@ en:
         explain: Explain
         json: JSON
       error_occurred: Oops, an error occurred.
-      no_intent_found: No interpretation found.
-      intent_found:
+      no_interpretation_found: No interpretation found.
+      interpretation_found:
         one: "1 interpretation found."
         other: "%{count} interpretations found."
       warnings:
