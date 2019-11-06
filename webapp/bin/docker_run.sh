@@ -72,6 +72,11 @@ EOM
   fi
 elif [[ "$1" == "init" ]]; then
 
+    # copy public assets to external container
+    mkdir -p /tmp/public/
+    cp -raf ./public/packs  /tmp/public/
+    cp -raf ./public/assets /tmp/public/
+
     if [[ "$POD_INDEX" == "0" ]] ; then
 
       # Parse postgres and redis urls from Env Variables
@@ -80,11 +85,6 @@ elif [[ "$1" == "init" ]]; then
       DB_REDIS=$(parse_url "$VIKYAPP_CACHE_REDIS_URL")
       ES=$(parse_url "$VIKYAPP_STATISTICS_URL")
       KIBANA=$(parse_url "$VIKYAPP_STATISTICS_VISUALIZER_URL")
-
-      # copy public asset to external container
-      mkdir -p /tmp/public/
-      cp -raf ./public/packs  /tmp/public/
-      cp -raf ./public/assets /tmp/public/
 
       echo "Waiting for postgres on $DB_POSTGRES:$DB_PORT"
       echo "Waiting for redis on $DB_REDIS"
