@@ -349,10 +349,12 @@ backup_restore:
     - "build_backup"
   script:
     # update image fo the doc
+    - export IMAGE_DOC="${DOCKER_IMAGE_DOC_OVERRIDE:-$DOCKERHUB_IMAGE_DOC}"
+    - export IMAGE_DOC_TAG="${DOCKER_IMAGE_DOC_TAG_OVERRIDE:-latest}"
     - kube_setup
-    - DOC_DIGEST_TAG=$(docker_digest_tag "${DOCKER_IMAGE_DOC}:${DOCKER_IMAGE_DOC_TAG:-latest}")
-    - echo "Updating doc to ${DOCKER_IMAGE_DOC}:${DOC_DIGEST_TAG}"
-    - kubectl set image deployments/viky-doc-deployment *="${DOCKER_IMAGE_DOC}:${DOC_DIGEST_TAG}"
+    - DOC_DIGEST_TAG=$(docker_digest_tag "${IMAGE_DOC}:${IMAGE_DOC_TAG}")
+    - echo "Updating doc to ${IMAGE_DOC}:${DOC_DIGEST_TAG}"
+    - kubectl set image deployments/viky-doc-deployment *="${IMAGE_DOC}:${DOC_DIGEST_TAG}"
   when: manual
   allow_failure: true
 
