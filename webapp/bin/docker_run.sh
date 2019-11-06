@@ -81,6 +81,11 @@ elif [[ "$1" == "init" ]]; then
       ES=$(parse_url "$VIKYAPP_STATISTICS_URL")
       KIBANA=$(parse_url "$VIKYAPP_STATISTICS_VISUALIZER_URL")
 
+      # copy public asset to external container
+      mkdir -p /tmp/public/
+      cp -raf ./public/packs  /tmp/public/
+      cp -raf ./public/assets /tmp/public/
+
       echo "Waiting for postgres on $DB_POSTGRES:$DB_PORT"
       echo "Waiting for redis on $DB_REDIS"
       echo "Waiting for ES on $ES"

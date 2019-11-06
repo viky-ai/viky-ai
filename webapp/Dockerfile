@@ -89,6 +89,9 @@ RUN bundle install --without development test --jobs=$(nproc)
 # Copy application code
 COPY . /webapp
 
+# create static assets echange dir
+RUN mkdir -p /tmp/public/
+
 # create temporary dir for sidekiq
 RUN mkdir -p /webapp/tmp/
 RUN mkdir -p /webapp/tmp/pids/
