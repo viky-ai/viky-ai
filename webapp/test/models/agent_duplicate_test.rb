@@ -310,6 +310,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
 
       assert_equal 10, admin_user.expressions_count
       assert_equal 7, weather_agent.expressions_count
+      assert admin_user.quota_enabled
 
       duplicator = AgentDuplicator.new(weather_agent, admin_user)
 
@@ -323,6 +324,11 @@ class AgentDuplicateTest < ActiveSupport::TestCase
       assert duplicator.respects_quota?
 
       Quota.stubs(:expressions_limit).returns(20)
+      assert duplicator.respects_quota?
+
+      admin_user.quota_enabled = false
+      admin_user.save
+      Quota.stubs(:expressions_limit).returns(10)
       assert duplicator.respects_quota?
     end
   end
