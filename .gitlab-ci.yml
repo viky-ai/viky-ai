@@ -18,6 +18,7 @@ variables:
 
 image: vikyai/tools-gitlab-auto-deploy-image:latest
 before_script:
+  - if [[ "$TRACE" ]] ; then  set -x ; fi
   # load auto-deploy if exits (not in test)
   - if [ -f /auto-deploy.sh ]; then . /auto-deploy.sh ; fi
 
