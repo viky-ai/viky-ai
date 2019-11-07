@@ -15,7 +15,6 @@ variables:
   DOCKERHUB_IMAGE_APP: "vikyai/app"
   DOCKERHUB_IMAGE_TOOLS_BACKUP: "vikyai/tools_backup"
   DOCKERHUB_IMAGE_DOC: vikyai/doc
-  SKIP_TEST: "true"
 
 image: vikyai/tools-gitlab-auto-deploy-image:latest
 before_script:
@@ -159,7 +158,6 @@ push_dockerhub:
     S3_SECRET_KEY: ${S3_SECRET_KEY}
     HELM_RELEASE_NAME: "viky-dev"
     HELM_VALUES: "viky/custom-values/production.yaml,custom-values.yml"
-    KUBE_NAMESPACE: viky-ai-production
 
 .deploy_production:
   needs:
