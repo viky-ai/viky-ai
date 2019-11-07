@@ -18,11 +18,13 @@ variables:
 
 image: vikyai/tools-gitlab-auto-deploy-image:latest
 before_script:
-  - if [[ "$TRACE" ]] ; then  set -x ; fi
+  - if [ "$TRACE" == "true" ] ; then  set -x ; fi
   # load auto-deploy if exits (not in test)
   - if [ -f /auto-deploy.sh ]; then . /auto-deploy.sh ; fi
 
 .kubernetes_runner:
+  environment:
+    name: dev-${CI_COMMIT_REF_NAME}
   tags:
     - kubernetes
   variables:
