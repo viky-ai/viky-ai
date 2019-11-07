@@ -157,7 +157,7 @@ push_dockerhub:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
     HELM_RELEASE_NAME: "viky-dev"
-    HELM_VALUES: "viky/custom-values/production.yaml,custom-values.yml"
+    HELM_VALUES: "viky/custom-values/dev.yaml,custom-values.yml"
 
 .deploy_production:
   needs:
