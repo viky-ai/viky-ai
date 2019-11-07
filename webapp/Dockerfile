@@ -1,8 +1,8 @@
 # Using docker multi stage (docker >= 17.05)
 # https://codefresh.io/blog/node_docker_multistage/
 
-# docker build --target image_ruby_run   -t docker-registry.pertimm.net/viky.ai/platform/app .
-# docker build --target image_ruby_test  -t docker-registry.pertimm.net/viky.ai/platform/app_test .
+# docker build --pull --target image_ruby_run   -t docker-registry.pertimm.net/viky.ai/platform/app .
+# docker build        --target image_ruby_test  -t docker-registry.pertimm.net/viky.ai/platform/app_test .
 
 #####################################################################
 # image_ruby_base : ruby + sys dependencies
@@ -47,6 +47,7 @@ RUN set -ex; \
       libpq-dev \
       libyaml-dev \
       postgresql-client \
+      rsync \
       zlib1g-dev \
     ; \
     rm -rf /var/lib/apt/lists/*
@@ -88,6 +89,9 @@ RUN bundle install --without development test --jobs=$(nproc)
 
 # Copy application code
 COPY . /webapp
+
+# create static assets echange dir
+RUN mkdir -p /tmp/public/
 
 # create temporary dir for sidekiq
 RUN mkdir -p /webapp/tmp/

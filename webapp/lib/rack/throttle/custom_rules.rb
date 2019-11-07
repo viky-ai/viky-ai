@@ -17,6 +17,7 @@ module Rack
 
       def allowed?(request)
         return true unless Feature.quota_enabled?
+        return true if rule_for(request).nil?
 
         api_token = request.params["agent_token"] || request.get_header("HTTP_AGENT_TOKEN")
 

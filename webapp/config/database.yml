@@ -17,5 +17,5 @@ test:
 
 production:
   <<: *default
-  database: vikyapp_production
+  database: <%= ENV.fetch("VIKYAPP_DB_NAME") { 'vikyapp_production' } %>
   timeout: 1500

@@ -11,13 +11,20 @@ variables:
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
   DOCKER_IMAGE_DOC: docker-registry.pertimm.net/viky.ai/doc
+  DOCKERHUB_IMAGE_NLP: "vikyai/nlp"
+  DOCKERHUB_IMAGE_APP: "vikyai/app"
+  DOCKERHUB_IMAGE_TOOLS_BACKUP: "vikyai/tools_backup"
+  DOCKERHUB_IMAGE_DOC: vikyai/doc
 
 image: vikyai/tools-gitlab-auto-deploy-image:latest
 before_script:
+  - if [ "${TRACE:-false}" == "true" ] ; then  set -x ; fi
   # load auto-deploy if exits (not in test)
   - if [ -f /auto-deploy.sh ]; then . /auto-deploy.sh ; fi
 
 .kubernetes_runner:
+  environment:
+    name: dev-${CI_COMMIT_REF_NAME}
   tags:
     - kubernetes
   variables:
@@ -108,52 +115,39 @@ test_nlp:
         - "reports/TEST-*.xml"
 
 # Tag docker image to lasted
-tag_webapp:
+tag_latest:
   extends: .kubernetes_runner
   stage: docker_tag
-  needs:
-    - "build_webapp"
-    - "test_webapp"
-  only:
-    - master
   variables:
     GIT_STRATEGY: none
+  only:
+    - master
   script:
     - docker_tag_latest ${DOCKER_IMAGE_APP}
-    - docker_tag_latest ${DOCKER_IMAGE_APP}_test
-
-tag_nlp:
-  extends: .kubernetes_runner
-  stage: docker_tag
-  needs:
-    - "build_nlp"
-    - "test_nlp"
-  only:
-    - master
-  variables:
-    GIT_STRATEGY: none
-  script:
     - docker_tag_latest ${DOCKER_IMAGE_NLP}
+    - docker_tag_latest ${DOCKER_IMAGE_TOOLS_BACKUP}
 
-tag_backup:
+# Push Docker image to Dockerhub only when on Master and it's a Tag
+push_dockerhub:
   extends: .kubernetes_runner
   stage: docker_tag
-  needs:
-    - "build_backup"
   only:
+    - tags
     - master
-  variables:
-    GIT_STRATEGY: none
+  environment:
+    name: viky-ai-production
   script:
-    - docker_tag_latest ${DOCKER_IMAGE_TOOLS_BACKUP}
+    - export VIKY_GITLAB_TAG="${CI_COMMIT_REF_SLUG:-latest}"
+    - export VIKY_DOCKERHUB_TAG="latest"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_NLP}:${VIKY_GITLAB_TAG}"          "${DOCKERHUB_IMAGE_NLP}:${VIKY_DOCKERHUB_TAG}"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_APP}:${VIKY_GITLAB_TAG}"          "${DOCKERHUB_IMAGE_APP}:${VIKY_DOCKERHUB_TAG}"
+    - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_TOOLS_BACKUP}:${VIKY_GITLAB_TAG}" "${DOCKERHUB_IMAGE_TOOLS_BACKUP}:${VIKY_DOCKERHUB_TAG}"
 
 # Deploy generic job
 
 .deploy_dev:
   needs:
     - build_backup
-    - build_webapp
-    - build_nlp
     - test_webapp
     - test_nlp
   except:
@@ -165,37 +159,36 @@ tag_backup:
   variables:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
+    VIKY_USE_DOCKERHUB_IMAGE: "false"
     HELM_RELEASE_NAME: "viky-dev"
     HELM_VALUES: "viky/custom-values/dev.yaml,custom-values.yml"
 
-.deploy_preprod:
+.deploy_production:
   needs:
-    - "tag_webapp"
-    - "tag_backup"
-    - "tag_nlp"
+    - "push_dockerhub"
   only:
     - master
   except:
     - tags
   environment:
-    name: viky-beta
-    url: https://viky-beta.viky.ai
+    name: viky-ai-production
+    url: https://www.viky.ai
   variables:
     S3_ACCESS_KEY: ${S3_ACCESS_KEY}
     S3_SECRET_KEY: ${S3_SECRET_KEY}
+    VIKY_DOCKER_TAG: "latest"
+    VIKY_USE_DOCKERHUB_IMAGE: "true"
     VIKYAPP_AUTO_BACKUP: "true"
-    HELM_RELEASE_NAME: "viky-beta"
-    HELM_VALUES: "viky/custom-values/preproduction.yaml,custom-values.yml"
-    # ASN cluster
-    KUBECONFIG_URL: "https://gitlab.pertimm.net/api/v4/projects/383/repository/files/deployment%2Fkubernetes%2Fconfig%2Fconfig.yml/raw?ref=${CI_COMMIT_REF_NAME}&private_token=TZupQ1sUxjKfSuVMUNJH"
-    KUBE_NAMESPACE: viky-beta
+    HELM_RELEASE_NAME: "viky-prod"
+    HELM_VALUES: "viky/custom-values/production.yaml,custom-values.yml"
+    KUBE_NAMESPACE: viky-ai-production
 
 .deploy:
   extends: .kubernetes_runner
   stage: deploy
   variables:
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
-    HELM_TIMEOUT: "900"
+    HELM_TIMEOUT: "600"
     HELM_EXTRA_OPTIONS: "--wait"
   script:
     - kube_setup
@@ -203,16 +196,19 @@ tag_backup:
     - helm history "${RELEASE_NAME}" || true
     - helm status  "${RELEASE_NAME}" || true
     # backup current env
-    - if [ "${BACKUP_BEFORE_DEPLOY}" == "true" ]; then kubectl exec $(kube_get_pods \"app=viky-webapp-backup\") bash /backup/backup.sh || true ; fi
+    - if [ "${BACKUP_BEFORE_DEPLOY:-false}" == "true" ]; then kubectl exec $(kube_get_pods \"app=viky-webapp-backup\") bash /backup/backup.sh || true ; fi
     # Go to Kubernetes directory
     - cd deployment/kubernetes/
     - bin/generate-ci-override-values.sh
+    - cat custom-values.yml
     # Deploy Viky Platform
     - HELM_OPTIONS="--install ${HELM_EXTRA_OPTIONS} --timeout ${HELM_TIMEOUT}  --values ${HELM_VALUES}"
     - echo "helm upgrade ${HELM_OPTIONS} "${RELEASE_NAME}" ./viky/"
     - helm upgrade ${HELM_OPTIONS} "${RELEASE_NAME}" ./viky/
+    - notify_deployment
 
 # Deploy any branches on dev
+
 deploy_dev:
   environment:
     name: dev-${CI_COMMIT_REF_NAME}
@@ -231,15 +227,15 @@ deploy_dev_forced:
     HELM_EXTRA_OPTIONS: "--force"
 
 # Deploy master on preprod
-deploy_preprod:
+deploy_production:
   extends:
     - .deploy
-    - .deploy_preprod
+    - .deploy_production
   variables:
     BACKUP_BEFORE_DEPLOY: "true"
 
-deploy_preprod_forced:
-  extends: deploy_preprod
+deploy_production_forced:
+  extends: deploy_production
   when: manual
   variables:
     HELM_EXTRA_OPTIONS: "--force"
@@ -282,16 +278,10 @@ delete_env:
   when: manual
   allow_failure: true
 
-invite_admin_dev:
+invite_admin:
   extends:
     - .kubernetes_runner
     - .deploy_dev
-    - .invite_admin
-
-invite_admin_preprod:
-  extends:
-    - .kubernetes_runner
-    - .deploy_preprod
     - .invite_admin
 
 # backup
@@ -312,10 +302,10 @@ backup_dev:
     - .deploy_dev
     - .backup
 
-backup_preprod:
+backup_production:
   extends:
     - .kubernetes_runner
-    - .deploy_preprod
+    - .deploy_production
     - .backup
 
 # backup restore only for dev
@@ -351,10 +341,12 @@ backup_restore:
     - "build_backup"
   script:
     # update image fo the doc
+    - export IMAGE_DOC="${DOCKER_IMAGE_DOC_OVERRIDE:-$DOCKERHUB_IMAGE_DOC}"
+    - export IMAGE_DOC_TAG="${DOCKER_IMAGE_DOC_TAG_OVERRIDE:-latest}"
     - kube_setup
-    - DOC_DIGEST_TAG=$(docker_digest_tag "${DOCKER_IMAGE_DOC}:${DOCKER_IMAGE_DOC_TAG:-latest}")
-    - echo "Updating doc to ${DOCKER_IMAGE_DOC}:${DOC_DIGEST_TAG}"
-    - kubectl set image deployments/viky-doc-deployment *="${DOCKER_IMAGE_DOC}:${DOC_DIGEST_TAG}"
+    - DOC_DIGEST_TAG=$(docker_digest_tag "${IMAGE_DOC}:${IMAGE_DOC_TAG}")
+    - echo "Updating doc to ${IMAGE_DOC}:${DOC_DIGEST_TAG}"
+    - kubectl set image deployments/viky-doc-deployment *="${IMAGE_DOC}:${DOC_DIGEST_TAG}"
   when: manual
   allow_failure: true
 
@@ -364,10 +356,10 @@ update_doc_dev:
     - .deploy_dev
     - .update_doc
 
-update_doc_preprod:
+update_doc_production:
   extends:
     - .kubernetes_runner
-    - .deploy_preprod
+    - .deploy_production
     - .update_doc
 
 # Get deployment status
@@ -391,8 +383,8 @@ deploy_status_dev:
     - .deploy_dev
     - .deploy_status
 
-deploy_status_preprod:
+deploy_status_production:
   extends:
     - .kubernetes_runner
-    - .deploy_preprod
+    - .deploy_production
     - .deploy_status

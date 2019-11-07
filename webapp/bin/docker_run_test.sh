@@ -26,7 +26,7 @@ export DISABLE_SPRING=true
 ./bin/rails statistics:setup
 
 # Run tests
-COVERAGE=1 DISABLE_SPRING=1 ./bin/rails test
+COVERAGE=1 DISABLE_SPRING=1 RETRY=1 ./bin/rails test
 
 # Run system tests
 COVERAGE=1 DISABLE_SPRING=1 RETRY=1 ./bin/rails test:system
