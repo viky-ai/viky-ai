@@ -47,6 +47,7 @@ RUN set -ex; \
       libpq-dev \
       libyaml-dev \
       postgresql-client \
+      rsync \
       zlib1g-dev \
     ; \
     rm -rf /var/lib/apt/lists/*

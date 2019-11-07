@@ -72,12 +72,13 @@ EOM
   fi
 elif [[ "$1" == "init" ]]; then
 
-    # copy public assets to external container
-    mkdir -p /tmp/public/
-    cp -raf ./public/packs  /tmp/public/
-    cp -raf ./public/assets /tmp/public/
-
     if [[ "$POD_INDEX" == "0" ]] ; then
+
+      # copy public assets to external container
+      echo "Sync static content"
+      mkdir -p /tmp/public/
+      rsync -aq --delete-after ./public/packs/  /tmp/public/packs/
+      rsync -aq --delete-after ./public/assets/ /tmp/public/assets/
 
       # Parse postgres and redis urls from Env Variables
       DB_POSTGRES=$(parse_url "$VIKYAPP_DB_HOST")
