@@ -79,6 +79,8 @@ elif [[ "$1" == "init" ]]; then
       mkdir -p /tmp/public/
       rsync -aq --delete-after ./public/packs/  /tmp/public/packs/
       rsync -aq --delete-after ./public/assets/ /tmp/public/assets/
+      # create dir if not exist
+      mkdir -p /tmp/public/uploads/
 
       # Parse postgres and redis urls from Env Variables
       DB_POSTGRES=$(parse_url "$VIKYAPP_DB_HOST")
