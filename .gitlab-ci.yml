@@ -89,7 +89,7 @@ test_webapp:
     - export SELENIUM_REMOTE_URL="http://${CI_SERVICE_HOST:-selenium-chrome}:4444/wd/hub/"
     - export VIKYAPP_STATISTICS_NO_REPLICA="true"
     - cd /webapp
-    - if [[ "${SKIP_TEST:-false}" != "true" ]]; then ./bin/docker_run_test.sh ; fi
+    - if [ "${SKIP_TEST:-false}" != "true" ]; then ./bin/docker_run_test.sh ; fi
   artifacts:
     # expire_in: 1 week
     reports:
@@ -107,7 +107,7 @@ test_nlp:
     GIT_STRATEGY: none
   script:
     - export VIKYAPP_REDIS_PACKAGE_NOTIFIER="redis://${CI_SERVICE_HOST:-redis}:6379/3"
-    - if [[ "${SKIP_TEST:-false}" != "true" ]]; then /docker_run_test.sh ; fi
+    - if [ "${SKIP_TEST:-false}" != "true" ]; then /docker_run_test.sh ; fi
   artifacts:
     # expire_in: 1 week
     reports:
@@ -196,7 +196,7 @@ push_dockerhub:
     - helm history "${RELEASE_NAME}" || true
     - helm status  "${RELEASE_NAME}" || true
     # backup current env
-    - if [[ "${BACKUP_BEFORE_DEPLOY}" == "true" ]]; then kubectl exec $(kube_get_pods \"app=viky-webapp-backup\") bash /backup/backup.sh || true ; fi
+    - if [ "${BACKUP_BEFORE_DEPLOY}" == "true" ]; then kubectl exec $(kube_get_pods \"app=viky-webapp-backup\") bash /backup/backup.sh || true ; fi
     # Go to Kubernetes directory
     - cd deployment/kubernetes/
     - bin/generate-ci-override-values.sh
