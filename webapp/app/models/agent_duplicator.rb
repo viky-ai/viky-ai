@@ -7,6 +7,8 @@ class AgentDuplicator
 
   def respects_quota?
     return true unless Feature.quota_enabled?
+    return true unless @new_owner.quota_enabled
+
     final = @new_owner.expressions_count + @agent.expressions_count
     final <= Quota.expressions_limit
   end
