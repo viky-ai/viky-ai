@@ -18,7 +18,7 @@ variables:
 
 image: vikyai/tools-gitlab-auto-deploy-image:latest
 before_script:
-  - if [ "$TRACE" == "true" ] ; then  set -x ; fi
+  - if [ "${TRACE:-false}" == "true" ] ; then  set -x ; fi
   # load auto-deploy if exits (not in test)
   - if [ -f /auto-deploy.sh ]; then . /auto-deploy.sh ; fi
 
@@ -196,7 +196,7 @@ push_dockerhub:
     - helm history "${RELEASE_NAME}" || true
     - helm status  "${RELEASE_NAME}" || true
     # backup current env
-    - if [ "${BACKUP_BEFORE_DEPLOY}" == "true" ]; then kubectl exec $(kube_get_pods \"app=viky-webapp-backup\") bash /backup/backup.sh || true ; fi
+    - if [ "${BACKUP_BEFORE_DEPLOY:-false}" == "true" ]; then kubectl exec $(kube_get_pods \"app=viky-webapp-backup\") bash /backup/backup.sh || true ; fi
     # Go to Kubernetes directory
     - cd deployment/kubernetes/
     - bin/generate-ci-override-values.sh
