@@ -318,8 +318,8 @@ backup_production:
     - PODNAME=$(kube_get_pods "app=viky-webapp-backup")
     # backup current env
     - kubectl exec ${PODNAME}  bash /backup/backup.sh || true
-    # restore base on viky-beta
-    - kubectl exec ${PODNAME}  bash /backup/restore.sh "viky-beta"
+    # restore base on viky-ai-production
+    - kubectl exec ${PODNAME}  bash /backup/restore.sh "viky-ai-production"
     # delete pods to restart viky apps deployment
     - kubectl delete pods -l 'app in (viky-webapp-worker, viky-webapp, viky-nlp)'
   when: manual
