@@ -3,11 +3,12 @@ require 'test_helper'
 class Chatbot::MapTest < ActiveSupport::TestCase
 
   test 'Create a simple map statement' do
+    google_api_key = ENV.fetch('VIKYAPP_GOOGLE_MAP_API_KEY') { 'missing-google-map-api-key' }
     statement = ChatStatement.new(
       speaker: :bot,
       nature: :interactive_map,
       content: {
-        params: "place?key=***REMOVED***&q=Valence"
+        params: "place?key=#{google_api_key}&q=Valence"
       },
       chat_session: chat_sessions(:one)
     )
