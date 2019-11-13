@@ -2,12 +2,12 @@
 # https://codefresh.io/blog/node_docker_multistage/
 
 # Run
-# docker build --pull --target run_image -t docker-registry.pertimm.net/viky.ai/platform/nlp .
-# docker run -it --volume "$(pwd)/import:/nls/import" -p "9345:9345" -t docker-registry.pertimm.net/viky.ai/platform/nlp
+# docker build --pull --target run_image -t vikyai/nlp .
+# docker run -it --volume "$(pwd)/import:/nls/import" -p "9345:9345" -t vikyai/nlp
 
 # Tests
-# docker build --target test_image -t docker-registry.pertimm.net/viky.ai/platform/nlp_test .
-# docker run -t docker-registry.pertimm.net/viky.ai/platform/nlp_test
+# docker build --target test_image -t vikyai/platform/nlp_test .
+# docker run -t vikyai/nlp_test
 
 #########################################################################################
 # Minimal dependencies to build NLP from strach

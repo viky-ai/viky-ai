@@ -10,7 +10,6 @@ variables:
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
-  DOCKER_IMAGE_DOC: docker-registry.pertimm.net/viky.ai/doc
   DOCKERHUB_IMAGE_NLP: "vikyai/nlp"
   DOCKERHUB_IMAGE_APP: "vikyai/app"
   DOCKERHUB_IMAGE_TOOLS_BACKUP: "vikyai/tools_backup"
