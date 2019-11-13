@@ -34,7 +34,7 @@ build_backup:
   extends: .kubernetes_runner
   stage: build
   script:
-    - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup
+    - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} docker/backup
 
 build_webapp:
   extends: .kubernetes_runner
