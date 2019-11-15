@@ -229,7 +229,7 @@ index 93c789c8..8c2c426a 100644
 +  end
 +
    test "non admin user" do
-     assert !User.find_by_email('notconfirmed@viky.ai').admin?
+     assert_not User.find_by_email('notconfirmed@viky.ai').admin?
      assert User.find_by_email('admin@viky.ai').admin?
 ```
 
