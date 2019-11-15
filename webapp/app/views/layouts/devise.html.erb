@@ -1,7 +1,24 @@
+<%
+  case controller_name
+  when "registrations"
+    @title = "#{t('views.registrations.new.title')} - viky.ai"
+  when "sessions"
+    @title = "#{t('views.sessions.new.title')} - viky.ai"
+  when "passwords"
+    @title = "#{t('views.passwords.new.title')} - viky.ai"
+  when "confirmations"
+    @title = "#{t('views.confirmations.new.title')} - viky.ai"
+  when "unlocks"
+    @title = "#{t('views.unlocks.new.title')} - viky.ai"
+  else
+    @title = "viky.ai"
+  end
+%>
+
 <!DOCTYPE html>
 <html>
   <head>
-    <title>viky.ai</title>
+    <title><%= @title %></title>
     <%= csrf_meta_tags %>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="turbolinks-cache-control" content="no-cache">
