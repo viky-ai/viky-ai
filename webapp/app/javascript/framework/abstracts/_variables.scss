@@ -37,7 +37,7 @@ $light-grey-900: darken($light-grey, 7%);
 .bg-light-grey-900 { background-color: $light-grey-900; }
 
 
-$dark-grey: darken(desaturate(adjust-hue($primary_color, 25deg), 45%), 40%);
+$dark-grey: darken(desaturate(adjust-hue($primary_color, 7deg), 45%), 45%);
 
 $dark-grey-100: lighten($dark-grey, 60%);
 $dark-grey-200: lighten($dark-grey, 50%);
