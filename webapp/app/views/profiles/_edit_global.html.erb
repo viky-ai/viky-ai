@@ -23,12 +23,25 @@
       <%= display_errors(@profile, :bio) %>
     </div>
   </div>
-  <div class="actions">
+  <div class="field">
     <%= f.button t('views.profile.edit.global.submit_btn'), class: "btn btn--primary",
         data: {
           disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
         } %>
     <a href="<%= profile_path %>" class="btn btn--plain">Cancel</a>
   </div>
+
+  <% if Feature.privacy_policy_enabled? %>
+    <div class="note">
+      <div class="note__icon">
+        <span class="icon icon--small"><%= icon_information %></span>
+      </div>
+      <div class="note__content">
+        <%= t('views.profile.edit.legal_html',
+              privacy_policy_url: ENV['VIKYAPP_PRIVACY_POLICY_URL']
+            ) %>
+      </div>
+    </div>
+  <% end %>
 
 <% end %>

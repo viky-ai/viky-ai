@@ -1,9 +1,8 @@
 .note{
-  color: #666;
-  text-shadow: 0 1px 0 #fff;
   font-size: .9em;
   padding: .5em;
-  background-color: #f9f9f9;
+  background-color: $light-grey-100;
+  color: $dark-grey-300;
   border-radius: 3px;
 
   @include display_flex();
@@ -16,6 +15,27 @@
     margin-left: .5em;
     p{
       margin: 0 0 .5em 0;
+    }
+    p:only-child {
+      margin: 0;
+    }
+    a{
+      color: $dark-grey-400;
+      &:hover,
+      &:focus{
+        color: $dark-grey-800;
+      }
+    }
+  }
+
+  &.note--warning{
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: 2px solid $warning_color;
+    .note__icon{
+      svg{
+        fill: $warning_color;
+      }
     }
   }
 }

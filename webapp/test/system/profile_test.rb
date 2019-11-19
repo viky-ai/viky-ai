@@ -125,7 +125,7 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
     within(".test-profile-edit-destroy") do
-      assert has_text?("You must delete all agents you own in order to delete your account.")
+      assert has_text?("You must transfert your ownerships or delete all agents you own in order to delete your account.")
     end
   end
 

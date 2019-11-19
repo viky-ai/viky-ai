@@ -4,6 +4,11 @@ en:
       breadcrumb: Your profile
       edit:
         breadcrumb: Edition
+        legal_html: >
+          Your personal data will never be disclosed to third parties.
+          To know and exercise your rights, including the withdrawal of
+          your consent to the use of the data collected by this form,
+          please consult our <a href="%{privacy_policy_url}">privacy policy</a>.
         global:
           title: Your general informations
           submit_btn: Update
@@ -18,7 +23,7 @@ en:
         destroy:
           title: Delete your account
           message: Deleting your account is final, you will not be able to go back.
-          not_possible_message: You must delete all agents you own in order to delete your account.
+          not_possible_message: You must transfert your ownerships or delete all agents you own in order to delete your account.
           btn: I want to delete my account
       confirm_destroy:
         title: Are you sure?

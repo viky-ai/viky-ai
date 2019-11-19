@@ -10,7 +10,7 @@
   <%= highlight_html do %>
 <div class="note">
   <div class="note__icon">
-    <span class="icon"><%= icon_information %></span>
+    <span class="icon icon--small"><%= icon_information %></span>
   </div>
   <div class="note__content">
     <p>
@@ -19,3 +19,20 @@
   </div>
 </div>
   <% end %>
+</section>
+
+<section>
+  <h2>Warning variant</h2>
+  <%= highlight_html do %>
+<div class="note note--warning">
+  <div class="note__icon">
+    <span class="icon icon--small"><%= icon_alert %></span>
+  </div>
+  <div class="note__content">
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis consectetur commodi nobis amet facilis magni porro, quidem praesentium aliquid doloribus placeat, blanditiis, modi ullam sunt voluptates ducimus aperiam ipsum rem.
+    </p>
+  </div>
+</div>
+  <% end %>
+</section>
