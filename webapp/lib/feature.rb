@@ -64,4 +64,9 @@ module Feature
     yield
     enable_chatbot
   end
+
+
+  def self.privacy_policy_enabled?
+    !ENV['VIKYAPP_PRIVACY_POLICY_URL'].blank? && !ENV['VIKYAPP_TERMS_OF_USE_URL'].blank?
+  end
 end

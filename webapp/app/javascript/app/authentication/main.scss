@@ -1,6 +1,9 @@
+@import '../../framework/abstracts/variables';
+
 .login-wrapper{
-  background-color: hsl(192, 15, 97);
   min-height: 100%;
+  background-color: $light-grey-300;
+  border-bottom: 4px solid $primary-color
 }
 
 .login-ui-wrapper{

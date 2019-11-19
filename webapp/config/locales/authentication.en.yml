@@ -21,6 +21,11 @@ en:
         tagline: Start building agents now!
         username_label: Choose your username
         btn: Sign up
+        legal_html: >
+          By sign up, you confirm that you have read, understood and
+          accepted the <a href="%{terms_of_use_url}">terms of use</a>
+          and the <a href="%{privacy_policy_url}">privacy policy</a>,
+          and that you understand your right to information.
     passwords:
       new:
         title: Forgot your password?

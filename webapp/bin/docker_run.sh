@@ -74,6 +74,7 @@ elif [[ "$1" == "init" ]]; then
 
     if [[ "$POD_INDEX" == "0" ]] ; then
 
+
       # copy public assets to external container
       echo "Sync static content"
       mkdir -p /tmp/public/
@@ -81,6 +82,11 @@ elif [[ "$1" == "init" ]]; then
       rsync -aq --delete-after ./public/assets/ /tmp/public/assets/
       # create dir if not exist
       mkdir -p /tmp/public/uploads/
+
+      # create a readable file to check runtime access
+      touch /tmp/public/uploads/.readable
+      touch /tmp/public/assets/.readable
+      touch /tmp/public/packs/.readable
 
       # Parse postgres and redis urls from Env Variables
       DB_POSTGRES=$(parse_url "$VIKYAPP_DB_HOST")

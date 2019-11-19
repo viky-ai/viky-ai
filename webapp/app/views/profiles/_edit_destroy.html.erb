@@ -8,5 +8,12 @@
     </a>
   </p>
 <% else %>
-  <p><%= t('views.profile.edit.destroy.not_possible_message') %></p>
+  <div class="note note--warning">
+    <div class="note__icon icon--small">
+      <span class="icon icon--small"><%= icon_alert %></span>
+    </div>
+    <div class="note__content">
+      <%= t('views.profile.edit.destroy.not_possible_message') %>
+    </div>
+  </div>
 <% end %>

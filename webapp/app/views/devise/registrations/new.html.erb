@@ -41,6 +41,21 @@
                 disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
               } %>
         </div>
+
+        <% if Feature.privacy_policy_enabled? %>
+          <div class="note">
+            <div class="note__icon">
+              <span class="icon icon--small"><%= icon_information %></span>
+            </div>
+            <div class="note__content">
+              <%= t('views.registrations.new.legal_html',
+                    terms_of_use_url: ENV['VIKYAPP_TERMS_OF_USE_URL'],
+                    privacy_policy_url: ENV['VIKYAPP_PRIVACY_POLICY_URL']
+                  ) %>
+            </div>
+          </div>
+        <% end %>
+
       <% end %>
 
     </div>

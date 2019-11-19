@@ -111,10 +111,18 @@ ENV RAILS_ENV=production
 # Precompile assets
 RUN ./bin/rails assets:precompile
 
+# Check shared
+RUN set -ex; \
+    mkdir -p ./public/uploads/ ; \
+    touch ./public/uploads/.readable ; \
+    mkdir -p ./public/packs/ ; \
+    touch ./public/packs/.readable ; \
+    mkdir -p ./public/assets/ ; \
+    touch ./public/assets/.readable ;
+
 ENV RAILS_SERVE_STATIC_FILES=true
 ENV RAILS_LOG_TO_STDOUT=1
 
-VOLUME [ "/webapp/public/uploads" ]
 EXPOSE 3000
 CMD ["./bin/docker_run.sh"]
 
