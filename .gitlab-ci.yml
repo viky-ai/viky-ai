@@ -145,4 +145,4 @@ trigger_build:
   extends: .kubernetes_runner
   stage: deploy
   script:
-    - "curl -X POST -F token=${DEPLOYMENT_TOKEN} -F variables[VIKY_DOCKER_TAG]=${CI_COMMIT_REF_NAME} -F ref=master https://gitlab.pertimm.net/api/v4/projects/576/trigger/pipeline"
+    - "curl -X POST -F token=${DEPLOYMENT_TOKEN} -F variables[VIKY_DOCKER_TAG]=${CI_COMMIT_REF_SLUG} -F ref=master https://gitlab.pertimm.net/api/v4/projects/576/trigger/pipeline"
