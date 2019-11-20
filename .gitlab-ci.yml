@@ -21,8 +21,6 @@ before_script:
   - if [ -f /auto-deploy.sh ]; then . /auto-deploy.sh ; fi
 
 .kubernetes_runner:
-  environment:
-    name: dev-${CI_COMMIT_REF_NAME}
   tags:
     - kubernetes
   variables:
@@ -132,8 +130,6 @@ push_dockerhub:
   only:
     - tags
     - master
-  environment:
-    name: viky-ai-production
   script:
     - export VIKY_GITLAB_TAG="${CI_COMMIT_REF_SLUG:-latest}"
     - export VIKY_DOCKERHUB_TAG="latest"
@@ -141,8 +137,43 @@ push_dockerhub:
     - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_APP}:${VIKY_GITLAB_TAG}"          "${DOCKERHUB_IMAGE_APP}:${VIKY_DOCKERHUB_TAG}"
     - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_TOOLS_BACKUP}:${VIKY_GITLAB_TAG}" "${DOCKERHUB_IMAGE_TOOLS_BACKUP}:${VIKY_DOCKERHUB_TAG}"
 
-trigger_build:
+trigger_deploy_dev:
+  extends: .kubernetes_runner
+  except:
+    - master
+    - tags
+  environment:
+    name: dev-${VIKY_DOCKER_TAG}
+    url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
+    # TODO trigger auto delete env with api env stop : https://docs.gitlab.com/ee/api/environments.html#stop-an-environment
+    #on_stop: delete_env
   extends: .kubernetes_runner
   stage: deploy
   script:
-    - "curl --show-error --silent --output /dev/null -X POST -F token=${DEPLOYMENT_TOKEN} -F variables[VIKY_DOCKER_TAG]=${CI_COMMIT_REF_SLUG} -F ref=master https://gitlab.pertimm.net/api/v4/projects/576/trigger/pipeline"
+    - |
+      curl --show-error --silent --output /dev/null -X POST \
+      -F token=${DEPLOYMENT_TOKEN_DEV} \
+      -F ref=master \
+      -F variables[VIKY_DOCKER_TAG]=${CI_COMMIT_REF_SLUG} \
+      -F variables[NOTIFY_DEPLOYMENT_INFO]=${CI_COMMIT_SHORT_SHA} \
+      https://gitlab.pertimm.net/api/v4/projects/576/trigger/pipeline"
+
+trigger_deploy_production:
+  extends: .kubernetes_runner
+  only:
+    - master
+  except:
+    - tags
+  environment:
+    # TODO change env name and url
+    name: dev-${VIKY_DOCKER_TAG}
+    url: https://www.viky.ai
+  stage: deploy
+  script:
+    - |
+      curl --show-error --silent --output /dev/null -X POST \
+      -F token=${DEPLOYMENT_TOKEN_PROD} \
+      -F ref=master \
+      -F variables[VIKY_DOCKER_TAG]=latest \
+      -F variables[NOTIFY_DEPLOYMENT_INFO]=${CI_COMMIT_SHORT_SHA} \
+      https://gitlab.pertimm.net/api/v4/projects/570/trigger/pipeline"
