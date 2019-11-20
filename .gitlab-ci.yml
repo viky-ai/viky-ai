@@ -85,7 +85,7 @@ test_webapp:
     - export SELENIUM_REMOTE_URL="http://${CI_SERVICE_HOST:-selenium-chrome}:4444/wd/hub/"
     - export VIKYAPP_STATISTICS_NO_REPLICA="true"
     - cd /webapp
-    - if [ "${SKIP_TEST:-false}" != "true" ]; then ./bin/docker_run_test.sh ; fi
+    - if [ "${SKIP_TEST:-false}" != "true" ] ; then ./bin/docker_run_test.sh ; fi
   artifacts:
     # expire_in: 1 week
     reports:
@@ -151,12 +151,13 @@ deploy_dev:
   stage: deploy
   script:
     - |
+      export DEPLOY_GITLAB_CI_URL=$(echo "${DEPLOY_GITLAB_CI_URL_DEV_B64}" | base64 -d)
       curl --show-error --silent --output /dev/null -X POST \
       -F token=${DEPLOYMENT_TOKEN_DEV} \
       -F ref=master \
       -F variables[VIKY_DOCKER_TAG]=${CI_COMMIT_REF_SLUG} \
       -F variables[NOTIFY_DEPLOYMENT_INFO]=${CI_COMMIT_SHORT_SHA} \
-      "https://gitlab.pertimm.net/api/v4/projects/576/trigger/pipeline"
+      "${DEPLOY_GITLAB_CI_URL}"
 
 deploy_production:
   extends: .kubernetes_runner
@@ -171,9 +172,10 @@ deploy_production:
   stage: deploy
   script:
     - |
+      export DEPLOY_GITLAB_CI_URL=$(echo "${DEPLOY_GITLAB_CI_URL_PROD_B64}" | base64 -d)
       curl --show-error --silent --output /dev/null -X POST \
       -F token=${DEPLOYMENT_TOKEN_PROD} \
       -F ref=master \
       -F variables[VIKY_DOCKER_TAG]=latest \
       -F variables[NOTIFY_DEPLOYMENT_INFO]=${CI_COMMIT_SHORT_SHA} \
-      "https://gitlab.pertimm.net/api/v4/projects/570/trigger/pipeline"
+      "${DEPLOY_GITLAB_CI_URL}"
