@@ -137,7 +137,7 @@ push_dockerhub:
     - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_APP}:${VIKY_GITLAB_TAG}"          "${DOCKERHUB_IMAGE_APP}:${VIKY_DOCKERHUB_TAG}"
     - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_TOOLS_BACKUP}:${VIKY_GITLAB_TAG}" "${DOCKERHUB_IMAGE_TOOLS_BACKUP}:${VIKY_DOCKERHUB_TAG}"
 
-trigger_deploy_dev:
+deploy_dev:
   extends: .kubernetes_runner
   except:
     - master
@@ -156,9 +156,9 @@ trigger_deploy_dev:
       -F ref=master \
       -F variables[VIKY_DOCKER_TAG]=${CI_COMMIT_REF_SLUG} \
       -F variables[NOTIFY_DEPLOYMENT_INFO]=${CI_COMMIT_SHORT_SHA} \
-      https://gitlab.pertimm.net/api/v4/projects/576/trigger/pipeline"
+      "https://gitlab.pertimm.net/api/v4/projects/576/trigger/pipeline"
 
-trigger_deploy_production:
+deploy_production:
   extends: .kubernetes_runner
   only:
     - master
@@ -176,4 +176,4 @@ trigger_deploy_production:
       -F ref=master \
       -F variables[VIKY_DOCKER_TAG]=latest \
       -F variables[NOTIFY_DEPLOYMENT_INFO]=${CI_COMMIT_SHORT_SHA} \
-      https://gitlab.pertimm.net/api/v4/projects/570/trigger/pipeline"
+      "https://gitlab.pertimm.net/api/v4/projects/570/trigger/pipeline"
