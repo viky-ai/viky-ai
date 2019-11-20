@@ -151,6 +151,7 @@ deploy_dev:
   stage: deploy
   script:
     - |
+      # Deploy to dev
       export DEPLOY_GITLAB_CI_URL=$(echo "${DEPLOY_GITLAB_CI_URL_DEV_B64}" | base64 -d)
       curl --show-error --silent --output /dev/null -X POST \
       -F token=${DEPLOYMENT_TOKEN_DEV} \
@@ -172,6 +173,7 @@ deploy_production:
   stage: deploy
   script:
     - |
+      # Deploy to production
       export DEPLOY_GITLAB_CI_URL=$(echo "${DEPLOY_GITLAB_CI_URL_PROD_B64}" | base64 -d)
       curl --show-error --silent --output /dev/null -X POST \
       -F token=${DEPLOYMENT_TOKEN_PROD} \
