@@ -11,7 +11,7 @@
   <hide_msg>
   </hide_msg>
   </factory_config>
-  <component info="All libs not maintained by Pertimm" name="external_dependencies" parallel="true" support="brice.ruzand@pertimm.com" />
+  <component info="All libs not maintained by Pertimm" name="external_dependencies" parallel="true" />
 
   <component name="ogm_addr/lib" info="Handles listening to multiple IP/ports" />
   <component name="ogm_aut/lib" info="Finite State Automaton library" />

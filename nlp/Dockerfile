@@ -2,12 +2,12 @@
 # https://codefresh.io/blog/node_docker_multistage/
 
 # Run
-# docker build --pull --target run_image -t docker-registry.pertimm.net/viky.ai/platform/nlp .
-# docker run -it --volume "$(pwd)/import:/nls/import" -p "9345:9345" -t docker-registry.pertimm.net/viky.ai/platform/nlp
+# docker build --pull --target run_image -t vikyai/nlp .
+# docker run -it --volume "$(pwd)/import:/nls/import" -p "9345:9345" -t vikyai/nlp
 
 # Tests
-# docker build --target test_image -t docker-registry.pertimm.net/viky.ai/platform/nlp_test .
-# docker run -t docker-registry.pertimm.net/viky.ai/platform/nlp_test
+# docker build --target test_image -t vikyai/platform/nlp_test .
+# docker run -t vikyai/nlp_test
 
 #########################################################################################
 # Minimal dependencies to build NLP from strach
@@ -101,7 +101,6 @@ ADD products/bu2_nls/conf           /builds/nls/products/bu2_nls/conf
 ADD products/bu2_nls/ling           /builds/nls/products/bu2_nls/ling
 ADD products/bu2_nls/node_modules   /builds/nls/products/bu2_nls/node_modules
 ADD products/bu2_nls/manifest.xml   /builds/nls/products/bu2_nls/manifest.xml
-ADD products/bu2_nls/LICENSE.TXT    /builds/nls/products/bu2_nls/LICENSE.TXT
 ADD sources                         /builds/nls/sources
 
 RUN genmake.pl linux64 all

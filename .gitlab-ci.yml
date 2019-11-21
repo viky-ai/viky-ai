@@ -3,14 +3,12 @@ stages:
   - test
   - docker_tag
   - deploy
-  - admin
 
 variables:
   GIT_SUBMODULE_STRATEGY: none
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
-  DOCKER_IMAGE_DOC: docker-registry.pertimm.net/viky.ai/doc
   DOCKERHUB_IMAGE_NLP: "vikyai/nlp"
   DOCKERHUB_IMAGE_APP: "vikyai/app"
   DOCKERHUB_IMAGE_TOOLS_BACKUP: "vikyai/tools_backup"
@@ -23,8 +21,6 @@ before_script:
   - if [ -f /auto-deploy.sh ]; then . /auto-deploy.sh ; fi
 
 .kubernetes_runner:
-  environment:
-    name: dev-${CI_COMMIT_REF_NAME}
   tags:
     - kubernetes
   variables:
@@ -35,7 +31,7 @@ build_backup:
   extends: .kubernetes_runner
   stage: build
   script:
-    - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup
+    - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} docker/backup
 
 build_webapp:
   extends: .kubernetes_runner
@@ -70,7 +66,7 @@ test_webapp:
     - redis:5.0-alpine
     - name: selenium/standalone-chrome:3.141.59
       alias: selenium-chrome
-    - name: docker.elastic.co/elasticsearch/elasticsearch:7.3.2
+    - name: docker.elastic.co/elasticsearch/elasticsearch:7.4.1
       # Important other wise, port 9200 will never be exposed
       command:
         [
@@ -89,7 +85,7 @@ test_webapp:
     - export SELENIUM_REMOTE_URL="http://${CI_SERVICE_HOST:-selenium-chrome}:4444/wd/hub/"
     - export VIKYAPP_STATISTICS_NO_REPLICA="true"
     - cd /webapp
-    - if [ "${SKIP_TEST:-false}" != "true" ]; then ./bin/docker_run_test.sh ; fi
+    - if [ "${SKIP_TEST:-false}" != "true" ] ; then ./bin/docker_run_test.sh ; fi
   artifacts:
     # expire_in: 1 week
     reports:
@@ -134,8 +130,6 @@ push_dockerhub:
   only:
     - tags
     - master
-  environment:
-    name: viky-ai-production
   script:
     - export VIKY_GITLAB_TAG="${CI_COMMIT_REF_SLUG:-latest}"
     - export VIKY_DOCKERHUB_TAG="latest"
@@ -143,29 +137,31 @@ push_dockerhub:
     - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_APP}:${VIKY_GITLAB_TAG}"          "${DOCKERHUB_IMAGE_APP}:${VIKY_DOCKERHUB_TAG}"
     - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_TOOLS_BACKUP}:${VIKY_GITLAB_TAG}" "${DOCKERHUB_IMAGE_TOOLS_BACKUP}:${VIKY_DOCKERHUB_TAG}"
 
-# Deploy generic job
-
-.deploy_dev:
-  needs:
-    - build_backup
-    - test_webapp
-    - test_nlp
+deploy_dev:
+  extends: .kubernetes_runner
   except:
     - master
     - tags
   environment:
-    name: dev-${CI_COMMIT_REF_NAME}
+    name: dev-${CI_COMMIT_REF_SLUG}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
-  variables:
-    S3_ACCESS_KEY: ${S3_ACCESS_KEY}
-    S3_SECRET_KEY: ${S3_SECRET_KEY}
-    VIKY_USE_DOCKERHUB_IMAGE: "false"
-    HELM_RELEASE_NAME: "viky-dev"
-    HELM_VALUES: "viky/custom-values/dev.yaml,custom-values.yml"
+    # TODO trigger auto delete env with api env stop : https://docs.gitlab.com/ee/api/environments.html#stop-an-environment
+    #on_stop: delete_env
+  extends: .kubernetes_runner
+  stage: deploy
+  script:
+    - |
+      # Deploy to dev
+      export DEPLOY_GITLAB_CI_URL=$(echo "${DEPLOY_GITLAB_CI_URL_DEV_B64}" | base64 -d)
+      curl --show-error --silent --output /dev/null -X POST \
+      -F token=${DEPLOYMENT_TOKEN_DEV} \
+      -F ref=master \
+      -F variables[VIKY_DOCKER_TAG]=${CI_COMMIT_REF_SLUG} \
+      -F variables[NOTIFY_DEPLOYMENT_INFO]=${CI_COMMIT_SHORT_SHA} \
+      "${DEPLOY_GITLAB_CI_URL}"
 
-.deploy_production:
-  needs:
-    - "push_dockerhub"
+deploy_production:
+  extends: .kubernetes_runner
   only:
     - master
   except:
@@ -173,218 +169,14 @@ push_dockerhub:
   environment:
     name: viky-ai-production
     url: https://www.viky.ai
-  variables:
-    S3_ACCESS_KEY: ${S3_ACCESS_KEY}
-    S3_SECRET_KEY: ${S3_SECRET_KEY}
-    VIKY_DOCKER_TAG: "latest"
-    VIKY_USE_DOCKERHUB_IMAGE: "true"
-    VIKYAPP_AUTO_BACKUP: "true"
-    HELM_RELEASE_NAME: "viky-prod"
-    HELM_VALUES: "viky/custom-values/production.yaml,custom-values.yml"
-    KUBE_NAMESPACE: viky-ai-production
-
-.deploy:
-  extends: .kubernetes_runner
   stage: deploy
-  variables:
-    VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
-    HELM_TIMEOUT: "600"
-    HELM_EXTRA_OPTIONS: "--wait"
   script:
-    - kube_setup
-    # current deployment status
-    - helm history "${RELEASE_NAME}" || true
-    - helm status  "${RELEASE_NAME}" || true
-    # backup current env
-    - if [ "${BACKUP_BEFORE_DEPLOY:-false}" == "true" ]; then kubectl exec $(kube_get_pods \"app=viky-webapp-backup\") bash /backup/backup.sh || true ; fi
-    # Go to Kubernetes directory
-    - cd deployment/kubernetes/
-    - bin/generate-ci-override-values.sh
-    - cat custom-values.yml
-    # Deploy Viky Platform
-    - HELM_OPTIONS="--install ${HELM_EXTRA_OPTIONS} --timeout ${HELM_TIMEOUT}  --values ${HELM_VALUES}"
-    - echo "helm upgrade ${HELM_OPTIONS} "${RELEASE_NAME}" ./viky/"
-    - helm upgrade ${HELM_OPTIONS} "${RELEASE_NAME}" ./viky/
-    - notify_deployment
-
-# Deploy any branches on dev
-
-deploy_dev:
-  environment:
-    name: dev-${CI_COMMIT_REF_NAME}
-    on_stop: delete_env
-  extends:
-    - .deploy
-    - .deploy_dev
-
-deploy_dev_forced:
-  extends: deploy_dev
-  environment:
-    name: dev-${CI_COMMIT_REF_NAME}
-    on_stop: delete_env
-  when: manual
-  variables:
-    HELM_EXTRA_OPTIONS: "--force"
-
-# Deploy master on preprod
-deploy_production:
-  extends:
-    - .deploy
-    - .deploy_production
-  variables:
-    BACKUP_BEFORE_DEPLOY: "true"
-
-deploy_production_forced:
-  extends: deploy_production
-  when: manual
-  variables:
-    HELM_EXTRA_OPTIONS: "--force"
-
-# remove environment only for dev
-.delete_env:
-  environment:
-    name: dev-${CI_COMMIT_REF_NAME}
-    action: stop
-  stage: admin
-  needs:
-    # dummy needs to allow it directly
-    - "build_backup"
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - kube_setup
-    - helm history "${RELEASE_NAME}" || true
-    - helm status  "${RELEASE_NAME}" || true
-    - kubectl delete secret --ignore-not-found viky-infra-es-keystore-secret
-    - kube_cleanup
-  when: manual
-  allow_failure: true
-
-delete_env:
-  extends:
-    - .kubernetes_runner
-    - .deploy_dev
-    - .delete_env
-
-# invite admin user
-.invite_admin:
-  stage: admin
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - kube_setup
-    - PODNAME=$(kube_get_pods "app=viky-webapp")
-    - kubectl exec ${PODNAME} ./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]
-  when: manual
-  allow_failure: true
-
-invite_admin:
-  extends:
-    - .kubernetes_runner
-    - .deploy_dev
-    - .invite_admin
-
-# backup
-.backup:
-  stage: admin
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - kube_setup
-    - PODNAME=$(kube_get_pods "app=viky-webapp-backup")
-    - kubectl exec ${PODNAME}  bash /backup/backup.sh
-  when: manual
-  allow_failure: true
-
-backup_dev:
-  extends:
-    - .kubernetes_runner
-    - .deploy_dev
-    - .backup
-
-backup_production:
-  extends:
-    - .kubernetes_runner
-    - .deploy_production
-    - .backup
-
-# backup restore only for dev
-.backup_restore:
-  stage: admin
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - kube_setup
-    - PODNAME=$(kube_get_pods "app=viky-webapp-backup")
-    # backup current env
-    - kubectl exec ${PODNAME}  bash /backup/backup.sh || true
-    # restore base on viky-ai-production
-    - kubectl exec ${PODNAME}  bash /backup/restore.sh "viky-ai-production"
-    # delete pods to restart viky apps deployment
-    - kubectl delete pods -l 'app in (viky-webapp-worker, viky-webapp, viky-nlp)'
-  when: manual
-  allow_failure: true
-
-backup_restore:
-  extends:
-    - .kubernetes_runner
-    - .deploy_dev
-    - .backup_restore
-
-# update homepage and doc to latest image
-.update_doc:
-  stage: admin
-  variables:
-    GIT_STRATEGY: none
-  needs:
-    # dummy needs to allow it directly
-    - "build_backup"
-  script:
-    # update image fo the doc
-    - export IMAGE_DOC="${DOCKER_IMAGE_DOC_OVERRIDE:-$DOCKERHUB_IMAGE_DOC}"
-    - export IMAGE_DOC_TAG="${DOCKER_IMAGE_DOC_TAG_OVERRIDE:-latest}"
-    - kube_setup
-    - DOC_DIGEST_TAG=$(docker_digest_tag "${IMAGE_DOC}:${IMAGE_DOC_TAG}")
-    - echo "Updating doc to ${IMAGE_DOC}:${DOC_DIGEST_TAG}"
-    - kubectl set image deployments/viky-doc-deployment *="${IMAGE_DOC}:${DOC_DIGEST_TAG}"
-  when: manual
-  allow_failure: true
-
-update_doc_dev:
-  extends:
-    - .kubernetes_runner
-    - .deploy_dev
-    - .update_doc
-
-update_doc_production:
-  extends:
-    - .kubernetes_runner
-    - .deploy_production
-    - .update_doc
-
-# Get deployment status
-.deploy_status:
-  stage: admin
-  variables:
-    GIT_STRATEGY: none
-  needs:
-    # dummy needs to allow it directly
-    - "build_backup"
-  script:
-    - kube_setup
-    - helm history "${RELEASE_NAME}" || true
-    - helm status  "${RELEASE_NAME}"
-  when: manual
-  allow_failure: true
-
-deploy_status_dev:
-  extends:
-    - .kubernetes_runner
-    - .deploy_dev
-    - .deploy_status
-
-deploy_status_production:
-  extends:
-    - .kubernetes_runner
-    - .deploy_production
-    - .deploy_status
+    - |
+      # Deploy to production
+      export DEPLOY_GITLAB_CI_URL=$(echo "${DEPLOY_GITLAB_CI_URL_PROD_B64}" | base64 -d)
+      curl --show-error --silent --output /dev/null -X POST \
+      -F token=${DEPLOYMENT_TOKEN_PROD} \
+      -F ref=master \
+      -F variables[VIKY_DOCKER_TAG]=latest \
+      -F variables[NOTIFY_DEPLOYMENT_INFO]=${CI_COMMIT_SHORT_SHA} \
+      "${DEPLOY_GITLAB_CI_URL}"
