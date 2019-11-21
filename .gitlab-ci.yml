@@ -18,7 +18,7 @@ image: vikyai/tools-gitlab-auto-deploy-image:latest
 before_script:
   - if [ "${TRACE:-false}" == "true" ] ; then  set -x ; fi
   # load auto-deploy if exits (not in test)
-  - if [ -f /auto-deploy.sh ]; then . /auto-deploy.sh ; fi
+  - if [ -f /auto-deploy.sh ] ; then . /auto-deploy.sh ; fi
 
 .kubernetes_runner:
   tags:
@@ -103,7 +103,7 @@ test_nlp:
     GIT_STRATEGY: none
   script:
     - export VIKYAPP_REDIS_PACKAGE_NOTIFIER="redis://${CI_SERVICE_HOST:-redis}:6379/3"
-    - if [ "${SKIP_TEST:-false}" != "true" ]; then /docker_run_test.sh ; fi
+    - if [ "${SKIP_TEST:-false}" != "true" ] ; then /docker_run_test.sh ; fi
   artifacts:
     # expire_in: 1 week
     reports:
