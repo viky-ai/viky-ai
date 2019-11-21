@@ -164,6 +164,8 @@ deploy_production:
   extends: .kubernetes_runner
   only:
     - master
+    # TODO branch below
+    - feature/20979_cleanup_saas
   except:
     - tags
   environment:

@@ -18,22 +18,20 @@ function restore()
     export RESTORE_POINT="$2"
   fi
 
+  if [ "${RESTORE_FROM}" == "${VIKYAPP_BACKUP_NAME}" ]; then
+    echo "You cannot restore TO ${VIKYAPP_BACKUP_NAME} FROM ${RESTORE_FROM}"
+    exit 1
+  fi
+
   export RESTORE_DIR="/restore_data"
 
-  # Check if the backup is on premises
-  if [ "${VIKYAPP_BACKUP_ON_PREMISES}" ]; then
-    echo "Retrive last backup from /backup_data/ DONE"
-  else
-
-    setup_s3
-    echo "Retrive latest backup from S3 storage on ${S3_ENDPOINT}/${S3_BUCKET}/viky-backups/${RESTORE_FROM}/${RESTORE_POINT} ..."
-    execute rm -rf   "${RESTORE_DIR}"
-    execute mkdir -p "${RESTORE_DIR}"
-    execute s3cmd sync --preserve --exclude="*.rbd"  \
-      "s3://${S3_BUCKET}/viky-backups/${RESTORE_FROM}/${RESTORE_POINT}/" "${RESTORE_DIR}/"
-    echo "Retrive latest backup DONE"
-
-  fi
+  setup_s3
+  echo "Retrive latest backup from S3 storage on ${S3_ENDPOINT}/${S3_BUCKET}/viky-backups/${RESTORE_FROM}/${RESTORE_POINT} ..."
+  execute rm -rf   "${RESTORE_DIR}"
+  execute mkdir -p "${RESTORE_DIR}"
+  execute s3cmd sync --preserve --exclude="*.rbd"  \
+    "s3://${S3_BUCKET}/viky-backups/${RESTORE_FROM}/${RESTORE_POINT}/" "${RESTORE_DIR}/"
+  echo "Retrive latest backup DONE"
 
   # Postgres
   echo "Restore postgres on ${VIKYAPP_DB_HOST} ..."
@@ -64,11 +62,6 @@ function restore()
   fi
 
   echo "Restore directory DONE"
-
-  if [ "${VIKYAPP_BACKUP_ON_PREMISES}" ]; then
-    # donot restore stats
-    exit 0
-  fi
 
   # ElasticSearch
   echo "Restoring Stats in ES ..."
