@@ -164,13 +164,10 @@ deploy_production:
   extends: .kubernetes_runner
   only:
     - master
-    # TODO branch below
-    - feature/20979_cleanup_saas
   except:
     - tags
   environment:
-    # TODO change env name and url
-    name: dev-${CI_COMMIT_REF_SLUG}
+    name: viky-ai-production
     url: https://www.viky.ai
   stage: deploy
   script:
