@@ -12,7 +12,7 @@
 /*
  *  Adding an address with a port.
  *  address format can be:
- *    www.pertimm.net
+ *    www.viky.ai
  *    localhost
  *    127.0.0.1
  *    0.0.0.0

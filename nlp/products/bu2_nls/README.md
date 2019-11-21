@@ -86,10 +86,10 @@ buildinit.pl
 genmake.pl linux64 all
 factory.pl -p bu2_nls fullclean
 nettoyer.sh
-docker build --target run_image -t docker-registry.pertimm.net/viky.ai/platform/nlp .
+docker build --target run_image -t vikyai/nlp .
 ```
 
 # Run Nlp container
 ```
-docker run -it --volume "$(pwd)/import:/nls/import" -p "9345:9345" -t docker-registry.pertimm.net/viky.ai/platform/nlp
+docker run -it --volume "$(pwd)/import:/nls/import" -p "9345:9345" -t vikyai/nlp
 ```

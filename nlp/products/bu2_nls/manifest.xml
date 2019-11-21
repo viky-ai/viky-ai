@@ -7,7 +7,7 @@
     <summary>Pertimm NLS</summary>
     <license>(C) Copyright Pertimm</license>
     <vendor>Pertimm</vendor>
-    <url>http://www.pertimm.com</url>
+    <url>https://www.viky.ai</url>
     <description>Pertimm Natural Language Server</description>
   </info>
 
@@ -59,8 +59,6 @@
   <packaging>
     <ship>
       <directory name="%COMMERCIAL_NAME%-%SVNREV%">
-
-        <file name="LICENSE.TXT" source="%OG_REPO_PATH%/products/bu2_nls/LICENSE.TXT" />
 
         <bin name="ogm_nls" source="%OG_REPO_PATH%/build/%TARGET%/bin/ogm_nls" />
         <bin name="ognlp" source="%OG_REPO_PATH%/build/%TARGET%/bin/ognlp" />
