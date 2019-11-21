@@ -10,15 +10,3 @@
 [submodule "duktape"]
 	path = nlp/sources/external_dependencies/duktape
 	url = https://github.com/svaarala/duktape.git
-[submodule "nlp/sources/external_dependencies/uriparser"]
-	path = nlp/sources/external_dependencies/uriparser
-	url = https://github.com/uriparser/uriparser.git
-[submodule "nlp/sources/external_dependencies/jansson"]
-	path = nlp/sources/external_dependencies/jansson
-	url = https://github.com/akheron/jansson.git
-[submodule "nlp/sources/external_dependencies/glib"]
-	path = nlp/sources/external_dependencies/glib
-	url = https://github.com/GNOME/glib.git
-[submodule "nlp/sources/external_dependencies/duktape"]
-	path = nlp/sources/external_dependencies/duktape
-	url = https://github.com/svaarala/duktape.git
