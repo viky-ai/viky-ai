@@ -130,6 +130,8 @@ push_dockerhub:
   only:
     - tags
     - master
+  environment:
+    name: viky-ai-production
   script:
     - export VIKY_GITLAB_TAG="${CI_COMMIT_REF_SLUG:-latest}"
     - export VIKY_DOCKERHUB_TAG="latest"
