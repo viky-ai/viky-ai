@@ -63,7 +63,7 @@ We will guide you through the contribution of a patch to viky.ai for the first t
 The first step to contributing to viky.ai is to get a copy of the source code. First, [fork viky.ai on GitHub](https://github.com/viky.ai/viky.ai/fork). Then, from the command line, navigate to the directory where you'll want your local copy of viky.ai to live and use the following command:
 
 ```bash
-$ git clone https://github.com/YourGitHubName/viky-ai.git
+$ git clone --recurse-submodules https://github.com/YourGitHubName/viky-ai.git
 ```
 
 ### Install locally viky.ai platform
