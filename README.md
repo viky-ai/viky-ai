@@ -1,5 +1,7 @@
 # Welcome to viky.ai
 
+![Some natural language analysis examples](illustration.jpg?raw=true)
+
 ## What's viky.ai
 
 viky.ai is a Natural Language Processing platform. It allows you to extract information from unstructured text contents.
