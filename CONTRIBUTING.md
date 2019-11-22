@@ -27,11 +27,11 @@ If your bug or feature request touches on user interface, there are a few additi
 
 We're always trying to make viky.ai better, and your feature requests are a key part of that. Here are some tips on how to make a request:
 
-* Please don't put "feature request" items into GitHub Issues, request the feature on the viky.ai-developers list. It's the proper place to discuss new ideas.
+* Please put your feature request items into GitHub Issues with the label "Feature request".
 * Describe clearly and concisely what the missing feature is and how you'd like to see it implemented. Include example code (non-functional is OK) and/or UI mockups if possible.
-* If it isn’t obvious, explain why you’d like the feature.
+* If it isn't obvious, explain why you'd like the feature.
 
-As with most open-source projects, code talks. If you are willing to write the code for the feature yourself it’s much more likely to be accepted. Fork viky.ai on GitHub, create a feature branch, and show us your work with a merge request!
+As with most open-source projects, code talks. If you are willing to write the code for the feature yourself it's much more likely to be accepted. Fork viky.ai on GitHub, create a feature branch, and show us your work with a merge request!
 
 ### Helping to resolve existing issues
 
@@ -60,7 +60,7 @@ We will guide you through the contribution of a patch to viky.ai for the first t
 
 ### Getting a copy of viky.ai code
 
-The first step to contributing to viky.ai is to get a copy of the source code. First, [fork viky.ai on GitHub](https://github.com/viky.ai/viky.ai/fork). Then, from the command line, navigate to the directory where you’ll want your local copy of viky.ai to live and use the following command:
+The first step to contributing to viky.ai is to get a copy of the source code. First, [fork viky.ai on GitHub](https://github.com/viky.ai/viky.ai/fork). Then, from the command line, navigate to the directory where you'll want your local copy of viky.ai to live and use the following command:
 
 ```bash
 $ git clone https://github.com/YourGitHubName/viky-ai.git
@@ -147,7 +147,7 @@ test "hello method" do
 end
 ```
 
-Since we haven't made any modifications to `User` model yet, our test should fail. Let’s run all the tests to make sure that's really what happens.
+Since we haven't made any modifications to `User` model yet, our test should fail. Let's run all the tests to make sure that's really what happens.
 
 ```bash
 $ ./bin/rails test
@@ -186,7 +186,7 @@ Everything should pass. You can proceed to the next step.
 
 #### Previewing your changes
 
-Now it’s time to go through all the changes made in our patch. To stage the changes ready for commit, run:
+Now it's time to go through all the changes made in our patch. To stage the changes ready for commit, run:
 
 ```bash
 $ git add app/models/user.rb test/models/user_test.rb
@@ -234,7 +234,7 @@ index 93c789c8..8c2c426a 100644
 ```
 
 
-If the patch’s content looked okay, it’s time to commit the changes.
+If the patch's content looked okay, it's time to commit the changes.
 
 ```bash
 $ git commit . -m "User instance can say hello"

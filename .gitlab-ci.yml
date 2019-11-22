@@ -117,7 +117,8 @@ tag_latest:
   variables:
     GIT_STRATEGY: none
   only:
-    - master
+    refs:
+      - master
   script:
     - docker_tag_latest ${DOCKER_IMAGE_APP}
     - docker_tag_latest ${DOCKER_IMAGE_NLP}
@@ -128,8 +129,9 @@ push_dockerhub:
   extends: .kubernetes_runner
   stage: docker_tag
   only:
-    - tags
-    - master
+    refs:
+      - tags
+      - master
   environment:
     name: viky-ai-production
   script:
@@ -141,9 +143,13 @@ push_dockerhub:
 
 deploy_dev:
   extends: .kubernetes_runner
+  only:
+    variables:
+      - $DEPLOY_GITLAB_CI_URL_DEV_B64
   except:
-    - master
-    - tags
+    refs:
+      - master
+      - tags
   environment:
     name: dev-${CI_COMMIT_REF_SLUG}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
@@ -165,9 +171,13 @@ deploy_dev:
 deploy_production:
   extends: .kubernetes_runner
   only:
-    - master
+    refs:
+      - master
+    variables:
+      - $DEPLOY_GITLAB_CI_URL_PROD_B64
   except:
-    - tags
+    refs:
+      - tags
   environment:
     name: viky-ai-production
     url: https://www.viky.ai
