@@ -41,7 +41,7 @@ gem 'elasticsearch', '~> 7.4'
 # Use Devise as authentication solution
 gem 'devise', '~> 4.7.1'
 gem 'devise_invitable', '~> 2.0.1'
-gem 'friendly_id', '~> 5.2.5'
+gem 'friendly_id', '~> 5.3.0'
 
 # Allow admin to switch user
 gem 'pretender'
