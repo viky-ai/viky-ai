@@ -45,7 +45,7 @@ GEM
     activerecord (6.0.1)
       activemodel (= 6.0.1)
       activesupport (= 6.0.1)
-    activerecord-import (1.0.2)
+    activerecord-import (1.0.3)
       activerecord (>= 3.2)
     activestorage (6.0.1)
       actionpack (= 6.0.1)
@@ -92,7 +92,7 @@ GEM
     crass (1.0.5)
     css_parser (1.7.0)
       addressable
-    csv (3.1.1)
+    csv (3.1.2)
     debug_inspector (0.0.3)
     devise (4.7.1)
       bcrypt (~> 3.0)
