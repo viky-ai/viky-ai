@@ -2,7 +2,7 @@ class User < ApplicationRecord
   extend FriendlyId
   friendly_id :username, use: :history, slug_column: 'username'
 
-  include UserImageUploader::Attachment.new(:image)
+  include UserImageUploader::Attachment(:image)
 
   has_many :memberships, dependent: :destroy
   has_many :agents, through: :memberships

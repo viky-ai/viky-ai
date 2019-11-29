@@ -6,7 +6,7 @@ class Agent < ApplicationRecord
 
   require 'rgl/adjacency'
 
-  include AgentImageUploader::Attachment.new(:image)
+  include AgentImageUploader::Attachment(:image)
 
   has_one :readme, dependent: :destroy
 
