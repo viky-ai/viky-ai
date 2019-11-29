@@ -1,22 +1,24 @@
 ---
-
 name: "Feature Request"
 about: Suggest an idea for this project
 labels: Feature request
----<!--
-Thank you for suggesting an idea to make Viky.ai better.
+---
 
+We're always trying to make viky.ai better, and your feature requests are a key part of that.
 Please fill in as much of the template below as you can.
--->
 
-#### Is your feature request related to a problem ?
+**Is your feature request related to a problem? Please describe.**
 
-<!--  Please describe the problem you are trying to solve. -->
+A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
-#### Describe the solution you'd like
+**Describe the solution you'd like**
 
-<!--  Please describe the desired behavior. -->
+A clear and concise description of what you want to happen.
 
-#### Describe alternatives you've considered
+**Describe alternatives you've considered**
 
-<!--  Please describe alternative solutions or features you have considered. -->
+A clear and concise description of any alternative solutions or features you've considered.
+
+**Additional context**
+
+Add any other context, screenshots, mockups, example code about the feature request here.
