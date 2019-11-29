@@ -145,6 +145,9 @@ push_dockerhub_master:
   only:
     refs:
       - master
+    variables:
+      - $DOCKER_HUB_LOGIN
+      - $DOCKER_HUB_PASSWORD
   variables:
     VIKY_DOCKERHUB_TAG: "latest"
   environment:
@@ -218,6 +221,6 @@ deploy_production:
       curl --show-error --silent --output /dev/null -X POST \
       -F token=${DEPLOYMENT_TOKEN_PROD} \
       -F ref=master \
-      -F variables[VIKY_DOCKER_TAG]=latest \
+      -F variables[VIKY_DOCKER_TAG]=saas \
       -F variables[NOTIFY_DEPLOYMENT_INFO]=${CI_COMMIT_SHORT_SHA} \
       "${DEPLOY_GITLAB_CI_URL}"
