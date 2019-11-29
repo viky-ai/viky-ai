@@ -119,27 +119,56 @@ tag_latest:
   only:
     refs:
       - master
+  except:
+    refs:
+      - tags
   script:
     - docker_tag_latest ${DOCKER_IMAGE_APP}
     - docker_tag_latest ${DOCKER_IMAGE_NLP}
     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_BACKUP}
 
 # Push Docker image to Dockerhub only when on Master and it's a Tag
-push_dockerhub:
+.push_dockerhub:
   extends: .kubernetes_runner
   stage: docker_tag
-  only:
-    refs:
-      - tags
-      - master
   environment:
     name: viky-ai-production
   script:
     - export VIKY_GITLAB_TAG="${CI_COMMIT_REF_SLUG:-latest}"
-    - export VIKY_DOCKERHUB_TAG="latest"
     - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_NLP}:${VIKY_GITLAB_TAG}"          "${DOCKERHUB_IMAGE_NLP}:${VIKY_DOCKERHUB_TAG}"
     - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_APP}:${VIKY_GITLAB_TAG}"          "${DOCKERHUB_IMAGE_APP}:${VIKY_DOCKERHUB_TAG}"
     - docker_push_gitlab_to_dockerhub "${DOCKER_IMAGE_TOOLS_BACKUP}:${VIKY_GITLAB_TAG}" "${DOCKERHUB_IMAGE_TOOLS_BACKUP}:${VIKY_DOCKERHUB_TAG}"
+
+push_dockerhub_master:
+  extends: .push_dockerhub
+  stage: docker_tag
+  only:
+    refs:
+      - master
+  variables:
+    VIKY_DOCKERHUB_TAG: "latest"
+  environment:
+    name: viky-ai-production
+
+push_dockerhub_tag:
+  extends: .push_dockerhub
+  stage: docker_tag
+  only:
+    refs:
+      - tags
+  variables:
+    VIKY_DOCKERHUB_TAG: ${CI_COMMIT_TAG}
+  environment:
+    name: viky-ai-production
+
+push_dockerhub_saas:
+  extends: .push_dockerhub
+  stage: docker_tag
+  only:
+    refs:
+      - saas
+  variables:
+    VIKY_DOCKERHUB_TAG: "saas"
 
 deploy_dev:
   extends: .kubernetes_runner
@@ -148,7 +177,7 @@ deploy_dev:
       - $DEPLOY_GITLAB_CI_URL_DEV_B64
   except:
     refs:
-      - master
+      - saas
       - tags
   environment:
     name: dev-${CI_COMMIT_REF_SLUG}
@@ -172,7 +201,7 @@ deploy_production:
   extends: .kubernetes_runner
   only:
     refs:
-      - master
+      - saas
     variables:
       - $DEPLOY_GITLAB_CI_URL_PROD_B64
   except:
