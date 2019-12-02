@@ -90,7 +90,7 @@ GEM
     connection_pool (2.2.2)
     content_disposition (1.0.0)
     crass (1.0.5)
-    css_parser (1.7.0)
+    css_parser (1.7.1)
       addressable
     csv (3.1.2)
     debug_inspector (0.0.3)
@@ -121,9 +121,9 @@ GEM
       faraday
       multi_json
     erubi (1.9.0)
-    faraday (0.17.0)
+    faraday (0.17.1)
       multipart-post (>= 1.2, < 3)
-    ffi (1.11.1)
+    ffi (1.11.3)
     foreman (0.86.0)
     foundation_emails (2.2.1.0)
     friendly_id (5.3.0)
@@ -201,9 +201,9 @@ GEM
     nio4r (2.5.2)
     nokogiri (1.10.5)
       mini_portile2 (~> 2.4.0)
-    nokogumbo (2.0.1)
+    nokogumbo (2.0.2)
       nokogiri (~> 1.8, >= 1.8.4)
-    oj (3.9.2)
+    oj (3.10.0)
     orm_adapter (0.5.0)
     pg (1.1.4)
     postmark (1.15.0)
@@ -281,7 +281,7 @@ GEM
     ruby-enum (0.7.2)
       i18n
     ruby-progressbar (1.10.1)
-    ruby-vips (2.0.15)
+    ruby-vips (2.0.16)
       ffi (~> 1.9)
     rubyzip (2.0.0)
     sanitize (5.1.0)
@@ -358,7 +358,7 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yajl-ruby (1.4.1)
-    zeitwerk (2.2.1)
+    zeitwerk (2.2.2)
 
 PLATFORMS
   ruby
