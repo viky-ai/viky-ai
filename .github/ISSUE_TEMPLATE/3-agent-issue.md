@@ -19,12 +19,12 @@ A clear and concise description of what the issue is.
 
 **Expected behavior**
 
-- The expected intent
+- The expected interpretation
 - The expected corresponding solution
 
 **Actual behavior** 
 
-- The actual intent
+- The actual interpretation
 - The actual corresponding solution
 
 **Additional context**
