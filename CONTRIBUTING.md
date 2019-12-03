@@ -45,7 +45,7 @@ As a next step beyond reporting issues, you can help us to resolve existing ones
 
 You can help improve the viky.ai documentation by making it more coherent, consistent, or readable, adding missing information, correcting factual errors, fixing typos.
 
-To do so, make changes to [viky.ai documentation source files](https://github.com/viky-ai/doc). Then open a pull request to apply your changes to the development branch.
+To do so, make changes to [viky.ai documentation source files](https://github.com/viky-ai/website). Then open a pull request to apply your changes to the development branch.
 
 
 ## Contributing to the viky.ai webapp code
@@ -60,7 +60,7 @@ We will guide you through the contribution of a patch to viky.ai for the first t
 
 ### Getting a copy of viky.ai code
 
-The first step to contributing to viky.ai is to get a copy of the source code. First, [fork viky.ai on GitHub](https://github.com/viky.ai/viky.ai/fork). Then, from the command line, navigate to the directory where you'll want your local copy of viky.ai to live and use the following command:
+The first step to contributing to viky.ai is to get a copy of the source code. First, [fork viky.ai on GitHub](https://github.com/viky-ai/viky-ai/fork). Then, from the command line, navigate to the directory where you'll want your local copy of viky.ai to live and use the following command:
 
 ```bash
 $ git clone --recurse-submodules https://github.com/YourGitHubName/viky-ai.git
