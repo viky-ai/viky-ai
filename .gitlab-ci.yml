@@ -198,7 +198,7 @@ deploy_dev:
       -F ref=master \
       -F variables[VIKY_DEPLOY_NAME]=viky-${CI_COMMIT_REF_SLUG} \
       -F variables[VIKY_DOCKER_TAG]=${CI_COMMIT_REF_SLUG} \
-      -F variables[DOCKER_IMAGE_DOC_TAG_OVERRIDE]=${DOCKER_IMAGE_DOC_TAG_OVERRIDE:-latest} \
+      -F variables[DOCKER_IMAGE_DOC_TAG]=${DOCKER_IMAGE_DOC_TAG:-latest} \
       -F variables[NOTIFY_DEPLOYMENT_INFO]=${CI_COMMIT_SHORT_SHA} \
       "${DEPLOY_GITLAB_CI_URL}"
 
@@ -225,6 +225,6 @@ deploy_production:
       -F ref=master \
       -F variables[VIKY_DEPLOY_NAME]=viky-ai-production \
       -F variables[VIKY_DOCKER_TAG]=saas \
-      -F variables[DOCKER_IMAGE_DOC_TAG_OVERRIDE]=saas \
+      -F variables[DOCKER_IMAGE_DOC_TAG]=saas \
       -F variables[NOTIFY_DEPLOYMENT_INFO]=${CI_COMMIT_SHORT_SHA} \
       "${DEPLOY_GITLAB_CI_URL}"
