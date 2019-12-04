@@ -12,3 +12,6 @@ reports
 
 public/packs
 public/assets
+
+docker-compose.yml
+Procfile
