@@ -1,6 +1,6 @@
 <% if interactive_map.params['endpoint'] == 'javascript' %>
   <script>
-    App.Statement.display_js_map("<%= map.params['api_key'] %>", "<%= statement.id %>", <%= interactive_map.params['payload'].to_json.html_safe %>)
+    App.Statement.display_js_map("<%= interactive_map.params['api_key'] %>", "<%= statement.id %>", <%= interactive_map.params['payload'].to_json.html_safe %>)
   </script>
 <% end %>
 
