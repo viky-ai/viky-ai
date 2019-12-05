@@ -52,7 +52,6 @@ class UserTest < ActiveSupport::TestCase
     ]
     assert_equal expected, User.search(s.options).all.collect(&:email)
 
-
     s = Backend::UserSearch.new(sort_by: 'email')
     expected = [
       'admin@viky.ai',

@@ -25,6 +25,7 @@ en:
         index:
           sort_by:
             last_action: Sort by last login
+            last_created: Sort by last creation
             email: Sort by email
           status:
             label: Status

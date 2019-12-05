@@ -45,12 +45,13 @@ class BackendUsersTest < ApplicationSystemTestCase
   end
 
 
-  test "Users can be sorted by email" do
+  test "Users can be sorted" do
     admin_login
     visit backend_users_path
 
-    find(".dropdown__trigger", text: "Sort by last login").click
-    find(".dropdown__content", text: "Sort by email").click
+    # Sort by email
+    find(".dropdown__trigger a", text: "Sort by last login").click
+    find(".dropdown__content a", text: "Sort by email").click
     expected = [
       "admin@viky.ai",
       "confirmed@viky.ai",
@@ -60,9 +61,22 @@ class BackendUsersTest < ApplicationSystemTestCase
       "notconfirmed@viky.ai",
       "show_on_agent_weather@viky.ai"
     ]
-
     find(".field .control:last-child .dropdown__trigger a").assert_text "Sort by email"
+    assert_equal expected, all(".user__info small").collect(&:text)
 
+    # Sort by last creation
+    find(".dropdown__trigger a", text: "Sort by email").click
+    find(".dropdown__content a", text: "Sort by last creation").click
+    expected = [
+      'edit_on_agent_weather@viky.ai',
+      'show_on_agent_weather@viky.ai',
+      'invited@viky.ai',
+      'locked@viky.ai',
+      'admin@viky.ai',
+      'confirmed@viky.ai',
+      'notconfirmed@viky.ai',
+    ]
+    find(".field .control:last-child .dropdown__trigger a").assert_text "Sort by last creation"
     assert_equal expected, all(".user__info small").collect(&:text)
   end
 
