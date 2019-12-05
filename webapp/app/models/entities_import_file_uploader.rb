@@ -1,9 +1,5 @@
 class EntitiesImportFileUploader < Shrine
-
   MAX_FILE_SIZE = 30.megabytes
-
-  plugin :activerecord
-  plugin :validation_helpers
 
   # csv file is detected as text/plain
   plugin :determine_mime_type, analyzer: ->(io, analyzers) do
@@ -11,9 +7,6 @@ class EntitiesImportFileUploader < Shrine
     mime_type = analyzers[:mime_types].call(io) if mime_type == "text/plain"
     mime_type
   end
-
-  plugin :delete_promoted
-  plugin :pretty_location
 
   Attacher.validate do
     validate_max_size MAX_FILE_SIZE,

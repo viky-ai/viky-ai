@@ -2,7 +2,7 @@ class EntitiesImport < ApplicationRecord
   belongs_to :entities_list
   belongs_to :user
 
-  include EntitiesImportFileUploader::Attachment.new(:file)
+  include EntitiesImportFileUploader::Attachment(:file)
   validates_presence_of :file, message: I18n.t('errors.entities_import.no_file'), on: :create
   validate :validate_absence_of_concurrent_import, on: :create
   validates :mode, presence: true
