@@ -34,6 +34,8 @@ class AgentTransfer
         end
       end
       AgentMailer.transfer_ownership(@previous_owner, @new_owner, @agent).deliver_later if Feature.email_configured?
+      @agent.need_nlp_sync
+      @agent.touch
     end
   end
 
