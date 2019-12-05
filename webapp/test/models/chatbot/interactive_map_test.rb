@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class Chatbot::MapTest < ActiveSupport::TestCase
+class Chatbot::InteractiveMapTest < ActiveSupport::TestCase
 
   test 'Create a simple map statement' do
     google_api_key = ENV.fetch('VIKYAPP_GOOGLE_MAP_API_KEY') { 'missing-google-map-api-key' }

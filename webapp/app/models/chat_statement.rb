@@ -28,7 +28,7 @@ class ChatStatement < ApplicationRecord
       when 'video'
         Chatbot::Video.new(content)
       when 'interactive_map'
-        Chatbot::Map.new(content)
+        Chatbot::InteractiveMap.new(content)
       when 'button'
         Chatbot::Button.new(content)
       when 'button_group'
