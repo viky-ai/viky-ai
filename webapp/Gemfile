@@ -41,7 +41,7 @@ gem 'elasticsearch', '~> 7.4'
 # Use Devise as authentication solution
 gem 'devise', '~> 4.7.1'
 gem 'devise_invitable', '~> 2.0.1'
-gem 'friendly_id', '~> 5.2.5'
+gem 'friendly_id', '~> 5.3.0'
 
 # Allow admin to switch user
 gem 'pretender'
@@ -56,9 +56,8 @@ gem 'foreman'
 gem 'dotenv-rails', '~> 2.7'
 
 # Upload (shrine & dependencies)
-gem 'shrine'
+gem 'shrine', "~> 3.0"
 gem 'image_processing'
-gem 'mini_magick', '>= 4.3.5'
 
 # Markdown
 gem 'html-pipeline'
@@ -114,7 +113,6 @@ group :test do
   gem 'selenium-webdriver'
   gem 'webdrivers', require: !ENV['SELENIUM_REMOTE_URL']
   gem 'mocha'
-  gem 'shrine-memory'
   gem 'simplecov'
   gem 'minitest-retry'
 end
