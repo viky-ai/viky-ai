@@ -16,27 +16,27 @@ class AgentTransfer
 
   def proceed
     validate
-    if valid?
-      ActiveRecord::Base.transaction do
-        downgrade_previous_ownership
-        new_ownership = create_new_ownership
-        if new_ownership.save
-          @agent.owner_id = @new_owner.id
-          @agent.slug = "#{@new_owner.username}/#{@agent.agentname}"
-          unless @agent.save
-            @errors << @agent.errors.full_messages
-            raise ActiveRecord::Rollback
-          end
-          @agent.users.reload
-        else
-          @errors << new_ownership.errors.full_messages
+    return unless valid?
+
+    ActiveRecord::Base.transaction do
+      downgrade_previous_ownership
+      new_ownership = create_new_ownership
+      if new_ownership.save
+        @agent.owner_id = @new_owner.id
+        @agent.slug = "#{@new_owner.username}/#{@agent.agentname}"
+        unless @agent.save
+          @errors << @agent.errors.full_messages
           raise ActiveRecord::Rollback
         end
+        @agent.users.reload
+      else
+        @errors << new_ownership.errors.full_messages
+        raise ActiveRecord::Rollback
       end
-      AgentMailer.transfer_ownership(@previous_owner, @new_owner, @agent).deliver_later if Feature.email_configured?
-      @agent.need_nlp_sync
-      @agent.touch
     end
+    AgentMailer.transfer_ownership(@previous_owner, @new_owner, @agent).deliver_later if Feature.email_configured?
+    @agent.need_nlp_sync
+    @agent.touch
   end
 
   private
