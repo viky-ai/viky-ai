@@ -127,36 +127,34 @@ class Api::V1::ChatStatementsController < Api::V1::ApplicationController
     # enum value "map" is not permitted due to conflict with ActiveRecord map method
     # so we use interactive_map internally.
     def transform_map_to_interactive_map(data)
-      # Map
       data[:nature] = "interactive_map" if data[:nature] == "map"
-
-      # Card with map
       data = transform_map_to_interactive_map_in_card(data)
-
-      # List with map
-      if data.dig(:content, :items).respond_to? "each_with_index"
-        data[:content][:items].each_with_index do |item, i|
-          if item[:nature] == "map"
-            data[:content][:items][i][:nature] = "interactive_map"
-          end
-          if item[:nature] == "card"
-            data[:content][:items][i] = transform_map_to_interactive_map_in_card(item)
-          end
-        end
-      end
-
+      data = transform_map_to_interactive_map_in_list(data)
       data
     end
 
     def transform_map_to_interactive_map_in_card(data)
-      if data.dig(:content, :components).respond_to? "each_with_index"
-        data[:content][:components].each_with_index do |component, i|
-          if component[:nature] == "map"
-            data[:content][:components][i][:nature] = "interactive_map"
-          end
+      return data unless data.dig(:content, :components).respond_to? "each_with_index"
+
+      data[:content][:components].each_with_index do |component, i|
+        if component[:nature] == "map"
+          data[:content][:components][i][:nature] = "interactive_map"
         end
       end
       data
     end
 
+    def transform_map_to_interactive_map_in_list(data)
+      return data unless data.dig(:content, :items).respond_to? "each_with_index"
+
+      data[:content][:items].each_with_index do |item, i|
+        if item[:nature] == "map"
+          data[:content][:items][i][:nature] = "interactive_map"
+        end
+        if item[:nature] == "card"
+          data[:content][:items][i] = transform_map_to_interactive_map_in_card(item)
+        end
+      end
+      data
+    end
 end
