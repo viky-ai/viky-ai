@@ -17,7 +17,7 @@ en:
         params: content.params
         title: content.title
         description: content.description
-      chatbot/map:
+      chatbot/interactive_map:
         params: content.params
         title: content.title
         description: content.description

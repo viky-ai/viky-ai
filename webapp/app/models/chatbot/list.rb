@@ -38,8 +38,8 @@ class Chatbot::List
         Chatbot::ButtonGroup.new(item["content"])
       when 'card'
         Chatbot::Card.new(item["content"])
-      when 'map'
-        Chatbot::Map.new(item["content"])
+      when 'interactive_map'
+        Chatbot::InteractiveMap.new(item["content"])
       when 'geolocation'
         Chatbot::Geolocation.new(item['content'])
       end
@@ -52,7 +52,7 @@ class Chatbot::List
     def recursive_validation
       if items.respond_to? :each
         items.each do |item|
-          unless ['text', 'image', 'video', 'button', 'button_group', 'card', 'map', 'geolocation'].include? item["nature"]
+          unless ['text', 'image', 'video', 'button', 'button_group', 'card', 'interactive_map', 'geolocation'].include? item["nature"]
             errors.add(:base, I18n.t('errors.chat_statement.invalid_nature', nature: item['nature']))
           end
         end
