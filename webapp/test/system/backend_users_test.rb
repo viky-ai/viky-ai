@@ -66,7 +66,7 @@ class BackendUsersTest < ApplicationSystemTestCase
 
     # Sort by last creation
     find(".dropdown__trigger a", text: "Sort by email").click
-    find(".dropdown__content a", text: "Sort by last creation").click
+    find(".dropdown__content a", text: "Sort by last sign up").click
     expected = [
       'edit_on_agent_weather@viky.ai',
       'show_on_agent_weather@viky.ai',
@@ -76,7 +76,7 @@ class BackendUsersTest < ApplicationSystemTestCase
       'confirmed@viky.ai',
       'notconfirmed@viky.ai',
     ]
-    find(".field .control:last-child .dropdown__trigger a").assert_text "Sort by last creation"
+    find(".field .control:last-child .dropdown__trigger a").assert_text "Sort by last sign up"
     assert_equal expected, all(".user__info small").collect(&:text)
   end
 

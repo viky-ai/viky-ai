@@ -96,7 +96,7 @@
 
         <% if !Feature.email_configured? || user.confirmed? %>
           <p>
-            <small>Created at</small>
+            <small>Sign up</small>
             <em><%= l(user.created_at, format: :long) %></em>
           </p>
           <% unless user.current_sign_in_at.nil? %>
