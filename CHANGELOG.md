@@ -5,6 +5,12 @@ All notable changes to viky.ai will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 
+## 2019-12-05
+
+### Fixed
+
+- Agent ownership transfert doesn't trigger NLP package synchronization.
+
 ## 2019-12-02
 
 ### Added
