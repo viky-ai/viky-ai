@@ -347,7 +347,7 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
-  test "Transfer agent ownership and keep edit rights for previous owner" do
+  test "Transfer agent ownership, keep edit rights for previous owner, trigger NLP sync" do
     user_admin = users(:admin)
     user_confirmed = users(:confirmed)
     terminator_agent = agents(:terminator)
@@ -357,7 +357,10 @@ class AgentTest < ActiveSupport::TestCase
     assert terminator_agent.users.one? { |user| user.id == user_admin.id }
     assert terminator_agent.users.none? { |user| user.id == user_confirmed.id }
 
+    terminator_agent.expects(:sync_nlp)
+    terminator_agent.expects(:notify_tests_suite_ui)
     result = terminator_agent.transfer_ownership_to(user_confirmed.email)
+
     assert result[:success]
 
     assert_equal "confirmed/terminator", terminator_agent.slug
