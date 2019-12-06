@@ -25,7 +25,7 @@ sigterm_handler() {
 trap "sigterm_handler; exit" SIGTERM
 
 start_fluentbit() {
-  /fluent-bit/bin/fluent-bit -c /fluent-bit/fulent-bit.conf &
+  /fluent-bit/bin/fluent-bit -c /webapp/config/statistics/fulent-bit.conf &
   echo $! > ./tmp/pids/fluent-bit.pid
 }
 
