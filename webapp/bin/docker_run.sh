@@ -14,15 +14,25 @@ sigterm_handler() {
     pkill --signal SIGTERM --pidfile ./tmp/pids/sidekiq.pid
   fi
 
+  if [[ -e ./tmp/pids/fluent-bit.pid ]]; then
+    pkill --signal SIGTERM --pidfile ./tmp/pids/fluent-bit.pid
+  fi
+
   # wait for stop
   wait
 }
 
 trap "sigterm_handler; exit" SIGTERM
 
+start_fluentbit() {
+  /fluent-bit/bin/fluent-bit -c /fluent-bit/fulent-bit.conf &
+  echo $! > ./tmp/pids/fluent-bit.pid
+}
+
 # remove previously started server pid
 rm -f ./tmp/pids/server.pid
 rm -f ./tmp/pids/sidekiq.pid
+rm -f ./tmp/pids/fluent-bit.pid
 
 # init container Check data migration
 POD_INDEX="${HOSTNAME##*-}"
@@ -112,6 +122,7 @@ else
   case "$1" in
   worker)
     # Start one worker
+    start_fluentbit
     bundle exec sidekiq -C config/sidekiq.yml &
     ;;
   stats-rollover)
@@ -122,6 +133,7 @@ else
     echo "viky.ai will be available on ${VIKYAPP_PUBLIC_URL}"
 
     # Start web server
+    start_fluentbit
     ./bin/rails server -b 0.0.0.0 -p 3000 &
     ;;
   esac

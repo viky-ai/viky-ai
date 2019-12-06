@@ -259,8 +259,12 @@ class InterpretRequestLogClient
     )
   end
 
-  def index_alias_name
+  def self.index_alias_name
     "index-#{InterpretRequestLogClient.index_name}"
+  end
+
+  def index_alias_name
+    InterpretRequestLogClient.index_alias_name
   end
 
   def search_alias_name

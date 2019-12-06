@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 6,
   "index_patterns": "stats-interpret_request_log-*",
   "settings": {
     "number_of_shards": 2
@@ -8,6 +8,19 @@
     "search-stats-interpret_request_log": {}
   },
   "mappings": {
+    "dynamic_templates":
+    [
+      {
+        "context_properties":
+        {
+          "mapping":
+          {
+            "type": "keyword"
+          },
+          "path_match": "context.*"
+        }
+      }
+    ],
     "properties": {
       "timestamp": {
         "type": "date"
@@ -42,8 +55,10 @@
       "status": {
         "type": "integer"
       },
-      "context":{
-        "type": "object"
+      "fluentbit_time": {
+        "type": "date",
+        "index": false,
+        "store": false
       },
       "body": {
         "properties": {
