@@ -85,8 +85,10 @@ class User < ApplicationRecord
       conditions = conditions.order(
         "current_sign_in_at desc NULLS LAST, last_sign_in_at desc NULLS LAST, created_at desc"
       )
+    when "last_created"
+      conditions = conditions.order("created_at desc")
     when "email"
-      conditions = conditions.order("email ASC")
+      conditions = conditions.order("email asc")
     end
 
     case q[:status]

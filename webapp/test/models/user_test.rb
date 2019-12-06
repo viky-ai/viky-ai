@@ -52,7 +52,6 @@ class UserTest < ActiveSupport::TestCase
     ]
     assert_equal expected, User.search(s.options).all.collect(&:email)
 
-
     s = Backend::UserSearch.new(sort_by: 'email')
     expected = [
       'admin@viky.ai',
@@ -62,6 +61,18 @@ class UserTest < ActiveSupport::TestCase
       'locked@viky.ai',
       'notconfirmed@viky.ai',
       'show_on_agent_weather@viky.ai'
+    ]
+    assert_equal expected, User.search(s.options).all.collect(&:email)
+
+    s = Backend::UserSearch.new(sort_by: 'last_created')
+    expected = [
+      'edit_on_agent_weather@viky.ai',
+      'show_on_agent_weather@viky.ai',
+      'invited@viky.ai',
+      'locked@viky.ai',
+      'admin@viky.ai',
+      'confirmed@viky.ai',
+      'notconfirmed@viky.ai',
     ]
     assert_equal expected, User.search(s.options).all.collect(&:email)
   end

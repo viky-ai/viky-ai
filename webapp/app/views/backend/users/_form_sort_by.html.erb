@@ -20,6 +20,15 @@
         </a>
       </li>
       <li>
+        <a href="#" <% if @search.sort_by == 'last_created' %>class="current"<% end %>
+           data-behavior="populate-input, submit-form"
+           data-input-selector="input[name='search[sort_by]']"
+           data-input-value="last_created"
+           data-form-selector=".new_search">
+          <%= t('views.backend.users.index.sort_by.last_created') %>
+        </a>
+      </li>
+      <li>
         <a href="#" <% if @search.sort_by == 'email' %>class="current"<% end %>
            data-behavior="populate-input, submit-form"
            data-input-selector="input[name='search[sort_by]']"

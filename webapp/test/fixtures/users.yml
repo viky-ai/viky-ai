@@ -11,7 +11,8 @@ confirmed:
   encrypted_password: <%= Devise::Encryptor.digest(User, 'BimBamBoom') %>
   email: confirmed@viky.ai
   username: confirmed
-  confirmed_at: "2017-01-01 00:00:01"
+  created_at: "2017-01-01 00:00:01"
+  confirmed_at: "2017-01-01 00:00:02"
   current_sign_in_at: "2017-01-01 00:00:01"
 
 admin:
@@ -19,7 +20,8 @@ admin:
   encrypted_password: <%= Devise::Encryptor.digest(User, 'AdminBoom') %>
   email: admin@viky.ai
   username: admin
-  confirmed_at: "2017-01-01 00:00:02"
+  created_at: "2017-01-01 00:00:02"
+  confirmed_at: "2017-01-01 00:00:03"
   current_sign_in_at: "2017-01-01 00:00:02"
   admin: true
 
@@ -28,9 +30,10 @@ locked:
   encrypted_password: <%= Devise::Encryptor.digest(User, 'BimBamBoom') %>
   email: locked@viky.ai
   username: locked
-  confirmed_at: "2017-01-01 00:00:03"
-  current_sign_in_at: "2017-01-01 00:00:03"
-  locked_at: "2017-01-01 01:00:00"
+  created_at: "2017-01-01 00:00:03"
+  confirmed_at: "2017-01-01 00:00:04"
+  current_sign_in_at: "2017-01-01 00:00:05"
+  locked_at: "2017-01-01 01:00:06"
 
 invited:
   encrypted_password: <%= Devise::Encryptor.digest(User, 'BimBamBoom') %>
@@ -45,13 +48,15 @@ show_on_agent_weather:
   encrypted_password: <%= Devise::Encryptor.digest(User, 'BimBamBoom') %>
   email: show_on_agent_weather@viky.ai
   username: show_on_agent_weather
-  confirmed_at: "2017-01-01 00:00:05"
-  current_sign_in_at: "2017-01-01 00:00:05"
+  created_at: "2017-01-01 00:00:05"
+  confirmed_at: "2017-01-01 00:00:06"
+  current_sign_in_at: "2017-01-01 00:00:07"
 
 edit_on_agent_weather:
   id: "139ea746-a7df-4218-a6a4-b202958f2cf6"
   encrypted_password: <%= Devise::Encryptor.digest(User, 'BimBamBoom') %>
   email: edit_on_agent_weather@viky.ai
   username: edit_on_agent_weather
-  confirmed_at: "2017-01-01 00:00:06"
-  current_sign_in_at: "2017-01-01 00:00:06"
+  created_at: "2017-01-01 00:00:06"
+  confirmed_at: "2017-01-01 00:00:07"
+  current_sign_in_at: "2017-01-01 00:00:08"
