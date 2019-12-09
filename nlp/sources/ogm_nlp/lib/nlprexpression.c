@@ -107,11 +107,22 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     IFE(status);
   }
 
-  IFE(NlpCalculateScoreDuringParsing(ctrl_nlp_th, request_expression));
-  IFE(NlpSetNbAnys(ctrl_nlp_th, request_expression));
-  IFE(NlpSetAnyTopology(ctrl_nlp_th, request_expression));
 
   int must_add_request_expression = TRUE;
+
+  og_bool matched_language = NlpGetBestLocale(ctrl_nlp_th, request_expression,NULL);
+  IFE(matched_language);
+  if (!matched_language)
+  {
+    must_add_request_expression = FALSE;
+  }
+
+  if (must_add_request_expression)
+  {
+    IFE(NlpCalculateScoreDuringParsing(ctrl_nlp_th, request_expression));
+    IFE(NlpSetNbAnys(ctrl_nlp_th, request_expression));
+    IFE(NlpSetAnyTopology(ctrl_nlp_th, request_expression));
+  }
 
   if (must_add_request_expression && !is_super_list)
   {

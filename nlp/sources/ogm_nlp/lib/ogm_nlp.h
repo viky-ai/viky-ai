@@ -1155,6 +1155,8 @@ og_status NlpCheckPackages(og_nlp_th ctrl_nlp_th);
 /* nlplocale.c */
 og_status NlpInterpretRequestBuildAcceptLanguage(og_nlp_th ctrl_nlp_th, json_t *json_accept_language);
 int NlpAcceptLanguageString(og_nlp_th ctrl_nlp_th, int size, char *string);
+og_bool NlpGetBestLocale(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    struct accept_language **paccepted_language);
 og_status NlpAdjustLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
 /* nlpscore.c */
