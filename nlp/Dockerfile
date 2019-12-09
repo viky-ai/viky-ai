@@ -6,7 +6,7 @@
 # docker run -it --volume "$(pwd)/import:/nls/import" -p "9345:9345" -t vikyai/nlp
 
 # Tests
-# docker build --target test_image -t vikyai/platform/nlp_test .
+# docker build --target test_image -t vikyai/nlp_test .
 # docker run -t vikyai/nlp_test
 
 #########################################################################################

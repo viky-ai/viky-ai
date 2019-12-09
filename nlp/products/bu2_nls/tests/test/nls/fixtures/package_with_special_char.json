@@ -8,8 +8,7 @@
         "slug": "special_char_1",
         "expressions": [
           {
-            "expression": "@#!|\"\\\n_¢ß¥£™©®ª×÷±²³¼½¾µ¿¶·¸",
-            "locale": "fr-FR"
+            "expression": "@#!|\"\\\n_¢ß¥£™©®ª×÷±²³¼½¾µ¿¶·¸"
           }
         ]
       },
@@ -18,8 +17,7 @@
         "slug": "special_char_2",
         "expressions": [
           {
-            "expression": "º°¯§…¤¦≠¬ˆ¨‰自爾秦書わたしワタシ🎾",
-            "locale": "fr-FR"
+            "expression": "º°¯§…¤¦≠¬ˆ¨‰自爾秦書わたしワタシ🎾"
           }
         ]
       },
@@ -28,8 +26,7 @@
         "slug": "special_char_3",
         "expressions": [
           {
-            "expression": "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØŒŠþÙÚÛÜÝŸàáâãäåæçèéêëìíîïðñòóôõöøœšÞùúûüýÿ",
-            "locale": "fr-FR"
+            "expression": "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØŒŠþÙÚÛÜÝŸàáâãäåæçèéêëìíîïðñòóôõöøœšÞùúûüýÿ"
           }
         ]
       }
