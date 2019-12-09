@@ -18,6 +18,7 @@ module Nls
         package = Package.new("locale")
         locale = package.new_interpretation("locale")
         locale << Expression.new("with a nice swimming pool with spa for 3 people and sea view", locale: "en")
+        locale << Expression.new("avec piscine avec spa pour 3 personnes et vue sur la mer", locale: "fr")
 
         Nls.package_update(package)
 
@@ -29,17 +30,18 @@ module Nls
 
         sentence = "with a nice swimming pool with spa for 3 people and sea view"
 
-        check_interpret(sentence, interpretation: "locale", score: 1.0)
+        check_interpret(sentence, locale: "en", interpretation: "locale", score: 1.0)
+        check_interpret(sentence, locale: "en;q=0.2", interpretation: "locale", score: 0.86)
 
       end
 
       def test_locale_score_fr
 
-        sentence = "with a nice swimming pool with spa for 3 people and sea view"
+        sentence = "avec piscine avec spa pour 3 personnes et vue sur la mer"
 
-        Interpretation.default_locale = "fr"
+        check_interpret(sentence, locale: "fr", interpretation: "locale", score: 1.0)
+        check_interpret(sentence, locale: "fr;q=0.2", interpretation: "locale", score: 0.86)
 
-        check_interpret(sentence, interpretation: "locale", score: 0.85)
 
       end
 
