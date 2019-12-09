@@ -100,12 +100,12 @@ namespace :statistics do
   end
 
 
-  desc 'Roll over index if older than 7 days or have more than 100 000 documents'
+  desc 'Roll over index if older than 60 days or have more than 500 000 documents'
   task :rollover => :environment do |_, _|
-    max_age = '7d'
-    max_docs = 100_000
-    Task::Print.step("Roll over alias #{client.index_alias_name} with conditions max_age=#{max_age} or max_docs=#{max_docs}.")
+    max_age = '60d'
+    max_docs = 500_000
     client = InterpretRequestLogClient.long_waiting_client
+    Task::Print.step("Roll over alias #{client.index_alias_name} with conditions max_age=#{max_age} or max_docs=#{max_docs}.")
     unless client.cluster_ready?
       Task::Print.error('Cannot perform tasks : cluster is not ready')
       exit 1
@@ -121,11 +121,11 @@ namespace :statistics do
     old_index = res[:old_index]
     Task::Print.substep("Index #{old_index.name} rolled over to #{new_index.name}.")
     Task::Print.substep("Index #{old_index.name} switched to read only and migrating.")
-    shrink_node_name = client.migrate_index_to_other_node old_index
+    shrink_node_name = client.shrink_prepare old_index
     Task::Print.substep("Shards migration to #{shrink_node_name} completed.")
     target_name = client.decrease_space_consumption old_index
     Task::Print.substep("Index #{target_name.name} disk consumption optimized.")
-    client.enable_replication target_name
+    client.shrink_finish new_index
     Task::Print.substep("Configured a replica for index #{target_name.name}.")
     client.switch_search_to_new_index(old_index, target_name)
     client.delete_index old_index

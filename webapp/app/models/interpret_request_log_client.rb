@@ -125,6 +125,8 @@ class InterpretRequestLogClient
   end
 
   def enable_replication(index)
+    return if ENV['VIKYAPP_STATISTICS_NO_REPLICA'] == 'true'
+
     @client.indices.put_settings index: index.name, body: {
       'index.number_of_replicas' => 1
     }
@@ -169,14 +171,29 @@ class InterpretRequestLogClient
     }
   end
 
-  def migrate_index_to_other_node(index)
+  def shrink_prepare(index)
     shrink_node_name = pick_random_node
+    # The index must be read-only.
+    # A copy of every shard in the index must reside on the same node.
+    # https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-shrink-index.html#shrink-index-api-prereqs
     @client.indices.put_settings index: index.name, body: {
       'index.routing.allocation.require._name' => shrink_node_name,
       'index.blocks.write' => true
     }
     @client.cluster.health wait_for_no_relocating_shards: true
     shrink_node_name
+  end
+
+  def shrink_finish(index)
+    settings = {
+      'index.routing.allocation.require._name' => nil,
+      'index.number_of_replicas' => 1
+    }
+    if ENV['VIKYAPP_STATISTICS_NO_REPLICA'] == 'true'
+      settings['index.number_of_replicas'] = 0
+    end
+    @client.indices.put_settings index: index.name, body: settings
+    @client.cluster.health wait_for_no_relocating_shards: true
   end
 
   def decrease_space_consumption(index)
