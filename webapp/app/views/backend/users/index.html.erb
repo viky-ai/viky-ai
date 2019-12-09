@@ -95,16 +95,21 @@
         </p>
 
         <% if !Feature.email_configured? || user.confirmed? %>
+          <p>
+            <small>Sign up</small>
+            <em><%= l(user.created_at, format: :long) %></em>
+          </p>
           <% unless user.current_sign_in_at.nil? %>
             <p>
-              <small>Last login</small>
+              <small>
+                Last login
+                <span class="badge badge--outline" title="<%= pluralize(user.sign_in_count, "login") %>">
+                  <%= user.sign_in_count %>
+                </span>
+              </small>
               <em><%= l(user.current_sign_in_at, format: :long) %></em>
             </p>
           <% end %>
-          <p>
-            <small>login count</small>
-            <em><%= pluralize(user.sign_in_count, "login") %></em>
-          </p>
         <% end %>
       </div>
 

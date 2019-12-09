@@ -31,16 +31,13 @@ class Api::V1::ChatStatementsController < Api::V1::ApplicationController
         params.require(:statement).permit(:nature, content: video_content_params)
       when 'map'
         data = params.require(:statement).permit(:nature, content: map_content_params)
-        # enum value "map" is not permitted due to conflict with ActiveRecord map method
-        # so we use interactive_map internally.
-        data[:nature] = "interactive_map"
-        data
+        transform_map_to_interactive_map(data)
       when 'button'
         params.require(:statement).permit(:nature, content: button_content_params)
       when 'button_group'
         params.require(:statement).permit(:nature, content: button_group_content_params)
       when 'list'
-        params.require(:statement).permit(
+        data = params.require(:statement).permit(
           :nature,
           content: [
             :orientation,
@@ -48,11 +45,13 @@ class Api::V1::ChatStatementsController < Api::V1::ApplicationController
             speech: [:text, :locale]
           ]
         )
+        transform_map_to_interactive_map(data)
       when 'card'
-        params.require(:statement).permit(
+        data = params.require(:statement).permit(
           :nature,
           content: card_content_params
         )
+        transform_map_to_interactive_map(data)
       when 'geolocation'
         params.require(:statement).permit(:nature, content: geolocation_content_params)
       end
@@ -123,5 +122,39 @@ class Api::V1::ChatStatementsController < Api::V1::ApplicationController
         card_content_params +
         geolocation_content_params(false)
       ).uniq
+    end
+
+    # enum value "map" is not permitted due to conflict with ActiveRecord map method
+    # so we use interactive_map internally.
+    def transform_map_to_interactive_map(data)
+      data[:nature] = "interactive_map" if data[:nature] == "map"
+      data = transform_map_to_interactive_map_in_card(data)
+      data = transform_map_to_interactive_map_in_list(data)
+      data
+    end
+
+    def transform_map_to_interactive_map_in_card(data)
+      return data unless data.dig(:content, :components).respond_to? "each_with_index"
+
+      data[:content][:components].each_with_index do |component, i|
+        if component[:nature] == "map"
+          data[:content][:components][i][:nature] = "interactive_map"
+        end
+      end
+      data
+    end
+
+    def transform_map_to_interactive_map_in_list(data)
+      return data unless data.dig(:content, :items).respond_to? "each_with_index"
+
+      data[:content][:items].each_with_index do |item, i|
+        if item[:nature] == "map"
+          data[:content][:items][i][:nature] = "interactive_map"
+        end
+        if item[:nature] == "card"
+          data[:content][:items][i] = transform_map_to_interactive_map_in_card(item)
+        end
+      end
+      data
     end
 end

@@ -3,14 +3,8 @@ require "image_processing/mini_magick"
 class UserImageUploader < Shrine
   include ImageProcessing::MiniMagick
 
-  plugin :determine_mime_type
-  plugin :validation_helpers
   plugin :remove_attachment
-  plugin :delete_raw
   plugin :remove_invalid
-  plugin :processing
-  plugin :versions
-  plugin :pretty_location
   plugin :default_url
 
   Attacher.default_url do
@@ -22,11 +16,10 @@ class UserImageUploader < Shrine
     validate_mime_type_inclusion ['image/jpeg', 'image/png', 'image/gif']
   end
 
-  process(:store) do |io, _context|
-    pipeline = ImageProcessing::MiniMagick.source(io.download)
+  Attacher.derivatives do |original|
+    magick = ImageProcessing::MiniMagick.source(original)
     {
-      original: io,
-      square: pipeline.resize_to_fill!(600, 600, gravity: 'Center')
+      square: magick.resize_to_fill!(600, 600, gravity: 'Center')
     }
   end
 

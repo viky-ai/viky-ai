@@ -33,6 +33,116 @@ class ChatStatementsControllerTest < ActionDispatch::IntegrationTest
   end
 
 
+  test 'Bot send a map' do
+    Feature.with_chatbot_enabled do
+      post "/api/v1/chat_sessions/#{chat_sessions(:one).id}/statements.json", params: {
+        statement: {
+          nature: 'map',
+          content: {
+            params: { api_key: "missing", endpoint: "place", query: "q=Valence"},
+            title: "Map title",
+            description: "Map description"
+          }
+        }
+      }
+      assert_equal '201', response.code
+    end
+  end
+
+
+  test 'Bot send a card with map' do
+    Feature.with_chatbot_enabled do
+      post "/api/v1/chat_sessions/#{chat_sessions(:one).id}/statements.json", params: {
+        statement: {
+          nature: 'card',
+          content: {
+            components: [
+              {
+                nature: 'map',
+                content: {
+                  params: { api_key: "missing", endpoint: "place", query: "q=Valence"},
+                  title: "Map title",
+                  description: "Map description"
+                }
+              }
+            ]
+          }
+        }
+      }
+      assert_equal '201', response.code
+    end
+  end
+
+
+  test 'Bot send a list with map' do
+    Feature.with_chatbot_enabled do
+      post "/api/v1/chat_sessions/#{chat_sessions(:one).id}/statements.json", params: {
+        statement: {
+          nature: 'list',
+          content: {
+            orientation: 'vertical',
+            items: [
+              {
+                nature: 'text',
+                content: {
+                  text: "Hello"
+                }
+              },
+              {
+                nature: 'map',
+                content: {
+                  params: { api_key: "missing", endpoint: "place", query: "q=Valence"},
+                  title: "Map title",
+                  description: "Map description"
+                }
+              }
+            ]
+          }
+        }
+      }
+      assert_equal '201', response.code
+    end
+  end
+
+
+  test 'Bot send a list of cards with map' do
+    Feature.with_chatbot_enabled do
+      post "/api/v1/chat_sessions/#{chat_sessions(:one).id}/statements.json", params: {
+        statement: {
+          nature: 'list',
+          content: {
+            orientation: 'vertical',
+            items: [
+              {
+                nature: 'text',
+                content: {
+                  text: "Hello"
+                }
+              },
+              {
+                nature: 'card',
+                content: {
+                  components: [
+                    {
+                      nature: 'map',
+                      content: {
+                        params: { api_key: "missing", endpoint: "place", query: "q=Valence"},
+                        title: "Map title",
+                        description: "Map description"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+      assert_equal '201', response.code
+    end
+  end
+
+
   test 'Reject sending a statement to an old session' do
     Feature.with_chatbot_enabled do
       assert ChatSession.create(

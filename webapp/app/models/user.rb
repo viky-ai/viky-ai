@@ -2,7 +2,7 @@ class User < ApplicationRecord
   extend FriendlyId
   friendly_id :username, use: :history, slug_column: 'username'
 
-  include UserImageUploader::Attachment.new(:image)
+  include UserImageUploader::Attachment(:image)
 
   has_many :memberships, dependent: :destroy
   has_many :agents, through: :memberships
@@ -85,8 +85,10 @@ class User < ApplicationRecord
       conditions = conditions.order(
         "current_sign_in_at desc NULLS LAST, last_sign_in_at desc NULLS LAST, created_at desc"
       )
+    when "last_created"
+      conditions = conditions.order("created_at desc")
     when "email"
-      conditions = conditions.order("email ASC")
+      conditions = conditions.order("email asc")
     end
 
     case q[:status]

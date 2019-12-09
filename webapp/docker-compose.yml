@@ -11,6 +11,7 @@ services:
     environment:
       VIKYAPP_INTERNAL_URL: ${VIKYAPP_INTERNAL_URL}
       VIKYAPP_REDIS_PACKAGE_NOTIFIER: 'redis://viky-redis-dev:6379/3'
+      VIKYAPP_NLP_PARALLEL_LOAD: 4
     networks:
       - kerbnet
     depends_on:
