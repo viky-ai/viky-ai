@@ -24,7 +24,7 @@ class BackendDashboardTest < ApplicationSystemTestCase
     assert_equal "/backend/dashboard", current_path
     assert has_text?("4\nAgents")
     assert has_text?("One public agent")
-    assert has_text?("6\nInterpretations")
+    assert has_text?("6\nFormulations")
     assert has_text?("5 interpretations")
     assert has_text?("8\nEntities")
     assert has_text?("5 entities lists")

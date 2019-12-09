@@ -1,4 +1,4 @@
-class Chatbot::Map
+class Chatbot::InteractiveMap
   include ActiveModel::Model
   include Speechable
 
@@ -9,7 +9,7 @@ class Chatbot::Map
   validates :description, length: { maximum: 500 }
 
   def nature
-    "map"
+    "interactive_map"
   end
 
   def has_info?
