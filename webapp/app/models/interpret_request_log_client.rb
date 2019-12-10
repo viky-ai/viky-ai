@@ -121,6 +121,8 @@ class InterpretRequestLogClient
       }
     )
     enable_replication new_index if new_index.inactive?
+    @client.indices.refresh index: new_index.name
+    @client.indices.flush index: new_index.name
     result
   end
 
@@ -130,6 +132,7 @@ class InterpretRequestLogClient
     @client.indices.put_settings index: index.name, body: {
       'index.number_of_replicas' => 1
     }
+    @client.cluster.health wait_for_no_relocating_shards: true
   end
 
   def disable_all_replication()
@@ -161,7 +164,7 @@ class InterpretRequestLogClient
     res = @client.indices.rollover(alias: index_alias_name, new_index: new_index.name, body: {
       conditions: {
         max_age: max_age,
-        max_docs: max_docs,
+        max_docs: max_docs
       }
     })
     old_index = StatisticsIndex.from_name res['old_index']

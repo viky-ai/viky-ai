@@ -45,6 +45,7 @@ services:
       path.repo: /backup_data
       discovery.type: single-node
       node.name: viky-stats01-dev
+      cluster.name: viky.ai-stats-dev
       network.host: "0.0.0.0"
       ES_JAVA_OPTS: -Xms128m -Xmx392m
       S3_ACCESS_KEY: ${S3_ACCESS_KEY:-no_access}
