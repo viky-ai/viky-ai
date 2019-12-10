@@ -72,9 +72,9 @@ en:
             one: One public agent
             other: "%{total} public agents"
           formulations:
-            zero: Interpretation
-            one: Interpretation
-            other: Interpretations
+            zero: Formulation
+            one: Formulation
+            other: Formulations
           interpretations:
             zero: No interpretation
             one: One interpretation

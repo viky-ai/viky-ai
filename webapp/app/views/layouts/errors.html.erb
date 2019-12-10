@@ -8,6 +8,7 @@
     <%= stylesheet_link_tag 'application', 'data-turbolinks-track': 'reload' %>
     <%= stylesheet_pack_tag 'errors', 'data-turbolinks-track': 'reload' %>
     <%= javascript_pack_tag 'errors', 'data-turbolinks-track': 'reload' %>
+    <% if Feature.matomo_enabled? %><%= render 'layouts/matomo' %><% end %>
   </head>
 
   <body>

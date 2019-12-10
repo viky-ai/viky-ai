@@ -188,21 +188,24 @@ int NlpAcceptLanguageString(og_nlp_th ctrl_nlp_th, int size, char *string)
 
 }
 
+/*
+ * Returns TRUE if a language match and returns the best accepted language if it exist or NULL if not
+ * Returns FALSE if no language match
+ */
 
-og_status NlpAdjustLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+og_bool NlpGetBestLocale(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    struct accept_language **paccept_language)
 {
+  if (paccept_language) *paccept_language = NULL;
   int locale = request_expression->expression->locale;
-  if (locale == DOgLangNil) DONE;
+  if (locale == DOgLangNil) return TRUE;
   int accept_language_used = OgHeapGetCellsUsed(ctrl_nlp_th->haccept_language);
-  IFn(accept_language_used) DONE;
+  IFn(accept_language_used) return TRUE;
 
   struct accept_language *accept_language_all = OgHeapGetCell(ctrl_nlp_th->haccept_language, 0);
   IFN(accept_language_all) DPcErr;
 
-  og_bool found_quality_factor = FALSE;
-
-  // No language found means 0.1
-  double quality_factor = 0.1;
+  og_bool found_accepted_language = FALSE;
 
   // First we get the exact match of the language
   for (int i = 0; i < accept_language_used; i++)
@@ -210,36 +213,54 @@ og_status NlpAdjustLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expression 
     struct accept_language *accept_language = accept_language_all + i;
     if (locale == accept_language->locale)
     {
-      found_quality_factor = TRUE;
-      quality_factor = accept_language->quality_factor;
+      found_accepted_language = TRUE;
+      if (paccept_language) *paccept_language = accept_language;
     }
   }
 
   // Then we want to match only on language
-  if (!found_quality_factor)
+  if (!found_accepted_language)
   {
     for (int i = 0; i < accept_language_used; i++)
     {
       struct accept_language *accept_language = accept_language_all + i;
-      if (OgIso639_3166ToLang(locale) == accept_language->locale)
+      if (OgIso639_3166ToLang(locale) == OgIso639_3166ToLang(accept_language->locale))
       {
-        found_quality_factor = TRUE;
-        quality_factor = accept_language->quality_factor;
+        found_accepted_language = TRUE;
+        if (paccept_language) *paccept_language = accept_language;
       }
     }
   }
   // Last we use the '*' language
-  if (!found_quality_factor)
+  if (!found_accepted_language)
   {
     for (int i = 0; i < accept_language_used; i++)
     {
       struct accept_language *accept_language = accept_language_all + i;
       if (accept_language->locale == DOgLangNil)
       {
-        found_quality_factor = TRUE;
-        quality_factor = accept_language->quality_factor;
+        found_accepted_language = TRUE;
+        if (paccept_language) *paccept_language = accept_language;
       }
     }
+  }
+  return found_accepted_language;
+}
+
+og_status NlpAdjustLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+{
+  struct accept_language *accept_language;
+  og_bool matched_language = NlpGetBestLocale(ctrl_nlp_th, request_expression, &accept_language);
+  IFE(matched_language);
+
+  // Expression has no language or no language specified in request
+  if (matched_language && !accept_language) DONE;
+
+  // No language found means 0.1
+  double quality_factor = 0.1;
+  if (matched_language)
+  {
+    quality_factor = accept_language->quality_factor;
   }
   request_expression->score->locale *= quality_factor;
   DONE;
