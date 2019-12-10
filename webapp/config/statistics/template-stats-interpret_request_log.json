@@ -1,5 +1,5 @@
 {
-  "version": 6,
+  "version": 7,
   "index_patterns": "stats-interpret_request_log-*",
   "settings": {
     "number_of_shards": 2
@@ -8,13 +8,11 @@
     "search-stats-interpret_request_log": {}
   },
   "mappings": {
-    "dynamic_templates":
-    [
+    "dynamic": false,
+    "dynamic_templates": [
       {
-        "context_properties":
-        {
-          "mapping":
-          {
+        "context_properties": {
+          "mapping": {
             "type": "keyword"
           },
           "path_match": "context.*"
@@ -60,6 +58,11 @@
         "index": false,
         "store": false
       },
+      "context": {
+        "dynamic": true,
+        "properties": {
+        }
+      },
       "body": {
         "properties": {
           "interpretations": {
@@ -88,6 +91,23 @@
           },
           "errors": {
             "type": "text"
+          },
+          "errors_code": {
+            "type": "keyword"
+          },
+          "errors_javascript": {
+            "properties": {
+              "solution_location": {
+                "properties": {
+                  "slug": {
+                    "type": "keyword"
+                  },
+                  "id": {
+                    "type": "keyword"
+                  }
+                }
+              }
+            }
           }
         }
       }
