@@ -12,7 +12,6 @@ module Feature
     ENV['VIKYAPP_USER_REGISTRATION'] = 'false'
   end
 
-
   def self.email_configured?
     return true if Rails.env.test?
 
@@ -20,7 +19,6 @@ module Feature
     postmark_enabled = ENV.fetch("POSTMARK_TOKEN") { false }
     postmark_enabled || smtp_enabled == 'true'
   end
-
 
   def self.quota_enabled?
     ENV['VIKYAPP_QUOTA_ENABLED'] == 'true'
@@ -39,7 +37,6 @@ module Feature
     yield
     disable_quota
   end
-
 
   def self.chatbot_enabled?
     ENV['VIKYAPP_CHATBOT_ENABLED'] == 'true'
@@ -65,8 +62,15 @@ module Feature
     enable_chatbot
   end
 
-
   def self.privacy_policy_enabled?
     !ENV['VIKYAPP_PRIVACY_POLICY_URL'].blank? && !ENV['VIKYAPP_TERMS_OF_USE_URL'].blank?
+  end
+
+  def self.matomo_enabled?
+    (
+      ENV['VIKYAPP_MATOMO_ENABLED'] == 'true' &&
+      !ENV['VIKYAPP_MATOMO_TRACKER_URL'].blank? &&
+      !ENV['VIKYAPP_MATOMO_SITE_ID'].blank?
+    )
   end
 end
