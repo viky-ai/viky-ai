@@ -148,9 +148,9 @@ class StatementHistory
 class Speaker
   say: (text, locale) ->
     if (window.speechSynthesis)
-      Speaker = window.speechSynthesis
+      speech_synthesis = window.speechSynthesis
       speech_request = new SpeechSynthesisUtterance();
-      voices = Speaker.getVoices()
+      voices = speech_synthesis.getVoices()
 
       for voice in voices
         if voice.lang == locale || voice.lang == locale.replace('-', '_')
@@ -160,12 +160,12 @@ class Speaker
       speech_request.volume = 1
       speech_request.text = text
       speech_request.lang = locale
-      Speaker.speak(speech_request)
+      speech_synthesis.speak(speech_request)
 
   quiet: () ->
     if (window.speechSynthesis)
-      Speaker = window.speechSynthesis
-      Speaker.cancel()
+      speech_synthesis = window.speechSynthesis
+      speech_synthesis.cancel()
 
 
 class Geolocator
