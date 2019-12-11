@@ -164,7 +164,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     }
     assert_equal expected, JSON.parse(response.body)
     client = InterpretRequestLogTestClient.new
-    result = client.search_documents({ match: { sentence: sentence } },1)
+    result = client.search_documents({ query: { match: { sentence: sentence } } }, 1)
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 'abc', found[:context]['session_id']
     assert_equal '1.1-a58b', found[:context]['bot_version']
@@ -219,7 +219,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
         }
 
     client = InterpretRequestLogTestClient.new
-    result = client.search_documents({ match: { sentence: sentence } },1)
+    result = client.search_documents({ query: { match: { sentence: sentence } } }, 1)
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 503, found[:status]
     assert_equal ['NLS temporarily unavailable', 'No more NLP server are available', 'Connection refused - Failed to open TCP connection'],
@@ -239,7 +239,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
         }
 
     client = InterpretRequestLogTestClient.new
-    result = client.search_documents({ match: { sentence: sentence } },1)
+    result = client.search_documents({ query: { match: { sentence: sentence } } }, 1)
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 503, found[:status]
     assert_equal ['NLS temporarily unavailable', 'NLP have just crashed'], found[:body]['errors']
@@ -259,7 +259,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     assert_response 500
 
     client = InterpretRequestLogTestClient.new
-    result = client.search_documents({ match: { sentence: sentence } },1)
+    result = client.search_documents({ query: { match: { sentence: sentence } } }, 1)
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 500, found[:status]
     assert_equal ['Unexpected error while requesting NLS', '#<RuntimeError: Big big error>'], found[:body]['errors']

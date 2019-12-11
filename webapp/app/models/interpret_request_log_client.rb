@@ -23,23 +23,19 @@ class InterpretRequestLogClient
     @refresh_on_save = false
   end
 
-  def get_document(id)
-    @client.get index: search_alias_name, id: id
+  def save_document(json_document)
+    @client.index index: index_alias_name, body: json_document, refresh: @refresh_on_save
   end
 
-  def save_document(json_document, id)
-    @client.index index: index_alias_name, body: json_document, id: id, refresh: @refresh_on_save
-  end
-
-  def count_documents(params = {})
-    result = @client.count index: search_alias_name, body: params
+  def count_documents(query = {})
+    result = @client.count index: search_alias_name, body: query
     result['count']
   end
 
   def search_documents(query, size)
     @client.search(
       index: search_alias_name,
-      body: { query: query },
+      body: query,
       size: size
     )
   end

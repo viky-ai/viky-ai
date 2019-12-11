@@ -25,12 +25,13 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
   end
 
 
-  test 'Find an interpretation log by id' do
+  test 'Find an interpretation log' do
+    sentence = "What 's the weather like ?"
     weather_agent = agents(:weather)
     interpretation_weather = interpretations(:weather_question)
     log = InterpretRequestLog.new(
       timestamp: '2018-07-04T14:25:14+02:00',
-      sentence: "What 's the weather like ?",
+      sentence: sentence,
       language: 'en',
       spellchecking: 'low',
       now: '2018-07-10T14:10:36+02:00',
@@ -45,7 +46,11 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
       }]
     })
     assert log.save
-    found = InterpretRequestLog.find(log.id)
+    assert log.persisted?
+
+    found = InterpretRequestLog.find(
+      query: { match: { sentence: sentence } }
+    )
     assert_equal log.timestamp, found.timestamp
     assert_equal log.sentence, found.sentence
     assert_equal log.language, found.language

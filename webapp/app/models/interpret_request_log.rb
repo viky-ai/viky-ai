@@ -6,22 +6,23 @@ require 'securerandom'
 class InterpretRequestLog
   include ActiveModel::Model
 
-  attr_accessor :id, :agents, :timestamp, :sentence, :language, :spellchecking, :now, :status, :body, :context
+  attr_accessor :agents, :timestamp, :sentence, :language, :spellchecking, :now, :status, :body, :context
 
   validates :context_to_s, length: {
     maximum: 1000
   }
 
-  def self.count(params = {})
+  def self.count(query = {})
     client = InterpretRequestLogClient.build_client
-    client.count_documents(params)
+    client.count_documents(query)
   end
 
-  def self.find(id)
+  def self.find(query = {})
     client = InterpretRequestLogClient.build_client
-    result = client.get_document id
-    params = result['_source'].symbolize_keys
-    params[:id] = result['_id']
+    result = client.search_documents(query, 1)
+    return nil if result['hits']['total']['value'] <= 0
+
+    params = result['hits']['hits'].first['_source'].symbolize_keys
     params.delete(:agent_slug)
     params.delete(:owner_id)
     InterpretRequestLog.new params
@@ -33,7 +34,6 @@ class InterpretRequestLog
       attributes.delete(:agent_id)
     end
     super
-    @id = SecureRandom.uuid
     @agents ||= Agent.where(id: attributes[:agent_id])
     @sentence ||= ''
     @context ||= {}
@@ -55,7 +55,7 @@ class InterpretRequestLog
     if Rails.env.test?
 
       client = InterpretRequestLogClient.build_client
-      client.save_document(to_json, @id)
+      client.save_document(to_json)
 
     else
 
