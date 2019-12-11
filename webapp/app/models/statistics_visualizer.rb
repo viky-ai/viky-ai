@@ -5,13 +5,13 @@ require 'net/http'
 class StatisticsVisualizer
   def endpoint
     ENV.fetch('VIKYAPP_STATISTICS_VISUALIZER_URL') do
-      'http://localhost:5601/kibana'
+      'http://localhost:5601'
     end
   end
 
   def configure
     file = "#{Rails.root}/config/kibana/kibana-conf.ndjson"
-    uri = URI("#{endpoint}/api/saved_objects/_import?overwrite=true")
+    uri = URI("#{endpoint}/kibana/api/saved_objects/_import?overwrite=true")
     request = Net::HTTP::Post.new(uri)
     request['kbn-xsrf'] = true
     form_data = [['file', File.open(file), { filename: File.basename(file) }]]
