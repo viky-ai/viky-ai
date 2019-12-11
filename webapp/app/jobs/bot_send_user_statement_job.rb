@@ -35,7 +35,7 @@ class BotSendUserStatementJob < ApplicationJob
   rescue => e
     backtrace = ::Rails.backtrace_cleaner.clean(e.backtrace)
     bot_id = chat_session.bot.id rescue "Unkow bot chat_session_id: #{chat_session_id}"
-    Sidekiq::Logging.logger.error "bot_id:#{chat_session.bot.id} failed : #{e.message}\n\t#{backtrace.join("\n\t")}"
+    logger.error "bot_id:#{chat_session.bot.id} failed: #{e.message}\n\t#{backtrace.join("\n\t")}"
     raise
   end
 
