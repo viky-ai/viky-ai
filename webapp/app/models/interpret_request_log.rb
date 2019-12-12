@@ -53,12 +53,9 @@ class InterpretRequestLog
     # fluent does not support multiple index target
     # needed for parallel testing
     if Rails.env.test?
-
       client = InterpretRequestLogClient.build_client
       client.save_document(to_json)
-
     else
-
       fluentbit_uri = URI(ENV.fetch('VIKYAPP_STATISTICS_FLUENTBIT_URL') { 'tcp://127.0.0.1:24224' })
       fluentbit_log = Fluent::Logger::FluentLogger.open(
         'stats',
@@ -68,16 +65,14 @@ class InterpretRequestLog
         wait_writeable: false,
         logger: Rails.logger
       )
-
       begin
         fluentbit_log.post(InterpretRequestLogClient.index_alias_name, to_json)
       rescue IO::EAGAINWaitWritable => e
-        # wait code for avoding "Resource temporarily unavailable"
+        # wait code for avoiding "Resource temporarily unavailable"
         # Passed records are stored into logger's internal buffer so don't re-post same event.
         Rails.logger.warn("Error on InterpretRequestLog.save : #{e.inspect}", to_json)
       end
     end
-
     @persisted = true
   end
 
