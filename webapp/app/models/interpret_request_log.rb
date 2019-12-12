@@ -17,17 +17,6 @@ class InterpretRequestLog
     client.count_documents(query)
   end
 
-  def self.find(query = {})
-    client = InterpretRequestLogClient.build_client
-    result = client.search_documents(query, 1)
-    return nil if result['hits']['total']['value'] <= 0
-
-    params = result['hits']['hits'].first['_source'].symbolize_keys
-    params.delete(:agent_slug)
-    params.delete(:owner_id)
-    InterpretRequestLog.new params
-  end
-
   def initialize(attributes = {})
     if attributes[:agents].blank?
       attributes[:agents] = Agent.where(id: attributes[:agent_id])
