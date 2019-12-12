@@ -32,18 +32,11 @@ class InterpretRequestLogClient
     result['count']
   end
 
-  def search_documents(query, size)
+  def search_documents(query, size = 10)
     @client.search(
       index: search_alias_name,
       body: query,
       size: size
-    )
-  end
-
-  def search(body)
-    @client.search(
-      index: search_alias_name,
-      body: body
     )
   end
 
