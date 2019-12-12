@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ### Changed
 
-- agents api: `GET /agents/:owner/:agent/interpret.json` parameter `language` will interpret only listed languages if specified. [#29](https://github.com/viky-ai/viky-ai/pull/29)
+- Agents API: `GET /agents/:owner/:agent/interpret.json` parameter `language` will interpret only listed languages if specified. [#29](https://github.com/viky-ai/viky-ai/pull/29)
 
 ### Fixed
 
