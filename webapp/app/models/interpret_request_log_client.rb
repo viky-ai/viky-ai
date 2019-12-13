@@ -164,7 +164,9 @@ class InterpretRequestLogClient
   end
 
   def shrink_prepare(index)
-    shrink_node_name = pick_random_node
+    shrink_node_name = pick_random_node ['data']
+    return '' if shrink_node_name.blank?
+
     # The index must be read-only.
     # A copy of every shard in the index must reside on the same node.
     # https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-shrink-index.html#shrink-index-api-prereqs
@@ -286,8 +288,11 @@ class InterpretRequestLogClient
 
   private
 
-    def pick_random_node
+    def pick_random_node(roles = [])
       node_stats = @client.nodes.info['nodes']
+      node_stats = node_stats.select { |_, v| (v['roles'] & roles).present? } if roles.present?
+      return '' if node_stats.blank?
+
       shrink_node = node_stats.keys.sample
       node_stats[shrink_node]['name']
     end

@@ -107,7 +107,7 @@ namespace :statistics do
     client = InterpretRequestLogClient.long_waiting_client
     Task::Print.step("Roll over alias #{client.index_alias_name} with conditions max_age=#{max_age} or max_docs=#{max_docs}.")
     unless client.cluster_ready?
-      Task::Print.error('Cannot perform tasks : cluster is not ready')
+      Task::Print.error('Cannot perform tasks: cluster is not ready')
       exit 1
     end
 
@@ -122,6 +122,12 @@ namespace :statistics do
     Task::Print.substep("Index #{old_index.name} rolled over to #{new_index.name}.")
     Task::Print.substep("Index #{old_index.name} switched to read only and migrating.")
     shrink_node_name = client.shrink_prepare old_index
+    if shrink_node_name.blank?
+      # Should never happen because if we are doing an index rollover
+      # it means that their is at least 1 data node in the cluster
+      Task::Print.error("Cannot move index #{previous_active_index.name}: no node with data role found")
+      exit 1
+    end
     Task::Print.substep("Shards migration to #{shrink_node_name} completed.")
     target_name = client.decrease_space_consumption old_index
     Task::Print.substep("Index #{target_name.name} disk consumption optimized.")
