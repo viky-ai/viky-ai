@@ -131,7 +131,7 @@ namespace :statistics do
     Task::Print.substep("Shards migration to #{shrink_node_name} completed.")
     slimmer_index = client.decrease_space_consumption previous_active_index
     Task::Print.substep("Index #{slimmer_index.name} disk consumption optimized.")
-    client.shrink_finish new_active_index
+    client.shrink_finish slimmer_index
     Task::Print.substep("Configured a replica for index #{slimmer_index.name}.")
     client.switch_search_to_new_index(previous_active_index, slimmer_index)
     client.delete_index previous_active_index
