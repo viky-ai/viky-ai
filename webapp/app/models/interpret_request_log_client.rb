@@ -116,10 +116,8 @@ class InterpretRequestLogClient
   end
 
   def enable_replication(index)
-    return if ENV['VIKYAPP_STATISTICS_NO_REPLICA'] == 'true'
-
     @client.indices.put_settings index: index.name, body: {
-      'index.number_of_replicas' => 1
+      'index.number_of_replicas' => ENV['VIKYAPP_STATISTICS_NO_REPLICA'] == 'true' ? 0 : 1
     }
     @client.cluster.health wait_for_no_relocating_shards: true
   end
@@ -181,12 +179,9 @@ class InterpretRequestLogClient
   def shrink_finish(index)
     settings = {
       'index.routing.allocation.require._name' => nil,
-      'index.number_of_replicas' => 1
     }
-    if ENV['VIKYAPP_STATISTICS_NO_REPLICA'] == 'true'
-      settings['index.number_of_replicas'] = 0
-    end
     @client.indices.put_settings index: index.name, body: settings
+    enable_replication index
     @client.cluster.health wait_for_no_relocating_shards: true
   end
 
