@@ -124,7 +124,7 @@ class InterpretRequestLogClient
     @client.cluster.health wait_for_no_relocating_shards: true
   end
 
-  def disable_all_replication()
+  def disable_all_replication
     @client.indices.put_settings index: '_all', ignore_unavailable: true, allow_no_indices: true, body: {
       'index.number_of_replicas' => 0
     }
@@ -149,17 +149,17 @@ class InterpretRequestLogClient
                    .map { |name| StatisticsIndex.from_name name }
   end
 
-  def rollover(new_index, max_age, max_docs)
+  def rollover_active_index_to(new_index, max_age, max_docs)
     res = @client.indices.rollover(alias: index_alias_name, new_index: new_index.name, body: {
       conditions: {
         max_age: max_age,
         max_docs: max_docs
       }
     })
-    old_index = StatisticsIndex.from_name res['old_index']
+    previous_active_index = StatisticsIndex.from_name res['old_index']
     {
       rollover_needed?: res['rolled_over'],
-      old_index: old_index
+      previous_active_index: previous_active_index
     }
   end
 
