@@ -9,6 +9,13 @@ class HashExtensionsTest < ActiveSupport::TestCase
     assert_equal e, h.flatten_by_keys
   end
 
+  test 'flatten_by_keys with a custom separator' do
+    h = { foo: { bar: { baz: 1 }, bay: [2, 3, 4] } }
+    e = { 'foo:bar:baz': 1, 'foo:bay': [2, 3, 4] }
+    assert_equal e, h.flatten_by_keys(':')
+  end
+
+
   test 'flatten_by_keys complexe case' do
     h = {
       key1: 'value1',

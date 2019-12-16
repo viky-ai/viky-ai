@@ -82,7 +82,7 @@ class InterpretRequestLog
         owner_id: @agents.map { |agent| agent.owner.id },
         status: @status,
         body: @body,
-        context: @context.flatten_by_keys
+        context: @context.flatten_by_keys(':')
       }
       result[:now] = @now if @now.present?
       result
