@@ -120,18 +120,15 @@ namespace :statistics do
     end
     previous_active_index = res[:previous_active_index]
     Task::Print.substep("Index #{previous_active_index.name} rolled over to #{new_active_index.name}.")
-    Task::Print.substep("Index #{previous_active_index.name} switched to read only and migrating.")
-    shrink_node_name = client.shrink_prepare previous_active_index
-    if shrink_node_name.blank?
+    Task::Print.substep("Optimizing space consumption of #{previous_active_index.name}.")
+    slimmer_index = client.decrease_space_consumption previous_active_index
+    if slimmer_index.blank?
       # Should never happen because if we are doing an index rollover
       # it means that their is at least 1 data node in the cluster
       Task::Print.error("Cannot move index #{previous_active_index.name}: no node with data role found")
       exit 1
     end
-    Task::Print.substep("Shards migration to #{shrink_node_name} completed.")
-    slimmer_index = client.decrease_space_consumption previous_active_index
-    Task::Print.substep("Index #{slimmer_index.name} disk consumption optimized.")
-    client.shrink_finish slimmer_index
+    Task::Print.substep("Slimmed #{previous_active_index.name} into #{slimmer_index.name}.")
     Task::Print.substep("Configured a replica for index #{slimmer_index.name}.")
     client.switch_search_to_new_index(previous_active_index, slimmer_index)
     client.delete_index previous_active_index

@@ -161,9 +161,9 @@ class InterpretRequestLogClient
     }
   end
 
-  def shrink_prepare(index)
+  def decrease_space_consumption(index)
     shrink_node_name = pick_random_node ['data']
-    return '' if shrink_node_name.blank?
+    return nil if shrink_node_name.blank?
 
     # The index must be read-only.
     # A copy of every shard in the index must reside on the same node.
@@ -172,25 +172,21 @@ class InterpretRequestLogClient
       'index.routing.allocation.require._name' => shrink_node_name,
       'index.blocks.write' => true
     }
+    begin
+      @client.cluster.health wait_for_no_relocating_shards: true
+      inactive_template = StatisticsIndexTemplate.new 'inactive'
+      slimmer_index = StatisticsIndex.from_template inactive_template
+      @client.indices.shrink index: index.name, target: slimmer_index.name
+      @client.indices.forcemerge index: slimmer_index.name, max_num_segments: 1
+    ensure
+      settings = {
+        'index.routing.allocation.require._name' => nil,
+      }
+      @client.indices.put_settings index: slimmer_index.name, body: settings
+    end
+    enable_replication slimmer_index
     @client.cluster.health wait_for_no_relocating_shards: true
-    shrink_node_name
-  end
-
-  def shrink_finish(index)
-    settings = {
-      'index.routing.allocation.require._name' => nil,
-    }
-    @client.indices.put_settings index: index.name, body: settings
-    enable_replication index
-    @client.cluster.health wait_for_no_relocating_shards: true
-  end
-
-  def decrease_space_consumption(index)
-    inactive_template = StatisticsIndexTemplate.new 'inactive'
-    target_name = StatisticsIndex.from_template inactive_template
-    @client.indices.shrink index: index.name, target: target_name.name
-    @client.indices.forcemerge index: target_name.name, max_num_segments: 1
-    target_name
+    slimmer_index
   end
 
   def fetch_deployed_index_version
