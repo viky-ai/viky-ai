@@ -26,6 +26,7 @@ class InterpretRequestLog
     @agents ||= Agent.where(id: attributes[:agent_id])
     @sentence ||= ''
     @context ||= {}
+    @body ||= {}
     @context['agent_version'] = @agents.map(&:updated_at)
     @persisted = false
   end
@@ -81,10 +82,18 @@ class InterpretRequestLog
         agent_slug: @agents.map(&:slug),
         owner_id: @agents.map { |agent| agent.owner.id },
         status: @status,
-        body: @body,
+        body: filter_explanations(@body),
         context: @context.flatten_by_keys(':')
       }
       result[:now] = @now if @now.present?
+      result
+    end
+
+    def filter_explanations(body)
+      result = body.deep_dup
+      result['interpretations']&.each do |i|
+        i.delete('explanation')
+      end
       result
     end
 
