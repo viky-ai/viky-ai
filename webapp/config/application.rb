@@ -59,6 +59,9 @@ module Webapp
     # Feature switch
     require "#{config.root}/lib/feature.rb"
 
+    # load extensions
+    Dir[File.join(Rails.root, 'lib', 'extensions', '*.rb')].each {|l| require l }
+
     # Rack health_check middleware
     require "#{config.root}/app/middlewares/health_check.rb"
     config.middleware.insert_after Rails::Rack::Logger, HealthCheck

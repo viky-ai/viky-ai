@@ -5,6 +5,11 @@
 # docker build        --target image_ruby_test  -t vikyai/app_test .
 
 #####################################################################
+# Include fluentbit in webapp to bufferize stats collection
+#####################################################################
+FROM fluent/fluent-bit:1.3 AS fluent-bit
+
+#####################################################################
 # image_ruby_base : ruby + sys dependencies
 #####################################################################
 FROM ruby:2.6-slim-buster AS image_ruby_base
@@ -57,6 +62,9 @@ ENV DOCKERIZE_VERSION v0.6.1
 RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
+# install fluient-bit within the webapp
+COPY --from=fluent-bit /fluent-bit /fluent-bit
 
 WORKDIR /
 

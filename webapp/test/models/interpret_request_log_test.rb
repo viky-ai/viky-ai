@@ -25,37 +25,6 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
   end
 
 
-  test 'Find an interpretation log by id' do
-    weather_agent = agents(:weather)
-    interpretation_weather = interpretations(:weather_question)
-    log = InterpretRequestLog.new(
-      timestamp: '2018-07-04T14:25:14+02:00',
-      sentence: "What 's the weather like ?",
-      language: 'en',
-      spellchecking: 'low',
-      now: '2018-07-10T14:10:36+02:00',
-      agents: [weather_agent],
-    ).with_response('200', {
-      'interpretations' => [{
-        'id' => interpretation_weather.id,
-        'slug' => interpretation_weather.slug,
-        'name' => interpretation_weather.interpretation_name,
-        'score' => '0.83',
-        'solution' => 'forecast.today'
-      }]
-    })
-    assert log.save
-    found = InterpretRequestLog.find(log.id)
-    assert_equal log.timestamp, found.timestamp
-    assert_equal log.sentence, found.sentence
-    assert_equal log.language, found.language
-    assert_equal log.spellchecking, found.spellchecking
-    assert_equal log.now, found.now
-    assert_equal log.status, found.status
-    assert_equal log.body, found.body
-  end
-
-
   test 'Count how much interpret request in a specific time frame' do
     weather_agent = agents(:weather)
     interpretation_weather_question = interpretations(:weather_question)

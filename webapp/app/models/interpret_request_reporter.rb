@@ -108,7 +108,7 @@ class InterpretRequestReporter
 
     def proceed
       client = InterpretRequestLogClient.build_client
-      client.search(query)
+      client.search_documents(query)
     end
 
 end

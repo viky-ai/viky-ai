@@ -23,31 +23,20 @@ class InterpretRequestLogClient
     @refresh_on_save = false
   end
 
-  def get_document(id)
-    @client.get index: search_alias_name, id: id
+  def save_document(json_document)
+    @client.index index: index_alias_name, body: json_document, refresh: @refresh_on_save
   end
 
-  def save_document(json_document, id)
-    @client.index index: index_alias_name, body: json_document, id: id, refresh: @refresh_on_save
-  end
-
-  def count_documents(params = {})
-    result = @client.count index: search_alias_name, body: params
+  def count_documents(query = {})
+    result = @client.count index: search_alias_name, body: query
     result['count']
   end
 
-  def search_documents(query, size)
+  def search_documents(query, size = 10)
     @client.search(
       index: search_alias_name,
-      body: { query: query },
+      body: query,
       size: size
-    )
-  end
-
-  def search(body)
-    @client.search(
-      index: search_alias_name,
-      body: body
     )
   end
 
@@ -121,16 +110,19 @@ class InterpretRequestLogClient
       }
     )
     enable_replication new_index if new_index.inactive?
+    @client.indices.refresh index: new_index.name
+    @client.indices.flush index: new_index.name
     result
   end
 
   def enable_replication(index)
     @client.indices.put_settings index: index.name, body: {
-      'index.number_of_replicas' => 1
+      'index.number_of_replicas' => ENV['VIKYAPP_STATISTICS_NO_REPLICA'] == 'true' ? 0 : 1
     }
+    @client.cluster.health wait_for_no_relocating_shards: true
   end
 
-  def disable_all_replication()
+  def disable_all_replication
     @client.indices.put_settings index: '_all', ignore_unavailable: true, allow_no_indices: true, body: {
       'index.number_of_replicas' => 0
     }
@@ -155,36 +147,46 @@ class InterpretRequestLogClient
                    .map { |name| StatisticsIndex.from_name name }
   end
 
-  def rollover(new_index, max_age, max_docs)
+  def rollover_active_index_to(new_index, max_age, max_docs)
     res = @client.indices.rollover(alias: index_alias_name, new_index: new_index.name, body: {
       conditions: {
         max_age: max_age,
-        max_docs: max_docs,
+        max_docs: max_docs
       }
     })
-    old_index = StatisticsIndex.from_name res['old_index']
+    previous_active_index = StatisticsIndex.from_name res['old_index']
     {
       rollover_needed?: res['rolled_over'],
-      old_index: old_index
+      previous_active_index: previous_active_index
     }
   end
 
-  def migrate_index_to_other_node(index)
-    shrink_node_name = pick_random_node
+  def decrease_space_consumption(index)
+    shrink_node_name = pick_random_node ['data']
+    return nil if shrink_node_name.blank?
+
+    # The index must be read-only.
+    # A copy of every shard in the index must reside on the same node.
+    # https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-shrink-index.html#shrink-index-api-prereqs
     @client.indices.put_settings index: index.name, body: {
       'index.routing.allocation.require._name' => shrink_node_name,
       'index.blocks.write' => true
     }
+    begin
+      @client.cluster.health wait_for_no_relocating_shards: true
+      inactive_template = StatisticsIndexTemplate.new 'inactive'
+      slimmer_index = StatisticsIndex.from_template inactive_template
+      @client.indices.shrink index: index.name, target: slimmer_index.name
+      @client.indices.forcemerge index: slimmer_index.name, max_num_segments: 1
+    ensure
+      settings = {
+        'index.routing.allocation.require._name' => nil,
+      }
+      @client.indices.put_settings index: slimmer_index.name, body: settings
+    end
+    enable_replication slimmer_index
     @client.cluster.health wait_for_no_relocating_shards: true
-    shrink_node_name
-  end
-
-  def decrease_space_consumption(index)
-    inactive_template = StatisticsIndexTemplate.new 'inactive'
-    target_name = StatisticsIndex.from_template inactive_template
-    @client.indices.shrink index: index.name, target: target_name.name
-    @client.indices.forcemerge index: target_name.name, max_num_segments: 1
-    target_name
+    slimmer_index
   end
 
   def fetch_deployed_index_version
@@ -259,8 +261,12 @@ class InterpretRequestLogClient
     )
   end
 
-  def index_alias_name
+  def self.index_alias_name
     "index-#{InterpretRequestLogClient.index_name}"
+  end
+
+  def index_alias_name
+    InterpretRequestLogClient.index_alias_name
   end
 
   def search_alias_name
@@ -273,8 +279,11 @@ class InterpretRequestLogClient
 
   private
 
-    def pick_random_node
+    def pick_random_node(roles = [])
       node_stats = @client.nodes.info['nodes']
+      node_stats = node_stats.select { |_, v| (v['roles'] & roles).present? } if roles.present?
+      return '' if node_stats.blank?
+
       shrink_node = node_stats.keys.sample
       node_stats[shrink_node]['name']
     end
