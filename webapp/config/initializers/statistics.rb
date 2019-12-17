@@ -1,4 +1,5 @@
 require 'interpret_request_log_client'
+require 'statistics_index_template'
 
 client = InterpretRequestLogClient.long_waiting_client
 begin

@@ -100,36 +100,39 @@ namespace :statistics do
   end
 
 
-  desc 'Roll over index if older than 7 days or have more than 100 000 documents'
+  desc 'Roll over index if older than 60 days or have more than 500 000 documents'
   task :rollover => :environment do |_, _|
-    max_age = '7d'
-    max_docs = 100_000
-    Task::Print.step("Roll over alias #{client.index_alias_name} with conditions max_age=#{max_age} or max_docs=#{max_docs}.")
+    max_age = '60d'
+    max_docs = 500_000
     client = InterpretRequestLogClient.long_waiting_client
+    Task::Print.step("Roll over alias #{client.index_alias_name} with conditions max_age=#{max_age} or max_docs=#{max_docs}.")
     unless client.cluster_ready?
-      Task::Print.error('Cannot perform tasks : cluster is not ready')
+      Task::Print.error('Cannot perform tasks: cluster is not ready')
       exit 1
     end
 
     active_template = StatisticsIndexTemplate.new 'active'
-    new_index = StatisticsIndex.from_template active_template
-    res = client.rollover(new_index, max_age, max_docs)
+    new_active_index = StatisticsIndex.from_template active_template
+    res = client.rollover_active_index_to new_active_index, max_age, max_docs
     unless res[:rollover_needed?]
       Task::Print.notice('No need to roll over because no condition reached.')
       exit 0
     end
-    old_index = res[:old_index]
-    Task::Print.substep("Index #{old_index.name} rolled over to #{new_index.name}.")
-    Task::Print.substep("Index #{old_index.name} switched to read only and migrating.")
-    shrink_node_name = client.migrate_index_to_other_node old_index
-    Task::Print.substep("Shards migration to #{shrink_node_name} completed.")
-    target_name = client.decrease_space_consumption old_index
-    Task::Print.substep("Index #{target_name.name} disk consumption optimized.")
-    client.enable_replication target_name
-    Task::Print.substep("Configured a replica for index #{target_name.name}.")
-    client.switch_search_to_new_index(old_index, target_name)
-    client.delete_index old_index
-    Task::Print.success("Index #{old_index.name} removed.")
+    previous_active_index = res[:previous_active_index]
+    Task::Print.substep("Index #{previous_active_index.name} rolled over to #{new_active_index.name}.")
+    Task::Print.substep("Optimizing space consumption of #{previous_active_index.name}.")
+    slimmer_index = client.decrease_space_consumption previous_active_index
+    if slimmer_index.blank?
+      # Should never happen because if we are doing an index rollover
+      # it means that their is at least 1 data node in the cluster
+      Task::Print.error("Cannot move index #{previous_active_index.name}: no node with data role found")
+      exit 1
+    end
+    Task::Print.substep("Slimmed #{previous_active_index.name} into #{slimmer_index.name}.")
+    Task::Print.substep("Configured a replica for index #{slimmer_index.name}.")
+    client.switch_search_to_new_index(previous_active_index, slimmer_index)
+    client.delete_index previous_active_index
+    Task::Print.success("Index #{previous_active_index.name} removed.")
   end
 
 
