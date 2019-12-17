@@ -26,6 +26,7 @@ class InterpretRequestLog
     @agents ||= Agent.where(id: attributes[:agent_id])
     @sentence ||= ''
     @context ||= {}
+    @body ||= {}
     @context['agent_version'] = @agents.map(&:updated_at)
     @persisted = false
   end
@@ -72,6 +73,13 @@ class InterpretRequestLog
   private
 
     def to_json
+
+      # remove explanation
+      body = @body.deep_dup
+      body['interpretations']&.each do |i|
+        i.delete('explanation')
+      end
+
       result = {
         timestamp: @timestamp,
         sentence: @sentence,
@@ -81,7 +89,7 @@ class InterpretRequestLog
         agent_slug: @agents.map(&:slug),
         owner_id: @agents.map { |agent| agent.owner.id },
         status: @status,
-        body: @body,
+        body: body,
         context: @context.flatten_by_keys(':')
       }
       result[:now] = @now if @now.present?
