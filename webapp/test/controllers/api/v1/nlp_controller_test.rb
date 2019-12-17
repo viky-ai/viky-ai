@@ -215,6 +215,54 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     assert_equal [agent.updated_at], found[:context]['agent_version']
   end
 
+  test 'Enable verbose no explanation in stats' do
+    sentence = "test context #{SecureRandom.uuid}"
+    interpretation = interpretations(:weather_forecast)
+    agent = agents(:weather)
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
+      status: '200',
+      body: {
+        'interpretations' => [
+          {
+            'package'     => agent.id,
+            'id'          => interpretation.id,
+            'slug'        => 'weather_forecast',
+            'score'       => 1.0,
+            'explanation' => "a dummy explanation"
+          }
+        ]
+      }
+    )
+
+    get '/api/v1/agents/admin/weather/interpret.json',
+        params: {
+          sentence: sentence,
+          agent_token: agent.api_token,
+          verbose: true
+        }
+
+    expected = {
+      'interpretations' => [
+        {
+          'id'          => interpretation.id,
+          'slug'        => 'weather_forecast',
+          'name'        => 'weather_forecast',
+          'score'       => 1.0,
+          'explanation' => 'a dummy explanation'
+        }
+      ]
+    }
+    assert_equal expected, JSON.parse(response.body)
+
+    client = InterpretRequestLogTestClient.new
+    result = client.search_documents({ query: { match: { sentence: sentence } } }, 1)
+    found = result['hits']['hits'].first['_source'].symbolize_keys
+    assert_equal sentence, found[:sentence]
+    assert_not_nil found[:body]
+    assert_not_nil found[:body]['interpretations']
+    assert_not_nil found[:body]['interpretations'].first
+    assert_nil     found[:body]['interpretations'].first['explanation']
+  end
 
   test 'Set spellchecking' do
     interpretation = interpretations(:weather_forecast)
