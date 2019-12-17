@@ -73,13 +73,6 @@ class InterpretRequestLog
   private
 
     def to_json
-
-      # remove explanation
-      body = @body.deep_dup
-      body['interpretations']&.each do |i|
-        i.delete('explanation')
-      end
-
       result = {
         timestamp: @timestamp,
         sentence: @sentence,
@@ -89,10 +82,18 @@ class InterpretRequestLog
         agent_slug: @agents.map(&:slug),
         owner_id: @agents.map { |agent| agent.owner.id },
         status: @status,
-        body: body,
+        body: filter_explanations(@body),
         context: @context.flatten_by_keys(':')
       }
       result[:now] = @now if @now.present?
+      result
+    end
+
+    def filter_explanations(body)
+      result = body.deep_dup
+      result['interpretations']&.each do |i|
+        i.delete('explanation')
+      end
       result
     end
 

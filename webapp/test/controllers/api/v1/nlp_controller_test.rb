@@ -229,6 +229,13 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
             'slug'        => 'weather_forecast',
             'score'       => 1.0,
             'explanation' => "a dummy explanation"
+          },
+          {
+            'package'     => agent.id,
+            'id'          => '123456789',
+            'slug'        => 'weather_rainy',
+            'score'       => 1.0,
+            'explanation' => "another explanation"
           }
         ]
       }
@@ -249,6 +256,13 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
           'name'        => 'weather_forecast',
           'score'       => 1.0,
           'explanation' => 'a dummy explanation'
+        },
+        {
+          'id'          => '123456789',
+          'slug'        => 'weather_rainy',
+          'name'        => 'weather_rainy',
+          'score'       => 1.0,
+          'explanation' => 'another explanation'
         }
       ]
     }
@@ -262,6 +276,8 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     assert_not_nil found[:body]['interpretations']
     assert_not_nil found[:body]['interpretations'].first
     assert_nil     found[:body]['interpretations'].first['explanation']
+    assert_not_nil found[:body]['interpretations'].second
+    assert_nil     found[:body]['interpretations'].second['explanation']
   end
 
   test 'Set spellchecking' do
