@@ -173,15 +173,11 @@ push_dockerhub_saas:
   variables:
     VIKY_DOCKERHUB_TAG: "saas"
 
-deploy_dev:
+.deploy_dev:
   extends: .kubernetes_runner
   only:
     variables:
       - $DEPLOY_GITLAB_CI_URL_DEV_B64
-  except:
-    refs:
-      - saas
-      - tags
   environment:
     name: dev-${CI_COMMIT_REF_SLUG}
     url: https://viky-${CI_ENVIRONMENT_SLUG}-kube.viky.ai
@@ -203,6 +199,25 @@ deploy_dev:
       -F variables[DOCKER_IMAGE_DOC_TAG]=latest \
       -F variables[NOTIFY_DEPLOYMENT_INFO]=${CI_COMMIT_SHORT_SHA} \
       "${DEPLOY_GITLAB_CI_URL}"
+
+deploy_dev:
+  extends: .deploy_dev
+  when: manual
+  except:
+    refs:
+      - saas
+      - tags
+      - master
+
+deploy_master:
+  extends: .deploy_dev
+  except:
+    refs:
+      - saas
+      - tag
+  only:
+    refs:
+      - master
 
 deploy_production:
   extends: .kubernetes_runner

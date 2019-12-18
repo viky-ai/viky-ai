@@ -38,6 +38,9 @@ gem 'sidekiq'
 # Use ElasticSearch for stats
 gem 'elasticsearch', '~> 7.4'
 
+# Use fluent to bufferize stats recording
+gem 'fluent-logger'
+
 # Use Devise as authentication solution
 gem 'devise', '~> 4.7.1'
 gem 'devise_invitable', '~> 2.0.1'

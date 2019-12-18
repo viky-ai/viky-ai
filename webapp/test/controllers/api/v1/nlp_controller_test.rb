@@ -164,13 +164,121 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     }
     assert_equal expected, JSON.parse(response.body)
     client = InterpretRequestLogTestClient.new
-    result = client.search_documents({ match: { sentence: sentence } },1)
+    result = client.search_documents({ query: { match: { sentence: sentence } } }, 1)
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 'abc', found[:context]['session_id']
     assert_equal '1.1-a58b', found[:context]['bot_version']
     assert_equal [agent.updated_at], found[:context]['agent_version']
   end
 
+
+  test 'Provide a deeply nested context with the sentence' do
+    sentence = "test context #{SecureRandom.uuid}"
+    interpretation = interpretations(:weather_forecast)
+    agent = agents(:weather)
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
+      status: '200',
+      body: {
+        'interpretations' => [
+          {
+            'package' => agent.id,
+            'id'      => interpretation.id,
+            'slug'    => 'weather_forecast',
+            'score'   => 1.0
+          }
+        ]
+      }
+    )
+    get '/api/v1/agents/admin/weather/interpret.json',
+        params: {
+          sentence: sentence,
+          agent_token: agent.api_token,
+          context: {
+            session_id: 'abc',
+            bot_version: {
+              'major': '1',
+              'minor': '2',
+              'revision': 'a58b',
+              'tags': %w(foo bar)
+            }
+          }
+        }
+
+    client = InterpretRequestLogTestClient.new
+    result = client.search_documents({ query: { match: { sentence: sentence } } }, 1)
+    found = result['hits']['hits'].first['_source'].symbolize_keys
+    assert_equal 'abc', found[:context]['session_id']
+    assert_equal '1', found[:context]['bot_version:major']
+    assert_equal '2', found[:context]['bot_version:minor']
+    assert_equal 'a58b', found[:context]['bot_version:revision']
+    assert_equal %w(foo bar), found[:context]['bot_version:tags']
+    assert_equal [agent.updated_at], found[:context]['agent_version']
+  end
+
+  test 'Enable verbose no explanation in stats' do
+    sentence = "test context #{SecureRandom.uuid}"
+    interpretation = interpretations(:weather_forecast)
+    agent = agents(:weather)
+    Nlp::Interpret.any_instance.stubs('send_nlp_request').returns(
+      status: '200',
+      body: {
+        'interpretations' => [
+          {
+            'package'     => agent.id,
+            'id'          => interpretation.id,
+            'slug'        => 'weather_forecast',
+            'score'       => 1.0,
+            'explanation' => "a dummy explanation"
+          },
+          {
+            'package'     => agent.id,
+            'id'          => '123456789',
+            'slug'        => 'weather_rainy',
+            'score'       => 1.0,
+            'explanation' => "another explanation"
+          }
+        ]
+      }
+    )
+
+    get '/api/v1/agents/admin/weather/interpret.json',
+        params: {
+          sentence: sentence,
+          agent_token: agent.api_token,
+          verbose: true
+        }
+
+    expected = {
+      'interpretations' => [
+        {
+          'id'          => interpretation.id,
+          'slug'        => 'weather_forecast',
+          'name'        => 'weather_forecast',
+          'score'       => 1.0,
+          'explanation' => 'a dummy explanation'
+        },
+        {
+          'id'          => '123456789',
+          'slug'        => 'weather_rainy',
+          'name'        => 'weather_rainy',
+          'score'       => 1.0,
+          'explanation' => 'another explanation'
+        }
+      ]
+    }
+    assert_equal expected, JSON.parse(response.body)
+
+    client = InterpretRequestLogTestClient.new
+    result = client.search_documents({ query: { match: { sentence: sentence } } }, 1)
+    found = result['hits']['hits'].first['_source'].symbolize_keys
+    assert_equal sentence, found[:sentence]
+    assert_not_nil found[:body]
+    assert_not_nil found[:body]['interpretations']
+    assert_not_nil found[:body]['interpretations'].first
+    assert_nil     found[:body]['interpretations'].first['explanation']
+    assert_not_nil found[:body]['interpretations'].second
+    assert_nil     found[:body]['interpretations'].second['explanation']
+  end
 
   test 'Set spellchecking' do
     interpretation = interpretations(:weather_forecast)
@@ -219,7 +327,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
         }
 
     client = InterpretRequestLogTestClient.new
-    result = client.search_documents({ match: { sentence: sentence } },1)
+    result = client.search_documents({ query: { match: { sentence: sentence } } }, 1)
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 503, found[:status]
     assert_equal ['NLS temporarily unavailable', 'No more NLP server are available', 'Connection refused - Failed to open TCP connection'],
@@ -239,7 +347,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
         }
 
     client = InterpretRequestLogTestClient.new
-    result = client.search_documents({ match: { sentence: sentence } },1)
+    result = client.search_documents({ query: { match: { sentence: sentence } } }, 1)
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 503, found[:status]
     assert_equal ['NLS temporarily unavailable', 'NLP have just crashed'], found[:body]['errors']
@@ -259,7 +367,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     assert_response 500
 
     client = InterpretRequestLogTestClient.new
-    result = client.search_documents({ match: { sentence: sentence } },1)
+    result = client.search_documents({ query: { match: { sentence: sentence } } }, 1)
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 500, found[:status]
     assert_equal ['Unexpected error while requesting NLS', '#<RuntimeError: Big big error>'], found[:body]['errors']

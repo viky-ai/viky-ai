@@ -1,25 +1,20 @@
+# frozen_string_literal: true
+
+require 'fluent-logger'
+require 'securerandom'
+
 class InterpretRequestLog
   include ActiveModel::Model
 
-  attr_accessor :id, :agents, :timestamp, :sentence, :language, :spellchecking, :now, :status, :body, :context
+  attr_accessor :agents, :timestamp, :sentence, :language, :spellchecking, :now, :status, :body, :context
 
   validates :context_to_s, length: {
     maximum: 1000
   }
 
-  def self.count(params = {})
+  def self.count(query = {})
     client = InterpretRequestLogClient.build_client
-    client.count_documents(params)
-  end
-
-  def self.find(id)
-    client = InterpretRequestLogClient.build_client
-    result = client.get_document id
-    params = result['_source'].symbolize_keys
-    params[:id] = result['_id']
-    params.delete(:agent_slug)
-    params.delete(:owner_id)
-    InterpretRequestLog.new params
+    client.count_documents(query)
   end
 
   def initialize(attributes = {})
@@ -31,7 +26,9 @@ class InterpretRequestLog
     @agents ||= Agent.where(id: attributes[:agent_id])
     @sentence ||= ''
     @context ||= {}
+    @body ||= {}
     @context['agent_version'] = @agents.map(&:updated_at)
+    @persisted = false
   end
 
   def with_response(status, body)
@@ -43,15 +40,35 @@ class InterpretRequestLog
   def save
     return false unless valid?
 
-    client = InterpretRequestLogClient.build_client
-    result = client.save_document(to_json, @id)
-    @id = result['_id']
+    # fluent does not support multiple index target
+    # needed for parallel testing
+    if Rails.env.test?
+      client = InterpretRequestLogClient.build_client
+      client.save_document(to_json)
+    else
+      fluentbit_uri = URI(ENV.fetch('VIKYAPP_STATISTICS_FLUENTBIT_URL') { 'tcp://127.0.0.1:24224' })
+      fluentbit_log = Fluent::Logger::FluentLogger.open(
+        'stats',
+        host: fluentbit_uri.host,
+        port: fluentbit_uri.port,
+        use_nonblock: true,
+        wait_writeable: false,
+        logger: Rails.logger
+      )
+      begin
+        fluentbit_log.post(InterpretRequestLogClient.index_alias_name, to_json)
+      rescue IO::EAGAINWaitWritable => e
+        # wait code for avoiding "Resource temporarily unavailable"
+        # Passed records are stored into logger's internal buffer so don't re-post same event.
+        Rails.logger.warn("Error on InterpretRequestLog.save : #{e.inspect}", to_json)
+      end
+    end
+    @persisted = true
   end
 
   def persisted?
-    @id.present?
+    @persisted
   end
-
 
   private
 
@@ -65,10 +82,18 @@ class InterpretRequestLog
         agent_slug: @agents.map(&:slug),
         owner_id: @agents.map { |agent| agent.owner.id },
         status: @status,
-        body: @body,
-        context: @context
+        body: filter_explanations(@body),
+        context: @context.flatten_by_keys(':')
       }
       result[:now] = @now if @now.present?
+      result
+    end
+
+    def filter_explanations(body)
+      result = body.deep_dup
+      result['interpretations']&.each do |i|
+        i.delete('explanation')
+      end
       result
     end
 

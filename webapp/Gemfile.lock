@@ -124,6 +124,8 @@ GEM
     faraday (0.17.1)
       multipart-post (>= 1.2, < 3)
     ffi (1.11.3)
+    fluent-logger (0.8.2)
+      msgpack (>= 1.0.0, < 2)
     foreman (0.86.0)
     foundation_emails (2.2.1.0)
     friendly_id (5.3.0)
@@ -376,6 +378,7 @@ DEPENDENCIES
   devise_invitable (~> 2.0.1)
   dotenv-rails (~> 2.7)
   elasticsearch (~> 7.4)
+  fluent-logger
   foreman
   friendly_id (~> 5.3.0)
   hiredis
