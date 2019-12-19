@@ -349,4 +349,15 @@ class AgentSearchTest < ActiveSupport::TestCase
     ]
     assert_equal expected, Agent.search(s.options).all.collect(&:name)
   end
+
+
+  test 'Deduplicate agent when searching owned agent with collaborators' do
+    user = users(:admin)
+    s = AgentSearch.new(user, query: 'weath', filter_owner: 'owned', filter_visibility: 'private', sort_by: 'name')
+    assert_equal 1, Agent.search(s.options).count
+    expected = [
+      'My awesome weather bot',
+    ]
+    assert_equal expected, Agent.search(s.options).all.collect(&:name)
+  end
 end
