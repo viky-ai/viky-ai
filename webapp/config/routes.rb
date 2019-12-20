@@ -1,10 +1,10 @@
 class FeatureChatbotConstraint
   def matches?(request)
-    user = request.env["warden"].user(:user)
-    if user.nil?
+    u = User.current_user_through_cookies(request.cookie_jar)
+    if u.nil?
       Feature.chatbot_enabled?
     else
-      Feature.chatbot_enabled? && user.chatbot_enabled
+      Feature.chatbot_enabled? && u.chatbot_enabled
     end
   end
 end
