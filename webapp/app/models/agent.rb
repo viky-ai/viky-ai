@@ -129,7 +129,7 @@ class Agent < ApplicationRecord
       public_reachable = public_reachable.where.not(id: q[:selected_ids]) unless public_reachable.nil?
     end
 
-    select_request = !public_reachable.nil? ? "#{user_reachable.to_sql} UNION #{public_reachable.to_sql}" : user_reachable.to_sql
+    select_request = !public_reachable.nil? ? "#{user_reachable.to_sql} UNION #{public_reachable.to_sql}" : user_reachable.distinct.to_sql
     sort_request = Agent.from(Arel.sql "(#{select_request}) AS agents")
     case q[:sort_by]
     when 'name'
