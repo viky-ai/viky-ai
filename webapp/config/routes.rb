@@ -1,24 +1,10 @@
 class FeatureChatbotConstraint
   def matches?(request)
-    u = current_user(request.cookie_jar)
+    u = User.current_user_through_cookie(request.cookie_jar)
     if u.nil?
       Feature.chatbot_enabled?
     else
       Feature.chatbot_enabled? && u.chatbot_enabled
-    end
-  end
-
-  def current_user(cookie)
-    impersonated_user = User.find_by_id(cookie.signed[:impersonated_user_id])
-    if impersonated_user.nil?
-      user = User.find_by(id: cookie.signed['user_id'])
-    else
-      user = impersonated_user
-    end
-    if user && cookie.signed['user_expires_at'] > Time.now
-      user
-    else
-      nil
     end
   end
 end
