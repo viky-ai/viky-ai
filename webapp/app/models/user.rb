@@ -206,14 +206,14 @@ class User < ApplicationRecord
     User.from(selection).order("total DESC")
   end
 
-  def self.current_user_through_cookie(cookie)
-    impersonated_user = User.find_by_id(cookie.signed[:impersonated_user_id])
+  def self.current_user_through_cookies(cookies)
+    impersonated_user = User.find_by_id(cookies.signed[:impersonated_user_id])
     if impersonated_user.nil?
-      user = User.find_by(id: cookie.signed['user_id'])
+      user = User.find_by(id: cookies.signed['user_id'])
     else
       user = impersonated_user
     end
-    if user && cookie.signed['user_expires_at'] > Time.now
+    if user && cookies.signed['user_expires_at'] > Time.now
       user
     else
       nil

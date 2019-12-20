@@ -1,6 +1,6 @@
 class FeatureChatbotConstraint
   def matches?(request)
-    u = User.current_user_through_cookie(request.cookie_jar)
+    u = User.current_user_through_cookies(request.cookie_jar)
     if u.nil?
       Feature.chatbot_enabled?
     else
