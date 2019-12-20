@@ -223,6 +223,14 @@ class BackendUsersTest < ApplicationSystemTestCase
     visit "backend/users"
     assert has_text?("You do not have permission to access this interface.")
 
+    Feature.with_chatbot_enabled do
+      users(:edit_on_agent_weather).update(chatbot_enabled: true)
+      assert_not users(:admin).chatbot_enabled
+      assert users(:edit_on_agent_weather).chatbot_enabled
+      visit chatbots_path
+      assert page.has_text?("Choose a chatbot on the left.")
+    end
+
     click_link("Comeback")
     assert has_text?("Agents")
     within("nav") do
