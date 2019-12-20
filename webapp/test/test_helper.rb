@@ -23,6 +23,8 @@ if ENV['COVERAGE']
   end
 end
 
+require 'sidekiq/testing'
+
 class ActiveSupport::TestCase
   make_my_diffs_pretty!
 
