@@ -15,7 +15,7 @@ static og_bool NlpSolutionCombine(og_nlp_th ctrl_nlp_th, struct request_expressi
 static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     og_string solution_key, json_t *sub_solution);
-static og_status NlpSolutionBuildRawTextGetAnyPositions(og_nlp_th ctrl_nlp_th,
+static og_status NlpSolutionCalculateAnyPositions(og_nlp_th ctrl_nlp_th,
     struct request_expression *request_expression, int *pstart_position_any, int *pend_position_any);
 static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_package_solution);
@@ -873,7 +873,7 @@ og_status NlpSolutionCalculatePositions(og_nlp_th ctrl_nlp_th, struct request_ex
   int start_position_any = start_position_expression;
   int end_position_any = end_position_expression;
 
-  IFE(NlpSolutionBuildRawTextGetAnyPositions(ctrl_nlp_th, request_expression, &start_position_any, &end_position_any));
+  IFE(NlpSolutionCalculateAnyPositions(ctrl_nlp_th, request_expression, &start_position_any, &end_position_any));
 
   int start_position = start_position_expression;
   if (start_position_any < start_position) start_position = start_position_any;
@@ -896,6 +896,7 @@ static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_e
   unsigned char *raw_text_name = "raw_text";
 
   IFE(NlpSolutionCalculatePositions(ctrl_nlp_th, request_expression));
+  IFE(NlpSolutionCalculateLanguage(ctrl_nlp_th, request_expression));
 
   int start_position = request_expression->start_position_byte;
   int end_position = request_expression->end_position_byte;
@@ -924,6 +925,14 @@ static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_e
   IFE(NlpJsAddVariable(ctrl_nlp_th, end_position_name, end_position_string, end_position_string_length));
   NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: end_position is '%s'", end_position_string);
 
+  unsigned char *language_name = "language";
+  unsigned char *language_code = OgIso639ToCode(request_expression->language->id);
+  if (request_expression->language->id == DOgLangNil) language_code= "nil";
+  char language_code_string[DPcPathSize];
+  int language_code_string_length = snprintf(language_code_string, DPcPathSize, "\"%s\"", language_code);
+  IFE(NlpJsAddVariable(ctrl_nlp_th, language_name, language_code_string, language_code_string_length));
+  NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: language is '%s'", language_code_string);
+
   unsigned char *request_raw_text_name = "request_raw_text";
   const unsigned char *request_raw_text_string = ctrl_nlp_th->request_sentence;
   length_position = strlen(ctrl_nlp_th->request_sentence);
@@ -940,7 +949,7 @@ static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_e
   DONE;
 }
 
-static og_status NlpSolutionBuildRawTextGetAnyPositions(og_nlp_th ctrl_nlp_th,
+static og_status NlpSolutionCalculateAnyPositions(og_nlp_th ctrl_nlp_th,
     struct request_expression *request_expression, int *pstart_position_any, int *pend_position_any)
 {
 
@@ -973,7 +982,7 @@ static og_status NlpSolutionBuildRawTextGetAnyPositions(og_nlp_th ctrl_nlp_th,
           request_input_part->Irequest_expression);
       IFN(sub_request_expression) DPcErr;
       IFE(
-          NlpSolutionBuildRawTextGetAnyPositions(ctrl_nlp_th, sub_request_expression, pstart_position_any,
+          NlpSolutionCalculateAnyPositions(ctrl_nlp_th, sub_request_expression, pstart_position_any,
               pend_position_any));
     }
   }
