@@ -1,1 +1,19 @@
 CHANGELOG.md merge=union
+
+*.h linguist-language=C
+*.sql linguist-language=SQL
+*.tpl linguist-detectable=false
+*.xsl linguist-detectable=false
+
+nlp/sources/ogm_uni/lib/cjkpunct.c linguist-generated=true
+nlp/sources/ogm_uni/lib/cp1250.c linguist-generated=true
+nlp/sources/ogm_uni/lib/cp1251.c linguist-generated=true
+nlp/sources/ogm_uni/lib/cp1252.c linguist-generated=true
+nlp/sources/ogm_uni/lib/cp1256.c linguist-generated=true
+nlp/sources/ogm_uni/lib/cp850.c linguist-generated=true
+nlp/sources/ogm_uni/lib/cp866.c linguist-generated=true
+nlp/sources/ogm_uni/lib/cp8859_2.c linguist-generated=true
+nlp/sources/ogm_uni/lib/cp8859_5.c linguist-generated=true
+nlp/sources/ogm_uni/lib/cp936.h linguist-generated=true
+nlp/sources/ogm_uni/lib/cpbig5.h linguist-generated=true
+nlp/sources/ogm_uni/lib/cpgb2312.h linguist-generated=true
