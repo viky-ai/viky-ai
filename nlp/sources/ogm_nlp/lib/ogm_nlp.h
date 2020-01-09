@@ -526,6 +526,12 @@ struct request_score
 #define DOgNlpAnyTopologyRight    2
 #define DOgNlpAnyTopologyBothSide (DOgNlpAnyTopologyLeft+DOgNlpAnyTopologyRight)
 
+struct request_language
+{
+  int id;
+  double score;
+};
+
 struct request_expression
 {
   int self_index;
@@ -598,6 +604,7 @@ struct request_expression
   int end_position_byte;
   int end_position_char;
 
+  struct request_language language[1];
 };
 
 #define DOgMatchZoneInputPartSize 0x25
@@ -1283,4 +1290,6 @@ og_status NlpPrimaryPackageReset(og_nlp_th ctrl_nlp_th);
 og_status NlpAddPrimaryPackage(og_nlp_th ctrl_nlp_th, package_t primary_package);
 og_status NlpIsPrimaryPackage(og_nlp_th ctrl_nlp_th, package_t primary_package);
 
+/* nlplanguage.c*/
+og_status NlpSolutionCalculateLanguage(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
