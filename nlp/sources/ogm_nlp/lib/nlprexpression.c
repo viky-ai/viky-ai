@@ -107,10 +107,9 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     IFE(status);
   }
 
-
   int must_add_request_expression = TRUE;
 
-  og_bool matched_language = NlpGetBestLocale(ctrl_nlp_th, request_expression,NULL);
+  og_bool matched_language = NlpGetBestLocale(ctrl_nlp_th, request_expression, NULL);
   IFE(matched_language);
   if (!matched_language)
   {
@@ -252,7 +251,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   if (must_add_request_expression && !is_super_list)
   {
     IFE(NlpGetAutoCompleteRequestWord(ctrl_nlp_th, request_expression));
-    IFE(NlpRequestExpressionAddGluePunctuations(ctrl_nlp_th,request_expression));
+    IFE(NlpRequestExpressionAddGluePunctuations(ctrl_nlp_th, request_expression));
 
     struct request_expression *request_expressions = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
     IFn(request_expressions) DPcErr;
@@ -874,11 +873,12 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
   }
 
   struct expression *expression = request_expression->expression;
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d%s [%s] '%.*s' in interpretation '%s': '%s'%s%s%s%s%s%s%s%s%s%s",
-      string_offset, request_expression->self_index, request_expression->level,
-      (request_expression->keep_as_result ? "*" : ""), string_positions, DPcPathSize, expression->text,
-      expression->interpretation->slug, highlight, (solution[0] ? " " : ""), solution, any, overlap_mark, language, scores,
-      ac_request_word, alias_name, rwac, sortdata);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
+      "%s%2d:%d%s [%s] '%.*s' in interpretation '%s': '%s'%s%s%s%s%s%s%s%s%s%s", string_offset,
+      request_expression->self_index, request_expression->level, (request_expression->keep_as_result ? "*" : ""),
+      string_positions, DPcPathSize, expression->text, expression->interpretation->slug, highlight,
+      (solution[0] ? " " : ""), solution, any, overlap_mark, language, scores, ac_request_word, alias_name, rwac,
+      sortdata);
   DONE;
 }
 

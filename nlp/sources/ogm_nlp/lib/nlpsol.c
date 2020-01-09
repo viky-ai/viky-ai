@@ -15,8 +15,8 @@ static og_bool NlpSolutionCombine(og_nlp_th ctrl_nlp_th, struct request_expressi
 static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     og_string solution_key, json_t *sub_solution);
-static og_status NlpSolutionCalculateAnyPositions(og_nlp_th ctrl_nlp_th,
-    struct request_expression *request_expression, int *pstart_position_any, int *pend_position_any);
+static og_status NlpSolutionCalculateAnyPositions(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    int *pstart_position_any, int *pend_position_any);
 static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_package_solution);
 static og_status NlpSolutionClean(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
@@ -927,10 +927,13 @@ static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_e
 
   unsigned char *language_name = "language";
   unsigned char *language_code = OgIso639ToCode(request_expression->language->id);
-  if (request_expression->language->id == DOgLangNil) language_code= "nil";
   char language_code_string[DPcPathSize];
-  int language_code_string_length = snprintf(language_code_string, DPcPathSize, "\"%s\"", language_code);
-  IFE(NlpJsAddVariable(ctrl_nlp_th, language_name, language_code_string, language_code_string_length));
+  snprintf(language_code_string, DPcPathSize, "\"%s\"", language_code);
+  if (request_expression->language->id == DOgLangNil)
+  {
+    snprintf(language_code_string, DPcPathSize, "null");
+  }
+  IFE(NlpJsAddVariable(ctrl_nlp_th, language_name, language_code_string, -1));
   NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: language is '%s'", language_code_string);
 
   unsigned char *request_raw_text_name = "request_raw_text";
@@ -949,8 +952,8 @@ static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_e
   DONE;
 }
 
-static og_status NlpSolutionCalculateAnyPositions(og_nlp_th ctrl_nlp_th,
-    struct request_expression *request_expression, int *pstart_position_any, int *pend_position_any)
+static og_status NlpSolutionCalculateAnyPositions(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    int *pstart_position_any, int *pend_position_any)
 {
 
   int start_position_any = *pstart_position_any;

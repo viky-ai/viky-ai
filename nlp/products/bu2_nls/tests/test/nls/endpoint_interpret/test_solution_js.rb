@@ -369,7 +369,7 @@ module Nls
           'const raw_text = "jsisolationdeux";',
           'const start_position = 0;',
           'const end_position = 15;',
-          'const language = "nil";',
+          'const language = null;',
           'const request_raw_text = "jsisolationdeux";'
         ]
         assert_equal js_error['context'], expected_context
