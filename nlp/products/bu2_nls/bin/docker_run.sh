@@ -33,14 +33,18 @@ else
   WAIT_REDIS="-wait tcp://localhost:6379"
 fi
 
-/usr/local/bin/dockerize ${WAIT_REDIS} ${WAIT_VIKYAPP} -timeout 60s
+if   [[ "$1" == "init" ]]; then
+  /usr/local/bin/dockerize ${WAIT_REDIS} ${WAIT_VIKYAPP} -timeout 240s
+else
+  /usr/local/bin/dockerize ${WAIT_REDIS} ${WAIT_VIKYAPP} -timeout 60s
 
-# Start nlp in background, not in daemon
-cd /nlp_route
-bundle exec ./bin/nlp-route &
-NLP_ROUTE_PID=$!
-touch ${NLS_INSTALL_PATH}/log/ogm_nls.log
-tail -f --pid=${NLP_ROUTE_PID} ${NLS_INSTALL_PATH}/log/ogm_nls.log
+  # Start nlp in background, not in daemon
+  cd /nlp_route
+  bundle exec ./bin/nlp-route &
+  NLP_ROUTE_PID=$!
+  touch ${NLS_INSTALL_PATH}/log/ogm_nls.log
+  tail -f --pid=${NLP_ROUTE_PID} ${NLS_INSTALL_PATH}/log/ogm_nls.log
 
-# wait for signal
-wait
+  # wait for signal
+  wait
+fi
