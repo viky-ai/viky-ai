@@ -36,7 +36,28 @@ rm -f ./tmp/pids/fluent-bit.pid
 
 # init container Check data migration
 POD_INDEX="${HOSTNAME##*-}"
-if [[ "$1" == "create_db" ]]; then
+if [[ "$1" == "static" ]]; then
+
+  if [[ "$POD_INDEX" == "0" ]] ; then
+
+    # copy public assets to external container
+    echo "Sync static content"
+    mkdir -p /tmp/public/
+    rsync -aq --delete-after ./public/packs/  /tmp/public/packs/
+    rsync -aq --delete-after ./public/assets/ /tmp/public/assets/
+    # create dir if not exist
+    mkdir -p /tmp/public/uploads/
+
+    # create a readable file to check runtime access
+    touch /tmp/public/uploads/.readable
+    touch /tmp/public/assets/.readable
+    touch /tmp/public/packs/.readable
+
+  else
+    echo "Setup is only done on first container."
+  fi
+
+elif [[ "$1" == "create_db" ]]; then
 
   if [[ "$POD_INDEX" == "0" ]] ; then
 
