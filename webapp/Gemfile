@@ -36,7 +36,7 @@ gem 'hiredis'
 gem 'sidekiq'
 
 # Use ElasticSearch for stats
-gem 'elasticsearch', '~> 7.4'
+gem 'elasticsearch', '~> 7.4.0'
 
 # Use fluent to bufferize stats recording
 gem 'fluent-logger'
