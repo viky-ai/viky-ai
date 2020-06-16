@@ -65,7 +65,7 @@ gem 'image_processing'
 # Markdown
 gem 'html-pipeline'
 gem "commonmarker", "~> 0.16", require: false
-gem "sanitize", "~> 5.1", require: false
+gem "sanitize", "~> 5.2", require: false
 gem "rinku", "~> 2.0", require: false
 
 # Graph

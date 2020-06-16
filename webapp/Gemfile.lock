@@ -284,7 +284,7 @@ GEM
     ruby-vips (2.0.17)
       ffi (~> 1.9)
     rubyzip (2.3.0)
-    sanitize (5.1.0)
+    sanitize (5.2.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.8.0)
       nokogumbo (~> 2.0)
@@ -404,7 +404,7 @@ DEPENDENCIES
   rest-client
   rgl
   rinku (~> 2.0)
-  sanitize (~> 5.1)
+  sanitize (~> 5.2)
   sass-rails (~> 6)
   selenium-webdriver
   shrine (~> 3.0)
