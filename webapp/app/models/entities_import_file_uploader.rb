@@ -11,7 +11,7 @@ class EntitiesImportFileUploader < Shrine
   Attacher.validate do
     validate_max_size MAX_FILE_SIZE,
       message: I18n.t('errors.entities_import.max_file_size')
-    validate_mime_type_inclusion %w[text/csv application/vnd.ms-excel],
+    validate_mime_type_inclusion %w[text/csv application/csv application/vnd.ms-excel],
       message: I18n.t('errors.entities_import.wrong_format')
     validate_extension_inclusion %w[csv xls],
       message: I18n.t('errors.entities_import.wrong_extension')
