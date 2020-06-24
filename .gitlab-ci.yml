@@ -64,7 +64,7 @@ test_webapp:
   services:
     - postgres:11.5-alpine
     - redis:5.0-alpine
-    - name: selenium/standalone-chrome:3.141.59
+    - name: selenium/standalone-chrome:3.141.59-20200515
       alias: selenium-chrome
     - name: docker.elastic.co/elasticsearch/elasticsearch:7.4.1
       # Important other wise, port 9200 will never be exposed
