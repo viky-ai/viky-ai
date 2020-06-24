@@ -23,8 +23,6 @@ before_script:
 .kubernetes_runner:
   tags:
     - kubernetes
-  variables:
-    CI_SERVICE_HOST: "127.0.0.1"
 
 # Build docker image
 build_backup:
@@ -85,11 +83,11 @@ test_webapp:
   script:
     - export VIKYAPP_DB_USERNAME="${POSTGRES_USER}"
     - export VIKYAPP_DB_PASSWORD="${POSTGRES_PASSWORD}"
-    - export VIKYAPP_DB_HOST="${CI_SERVICE_HOST:-postgres}"
-    - export VIKYAPP_ACTIONCABLE_REDIS_URL="redis://${CI_SERVICE_HOST:-redis}:6379/1"
-    - export VIKYAPP_ACTIVEJOB_REDIS_URL="redis://${CI_SERVICE_HOST:-redis}:6379/2"
-    - export VIKYAPP_STATISTICS_URL="http://${CI_SERVICE_HOST:-elasticsearch}:9200"
-    - export SELENIUM_REMOTE_URL="http://${CI_SERVICE_HOST:-selenium-chrome}:4444/wd/hub/"
+    - export VIKYAPP_DB_HOST="postgres"
+    - export VIKYAPP_ACTIONCABLE_REDIS_URL="redis://redis:6379/1"
+    - export VIKYAPP_ACTIVEJOB_REDIS_URL="redis://redis:6379/2"
+    - export VIKYAPP_STATISTICS_URL="http://elasticsearch:9200"
+    - export SELENIUM_REMOTE_URL="http://selenium-chrome:4444/wd/hub/"
     - export VIKYAPP_STATISTICS_NO_REPLICA="true"
     - cd /webapp
     - if [ "${SKIP_TEST:-false}" != "true" ] ; then ./bin/docker_run_test.sh ; fi
@@ -109,7 +107,7 @@ test_nlp:
   variables:
     GIT_STRATEGY: none
   script:
-    - export VIKYAPP_REDIS_PACKAGE_NOTIFIER="redis://${CI_SERVICE_HOST:-redis}:6379/3"
+    - export VIKYAPP_REDIS_PACKAGE_NOTIFIER="redis://redis:6379/3"
     - if [ "${SKIP_TEST:-false}" != "true" ] ; then /docker_run_test.sh ; fi
   artifacts:
     # expire_in: 1 week
