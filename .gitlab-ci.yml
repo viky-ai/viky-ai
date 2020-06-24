@@ -50,6 +50,13 @@ build_nlp:
     - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--target test_image"
 
 # Test
+## Pin Selenium container version embedding Chrome < 83 because of shared-memory option regression
+## see : https://stackoverflow.com/questions/62030026/chrome-83-started-crashing-since-upgrade
+## and shared-memory (/dev/shm) cannot be customize in our current Gitlab + Helm pipeline
+## If you want to try it on your machine just run :
+##  $ docker run --rm --name selenium -d -p 4444:4444 selenium/standalone-chrome:3.141.59-20200515
+##  $ export SELENIUM_REMOTE_URL="http://localhost:4444/wd/hub/"
+##  $ ./bin/rails test:system
 test_webapp:
   extends: .kubernetes_runner
   stage: test
