@@ -60,6 +60,10 @@ class ChatSession < ApplicationRecord
       "de-DE": {
         language: "Deutsch",
         country: "Default"
+      },
+      "ro-RO": {
+        language: "Română",
+        country: "Default"
       }
     }
   end
