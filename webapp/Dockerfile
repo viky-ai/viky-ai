@@ -90,10 +90,11 @@ COPY Gemfile /webapp
 COPY Gemfile.lock /webapp
 
 # Get correct bundler version
-RUN gem install bundler -v 2.0.2
+RUN gem install bundler -v 2.1.4
 
 # Production dependencies
-RUN bundle install --without development test --jobs=$(nproc)
+RUN bundle config set without 'development test'
+RUN bundle install --jobs=$(nproc)
 
 # Copy application code
 COPY . /webapp
@@ -140,7 +141,8 @@ CMD ["./bin/docker_run.sh"]
 FROM image_ruby_common AS image_ruby_test
 
 # Install test dependencies
-RUN bundle install --jobs=$(nproc) --with=test
+RUN bundle config set with 'test'
+RUN bundle install --jobs=$(nproc)
 
 ENV RAILS_ENV=test
 
