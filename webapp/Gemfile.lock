@@ -110,7 +110,7 @@ GEM
     dotenv-rails (2.7.5)
       dotenv (= 2.7.5)
       railties (>= 3.2, < 6.1)
-    down (5.1.1)
+    down (5.2.0)
       addressable (~> 2.5)
     elasticsearch (7.4.0)
       elasticsearch-api (= 7.4.0)
@@ -219,7 +219,7 @@ GEM
       premailer (~> 1.7, >= 1.7.9)
     pretender (0.3.4)
       actionpack (>= 4.2)
-    public_suffix (4.0.5)
+    public_suffix (4.0.6)
     puma (4.3.5)
       nio4r (~> 2.0)
     racc (1.5.2)
@@ -301,7 +301,7 @@ GEM
     selenium-webdriver (3.142.7)
       childprocess (>= 0.5, < 4.0)
       rubyzip (>= 1.2.2)
-    shrine (3.2.1)
+    shrine (3.3.0)
       content_disposition (~> 1.0)
       down (~> 5.1)
     sidekiq (6.0.7)
@@ -409,7 +409,7 @@ DEPENDENCIES
   sanitize (~> 5.1)
   sass-rails (~> 6)
   selenium-webdriver
-  shrine (~> 3.0)
+  shrine (~> 3.3)
   sidekiq
   simplecov
   skylight

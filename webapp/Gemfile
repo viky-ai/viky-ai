@@ -59,7 +59,7 @@ gem 'foreman'
 gem 'dotenv-rails', '~> 2.7'
 
 # Upload (shrine & dependencies)
-gem 'shrine', "~> 3.0"
+gem 'shrine', "~> 3.3"
 gem 'image_processing'
 
 # Markdown
