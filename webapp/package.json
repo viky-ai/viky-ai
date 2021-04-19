@@ -10,7 +10,7 @@
     "codemirror": "^5.32.0",
     "coffee-loader": "^0.9.0",
     "coffeescript": "2.4.1",
-    "dompurify": "^2.0.0",
+    "dompurify": "^2.0.17",
     "jquery": "^3.5.0",
     "local-time": "^2.0.0",
     "marked": "^0.7.0",
