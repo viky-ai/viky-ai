@@ -141,7 +141,7 @@ CMD ["./bin/docker_run.sh"]
 FROM image_ruby_common AS image_ruby_test
 
 # Install test dependencies
-RUN bundle config set with 'test'
+RUN bundle config unset without 'test' && bundle config set with 'test'
 RUN bundle install --jobs=$(nproc)
 
 ENV RAILS_ENV=test
