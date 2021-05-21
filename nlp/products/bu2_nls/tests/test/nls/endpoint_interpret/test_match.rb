@@ -370,7 +370,7 @@ module Nls
 
         # resultat attendu
         solution = [ { building_feature: "swimming pool"} , { building_feature: "golf" } , { building_feature: "Sea view" } , { building_feature: "spa" } ]
-        expected = { interpretation: "pg-building-features", solution: solution, score: 0.9}
+        expected = { interpretation: "pg-building-features", solution: solution, score: 0.65}
 
         # creation et exécution de la requete
         check_interpret("with swimming pool with golf with sea view with spa", expected)
@@ -386,25 +386,25 @@ module Nls
 
         Nls.package_update(aller_de_a)
 
-        expected = { interpretation: "want-go-from-to", solution: { from: "New York", to: "Paris"}, score: 0.94}
+        expected = { interpretation: "want-go-from-to", solution: { from: "New York", to: "Paris"}, score: 0.76}
         check_interpret("I want to go from New York to Paris", expected)
 
-        expected = {interpretation: "want-go-from-to", solution: { from: "Paris", to: "New York"}, score: 0.94}
+        expected = {interpretation: "want-go-from-to", solution: { from: "Paris", to: "New York"}, score: 0.76}
         check_interpret("I want to go from Paris to New York", expected)
 
-        expected = { interpretation: "want-go-from-to", solution: { from: "Barcelona", to: "New York"}, score: 1.0}
+        expected = { interpretation: "want-go-from-to", solution: { from: "Barcelona", to: "New York"}, score: 0.87}
         check_interpret("I want to go from Barcelona to New York", expected)
 
-        expected = { interpretation: "want-go-from-to", solution: { from: "Perpette Les Oies", to: "Barcelona"}, score: 0.91}
+        expected = { interpretation: "want-go-from-to", solution: { from: "Perpette Les Oies", to: "Barcelona"}, score: 0.73}
         check_interpret("I want to go from Perpette Les Oies to Barcelona", expected)
 
-        expected = { interpretation: "want-go-from-to", solution: { from: "Barcelona", to: "Perpette Les Oies"}, score: 0.91}
+        expected = { interpretation: "want-go-from-to", solution: { from: "Barcelona", to: "Perpette Les Oies"}, score: 0.73}
         check_interpret("I want to go from Barcelona to Perpette Les Oies", expected)
 
-        expected = { interpretation: "want-go-from-to", solution: { from: "Paris", to: "Perpette Les Oies"}, score: 0.87}
+        expected = { interpretation: "want-go-from-to", solution: { from: "Paris", to: "Perpette Les Oies"}, score: 0.7}
         check_interpret("I want to go from Paris to Perpette Les Oies", expected)
 
-        expected = { interpretation: "want-go-from-to", solution: { from: "Perpette Les Oies", to: "Paris"}, score: 0.87}
+        expected = { interpretation: "want-go-from-to", solution: { from: "Perpette Les Oies", to: "Paris"}, score: 0.7}
         check_interpret("I want to go from Perpette Les Oies to Paris", expected)
 
       end
@@ -421,7 +421,7 @@ module Nls
         pg_building_feature = create_building_feature
         Nls.package_update(pg_building_feature)
 
-        expected = { interpretation: "want-go-from-to", solution: { from: "New York", to: "Barcelona"}, score: 0.95}
+        expected = { interpretation: "want-go-from-to", solution: { from: "New York", to: "Barcelona"}, score: 0.84}
         check_interpret("I want to go from New York to Barcelona with swimming pool", expected)
       end
 

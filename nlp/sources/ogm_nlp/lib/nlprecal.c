@@ -60,6 +60,13 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
     g_queue_push_tail(sorted_request_expressions, request_expressions + i);
   }
 
+  // Score calculation for all expression, it must not take too much time
+  for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
+  {
+    struct request_expression *request_expression = iter->data;
+    IFE(NlpCalculateScore(ctrl_nlp_th, request_expression));
+  }
+
   IFE(NlpCalculateKeptRequestExpressions(ctrl_nlp_th, sorted_request_expressions));
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
@@ -80,7 +87,7 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
     struct request_expression *request_expression = iter->data;
     if (!request_expression->keep_as_result) continue;
     IFE(NlpSolutionCalculate(ctrl_nlp_th, request_expression));
-    IFE(NlpCalculateScore(ctrl_nlp_th, request_expression));
+    //IFE(NlpCalculateScore(ctrl_nlp_th, request_expression));
   }
 
   IFE(NlpEnableListCheckOverlapAfterCalculation(ctrl_nlp_th, sorted_request_expressions));
