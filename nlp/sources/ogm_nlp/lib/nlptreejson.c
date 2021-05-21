@@ -59,8 +59,8 @@ og_status NlpInterpretTreeJson(og_nlp_th ctrl_nlp_th, struct request_expression 
 
   og_char_buffer scores[DPcPathSize];
   struct request_score *score = request_expression->score;
-  sprintf(scores, "cov:%.2f loc:%.2f spell:%.2f olap:%.2f any:%.2f ctx:%0.2f scope:%.2f", score->coverage,
-      score->locale, score->spelling, score->overlap, score->any, score->context, score->scope);
+  sprintf(scores, "cov:%.2f loc:%.2f spell:%.2f olap:%.2f any:%.2f ctx:%0.2f scope:%.2f expr:%.2f ord:%.2f", score->coverage,
+      score->locale, score->spelling, score->overlap, score->any, score->context, score->scope, score->expression, score->ordered);
 
   json_t *json_expression_scores = json_string(scores);
   IF(json_object_set_new(json_expression, "scores", json_expression_scores))
@@ -120,8 +120,8 @@ static og_status NlpInterpretTreeJsonRecursiveSub(og_nlp_th ctrl_nlp_th, json_t 
 
   og_char_buffer scores[DPcPathSize];
   struct request_score *score = sub_request_expression->score;
-  sprintf(scores, "cov:%.2f loc:%.2f spell:%.2f olap:%.2f any:%.2f ctx:%0.2f scope:%.2f", score->coverage,
-      score->locale, score->spelling, score->overlap, score->any, score->context, score->scope);
+  sprintf(scores, "cov:%.2f loc:%.2f spell:%.2f olap:%.2f any:%.2f ctx:%0.2f scope:%.2f expr:%.2f ord:%.2f", score->coverage,
+      score->locale, score->spelling, score->overlap, score->any, score->context, score->scope, score->expression, score->ordered);
   IF(json_object_set_new(json_sub_expression, "scores", json_string(scores)))
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting json_expression_scores");

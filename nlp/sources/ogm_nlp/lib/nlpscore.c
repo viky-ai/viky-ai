@@ -33,6 +33,8 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
   int nb_words = ctrl_nlp_th->basic_request_word_used;
   request_expression->nb_matched_words = 0;
 
+  score->ordered = 0.0;
+
   for (int i = 0; i < request_expression->orips_nb; i++)
   {
     struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
@@ -46,6 +48,7 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
           * request_input_part->score_spelling / nb_words;
       score->locale += (double) request_word->nb_matched_words / nb_words;
       request_expression->nb_matched_words += request_word->nb_matched_words;
+      score->ordered += 1;
     }
 
     else if (request_input_part->type == nlp_input_part_type_Interpretation)
@@ -59,13 +62,23 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
       score->spelling += sub_request_expression->score->spelling * sub_request_expression->score->coverage;
       score->coverage = (double) request_expression->nb_matched_words / nb_words;
       score->any *= sub_request_expression->score->any;
+      score->ordered += sub_request_expression->score->ordered;
     }
     else
     {
       score->locale += 1.0 / nb_words;
       score->spelling += 1.0 / nb_words;
+      score->ordered += 1;
     }
 
+  }
+
+  score->ordered /= request_expression->orips_nb;
+  if (!request_expression->expression->keep_order)
+  {
+    og_bool is_ordered = NlpRequestExpressionIsOrdered(ctrl_nlp_th, request_expression);
+    IFE(is_ordered);
+    if (!is_ordered) score->ordered *= 0.5;
   }
 
   // Should not happen, but safer to do it
@@ -95,6 +108,10 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
 
   // we use a mean score for the spelling score
   request_expression->score->spelling = score->spelling;
+
+  request_expression->score->expression = request_expression->expression->score;
+  request_expression->score->ordered = score->ordered;
+
   IFE(NlpAdjustLocaleScore(ctrl_nlp_th, request_expression));
 
   // overlap_mark is 1, 2, 3 when this number of input_part is included in another input_parts
@@ -161,6 +178,8 @@ og_status NlpCalculateScoreDuringParsing(og_nlp_th ctrl_nlp_th, struct request_e
   // we use a mean score for the spelling score
   request_expression->score->spelling = score->spelling / request_expression->orips_nb;
 
+  request_expression->score->expression = request_expression->expression->score;
+
   IFE(NlpAdjustLocaleScore(ctrl_nlp_th, request_expression));
 
   IFE(NlpCalculateTotalScore(ctrl_nlp_th, request_expression));
@@ -170,11 +189,14 @@ og_status NlpCalculateScoreDuringParsing(og_nlp_th ctrl_nlp_th, struct request_e
 
 static og_status NlpCalculateTotalScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
-  double score_number = 6.0;
+  //double score_number = 6.0;
+  double score_number = 8.0;
   struct request_score *score = request_expression->score;
 
+  //double score_sum = score->coverage + score->locale + score->spelling * score->spelling + score->overlap + score->any
+  //    + score->context;
   double score_sum = score->coverage + score->locale + score->spelling * score->spelling + score->overlap + score->any
-      + score->context;
+      + score->context + score->expression + score->ordered;
 
   request_expression->total_score = score->scope * score_sum / score_number;
 

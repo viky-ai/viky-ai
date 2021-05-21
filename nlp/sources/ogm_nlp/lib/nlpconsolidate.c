@@ -155,6 +155,8 @@ static og_status NlpConsolidatePrepareExpression(og_nlp_th ctrl_nlp_th, package_
     expression->case_sensitive = expression_compile->case_sensitive;
     expression->accent_sensitive = expression_compile->accent_sensitive;
 
+    expression->score = expression_compile->score;
+
     expression->locale = expression_compile->locale;
     expression->aliases_nb = expression_compile->aliases_nb;
     if (expression->aliases_nb > 0)

@@ -74,7 +74,7 @@ module Nls
 
       def test_highlight_basic
         expected_explanation = {
-          scores: "cov:1.00 loc:1.00 spell:1.00 olap:1.00 any:1.00 ctx:1.00 scope:1.00",
+          scores: "cov:1.00 loc:1.00 spell:1.00 olap:1.00 any:1.00 ctx:1.00 scope:1.00 expr:0.00 ord:1.00",
           highlight: {
           summary: "[cheval] [blanc]",
             words: [
@@ -106,13 +106,13 @@ module Nls
             text: "@{cheval} @{blanc}",
             slug: "cheval_blanc",
             highlight: "[cheval] [blanc]",
-            scores: "cov:1.00 loc:1.00 spell:1.00 olap:1.00 any:1.00 ctx:1.00 scope:1.00",
+            scores: "cov:1.00 loc:1.00 spell:1.00 olap:1.00 any:1.00 ctx:1.00 scope:1.00 expr:0.00 ord:1.00",
             expressions: [
               {
                 text: "cheval",
                 slug: "cheval",
                 highlight: "[cheval] blanc",
-                scores: "cov:0.50 loc:1.00 spell:1.00 olap:1.00 any:1.00 ctx:1.00 scope:1.00",
+                scores: "cov:0.50 loc:1.00 spell:1.00 olap:1.00 any:1.00 ctx:1.00 scope:1.00 expr:0.00 ord:1.00",
                 expressions: [
                   {
                     word: "cheval"
@@ -123,7 +123,7 @@ module Nls
                 text: "blanc",
                 slug: "blanc",
                 highlight: "cheval [blanc]",
-                scores: "cov:0.50 loc:1.00 spell:1.00 olap:1.00 any:1.00 ctx:1.00 scope:1.00",
+                scores: "cov:0.50 loc:1.00 spell:1.00 olap:1.00 any:1.00 ctx:1.00 scope:1.00 expr:0.00 ord:1.00",
                 expressions: [
                   {
                     word: "blanc"

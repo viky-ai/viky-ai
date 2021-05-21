@@ -124,9 +124,9 @@ module Nls
 
       def test_thousand_decimal_number_french_with_score
         Interpretation.default_locale = "fr-FR"
-        check_interpret("1 200,3",      { interpretation: "numbers_list", solution: [1200.3],  score: 1.0 })
-        check_interpret("9 100 200,0",  { interpretation: "numbers_list", solution: [9100200], score: 1.0 })
-        check_interpret("9100200,0",    { interpretation: "numbers_list", solution: [9100200], score: 1.0 })
+        check_interpret("1 200,3",      { interpretation: "numbers_list", solution: [1200.3],  score: 0.87 })
+        check_interpret("9 100 200,0",  { interpretation: "numbers_list", solution: [9100200], score: 0.87 })
+        check_interpret("9100200,0",    { interpretation: "numbers_list", solution: [9100200], score: 0.87 })
       end
 
       def test_thousand_decimal_number_english

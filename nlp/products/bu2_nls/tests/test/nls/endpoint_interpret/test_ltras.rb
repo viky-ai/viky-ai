@@ -38,13 +38,13 @@ module Nls
 
       def test_ltras_single_words
         sentence = 'with a nice swimmang poool with spa for 3 peoople and sea vieew'
-        check_interpret(sentence, interpretation: 'ltras', score: 0.94, spellchecking: :low)
+        check_interpret(sentence, interpretation: 'ltras', score: 0.76, spellchecking: :low)
       end
 
       def test_ltras_simple_locale
         sentence = 'complicate'
-        check_interpret(sentence, locale: 'en', packages: [@locale_package], interpretation: 'locale_en', score: 0.9, spellchecking: :high)
-        check_interpret(sentence, locale: 'fr', packages: [@locale_package], interpretation: 'locale_fr', score: 0.9, spellchecking: :high)
+        check_interpret(sentence, locale: 'en', packages: [@locale_package], interpretation: 'locale_en', score: 0.8, spellchecking: :high)
+        check_interpret(sentence, locale: 'fr', packages: [@locale_package], interpretation: 'locale_fr', score: 0.8, spellchecking: :high)
       end
 
 
@@ -53,23 +53,23 @@ module Nls
 
         # inactive
         sentence = 'swimming'
-        check_interpret(sentence, packages: [package], interpretation: 'ltras_simple', score: 1.0, spellchecking: :inactive)
+        check_interpret(sentence, packages: [package], interpretation: 'ltras_simple', score: 0.87, spellchecking: :inactive)
 
         sentence = 'swiming'
-        check_interpret(sentence, packages: [package], interpretation: nil, score: 1.0, spellchecking: :inactive)
+        check_interpret(sentence, packages: [package], interpretation: nil, score: 0.87, spellchecking: :inactive)
 
         # low
         sentence = 'swiming'
-        check_interpret(sentence, packages: [package], interpretation: 'ltras_simple', score: 0.97, spellchecking: :low)
+        check_interpret(sentence, packages: [package], interpretation: 'ltras_simple', score: 0.85, spellchecking: :low)
 
         sentence = 'swimmming'
-        check_interpret(sentence, packages: [package], interpretation: 'ltras_simple', score: 0.97, spellchecking: :low)
+        check_interpret(sentence, packages: [package], interpretation: 'ltras_simple', score: 0.85, spellchecking: :low)
 
         sentence = 'swimmminng'
-        check_interpret(sentence, packages: [package], interpretation: 'ltras_simple', score: 0.95, spellchecking: :low)
+        check_interpret(sentence, packages: [package], interpretation: 'ltras_simple', score: 0.84, spellchecking: :low)
 
         sentence = 'swimmang'
-        check_interpret(sentence, packages: [package], interpretation: 'ltras_simple', score: 0.90, spellchecking: :low)
+        check_interpret(sentence, packages: [package], interpretation: 'ltras_simple', score: 0.80, spellchecking: :low)
 
         sentence = 'swimmmang'
         check_interpret(sentence, packages: [package], interpretation: nil, spellchecking: :low)
@@ -79,17 +79,17 @@ module Nls
 
         # medium
         sentence = 'svimmang'
-        check_interpret(sentence, packages: [package], interpretation: 'ltras_simple', score: 0.86, spellchecking: :medium)
+        check_interpret(sentence, packages: [package], interpretation: 'ltras_simple', score: 0.77, spellchecking: :medium)
 
         sentence = 'svimmmang'
         check_interpret(sentence, packages: [package], interpretation: nil, spellchecking: :medium)
 
         # high
         sentence = 'svimmmang'
-        check_interpret(sentence, packages: [package], interpretation: 'ltras_simple', score: 0.85, spellchecking: :high)
+        check_interpret(sentence, packages: [package], interpretation: 'ltras_simple', score: 0.76, spellchecking: :high)
 
         sentence = 'svimmmanng'
-        check_interpret(sentence, packages: [package], interpretation: 'ltras_simple', score: 0.85, spellchecking: :high)
+        check_interpret(sentence, packages: [package], interpretation: 'ltras_simple', score: 0.76, spellchecking: :high)
 
         sentence = 'svimmman'
         check_interpret(sentence, packages: [package], interpretation: nil, spellchecking: :high)
@@ -98,7 +98,7 @@ module Nls
 
       def test_complexe_parsing
         sentence = 'abc 123 def , i : jklm 456 opq ;'
-        check_interpret(sentence, interpretation: 'parse', score: 1.0)
+        check_interpret(sentence, interpretation: 'parse', score: 0.87)
       end
     end
   end
