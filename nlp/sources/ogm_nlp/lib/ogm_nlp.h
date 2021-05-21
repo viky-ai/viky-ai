@@ -220,6 +220,7 @@ struct expression_compile
   int glue_distance;
   og_bool case_sensitive;
   og_bool accent_sensitive;
+  double score;
   int alias_start, aliases_nb;
   int locale;
   int input_part_start, input_parts_nb;
@@ -246,6 +247,8 @@ struct expression
 
   og_bool case_sensitive;
   og_bool accent_sensitive;
+
+  double score;
 
   int locale;
 
@@ -519,6 +522,8 @@ struct request_score
   double any;
   double context;
   double scope;
+  double expression;
+  double ordered;
 };
 
 #define DOgNlpAnyTopologyNil      0
@@ -607,7 +612,7 @@ struct request_expression
   struct request_language language[1];
 };
 
-#define DOgMatchZoneInputPartSize 0x25
+#define DOgMatchZoneInputPartSize 60
 struct match_zone_input_part
 {
   int start;

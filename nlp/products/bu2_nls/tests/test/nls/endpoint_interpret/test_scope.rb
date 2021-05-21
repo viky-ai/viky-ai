@@ -76,8 +76,8 @@ module Nls
         )
         assert_equal 'public',  interpretations['interpretations'][0]['scope']
         assert_equal 'private', interpretations['interpretations'][1]['scope']
-        assert_equal 0.85, interpretations['interpretations'][0]['score']
-        assert_equal 0.85, interpretations['interpretations'][1]['score']
+        assert_equal 0.76, interpretations['interpretations'][0]['score']
+        assert_equal 0.76, interpretations['interpretations'][1]['score']
 
         interpretations = check_interpret("public scope1, public scope2, private scope1, private scope2, hidden scope1, hidden scope2",
           interpretations: ["scope_public_2", "scope_private_2"],
@@ -87,8 +87,8 @@ module Nls
         )
         assert_equal 'public',  interpretations['interpretations'][0]['scope']
         assert_equal 'private', interpretations['interpretations'][1]['scope']
-        assert_equal 0.85, interpretations['interpretations'][0]['score']
-        assert_equal 0.85, interpretations['interpretations'][1]['score']
+        assert_equal 0.76, interpretations['interpretations'][0]['score']
+        assert_equal 0.76, interpretations['interpretations'][1]['score']
 
       end
 

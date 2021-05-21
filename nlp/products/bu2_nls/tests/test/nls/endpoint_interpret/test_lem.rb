@@ -68,16 +68,16 @@ module Nls
       end
 
       def test_lem_fr_root
-        check_interpret('travailler', interpretation: 'travailler', score: 1.0)
-        check_interpret('travaillerions', interpretation: 'travailler', score: 0.99)
-        check_interpret('chevaux', interpretation: 'cheval', score: 0.99)
-        check_interpret('sols', interpretation: 'sol', score: 0.99)
+        check_interpret('travailler', interpretation: 'travailler', score: 0.87)
+        check_interpret('travaillerions', interpretation: 'travailler', score: 0.87)
+        check_interpret('chevaux', interpretation: 'cheval', score: 0.87)
+        check_interpret('sols', interpretation: 'sol', score: 0.87)
 
-        check_interpret('sommes', interpretation: 'etre', score: 0.99)
-        check_interpret('fûmes', interpretation: 'etre', score: 0.99)
+        check_interpret('sommes', interpretation: 'etre', score: 0.87)
+        check_interpret('fûmes', interpretation: 'etre', score: 0.87)
 
-        check_interpret('ont', interpretation: 'avoir', score: 0.99)
-        check_interpret('eurent', interpretation: 'avoir', score: 0.99)
+        check_interpret('ont', interpretation: 'avoir', score: 0.87)
+        check_interpret('eurent', interpretation: 'avoir', score: 0.87)
 
         exception = assert_raises Minitest::Assertion do
           check_interpret('bols', interpretation: 'bol')
@@ -86,18 +86,18 @@ module Nls
       end
 
       def test_lem_fr_form
-        check_interpret('chiffonnier', interpretation: 'chiffonnieres', score: 0.99)
-        check_interpret('bonhomme', interpretation: 'bonshommes', score: 0.99)
-        check_interpret('madame', interpretation: 'mesdames', score: 0.99)
+        check_interpret('chiffonnier', interpretation: 'chiffonnieres', score: 0.87)
+        check_interpret('bonhomme', interpretation: 'bonshommes', score: 0.87)
+        check_interpret('madame', interpretation: 'mesdames', score: 0.87)
       end
 
       def test_lem_en
-        check_interpret('lady',  locale: 'en', interpretation: 'ladies', score: 0.99)
-        check_interpret('teeth', locale: 'en', interpretation: 'tooth',  score: 0.99)
-        check_interpret('doing', locale: 'en', interpretation: 'do',     score: 0.99)
-        check_interpret('been',  locale: 'en', interpretation: 'be',     score: 0.99)
-        check_interpret('knife', locale: 'en', interpretation: 'knives', score: 0.99)
-        check_interpret('cancelled', locale: 'en', interpretation: 'cancel', score: 0.99)
+        check_interpret('lady',  locale: 'en', interpretation: 'ladies', score: 0.87)
+        check_interpret('teeth', locale: 'en', interpretation: 'tooth',  score: 0.87)
+        check_interpret('doing', locale: 'en', interpretation: 'do',     score: 0.87)
+        check_interpret('been',  locale: 'en', interpretation: 'be',     score: 0.87)
+        check_interpret('knife', locale: 'en', interpretation: 'knives', score: 0.87)
+        check_interpret('cancelled', locale: 'en', interpretation: 'cancel', score: 0.87)
       end
     end
   end

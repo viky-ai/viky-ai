@@ -17,6 +17,8 @@ static int NlpCompilePackageExpressions(og_nlp_th ctrl_nlp_th, package_t package
     struct interpretation_compile *interpretation, json_t *json_expressions);
 static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     struct interpretation_compile *interpretation, json_t *json_expression);
+static og_bool NlpCompilePackageExpressionIsValid(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation_compile *interpretation, struct expression_compile *expression);
 static int NlpCompilePackageExpressionAliases(og_nlp_th ctrl_nlp_th, package_t package,
     struct expression_compile *expression, json_t *json_aliases);
 static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t package,
@@ -492,6 +494,7 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   json_t *json_glue_distance = NULL;
   json_t *json_case_sensitive = NULL;
   json_t *json_accent_sensitive = NULL;
+  json_t *json_score = NULL;
   json_t *json_aliases = NULL;
   json_t *json_locale = NULL;
   json_t *json_solution = NULL;
@@ -528,6 +531,10 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     else if (Ogstricmp(key, "accent-sensitive") == 0)
     {
       json_accent_sensitive = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "score") == 0)
+    {
+      json_score = json_object_iter_value(iter);
     }
     else if (Ogstricmp(key, "aliases") == 0)
     {
@@ -566,10 +573,12 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     DPcErr;
   }
 
-  size_t Iexpression;
-  struct expression_compile *expression = OgHeapNewCell(package->hexpression_compile, &Iexpression);
-  IFn(expression) DPcErr;
-  IFE(Iexpression);
+  struct expression_compile expression[1];
+
+//  size_t Iexpression;
+//  struct expression_compile *expression = OgHeapNewCell(package->hexpression_compile, &Iexpression);
+//  IFn(expression) DPcErr;
+//  IFE(Iexpression);
 
   expression->pos = expression_pos;
 
@@ -709,6 +718,24 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     DPcErr;
   }
 
+  if (json_score == NULL)
+  {
+    expression->score = 0.0;
+  }
+  else if (json_is_real(json_score))
+  {
+    expression->score = json_real_value(json_score);
+  }
+  else if (json_is_integer(json_score))
+  {
+    expression->score = json_integer_value(json_score);
+  }
+  else
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: score is not a real number nor an integer");
+    DPcErr;
+  }
+
   IFN(json_aliases)
   {
     expression->alias_start = (-1);
@@ -730,7 +757,195 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
 
   expression->json_solution = json_solution;
 
+  og_bool is_valid_expression = TRUE;
+  IFE(is_valid_expression = NlpCompilePackageExpressionIsValid(ctrl_nlp_th, package, interpretation, expression));
+  if (is_valid_expression)
+  {
+    IFE(OgHeapAppend(package->hexpression_compile, 1, expression));
+  }
+
   DONE;
+}
+
+// Based upon same parsing as NlpConsolidateExpression, but just to count input_parts
+
+static og_bool NlpCompilePackageExpressionIsValid(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation_compile *interpretation, struct expression_compile *expression)
+{
+  int input_parts_nb = 0;
+
+  og_string s = OgHeapGetCell(package->hexpression_ba, expression->text_start);
+  IFN(s) DPcErr;
+
+  int is = strlen(s);
+  og_string s_end = s + is;
+
+  NlpLog(DOgNlpTraceConsolidate, "NlpCompilePackageExpressionIsValid: parsing '%s'", s);
+
+  int state = 1;
+  og_bool end = FALSE;
+  int i = -1;
+  //int start = 0;
+  while (!end)
+  {
+    gunichar c = ' ';
+    og_string s_pos = g_utf8_find_next_char(s + i, s_end);
+    if (s_pos == NULL)
+    {
+      end = TRUE;
+      i = is;
+    }
+    else
+    {
+      i = s_pos - s;
+      c = g_utf8_get_char_validated(s_pos, is - i);
+      if ((c == (gunichar) -1) || (c == (gunichar) -2))
+      {
+        og_string id = OgHeapGetCell(package->hinterpretation_ba, interpretation->id_start);
+        IFN(id) DPcErr;
+        og_string slug = OgHeapGetCell(package->hinterpretation_ba, interpretation->slug_start);
+        IFN(slug) DPcErr;
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionIsValid : invalid UTF-8 character '%s' '%s' : '%s'",
+            slug, id, s_pos);
+        DPcErr;
+      }
+    }
+
+    switch (state)
+    {
+      case 1:   // between words or interpretations
+      {
+        if (c == '@' && i + 1 < is && s[i + 1] == '{')
+        {
+          state = 2;
+        }
+        else
+        {
+          og_bool punct_length = 0;
+          og_bool is_skipped = FALSE;
+          og_bool is_expression = FALSE;
+          og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, is - i, s + i, &is_skipped, &is_expression,
+              &punct_length);
+          IFE(is_punct);
+          if (is_punct)
+          {
+            if (!is_skipped)
+            {
+              // add punctuation word, except if glue-strength of expression is "punctuation"
+              // in that case, we want to add the expression without all expression punctuations
+              if (!(expression->glue_strength == nlp_glue_strength_Punctuation && is_expression))
+              {
+                input_parts_nb++;
+              }
+              state = 1;
+            }
+            i += punct_length - 1;
+            state = 1;
+          }
+          else if (g_unichar_isdigit(c))
+          {
+            state = 5;
+          }
+          else
+          {
+            state = 4;
+          }
+        }
+        break;
+      }
+      case 2:   // beginning of interpretation interpretation
+      {
+        if (c == '{')
+        {
+          state = 3;
+        }
+        else
+        {
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionIsValid: error at position %d in expression '%s'", i,
+              s);
+          DPcErr;
+        }
+        break;
+      }
+      case 3:   // middle or end of interpretation
+      {
+        if (c == '}')
+        {
+          input_parts_nb++;
+          state = 1;
+        }
+        break;
+      }
+      case 4:   // middle or end of word
+      {
+        og_bool punct_length = 0;
+        og_bool is_skip = FALSE;
+        og_bool is_expression = FALSE;
+        og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, is - i, s + i, &is_skip, &is_expression, &punct_length);
+        IFE(is_punct);
+        if (is_punct)
+        {
+          // add previously parsed word
+          input_parts_nb++;
+
+          if (!is_skip)
+          {
+            // add punctuation word, except if glue-strength of expression is "punctuation"
+            // in that case, we want to add the expression without all expression punctuations
+            if (!(expression->glue_strength == nlp_glue_strength_Punctuation && is_expression))
+            {
+              input_parts_nb++;
+            }
+            state = 1;
+          }
+          i += punct_length - 1;
+          state = 1;
+        }
+        else if (g_unichar_isdigit(c))
+        {
+          // add previously parsed word
+          input_parts_nb++;
+
+          i -= 1;
+          state = 1;
+        }
+        break;
+      }
+      case 5:   // in digit
+      {
+        if (!g_unichar_isdigit(c))
+        {
+          // add previously parsed digit word
+          input_parts_nb++;
+
+          i -= 1;
+          state = 1;
+        }
+        break;
+      }
+    }
+  }
+
+  if (state != 1)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionIsValid: error parsing expression '%s' : state %d != 1", s,
+        state);
+    DPcErr;
+  }
+
+  if (input_parts_nb > (DOgMatchZoneInputPartSize - 1))
+  {
+    og_string id = OgHeapGetCell(package->hinterpretation_ba, interpretation->id_start);
+    IFN(id) DPcErr;
+    og_string slug = OgHeapGetCell(package->hinterpretation_ba, interpretation->slug_start);
+    IFN(slug) DPcErr;
+    NlpLog(DOgNlpTraceMinimal, "NlpCompilePackageExpressionIsValid: expression skipped : too many input_part (%d > %d) "
+        "for expression %d in interpretation '%s' '%s' in package '%s'", input_parts_nb,
+        DOgMatchZoneInputPartSize - 1, expression->pos, slug, id, package->id);
+    return (FALSE);
+  }
+
+  return (TRUE);
 }
 
 static int NlpCompilePackageExpressionAliases(og_nlp_th ctrl_nlp_th, package_t package,

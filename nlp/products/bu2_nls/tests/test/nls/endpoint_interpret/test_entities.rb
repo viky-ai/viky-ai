@@ -81,30 +81,30 @@ module Nls
       end
 
       def test_entities_ltras
-        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.90 }
+        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.80 }
         check_interpret('before maisson de campagne after', expected)
 
-        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.88 }
+        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.79 }
         check_interpret('before maisson de cammpagne after', expected)
 
-        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.83 }
+        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.75 }
         check_interpret('before maison de cempagne after', expected)
 
-        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.82 }
+        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.74 }
         check_interpret('before maisson de cempagne after', expected)
 
         # expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.1 }
         # check_interpret('before maisonde campagne after', expected)
 
-        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.83 }
+        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.75 }
         check_interpret('before maison de campane after', expected)
       end
 
       def test_entities_accent_case
-        expected = { interpretation: 'entities', solution: 'Bourg-la-Reine', score: 1.00 }
+        expected = { interpretation: 'entities', solution: 'Bourg-la-Reine', score: 0.87 }
         check_interpret('bourg  la reine', expected)
 
-        expected = { interpretation: 'entities', solution: 'Placé', score: 1.00 }
+        expected = { interpretation: 'entities', solution: 'Placé', score: 0.87 }
         check_interpret('Placé', expected)
 
         exception = assert_raises Minitest::Assertion do
@@ -117,10 +117,10 @@ module Nls
         end
         assert exception.message.include?("Actual answer did not match on any interpretation")
 
-        expected = { interpretation: "entities", solution: "Nouméa", score: 1.00 }
+        expected = { interpretation: "entities", solution: "Nouméa", score: 0.87 }
         check_interpret("Nouméa", expected)
 
-        expected = { interpretation: "entities", solution: "Nouméa", score: 1.00 }
+        expected = { interpretation: "entities", solution: "Nouméa", score: 0.87 }
         check_interpret("Noumea", expected)
 
         exception = assert_raises Minitest::Assertion do
@@ -128,10 +128,10 @@ module Nls
         end
         assert exception.message.include?("Actual answer did not match on any interpretation")
 
-        expected = { interpretation: "entities", solution: "Béziers", score: 1.00 }
+        expected = { interpretation: "entities", solution: "Béziers", score: 0.87 }
         check_interpret("Béziers", expected)
 
-        expected = { interpretation: "entities", solution: "Béziers", score: 1.00 }
+        expected = { interpretation: "entities", solution: "Béziers", score: 0.87 }
         check_interpret("béziers", expected)
 
         exception = assert_raises Minitest::Assertion do
