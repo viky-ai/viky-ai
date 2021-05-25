@@ -833,8 +833,10 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
   if (score->coverage != 0.0 || score->locale != 0.0 || score->spelling != 0.0 || score->overlap != 0.0
       || score->any != 0.0)
   {
-    sprintf(scores, " scores=[%.2f %.2f %.2f %.2f %.2f %.2f]", score->coverage, score->locale, score->spelling,
-        score->overlap, score->any, score->scope);
+    //sprintf(scores, " scores=[%.2f %.2f %.2f %.2f %.2f %.2f]", score->coverage, score->locale, score->spelling,
+    //    score->overlap, score->any, score->scope);
+    sprintf(scores, " scores=[%.2f: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f]", request_expression->total_score, score->coverage, score->locale, score->spelling,
+        score->overlap, score->any, score->scope, score->expression, score->ordered);
   }
 
   char sortdata[DPcPathSize];

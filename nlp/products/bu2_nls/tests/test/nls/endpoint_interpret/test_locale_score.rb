@@ -30,8 +30,8 @@ module Nls
 
         sentence = "with a nice swimming pool with spa for 3 people and sea view"
 
-        check_interpret(sentence, locale: "en", interpretation: "locale", score: 1.0)
-        check_interpret(sentence, locale: "en;q=0.2", interpretation: "locale", score: 0.86)
+        check_interpret(sentence, locale: "en", interpretation: "locale", score: 0.87)
+        check_interpret(sentence, locale: "en;q=0.2", interpretation: "locale", score: 0.77)
 
       end
 
@@ -39,8 +39,8 @@ module Nls
 
         sentence = "avec piscine avec spa pour 3 personnes et vue sur la mer"
 
-        check_interpret(sentence, locale: "fr", interpretation: "locale", score: 1.0)
-        check_interpret(sentence, locale: "fr;q=0.2", interpretation: "locale", score: 0.86)
+        check_interpret(sentence, locale: "fr", interpretation: "locale", score: 0.87)
+        check_interpret(sentence, locale: "fr;q=0.2", interpretation: "locale", score: 0.77)
 
 
       end
